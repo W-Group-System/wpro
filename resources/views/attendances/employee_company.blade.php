@@ -110,7 +110,7 @@
                                         $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id);
                                     @endphp
                                     <tr>
-                                        <td>{{$emp->employee_code}}</td>
+                                        <td>{{$emp->employee_number}}</td>
                                         <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                         <td> @if($employee_schedule)
                                             <small>{{$emp->schedule_info->schedule_name}}</small>
