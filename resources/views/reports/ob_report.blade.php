@@ -58,12 +58,8 @@
                             <table class="table table-hover table-bordered tablewithSearch" id="ob_report">
                                 <thead>
                                     <tr>
-<<<<<<< HEAD
-                                        <th>User ID</th>
-=======
                                         {{-- <th>User ID</th> --}}
                                         <th>Employee Code</th>
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <th>Employee Name</th>
                                         <th>Date Filed</th>
                                         <th>Date</th>
@@ -77,12 +73,8 @@
                                 <tbody>
                                     @foreach($employee_obs as $item)
                                     <tr>
-<<<<<<< HEAD
-                                        <td>{{$item->employee->user_id}}</td>
-=======
                                         {{-- <td>{{$item->employee->user_id}}</td> --}}
                                         <td>{{$item->employee->employee_code}}</td>
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <td>{{$item->user->name}}</td>
                                         <td>{{date('d/m/Y h:i A', strtotime($item->created_at))}}</td>
                                         <td>{{ date('d/m/Y ', strtotime($item->applied_date)) }}</td>

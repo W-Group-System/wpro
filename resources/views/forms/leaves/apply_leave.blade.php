@@ -201,8 +201,6 @@
             }
           },
   });
-<<<<<<< HEAD
-=======
 
   $(document).ready(function() {
     $("#leave_type").on('change', function() {
@@ -217,5 +215,4 @@
       }
     })
   })
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
 </script>

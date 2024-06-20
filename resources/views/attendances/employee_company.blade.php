@@ -72,11 +72,7 @@
                                         <td colspan='5'>{{$emp->emp_code}} - {{$emp->first_name}} {{$emp->last_name}}</td>
                                     </tr> --}}
                                     <tr>
-<<<<<<< HEAD
-                                        <td>Employee ID</td>
-=======
                                         <td>Employee Code</td>
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <td>Schedule</td>
                                         <td>Name</td>
                                         <td>Date</td>

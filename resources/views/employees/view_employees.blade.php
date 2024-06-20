@@ -180,12 +180,8 @@
                             <table class="table table-hover table-bordered" id="datatableEmployee">
                                 <thead>
                                     <tr>
-<<<<<<< HEAD
-                                        <th>Biometric Code</th>
-=======
                                         <th>Employee Code</th>
                                         {{-- <th>Biometric Code</th> --}}
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <th>User ID</th>
                                         <th>Employee</th>
                                         <th>Company</th>
@@ -205,11 +201,7 @@
                                                     <i class="ti-pencil btn-icon-prepend"></i>
                                                 </a>
                                             @endif
-<<<<<<< HEAD
-                                            {{$employee->employee_number}}
-=======
                                             {{$employee->employee_code}}
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         </td>
                                         <td>{{$employee->user_id}} </td>
                                         <td>

@@ -37,12 +37,8 @@
                             <table border="1" class="table table-hover table-bordered users_table" id='users_table'>
                                 <thead>
                                     <tr>
-<<<<<<< HEAD
-                                        <th>ID</th>
-=======
                                         {{-- <th>ID</th> --}}
                                         <th>Employee Code</th>
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Role</th>
@@ -52,12 +48,8 @@
                                 <tbody>
                                     @foreach($users as $user)
                                     <tr>
-<<<<<<< HEAD
-                                        <td>{{$user->id}}</td>
-=======
                                         {{-- <td>{{$user->id}}</td> --}}
                                         <td>{{$user->employee->employee_code}}</td>
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->role}}</td>
