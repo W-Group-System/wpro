@@ -1,12 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\AttendanceDetailedReport;
 use Excel;
 use App\Payroll;
+use App\Employee;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use App\AttSummary;
+use App\Company;
+use App\ScheduleData;
 
 class PayslipController extends Controller
 {
@@ -215,15 +220,128 @@ class PayslipController extends Controller
             
         ));
     }
+    // public function generatedAttendances(Request $request)
+    // {
+    //     //02-20-24 JunJihad Commented This Code 
+
+    //     // $attendances =  AttSummary::orderBy('employee','asc')->get();
+    //     // return view('payroll.timekeeping',
+    //     // array(
+    //     //     'header' => 'Timekeeping',
+    //     //     'attendances' => $attendances,
+    //     //     'attendances' => $attendances,
+            
+    //     // ));
+    //     $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+
+    //     $companies = Company::whereHas('employee_has_company')
+    //     ->whereIn('id',$allowed_companies)
+    //     ->get();
+
+    //     $attendance_controller = new AttendanceController;
+    //     $company = isset($request->company) ? $request->company : "";
+
+    //     $from_date = $request->from;
+    //     $to_date = $request->to;
+
+    //     $date_range =  [];
+    //     $schedules = [];
+    //     $emp_data = [];
+    //     $attendances = [];
+       
+    //     if ($from_date != null) {
+    //         $emp_data = Employee::select('employee_number','user_id','first_name','last_name','schedule_id','employee_code')
+    //                             ->with(['attendances' => function ($query) use ($from_date, $to_date) {
+    //                                 $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
+    //                                 ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
+    //                                 ->orderBy('time_in','asc')
+    //                                 ->orderby('time_out','desc')
+    //                                 ->orderBy('id','asc');
+    //                             }])
+    //                             ->with(['approved_leaves' => function ($query) use ($from_date, $to_date) {
+    //                                 $query->whereBetween('date_from', [$from_date, $to_date])
+    //                                 ->where('status','Approved')
+    //                                 ->orderBy('id','asc');
+    //                             },'approved_leaves.leave'])
+    //                             ->with(['approved_wfhs' => function ($query) use ($from_date, $to_date) {
+    //                                 $query->whereBetween('applied_date', [$from_date, $to_date])
+    //                                 ->where('status','Approved')
+    //                                 ->orderBy('id','asc');
+    //                             }])
+    //                             ->with(['approved_obs' => function ($query) use ($from_date, $to_date) {
+    //                                 $query->whereBetween('applied_date', [$from_date, $to_date])
+    //                                 ->where('status','Approved')
+    //                                 ->orderBy('id','asc');
+    //                             }])
+    //                             ->with(['approved_dtrs' => function ($query) use ($from_date, $to_date) {
+    //                                 $query->whereBetween('dtr_date', [$from_date, $to_date])
+    //                                 ->where('status','Approved')
+    //                                 ->orderBy('id','asc');
+    //                             }])->where('company_id', $company);
+                                
+    //         $emp_data =  $emp_data->where('status','Active')->get();
+            
+    //         $date_range =  $attendance_controller->dateRange($from_date, $to_date);
+    //     }
+    //     $schedules = ScheduleData::all();
+    //     return view('payroll.attendance_detailed_report',
+    //     array(
+    //             'header' => 'Timekeeping',
+    //             'from_date' => $from_date,
+    //             'to_date' => $to_date,
+    //             'companies' => $companies,
+    //             'company' => $company,
+    //             'date_range' => $date_range,
+    //             'attendances' => $attendances,
+    //             'schedules' => $schedules,
+    //             'emp_data' => $emp_data,
+    //         ));
+    // }
+
     public function generatedAttendances(Request $request)
     {
-        $attendances =  AttSummary::orderBy('employee','asc')->get();
-        return view('payroll.timekeeping',
-        array(
-            'header' => 'Timekeeping',
-            'attendances' => $attendances,
-            'attendances' => $attendances,
+        
+        //02-20-24 JunJihad Commented This Code 
+
+        // $attendances =  AttSummary::orderBy('employee','asc')->get();
+        // return view('payroll.timekeeping',
+        // array(
+        //     'header' => 'Timekeeping',
+        //     'attendances' => $attendances,
+        //     'attendances' => $attendances,
             
-        ));
+        // ));
+        $generated_timekeepings = [];
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+
+        $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id',$allowed_companies)
+        ->get();
+
+        $attendance_controller = new AttendanceDetailedReport;
+        $company = isset($request->company) ? $request->company : "";
+
+        $from_date = $request->from;
+        $to_date = $request->to;
+
+        $schedules = [];
+        $attendances = [];
+       
+        if ($from_date != null) {
+           
+            $generated_timekeepings = AttendanceDetailedReport::where('company_id',$request->company)->whereBetween('log_date',[$from_date,$to_date])->get();
+       }
+        $schedules = ScheduleData::all();
+        return view('payroll.attendance_detailed_report',
+        array(
+                'header' => 'Timekeeping',
+                'from_date' => $from_date,
+                'to_date' => $to_date,
+                'companies' => $companies,
+                'company' => $company,
+                'attendances' => $attendances,
+                'schedules' => $schedules,
+                'generated_timekeepings' => $generated_timekeepings
+            ));
     }
 }
