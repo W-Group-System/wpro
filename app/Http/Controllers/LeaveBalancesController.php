@@ -44,11 +44,7 @@ class LeaveBalancesController extends Controller
         $employees = [];
         if($company){
 
-<<<<<<< HEAD
-            $employees = Employee::select('id','user_id','employee_number','first_name','last_name','department_id','company_id','status','original_date_hired')->with('department','company','employee_leave_credits.leave')
-=======
             $employees = Employee::select('id','user_id','employee_code','first_name','last_name','department_id','company_id','status','original_date_hired')->with('department','company','employee_leave_credits.leave')
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                     ->whereIn('company_id',$allowed_companies)
                                     ->where('status','Active')
                                     ->whereHas('employee_leave_credits')

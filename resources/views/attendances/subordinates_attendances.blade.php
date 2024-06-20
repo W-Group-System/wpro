@@ -54,12 +54,8 @@
   
                         <thead>
                             <tr>
-<<<<<<< HEAD
-                                <td>User ID</td>
-=======
                                 {{-- <td>User ID</td> --}}
                                 <td>Employee Code</td>
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                 <td>Name</td>
                                 <td>Schedule</td>
                                 <td>Date</td>
@@ -97,12 +93,8 @@
                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                             @endphp
                             <tr>
-<<<<<<< HEAD
-                                <td>{{$emp->employee_number}}</td>
-=======
                                 {{-- <td>{{$emp->employee_number}}</td> --}}
                                 <td>{{$emp->employee_code}}</td>
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
                                     @if($employee_schedule)

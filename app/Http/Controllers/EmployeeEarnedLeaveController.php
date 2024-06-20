@@ -31,11 +31,7 @@ class EmployeeEarnedLeaveController extends Controller
                                                     })
                                                     ->when($search,function($w) use($search){
                                                         return $w->where('first_name', 'like' , '%' .  $search . '%')->orWhere('last_name', 'like' , '%' .  $search . '%')
-<<<<<<< HEAD
-                                                        ->orWhere('employee_number', 'like' , '%' .  $search . '%')
-=======
                                                         ->orWhere('employee_code', 'like' , '%' .  $search . '%')
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                                         ->orWhere('user_id', '=' , $search)
                                                         ->orWhereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ["%{$search}%"])
                                                         ->orWhereRaw("CONCAT(`last_name`, ' ', `first_name`) LIKE ?", ["%{$search}%"]);

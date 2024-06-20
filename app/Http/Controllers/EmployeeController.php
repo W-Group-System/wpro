@@ -133,20 +133,13 @@ class EmployeeController extends Controller
                                                 ->orderBy('gender','ASC')
                                                 ->get();
 
-<<<<<<< HEAD
-        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','department_id','company_id','immediate_sup','classification','status')
-=======
+
         $employees = Employee::select('id','user_id','employee_number','first_name','last_name','department_id','company_id','immediate_sup','classification','status', 'employee_code')
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                 ->with('department', 'immediate_sup_data', 'user_info', 'company','classification_info')
                                 ->when($search,function($q) use($search){
                                     $q->where(function($w) use($search){
                                         $w->where('first_name', 'like' , '%' .  $search . '%')->orWhere('last_name', 'like' , '%' .  $search . '%')
-<<<<<<< HEAD
-                                        ->orWhere('employee_number', 'like' , '%' .  $search . '%')
-=======
                                         ->orWhere('employee_code', 'like' , '%' .  $search . '%')
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         ->orWhereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ["%{$search}%"])
                                         ->orWhereRaw("CONCAT(`last_name`, ' ', `first_name`) LIKE ?", ["%{$search}%"]);
                                     });
@@ -1414,11 +1407,7 @@ class EmployeeController extends Controller
             
             
 
-<<<<<<< HEAD
-            $emp_data = Employee::select('id','user_id','employee_number','first_name','last_name','schedule_id')
-=======
             $emp_data = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id')
->>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                     ->with(['schedule_info','attendances' => function ($query) use ($from_date, $to_date) {
                                             $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
                                                     ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
