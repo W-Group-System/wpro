@@ -73,7 +73,12 @@
 									<table class="table table-hover table-bordered tablewithSearch">
 									  <thead>
 										<tr>
+<<<<<<< HEAD
 										  <th>User ID</th>
+=======
+										  {{-- <th>User ID</th> --}}
+										  <th>Employee Code</th>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
 										  <th>Employee Name</th>
 										  <th>Date Filed</th>
 										  <th>WFH Date</th>
@@ -88,7 +93,12 @@
 									  <tbody> 
 										@foreach ($employee_wfhs as $form_approval)
 										<tr>
+<<<<<<< HEAD
 										  <td>{{$form_approval->user->id}}</td>
+=======
+										  {{-- <td>{{$form_approval->user->id}}</td> --}}
+										  <td>{{$form_approval->employee->employee_code}}</td>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
 										  <td>{{$form_approval->user->name}}</td>
 										  <td>{{date('d/m/Y h:i A', strtotime($form_approval->created_at))}}</td>
 										  <td>{{date('d/m/Y', strtotime($form_approval->applied_date))}}</td>

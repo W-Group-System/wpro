@@ -201,4 +201,21 @@
             }
           },
   });
+<<<<<<< HEAD
+=======
+
+  $(document).ready(function() {
+    $("#leave_type").on('change', function() {
+      if ($(this).val() == 1) {
+
+        $("[name='date_from']").attr('min', "{{date('Y-m-d', strtotime('+3 weekday'))}}")
+        $("[name='date_to']").attr('min', "{{date('Y-m-d', strtotime('+3 weekday'))}}")
+      } else if ($(this).val() == 2) {
+
+        $("[name='date_from']").attr('min', "{{date('Y-m-d', strtotime('-1 weekday'))}}")
+        $("[name='date_to']").attr('min', "{{date('Y-m-d', strtotime('-1 weekday'))}}")
+      }
+    })
+  })
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
 </script>

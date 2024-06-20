@@ -50,7 +50,12 @@
                                     <tr>
                                         <td>
                                             <strong>{{$item->user->name}}</strong> <br>
+<<<<<<< HEAD
                                             <small>User ID : {{$item->user->id}}</small> <br>
+=======
+                                            {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
+                                            <small>Employee Code: {{$item->employee->employee_code}}</small><br>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                             <small>{{$item->user->employee->company->company_name}}</small>
                                         
                                         </td>
@@ -119,7 +124,12 @@
                                 <tr>
                                     <td>
                                         <strong>{{$item->user->name}}</strong> <br>
+<<<<<<< HEAD
                                         <small>User ID : {{$item->user->id}}</small> <br>
+=======
+                                        {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
+                                        <small>Employee Code: {{$item->employee->employee_code}}</small><br>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <small>{{$item->user->employee->company->company_name}}</small>
                                     
                                     </td>
@@ -186,7 +196,12 @@
                                 <tr>
                                     <td>
                                         <strong>{{$item->user->name}}</strong> <br>
+<<<<<<< HEAD
                                         <small>User ID : {{$item->user->id}}</small> <br>
+=======
+                                        {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
+                                        <small>Employee Code: {{$item->employee->employee_code}}</small><br>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <small>{{$item->user->employee->company->company_name}}</small>
                                     
                                     </td>
@@ -254,7 +269,12 @@
                                 <tr>
                                     <td>
                                         <strong>{{$item->user->name}}</strong> <br>
+<<<<<<< HEAD
                                         <small>User ID : {{$item->user->id}}</small> <br>
+=======
+                                        {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
+                                        <small>Employee Code: {{$item->employee->employee_code}}</small><br>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <small>{{$item->user->employee->company->company_name}}</small>
                                     
                                     </td>
@@ -303,7 +323,11 @@
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
             <div class="col-md-6 mb-4  stretch-card transparent">
+=======
+            {{-- <div class="col-md-6 mb-4  stretch-card transparent">
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">DTR Approvals</h3>  
@@ -321,7 +345,11 @@
                                 <tr>
                                     <td>
                                         <strong>{{$item->user->name}}</strong> <br>
+<<<<<<< HEAD
                                         <small>User ID : {{$item->user->id}}</small> <br>
+=======
+                                        <small>Employee Code: {{$item->employee->employee_code}}</small><br>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <small>{{$item->user->employee->company->company_name}}</small>
                                     
                                     </td>
@@ -370,7 +398,11 @@
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
             </div>
+=======
+            </div> --}} 
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
             {{-- <div class="col-md-3 mb-4  stretch-card transparent">
                 <div class="card">
                     <div class="card-body">

@@ -61,7 +61,12 @@
 								<thead>
 									<tr>
 										
+<<<<<<< HEAD
 										<th>User ID</th>
+=======
+										{{-- <th>User ID</th> --}}
+										<th>Employee Code</th>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
 										<th>Employee</th>
 										<th>Classification</th>
 										<th>Company</th>
@@ -73,10 +78,16 @@
 								</thead>
 								<tbody>
 									@foreach ($earned_leaves as $item)
+<<<<<<< HEAD
 									
                                         <tr>
                                             
                                             <td>{{ $item->user_id }}</td>
+=======
+                                        <tr>
+                                            {{-- <td>{{ $item->user_id }}</td> --}}
+											<td>{{$item->employee->employee_code}}</td>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                             <td>{{ $item->employee  ? $item->employee->first_name . ' ' . $item->employee->last_name . ' ('.$item->employee->original_date_hired.')' : ""}}</td>
                                             <td>{{ $item->employee  ? $item->employee->classification_info->name : ""}}</td>
                                             <td>{{ $item->employee  ? $item->employee->company->company_name : ""}}</td>

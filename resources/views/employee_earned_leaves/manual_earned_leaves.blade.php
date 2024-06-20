@@ -25,7 +25,11 @@
                                             <option value="">--Select Employee--</option>
                                             @foreach ($employees_selection as $employee)
                                                 <option value="{{ $employee->user_id }}" @if ($employee->user_id == $user_id) selected @endif>
+<<<<<<< HEAD
                                                     {{ $employee->user_id . ' - ' . $employee->last_name . ', ' . $employee->first_name . ' (' . $employee->original_date_hired . ') ' }}</option>
+=======
+                                                    {{ $employee->employee_code . ' - ' . $employee->last_name . ', ' . $employee->first_name . ' (' . $employee->original_date_hired . ') ' }}</option>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                             @endforeach
                                         </select>
                                     </div>

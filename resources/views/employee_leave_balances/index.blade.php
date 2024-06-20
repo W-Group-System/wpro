@@ -47,7 +47,12 @@
 							<table class="table table-hover table-bordered tablewithSearch">
 								<thead>
 									<tr>
+<<<<<<< HEAD
 										<th>User ID</th>
+=======
+										{{-- <th>User ID</th> --}}
+                                        <th>Employee Code</th>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
 										<th>Employee</th>
 										<th>Company</th>
 										<th>Department</th>
@@ -57,7 +62,12 @@
 								<tbody>
 									@foreach ($employees as $employee)
                                     <tr>
+<<<<<<< HEAD
                                         <td>{{ $employee->user_id}}</td>
+=======
+                                        {{-- <td>{{ $employee->user_id}}</td> --}}
+                                        <td>{{$employee->employee_code}}</td>
+>>>>>>> 16f7e913aa54ff7c93427c7edcf6737e814fc063
                                         <td>
                                             {{ $employee->first_name . ' ' . $employee->last_name}} <br>
                                             <small>Date Hired: {{ $employee->original_date_hired }}</small>
