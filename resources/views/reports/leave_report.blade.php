@@ -65,7 +65,8 @@
 									  <thead>
 										<tr>
 										  
-										  <th>User ID</th>
+										  {{-- <th>User ID</th> --}}
+										  <th>Employee Code</th>
 										  <th>Employee Name</th>
 										  <th>Date Filed</th>
 										  <th>Form Type</th>
@@ -82,7 +83,8 @@
 									  <tbody> 
 										@foreach ($employee_leaves as $form_approval)
 										<tr>
-										  <td>{{$form_approval->user->id}}</td>
+										  {{-- <td>{{$form_approval->user->id}}</td> --}}
+										  <td>{{$form_approval->employee->employee_code}}</td>
 										  <td>{{$form_approval->user->name}}</td>
 										  <td>{{date('d/m/Y h:i A', strtotime($form_approval->created_at))}}</td>
 										  <td>{{$form_approval->leave->leave_type}}</td>

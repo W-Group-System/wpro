@@ -61,7 +61,8 @@
 							<table class="table table-hover table-bordered tablewithSearch">
 								<thead>
 									<tr>
-										<th>User ID</th>
+										{{-- <th>User ID</th> --}}
+										<td>Employee Code</td>
 										<th>Employee</th>
 										<th>Company</th>
 										<th>Department</th>
@@ -73,7 +74,8 @@
 									@foreach ($employees as $employee)
 										@if(count($employee->employee_leave_credits) > 0)
 											<tr>
-												<td>{{ $employee->user_id}}</td>
+												{{-- <td>{{ $employee->user_id}}</td> --}}
+												<td>{{$employee->employee_code}}</td>
 												<td>{{ $employee->first_name . ' ' . $employee->last_name}}</td>
 												<td>{{ $employee->company->company_name}}</td>
 												<td>{{ $employee->department->name}}</td>

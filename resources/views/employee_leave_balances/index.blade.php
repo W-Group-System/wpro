@@ -47,7 +47,8 @@
 							<table class="table table-hover table-bordered tablewithSearch">
 								<thead>
 									<tr>
-										<th>User ID</th>
+										{{-- <th>User ID</th> --}}
+                                        <th>Employee Code</th>
 										<th>Employee</th>
 										<th>Company</th>
 										<th>Department</th>
@@ -57,7 +58,8 @@
 								<tbody>
 									@foreach ($employees as $employee)
                                     <tr>
-                                        <td>{{ $employee->user_id}}</td>
+                                        {{-- <td>{{ $employee->user_id}}</td> --}}
+                                        <td>{{$employee->employee_code}}</td>
                                         <td>
                                             {{ $employee->first_name . ' ' . $employee->last_name}} <br>
                                             <small>Date Hired: {{ $employee->original_date_hired }}</small>

@@ -40,7 +40,8 @@
   
                         <thead>
                             <tr>
-                                <td>User ID</td>
+                                {{-- <td>User ID</td> --}}
+                                <td>Employee Code</td>
                                 <td>Name</td>
                                 <td>Schedule</td>
                                 <td>Date</td>
@@ -79,7 +80,8 @@
                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                             @endphp
                             <tr>
-                                <td>{{$emp->employee_number}}</td>
+                                {{-- <td>{{$emp->employee_number}}</td> --}}
+                                <td>{{$emp->employee_code}}</td>
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
                                     @if($employee_schedule)
@@ -251,7 +253,8 @@
 
                                     @endphp
                                     <td>@php
-
+                                        $time_start = "";
+                                        $time_end = "";
                                         if($time_in != null)
                                         {
                                             if($if_has_ob->date_from < $time_in->time_in)
