@@ -516,4 +516,12 @@ class AttendanceController extends Controller
         )
         );
     }
+
+    public function report()
+    {
+        return view('reports.attendance_report',
+        array(
+            'header' => 'attendance-report',
+        ));
+    }
 }

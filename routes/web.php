@@ -38,7 +38,7 @@ Route::group(['middleware' => 'auth'], function () {
     //admin
 
     Route::get('attendances', 'AttendanceController@index');
-
+    Route::get('attendance-report', 'AttendanceController@report');
 
     Route::get('get-attendance-bio', 'AttendanceController@get_attendances');
 

@@ -1,0 +1,166 @@
+@extends('layouts.header')
+@section('content')
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Attendance Reports</h4>
+                    <p class="card-description">
+                    <form method='get' onsubmit='show();' enctype="multipart/form-data">
+                        <div class=row>
+                            <div class='col-md-4'>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label text-right" for="monthSelect">Month</label>
+                                    <div class="col-sm-8">
+                                        <select id="monthSelect" class="selectpicker form-control" data-live-search="true" title="Choose a month">
+                                            <option value="01">January</option>
+                                            <option value="02">February</option>
+                                            <option value="03">March</option>
+                                            <option value="04">April</option>
+                                            <option value="05">May</option>
+                                            <option value="06">June</option>
+                                            <option value="07">July</option>
+                                            <option value="08">August</option>
+                                            <option value="09">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='col-md-4'>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label text-right" for="yearSelect">Year</label>
+                                    <div class="col-sm-8">
+                                        <select id="yearSelect" class="selectpicker form-control" data-live-search="true" title="Choose a year">
+                                            <!-- Dynamically populate year options with JavaScript -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='col-md-4'>
+                                <button type="submit" id="submitBtn" class="form-control btn btn-primary mb-2 btn-sm">Generate</button>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <h3 id="reportTitle"></h3><br>
+                            <label><b>I. Tardiness</b></label>
+                            <table class="table table-hover table-bordered tablewithSearch">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Company</th>
+                                        <th>Name</th>
+                                        <th>No. of Days with Tardiness</th>
+                                        <th>Remarks/ Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
+                            <label>A. Leave without Pay</label>
+                            <table class="table table-hover table-bordered tablewithSearch">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Company</th>
+                                        <th>Name</th>
+                                        <th>No. of LWOP days</th>
+                                        <th>Reason</th>
+                                        <th>Remarks/ Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <label>B. Leave Deviations</label>
+                            <table class="table table-hover table-bordered tablewithSearch">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Company</th>
+                                        <th>Name</th>
+                                        <th>Leave Date(s)</th>
+                                        <th>Leave Type</th>
+                                        <th>Remarks/ Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <label>C. Leave more than 5 consecutive days</label>
+                            <table class="table table-hover table-bordered tablewithSearch">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Company</th>
+                                        <th>Name</th>
+                                        <th>Leave Date(s)</th>
+                                        <th>Leave Type</th>
+                                        <th>Remarks/ Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <label><b>III. Overtime</b></label>
+                            <table class="table table-hover table-bordered tablewithSearch">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Company</th>
+                                        <th>Regular Working Hours</th>
+                                        <th>Overtime Hours Total</th>
+                                        <th>% of Overtime</th>
+                                        <th>Remarks/ Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Populate year options dynamically
+        var startYear = 2000;
+        var endYear = new Date().getFullYear();
+        for (var i = endYear; i >= startYear; i--) {
+            $('#yearSelect').append('<option value="' + i + '">' + i + '</option>');
+        }
+
+        // Set the current month and year in the report title
+        var currentDate = new Date();
+        var currentMonth = currentDate.getMonth(); // 0-based index
+        var currentYear = currentDate.getFullYear();
+        var monthNames = ["January", "February", "March", "April", "May", "June", 
+                          "July", "August", "September", "October", "November", "December"];
+        $('#reportTitle').text(monthNames[currentMonth] + ' ' + currentYear);
+
+        // Handle submit button click
+        $('#submitBtn').on('click', function(event) {
+            event.preventDefault();
+            var selectedMonth = $('#monthSelect').val();
+            var selectedYear = $('#yearSelect').val();
+            
+            if(selectedMonth && selectedYear) {
+                var monthName = monthNames[parseInt(selectedMonth) - 1];
+                var reportTitle = monthName + ' ' + selectedYear;
+                $('#reportTitle').text(reportTitle);
+            } else {
+                alert('Please select both month and year.');
+            }
+        });
+    });
+</script>
+@endsection
