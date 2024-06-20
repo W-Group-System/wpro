@@ -37,7 +37,8 @@
                             <table border="1" class="table table-hover table-bordered users_table" id='users_table'>
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        {{-- <th>ID</th> --}}
+                                        <th>Employee Code</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Role</th>
@@ -47,7 +48,8 @@
                                 <tbody>
                                     @foreach($users as $user)
                                     <tr>
-                                        <td>{{$user->id}}</td>
+                                        {{-- <td>{{$user->id}}</td> --}}
+                                        <td>{{$user->employee->employee_code}}</td>
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->role}}</td>

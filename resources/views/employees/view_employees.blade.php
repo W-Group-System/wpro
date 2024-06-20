@@ -180,7 +180,8 @@
                             <table class="table table-hover table-bordered" id="datatableEmployee">
                                 <thead>
                                     <tr>
-                                        <th>Biometric Code</th>
+                                        <th>Employee Code</th>
+                                        {{-- <th>Biometric Code</th> --}}
                                         <th>User ID</th>
                                         <th>Employee</th>
                                         <th>Company</th>
@@ -200,7 +201,7 @@
                                                     <i class="ti-pencil btn-icon-prepend"></i>
                                                 </a>
                                             @endif
-                                            {{$employee->employee_number}}
+                                            {{$employee->employee_code}}
                                         </td>
                                         <td>{{$employee->user_id}} </td>
                                         <td>
