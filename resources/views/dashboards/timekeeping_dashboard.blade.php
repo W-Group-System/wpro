@@ -374,7 +374,7 @@
                         </div>
                     </div>
                 </div>
-            </div> --}}
+            </div> --}} 
             {{-- <div class="col-md-3 mb-4  stretch-card transparent">
                 <div class="card">
                     <div class="card-body">
