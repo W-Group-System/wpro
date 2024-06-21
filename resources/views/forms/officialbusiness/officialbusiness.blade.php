@@ -181,9 +181,9 @@
                             data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
                             <i class="ti-eye"></i>
                           </button> 
-                          <button type="button" id="uploadFile{{ $ob->id }}" class="btn btn-info btn-rounded btn-icon"
+                          <button type="button" id="uploadFile{{ $ob->id }}" class="btn btn-success btn-rounded btn-icon"
                             data-target="#upload_obForm{{ $ob->id }}" data-toggle="modal" title='Upload'>
-                            <i class="ti-eye"></i>
+                            <i class="ti-upload"></i>
                           </button>                                    
                             <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
                               class="btn btn-rounded btn-danger btn-icon">
