@@ -20,6 +20,8 @@ use App\Exports\AttendanceSeabasedExport;
 use App\Imports\EmployeeSeabasedAttendanceImport;
 use App\Imports\HikAttLogAttendanceImport;
 
+use App\AttendanceDetailedReport;
+
 use Excel;
 
 use RealRashid\SweetAlert\Facades\Alert;
@@ -514,5 +516,31 @@ class AttendanceController extends Controller
             'devices' => $devices,
         )
         );
+    }
+
+    public function reports(Request $request)
+    {
+        // Get the selected month and year from the request
+        $selectedMonth = $request->input('month');
+        $selectedYear = $request->input('year');
+
+        // Validate that both month and year are provided
+        if ($selectedMonth && $selectedYear) {
+            // Filter the data based on the selected month and year
+            $data = AttendanceDetailedReport::whereYear('log_date', $selectedYear)
+                                            ->whereMonth('log_date', $selectedMonth)
+                                            ->get();
+        } else {
+            // If no month or year is selected, set data to empty collection
+            $data = collect();
+        }
+
+        // Pass the filtered data to the view
+        return view('reports.attendance_report', [
+            'header' => 'attendance-report',
+            'data' => $data,
+            'selectedMonth' => $selectedMonth,
+            'selectedYear' => $selectedYear
+        ]);
     }
 }

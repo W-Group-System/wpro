@@ -616,6 +616,7 @@
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-report') }}">Loans Report</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/incentive-report') }}">Incentive Reports</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/payroll-report') }}">Payroll Reports</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/attendance-report') }}">Attendance Reports</a></li>
                 </ul>
             </div>
         </li>
@@ -672,6 +673,7 @@
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.6/dist/sweetalert2.all.min.js"></script> --}}
     {{-- <script src="{{ asset('/body_css/js/form-validation.js') }}"></script>
+    
     <script src="{{ asset('/body_css/js/bt-maxLength.js') }}"></script> --}}
     @yield('footer')
     <script>
@@ -730,7 +732,10 @@
         }
         $(document).ready(function() {
 
+            
+
             $('.tablewithSearch').DataTable({
+                dom: 'Bfrtip',
                 //"ordering": true,
                 //"pageLength": 100,
                 //"paging": false,
