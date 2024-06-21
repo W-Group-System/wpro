@@ -15,9 +15,9 @@
             </div>
         </div>
           <div class="row">
-            <div class="col-md-9  transparent">
+            <div class="col-md-3  transparent">
                 <div class="row">
-                    <div class="col-md-4 mb-4 transparent">
+                    <div class="col-md-12 mb-4 transparent">
                         <div class="card">
                           <div class="card-body">
                             <h3 class="card-title">{{date('M d, Y')}} </h3>
@@ -101,33 +101,69 @@
                         </div>
                         @endif
                     </div>
-                    <div class="col-md-5 ">
-                      <div class="card">
-                        <div class="card-body">
-                          <p class="card-title mb-0">(<small><i>{{date('M 01')}} - {{date('M t')}}</i></small>)</p>
-                          <div class="table-responsive">
-                            <table class="table table-striped table-borderless">
-                              <thead>
-                                <tr>
-                                  <th>Holiday</th>
-                                  <th>Date</th>
-                                </tr>  
-                              </thead>
-                              <tbody>
-                                @foreach($holidays as $holiday)
-                                <tr>
-                                  <td>{{$holiday->holiday_name}}</td>
-                                  <td class="font-weight-medium"><div class="badge badge-success">{{date('M d',strtotime($holiday->holiday_date))}}</div></td>
-                                </tr>
-                                @endforeach
-                              </tbody>
-                            </table>
-                          </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-body">
+                        <p class="card-title mb-0">(<small><i>{{date('M 01')}} - {{date('M t')}}</i></small>)</p>
+                        <div class="table-responsive">
+                          <table class="table table-striped table-borderless">
+                            <thead>
+                              <tr>
+                                <th>Holiday</th>
+                                <th>Date</th>
+                              </tr>  
+                            </thead>
+                            <tbody>
+                              @foreach($holidays as $holiday)
+                              <tr>
+                                <td>{{$holiday->holiday_name}}</td>
+                                <td class="font-weight-medium"><div class="badge badge-success">{{date('M d',strtotime($holiday->holiday_date))}}</div></td>
+                              </tr>
+                              @endforeach
+                            </tbody>
+                          </table>
                         </div>
                       </div>
-                      
                     </div>
+                    
+                  </div>
                 </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-7">
+                  <div class="card" style="overflow-y: scroll; height:700px;">
+                    <div class="card-body">
+                      <div class="card-title">
+                        Employee Anniversaries
+                      </div>
+                      <ul class="icon-data-list" >
+                        @foreach($employee_anniversaries as $emp)
+                        @php
+                          $date_from = new DateTime($emp->original_date_hired);
+                          $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
+                          $s = $date_diff->format('%y') > 1 ? 's' : '';
+                        @endphp
+                        <li>
+                          <div class="d-flex">
+                            <img src="{{URL::asset($emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
+                            <div>
+                              <p class="text-info mb-1"><small>{{$emp->first_name}} {{$emp->last_name}}</small></p>
+                              <p class="mb-0"><small>{{$emp->company->company_name}}</small></p>
+                              <p class="mb-0"><small>{{$emp->position}}</small></p>
+                              <p class="mb-0"><small>{{date('M d',strtotime($emp->original_date_hired))}}</small></p>
+                              <p class="mb-0"><small>{{$date_diff->format('%y Year'.$s.' Anniversary')}}</small></p>
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="col-md-3 ">
               <div class='row'>
