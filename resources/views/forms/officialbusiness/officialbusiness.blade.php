@@ -97,6 +97,7 @@
                         <th>Purpose</th>
                         <th>Status </th>
                         <th>Approvers </th>
+                        <th>View Filled Form </th>
                         <th>Action </th>
                       </tr>
                     </thead>
@@ -147,7 +148,11 @@
                             <label class="badge badge-danger mt-1">No Approver</label>
                           @endif
                       </td>
-                        
+                      <td>
+                      @if ($ob->ob_file)
+                      <a href="{{ url($ob->ob_file) }}" target="_blank">View Filled Form</a>
+                      @endif
+                      </td>
                         <td id="tdActionId{{ $ob->id }}" data-id="{{ $ob->id }}">
                           @if ($ob->status == 'Pending' and $ob->level == 0)
                           <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
@@ -175,7 +180,11 @@
                           <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
                             data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
                             <i class="ti-eye"></i>
-                          </button>                            
+                          </button> 
+                          <button type="button" id="uploadFile{{ $ob->id }}" class="btn btn-info btn-rounded btn-icon"
+                            data-target="#upload_obForm{{ $ob->id }}" data-toggle="modal" title='Upload'>
+                            <i class="ti-eye"></i>
+                          </button>                                    
                             <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
                               class="btn btn-rounded btn-danger btn-icon">
                               <i class="fa fa-ban"></i>
@@ -202,6 +211,7 @@
 @foreach ($obs as $ob)
   @include('forms.officialbusiness.edit_ob')
   @include('forms.officialbusiness.view_ob')
+  @include('forms.officialbusiness.upload_file_ob')
 @endforeach  
 
 @include('forms.officialbusiness.apply_ob') 

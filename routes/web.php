@@ -85,6 +85,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('official-business', 'EmployeeObController@ob');
     Route::post('new-ob','EmployeeObController@new');
     Route::post('edit-ob/{id}', 'EmployeeObController@edit_ob');
+    Route::post('upload-ob-file/{id}', 'EmployeeObController@upload_obFile');
     Route::get('disable-ob/{id}', 'EmployeeObController@disable_ob');  
     
     Route::post('approve-ob-all','FormApprovalController@approveObAll');
