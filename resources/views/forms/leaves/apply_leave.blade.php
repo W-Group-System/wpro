@@ -215,11 +215,15 @@
       
       if ($(this).val() == 2) {
         
-        $("[name='date_from']").attr('max', "{{date('Y-m-d', strtotime('-1 weekday'))}}");
-        $("[name='date_to']").attr('max', "{{date('Y-m-d', strtotime('-1 weekday'))}}");
+        $("[name='date_from']").attr({
+          'min': "{{date('Y-m-d', strtotime('-3 weekday'))}}",
+          'max': "{{date('Y-m-d', strtotime('-1 weekday'))}}"
+        });
 
-        $("[name='date_from']").removeAttr('min');
-        $("[name='date_to']").removeAttr('min');
+        $("[name='date_to']").attr({
+          'min': "{{date('Y-m-d', strtotime('-3 weekday'))}}",
+          'max': "{{date('Y-m-d', strtotime('-1 weekday'))}}"
+        });
       }
     })
   })
