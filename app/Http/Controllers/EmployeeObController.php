@@ -102,6 +102,31 @@ class EmployeeObController extends Controller
         return back();
     }    
 
+    public function upload_obFile(Request $request, $id)
+    {
+        $new_ob = EmployeeOb::findOrFail($id);
+        
+        $request->validate([
+            'obfile' => 'required|mimes:pdf,xlsx,csv|max:2048',
+        ]);
+
+        $originalFileName = $request->file('obfile')->getClientOriginalName();
+        
+        $fileName = pathinfo($originalFileName, PATHINFO_FILENAME) . '_' . time() . '.' . $request->file('obfile')->extension();  
+        
+        $filePath = $request->file('obfile')->storeAs('public/ob_files', $fileName);
+        
+        $fileUrl = '/storage/ob_files/' . $fileName;
+        
+        $new_ob->ob_file = $fileUrl;
+        
+        $new_ob->save();
+
+        session()->flash('success', 'Successfully Updated');
+        return back();
+    }
+    
+
     public function disable_ob($id)
     {
         EmployeeOb::Where('id', $id)->update(['status' => 'Cancelled']);
