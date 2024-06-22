@@ -142,19 +142,26 @@
                       <ul class="icon-data-list" >
                         @foreach($employee_anniversaries as $emp)
                         @php
-                          $date_from = new DateTime($emp->original_date_hired);
-                          $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
-                          $s = $date_diff->format('%y') > 1 ? 's' : '';
+                          $original_date_hired = new DateTime($emp->original_date_hired);
+                          $current_date = new DateTime();
+                          $current_anniversary = new DateTime($current_date->format('Y') . '-' . $original_date_hired->format('m-d'));
+                          $s = $current_date->diff($original_date_hired)->format('%y') > 1 ? 's' : '';
+                          
+                          if ($current_anniversary >= $current_date) {
+                            $anniv_year = $current_date->diff($original_date_hired)->y + 1;
+                          }
+                          else {
+                            $anniv_year = $current_date->diff($original_date_hired)->y;
+                          }
+                          
                         @endphp
                         <li>
                           <div class="d-flex">
                             <img src="{{URL::asset($emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
                             <div>
                               <p class="text-info mb-1"><small>{{$emp->first_name}} {{$emp->last_name}}</small></p>
-                              <p class="mb-0"><small>{{$emp->company->company_name}}</small></p>
-                              <p class="mb-0"><small>{{$emp->position}}</small></p>
-                              <p class="mb-0"><small>{{date('M d',strtotime($emp->original_date_hired))}}</small></p>
-                              <p class="mb-0"><small>{{$date_diff->format('%y Year'.$s.' Anniversary')}}</small></p>
+                              <p class="mb-0"><small>{{$emp->company->company_code}}</small></p>
+                              <p class="mb-0"><small>{{$anniv_year.' year'.$s.' of Services'}}</small></p>
                             </div>
                           </div>
                         </li>
