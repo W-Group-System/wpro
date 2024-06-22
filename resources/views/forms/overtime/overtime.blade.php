@@ -99,6 +99,7 @@
                         <th>Remarks </th>
                         <th>Status </th>
                         <th>Approvers </th>
+                        <th>View Attachments</th>
                         <th>Action </th>
                       </tr>
                     </thead>
@@ -158,7 +159,9 @@
                             <label class="badge badge-danger mt-1">No Approver</label>
                           @endif
                         </td>
-
+                        <td>
+                          <a href="{{url($overtime->file_path)}}" target="_blank">{{$overtime->file_name}}</a>
+                        </td>
                         <td id="tdActionId{{ $overtime->id }}" data-id="{{ $overtime->id }}">
                           @if ($overtime->status == 'Pending' and $overtime->level == 0)
                             <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
@@ -190,7 +193,10 @@
                             <button title='Cancel' id="{{ $overtime->id }}" onclick="cancel(this.id)"
                               class="btn btn-rounded btn-danger btn-icon">
                               <i class="fa fa-ban"></i>
-                            </button>  
+                            </button>
+                            <button type="button" class="btn btn-success btn-rounded btn-icon" title="Upload Attachments" data-toggle="modal" data-target="#uploadOvertimeAttachments-{{$overtime->id}}">
+                              <i class="ti-upload"></i>
+                            </button>
                           @else
                             <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
                               data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
@@ -212,8 +218,9 @@
 @foreach ($overtimes as $overtime)
   @include('forms.overtime.edit_overtime')
   @include('forms.overtime.view_overtime')
+  @include('forms.overtime.upload_overtime_attachments')
 @endforeach  
- @include('forms.overtime.apply_overtime') 
+  @include('forms.overtime.apply_overtime') 
 @endsection
 @section('OvertimeScript')
 	<script>
