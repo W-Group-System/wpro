@@ -326,8 +326,6 @@
                           @endphp
                         </tr>
                       @endif
-
-
                     </tbody>
                   </table>
                 </div>
@@ -435,6 +433,7 @@
                         <th>Leave Count</th>
                         <th>Status </th>
                         <th>Approvers </th>
+                        <th>Uploaded File</th>
                         <th>Action </th>
                       </tr>
                     </thead>
@@ -494,7 +493,13 @@
                             <label class="badge badge-danger mt-1">No Approver</label>
                           @endif
                         </td>
-                        
+                        <td>
+                          @if($employee_leave->leave_file)
+                            <a href="storage/{{ $employee_leave->leave_file }}" target="_blank">{{ $employee_leave->leave_file }}</a>
+                          @else
+                            No file uploaded
+                          @endif
+                        </td>
                         <td id="tdActionId{{ $employee_leave->id }}" data-id="{{ $employee_leave->id }}">
 
                           @if ($employee_leave->status == 'Pending' && $employee_leave->level == 0)
@@ -523,6 +528,9 @@
                             <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
                               data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
                               <i class="ti-eye"></i>
+                            </button>
+                            <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon" data-target="#upload_leave{{ $employee_leave->id }}" data-toggle="modal" title='Upload'>
+                              <i class="ti-upload"></i>
                             </button>
 
                             @if(date('Y-m-d',strtotime($employee_leave->date_from)) == date('Y-m-d') || $employee_leave->withpay == 0)
@@ -555,7 +563,7 @@
                               data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
                               <i class="ti-eye"></i>
                             </button>                                                                               
-                          @endif
+                          @endif 
                         </td>                        
                       </tr>
                     @endforeach                      
@@ -569,6 +577,7 @@
         </div>
     </div>
 </div>
+
 
 @php
 function get_count_days($data,$date_from,$date_to,$halfday)
@@ -605,55 +614,83 @@ function get_count_days($data,$date_from,$date_to,$halfday)
   @include('forms.leaves.edit_leave')
   @include('forms.leaves.view_leave') 
   @include('forms.leaves.request_to_cancel') 
+  @include('forms.leaves.leave_file') 
 @endforeach
-
-
-
 
 @endsection
 
 @section('ForApprovalScript')
-	<script>
-		function cancel(id) {
-			var element = document.getElementById('tdActionId'+id);
-			var dataID = element.getAttribute('data-id');
-			swal({
-					title: "Are you sure?",
-					text: "You want to cancel this leave?",
-					icon: "warning",
-					buttons: true,
-					dangerMode: true,
-				})
-				.then((willCancel) => {
-					if (willCancel) {
-						document.getElementById("loader").style.display = "block";
-						$.ajax({
-							url: "disable-leave/" + id,
-							method: "GET",
-							data: {
-								id: id
-							},
-							headers: {
-								'X-CSRF-TOKEN': '{{ csrf_token() }}'
-							},
-							success: function(data) {
-								document.getElementById("loader").style.display = "none";
-								swal("Leave has been cancelled!", {
-									icon: "success",
-								}).then(function() {
-									document.getElementById("tdStatus" + id).innerHTML =
-										"<label class='badge badge-danger'>Cancelled</label>";
-                  document.getElementById(dataID).remove();
-                  document.getElementById("edit" + dataID).remove();
-								});
-							}
-						})
+<script>  
 
-					} else {
-            swal({text:"You stop the cancelation of leave.",icon:"success"});
-					}
-				});
-		}
+  $(document).ready(function() {
+    @foreach($employee_leaves as $employee_leave)
+      $('#upload{{ $employee_leave->id }}').on('click', function() {
+        $('#upload_leave{{ $employee_leave->id }}').modal('show');
+      });
 
-	</script>
+      $('#uploadBtn{{ $employee_leave->id }}').on('click', function() {
+        var formData = new FormData($('#uploadForm{{ $employee_leave->id }}')[0]);
+        $.ajax({
+          url: '{{ url("upload-attachment/".$employee_leave->id) }}',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            // Handle the response from the server
+            // alert('File uploaded successfully!');
+            window.location.reload(true);
+            $('#upload_leave{{ $employee_leave->id }}').modal('hide');
+          },
+          error: function(error) {
+            // Handle errors
+            alert('File upload failed!');
+          }
+        });
+      });
+    @endforeach
+  });
+
+  function cancel(id) {
+    var element = document.getElementById('tdActionId'+id);
+    var dataID = element.getAttribute('data-id');
+    swal({
+      title: "Are you sure?",
+      text: "You want to cancel this leave?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+    .then((willCancel) => {
+      if (willCancel) {
+        document.getElementById("loader").style.display = "block";
+        $.ajax({
+          url: "disable-leave/" + id,
+          method: "GET",
+          data: {
+            id: id
+          },
+          headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          },
+          success: function(data) {
+            document.getElementById("loader").style.display = "none";
+            swal("Leave has been cancelled!", {
+              icon: "success",
+            }).then(function() {
+              document.getElementById("tdStatus" + id).innerHTML =
+                "<label class='badge badge-danger'>Cancelled</label>";
+              document.getElementById(dataID).remove();
+              document.getElementById("edit" + dataID).remove();
+            });
+          }
+        })
+      } else {
+        swal({text:"You stop the cancelation of leave.",icon:"success"});
+      }
+    });
+  }
+  
+
+</script>
 @endsection

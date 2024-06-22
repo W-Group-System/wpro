@@ -61,23 +61,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @php
-                                $tardinessData = $data->filter(function ($item) {
-                                    return $item->late_min > 0;
-                                });
-                            @endphp
-                            @foreach($tardinessData as $tardiness)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $tardiness->company->company_code }}</td>
-                                    <td>{{ $tardiness->name }}</td>
-                                    <td>{{ $tardiness->tardiness_days }}</td>
-                                    <td>{{ $tardiness->remarks }}</td>
-                                </tr>
-                            @endforeach
+                                @foreach($tardinessData as $index => $tardiness)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $tardiness['company_code'] }}</td>
+                                        <td>{{ $tardiness['name'] }}</td>
+                                        <td>{{ $tardiness['tardiness_days'] }}</td>
+                                        <td>{{ $tardiness['remarks'] }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
-                        <!-- Rest of the tables remain unchanged -->
+                        <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
+                        <label>A. Leave without Pay</label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Name</th>
+                                    <th>No. of LWOP days</th>
+                                    <th>Reason</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('void-to-cancel-leave/{id}', 'EmployeeLeaveController@void_request_to_cancel');
     Route::get('approve-request-to-cancel-leave/{id}', 'EmployeeLeaveController@approve_request_to_cancel');
     Route::get('decline-request-to-cancel-leave/{id}', 'EmployeeLeaveController@decline_request_to_cancel');
+    Route::post('upload-attachment/{id}', 'EmployeeLeaveController@upload_attachment');
 
     Route::post('approve-leave-all','FormApprovalController@approveLeaveAll');
     Route::post('disapprove-leave-all','FormApprovalController@disapproveLeaveAll');
