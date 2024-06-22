@@ -535,10 +535,22 @@ class AttendanceController extends Controller
             $data = collect();
         }
 
+        // Group data by name and calculate the number of days with tardiness
+        $tardinessData = $data->filter(function ($item) {
+            return $item->late_min > 0;
+        })->groupBy('name')->map(function ($group) {
+            return [
+                'company_code' => $group->first()->company->company_code,
+                'name' => $group->first()->name,
+                'tardiness_days' => $group->count(),
+                'remarks' => $group->first()->remarks // Adjust if remarks should be handled differently
+            ];
+        });
+
         // Pass the filtered data to the view
         return view('reports.attendance_report', [
             'header' => 'attendance-report',
-            'data' => $data,
+            'tardinessData' => $tardinessData,
             'selectedMonth' => $selectedMonth,
             'selectedYear' => $selectedYear
         ]);
