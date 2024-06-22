@@ -77,6 +77,11 @@ class HomeController extends Controller
             $query->where('status',null)->whereYear('holiday_date', '=', date('Y'))->whereMonth('holiday_date',date('m'));
         })
         ->orderBy('holiday_date','asc')->get();
+
+        $employee_anniversaries = Employee::with('department', 'company')->where('status', "Active")
+          ->whereMonth('original_date_hired', date('m'))
+          ->orderByRaw('DAY(original_date_hired)', 'ASC')
+          ->get();
         
         return view('dashboards.home',
         array(
@@ -92,6 +97,7 @@ class HomeController extends Controller
             'holidays' => $holidays ,
             'employee_birthday_celebrants' => $employee_birthday_celebrants ,
             'employees_new_hire' => $employees_new_hire ,
+            'employee_anniversaries' => $employee_anniversaries
         ));
     }
 
