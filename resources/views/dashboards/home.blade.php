@@ -178,7 +178,7 @@
                               <p class="text-info mb-1"><small>{{$prob_emp->first_name}} {{$prob_emp->last_name}}</small></p>
                               <p class="mb-0"><small>{{$prob_emp->company->company_name}}</small></p>
                               <p class="mb-0"><small>{{$prob_emp->position}}</small></p>
-                              <p class="mb-0"><small>{{date('M d, Y',strtotime(auth()->user()->employee->original_date_hired))}}</small></p>
+                              <p class="mb-0"><small>{{date('M d, Y',strtotime($prob_emp->original_date_hired))}}</small></p>
                               <p class="mb-0"><small>
                                 @php
                                   $date_from = new DateTime($prob_emp->original_date_hired);
