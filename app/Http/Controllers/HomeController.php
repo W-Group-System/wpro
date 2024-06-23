@@ -82,6 +82,11 @@ class HomeController extends Controller
           ->whereMonth('original_date_hired', date('m'))
           ->orderByRaw('DAY(original_date_hired)', 'ASC')
           ->get();
+
+        $probationary_employee = Employee::with('department', 'company')
+            ->where('classification', "1")
+            ->where('status', "Active")
+            ->get();
         
         return view('dashboards.home',
         array(
@@ -97,7 +102,8 @@ class HomeController extends Controller
             'holidays' => $holidays ,
             'employee_birthday_celebrants' => $employee_birthday_celebrants ,
             'employees_new_hire' => $employees_new_hire ,
-            'employee_anniversaries' => $employee_anniversaries
+            'employee_anniversaries' => $employee_anniversaries,
+            'probationary_employee' => $probationary_employee
         ));
     }
 
