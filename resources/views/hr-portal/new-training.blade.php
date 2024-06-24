@@ -28,7 +28,7 @@
             </div>
             <div class="col-md-12 mb-2">
               Amount:
-              <input type="number" name="amount" class="form-control" value="{{$et->amount}}" required>
+              <input type="number" name="amount" class="form-control" required>
             </div>
           </div>
         </div>
