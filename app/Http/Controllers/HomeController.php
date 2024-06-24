@@ -38,7 +38,12 @@ class HomeController extends Controller
      
         $schedules = [];
         $attendance_controller = new AttendanceController;
-        $employee_birthday_celebrants = Employee::whereMonth('birth_date',date('m'))->orderByRaw('DAY(birth_date)')->where('status','Active')->get();
+        $current_day = date('d');
+        $employee_birthday_celebrants = Employee::whereMonth('birth_date', date('m'))
+        ->where('status', 'Active')
+        ->orderByRaw("DAY(birth_date) >= ? DESC, DAY(birth_date)", [$current_day])
+        ->get();
+        
         $employees_new_hire = Employee::where('original_date_hired',">=",date("Y-m-d", strtotime("-1 months")))->orderBy('original_date_hired','desc')->get();
         $sevendays = date('Y-m-d',strtotime("-7 days"));
         if(auth()->user()->employee){
@@ -65,10 +70,7 @@ class HomeController extends Controller
         // dd($attendance_employees);
         $announcements = Announcement::with('user')->where('expired',null)
         ->orWhere('expired',">=",date('Y-m-d'))->get();
-        
-        $birth_date_celebrants = Employee::with('department')->where('status','Active')
-        ->orderBy('birth_date','asc')
-        ->get();
+      
 
         $holidays = Holiday::where('status','Permanent')
         ->whereMonth('holiday_date',date('m'))
@@ -95,7 +97,6 @@ class HomeController extends Controller
             'handbook' => $handbook,
             'attendance_now' => $attendance_now,
             'attendances' => $attendances,
-            'birth_date_celebrants' => $birth_date_celebrants,
             'schedules' => $schedules,
             'announcements' => $announcements ,
             'attendance_employees' => $attendance_employees ,
