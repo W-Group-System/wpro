@@ -79,8 +79,8 @@ class HomeController extends Controller
         ->orderBy('holiday_date','asc')->get();
 
         $employee_anniversaries = Employee::with('department', 'company')->where('status', "Active")
+          ->whereYear('original_date_hired','!=',date('Y'))
           ->whereMonth('original_date_hired', date('m'))
-          ->orderByRaw('DAY(original_date_hired)', 'ASC')
           ->get();
 
         $probationary_employee = Employee::with('department', 'company')

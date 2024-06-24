@@ -323,7 +323,7 @@
                         Employee Anniversaries
                       </div>
                       <ul class="icon-data-list" >
-                        @foreach($employee_anniversaries as $emp)
+                        @foreach($employee_anniversaries->sortBy('original_date_hired') as $emp)
                         @php
                           $original_date_hired = new DateTime($emp->original_date_hired);
                           $current_date = new DateTime();
