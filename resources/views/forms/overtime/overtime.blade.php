@@ -160,7 +160,9 @@
                           @endif
                         </td>
                         <td>
+                          @if(!empty($overtime->file_path))
                           <a href="{{url($overtime->file_path)}}" target="_blank">{{$overtime->file_name}}</a>
+                          @endif
                         </td>
                         <td id="tdActionId{{ $overtime->id }}" data-id="{{ $overtime->id }}">
                           @if ($overtime->status == 'Pending' and $overtime->level == 0)
@@ -216,11 +218,11 @@
     </div>
 </div>
 @foreach ($overtimes as $overtime)
-  @include('forms.overtime.edit_overtime')
-  @include('forms.overtime.view_overtime')
-  @include('forms.overtime.upload_overtime_attachments')
+  {{-- @include('forms.overtime.edit_overtime') --}}
+  {{-- @include('forms.overtime.view_overtime') --}}
+  {{-- @include('forms.overtime.upload_overtime_attachments') --}}
 @endforeach  
-  @include('forms.overtime.apply_overtime') 
+  {{-- @include('forms.overtime.apply_overtime')  --}}
 @endsection
 @section('OvertimeScript')
 	<script>
