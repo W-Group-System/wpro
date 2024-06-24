@@ -218,11 +218,11 @@
     </div>
 </div>
 @foreach ($overtimes as $overtime)
-  {{-- @include('forms.overtime.edit_overtime') --}}
-  {{-- @include('forms.overtime.view_overtime') --}}
-  {{-- @include('forms.overtime.upload_overtime_attachments') --}}
+  @include('forms.overtime.edit_overtime')
+  @include('forms.overtime.view_overtime')
+  @include('forms.overtime.upload_overtime_attachments')
 @endforeach  
-  {{-- @include('forms.overtime.apply_overtime')  --}}
+  @include('forms.overtime.apply_overtime') 
 @endsection
 @section('OvertimeScript')
 	<script>
