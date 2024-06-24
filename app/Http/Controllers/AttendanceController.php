@@ -565,15 +565,15 @@ class AttendanceController extends Controller
 
 
         // Leaves 5 more consecutive
-        $consecLeaveData = $data->filter(function ($item) {
-            return $item->lv_w_pay > 0;
-        })->groupBy('name')->map(function ($group) {
-            return [
-                'company_code' => $group->first()->company->company_code,
-                'name' => $group->first()->name,
-                'remarks' => $group->first()->remarks
-            ];
-        });
+        // $consecLeaveData = $data->filter(function ($item) {
+        //     return $item->lv_w_pay > 0;
+        // })->groupBy('name')->map(function ($group) {
+        //     return [
+        //         'company_code' => $group->first()->company->company_code,
+        //         'name' => $group->first()->name,
+        //         'remarks' => $group->first()->remarks
+        //     ];
+        // });
         
         $overtimeData = $data->filter(fn($item) => $item->reg_hrs > 0)
             ->groupBy('company_id')

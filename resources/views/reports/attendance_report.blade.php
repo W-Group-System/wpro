@@ -126,7 +126,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($consecLeaveData as $index => $consecLeave)
+                                <!-- @foreach($consecLeaveData as $index => $consecLeave)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $consecLeave['company_code'] }}</td>
@@ -135,7 +135,7 @@
                                         <td></td>
                                         <td>{{ $consecLeave['remarks'] }}</td>
                                     </tr>
-                                @endforeach
+                                @endforeach -->
                             </tbody>
                         </table>
                         <label><b>III. Overtime</b></label>
