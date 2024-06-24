@@ -575,13 +575,15 @@ class AttendanceController extends Controller
         //     ];
         // });
         
-        $overtimeData = $data->filter(fn($item) => $item->reg_hrs > 0)
-            ->groupBy('company_id')
-            ->map(function ($group) {
-                $totalRegHrs = $group->sum('reg_hrs');
-                $totalOt = collect(['reg_ot', 'rst_ot', 'lh_ot', 'sh_ot', 'rst_lh_ot', 'rst_sh_ot'])
-                ->sum(fn($ot) => $group->sum($ot));
-
+        $overtimeData = $data->filter(function ($item) {
+            return $item->reg_hrs > 0;
+        })->groupBy('company_id')->map(function ($group) {
+            $totalRegHrs = $group->sum('reg_hrs');
+            $totalOt = collect(['reg_ot', 'rst_ot', 'lh_ot', 'sh_ot', 'rst_lh_ot', 'rst_sh_ot'])
+                ->sum(function ($ot) use ($group) {
+                    return $group->sum($ot);
+                });
+        
             return [
                 'company_code' => $group->first()->company->company_code,
                 'total_reg_hrs' => $totalRegHrs,
@@ -590,6 +592,7 @@ class AttendanceController extends Controller
                 'remarks' => $group->first()->remarks
             ];
         });
+        
 
 
         // Pass the filtered data to the view
