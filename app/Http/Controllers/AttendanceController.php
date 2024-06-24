@@ -555,12 +555,11 @@ class AttendanceController extends Controller
             return $item->lv_w_pay > 0;
         })->groupBy('name')->map(function ($group) {
             $employeeLeaveData = EmployeeLeave::where('user_id', $group->first()->user_id)->first();
-    
             return [
                 'company_code' => $group->first()->company->company_code,
                 'name' => $group->first()->name,
                 'remarks' => $group->first()->remarks,
-                'leave_data' => $employeeLeaveData  // Assuming you have a relationship or method to retrieve leave data
+                'leave_data' => $employeeLeaveData  
             ];
         });
 
