@@ -597,7 +597,7 @@ class AttendanceController extends Controller
             'header' => 'attendance-report',
             'tardinessData' => $tardinessData,
             'leaveWithoutData' => $leaveWithoutData,
-            'consecLeaveData' => $consecLeaveData,
+            // 'consecLeaveData' => $consecLeaveData,
             'overtimeData' => $overtimeData,
             'selectedMonth' => $selectedMonth,
             'selectedYear' => $selectedYear
