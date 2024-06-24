@@ -67,7 +67,7 @@
                                         <td>{{ $tardiness['company_code'] }}</td>
                                         <td>{{ $tardiness['name'] }}</td>
                                         <td>{{ $tardiness['tardiness_days'] }}</td>
-                                        <td>{{ $tardiness['remarks'] }}</td>
+                                        <td>Excessive; for NOD issuance</td>
                                     </tr>
                                 @endforeach
                             </tbody>
