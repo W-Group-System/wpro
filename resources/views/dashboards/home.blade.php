@@ -316,13 +316,18 @@
                 </div>
               </div>                             
               <div class="col-md-5">
-                <div class="row">
-                  <div class="card" style="overflow-y: scroll; height:700px;">
+             
+              </div>
+            @endif
+            <div class="col-md-3 ">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card" >
                     <div class="card-body">
                       <div class="card-title">
                         Employee Anniversaries
                       </div>
-                      <ul class="icon-data-list" >
+                      <ul class="icon-data-list w-100" style="overflow-y: scroll; height:300px;" >
                         @foreach($employee_anniversaries->sortBy('original_date_hired') as $emp)
                         @php
                           $original_date_hired = new DateTime($emp->original_date_hired);
@@ -342,9 +347,8 @@
                           <div class="d-flex">
                             <img src="{{URL::asset($emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
                             <div>
-                              <p class="text-info mb-1"><small>{{$emp->first_name}} {{$emp->last_name}}</small></p>
-                              <p class="mb-0"><small>{{$emp->company->company_code}}</small></p>
-                              <p class="mb-0"><small>{{$anniv_year.' year'.$s.' of Services'}}</small></p>
+                              <p class="text-info mb-1"><small>{{$emp->first_name}} {{$emp->last_name}}</small> <i>(<small class='text-danger'>{{$anniv_year.' year'.$s.' of Services'}}</small>)</i></p>
+                              <p class="mb-0"><small>{{$emp->company->company_code}}</small> - <small>{{$emp->department->name}}</small></p>
                             </div>
                           </div>
                         </li>
@@ -354,23 +358,21 @@
                   </div>
                 </div>
               </div>
-            @endif
-            <div class="col-md-3 ">
               <div class='row'>
                 <div class="col-md-12">
                   <div class="card mt-2">
-                    <div class="card-body " style="overflow-y: scroll; height:400px;">
+                    <div class="card-body " >
                       <p class="card-title">Welcome new Hires</p>
-                      <ul class="icon-data-list" >
+                      <ul class="icon-data-list w-100"  style="overflow-y: scroll; height:300px;">
                         @foreach($employees_new_hire as $employee)
                         <li>
                           <div class="d-flex">
                             <img src="{{URL::asset($employee->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
                             <div>
-                              <p class="text-info mb-1"><small>{{$employee->first_name}} {{$employee->last_name}}</small></p>
-                              <p class="mb-0"><small>{{$employee->company->company_name}}</small></p>
-                              <p class="mb-0"><small>{{$employee->position}}</small></p>
-                              <small>{{date('M. d',strtotime($employee->original_date_hired))}}</small>
+                              <p class="text-info mb-1"><small>{{$employee->first_name}} {{$employee->last_name}}</small> <i>(<small>{{date('M. d',strtotime($employee->original_date_hired))}}</small>)</i> - <small>{{$employee->company->company_code}}</small></p>
+                          
+                              <p class="mb-0"><small>{{$employee->position}}</small> - <small>{{$emp->department->name}}</small></p>
+                             
                             </div>
                           </div>
                         </li>
@@ -383,15 +385,15 @@
               <div class='row'>
                 <div class="col-md-12">
                   <div class="card mt-2">
-                    <div class="card-body " style="overflow-y: scroll; height:400px;">
+                    <div class="card-body " >
                       <p class="card-title">Birthday Celebrants</p>
-                      <ul class="icon-data-list" >
+                      <ul class="icon-data-list w-100"  style="overflow-y: scroll; height:300px;">
                         @foreach($employee_birthday_celebrants as $celebrant)
                         <li>
                           <div class="d-flex">
                             <img src="{{URL::asset($celebrant->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
                             <div>
-                              <p class="text-info mb-1"><small>{{$celebrant->first_name}} {{$celebrant->last_name}}</small></p>
+                              <p class="text-info mb-1"><small>{{$celebrant->first_name}} {{$celebrant->last_name}} - ({{$celebrant->company->company_code}})</small></p>
                               <small>{{date('M d',strtotime($celebrant->birth_date))}}</small>
                             </div>
                           </div>
