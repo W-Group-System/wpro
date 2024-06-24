@@ -7,21 +7,25 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form  method='POST' action='pay-reg' onsubmit='show()' enctype="multipart/form-data">
+        <form action="{{ url('importPayRegExcel') }}" class="form-horizontal" method="post" enctype="multipart/form-data">
           @csrf
           <div class="modal-body">
             <div class="row">
               <div class='col-md-12 form-group'>
                  Upload File
-                <input type="file" name='file' class="form-control" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
+                 @csrf
+                 <input type="file" name="import_file" accept=".xlsx, .csv" />
               </div>
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary">Import Payroll</button>
           </div>
         </form> 
       </div>
     </div>
 </div>
+
+
+

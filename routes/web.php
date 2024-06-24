@@ -209,10 +209,20 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Payroll
     Route::get('pay-reg', 'PayslipController@payroll_datas');
+    Route::post('importPayRegExcel', 'PayslipController@importPayRegExcel');
+
+    
+     
     Route::get('timekeeping', 'PayslipController@attendances');
     Route::get('generated-timekeeping', 'PayslipController@generatedAttendances');
     Route::post('pay-reg', 'PayslipController@import');
     Route::post('upload-attendance', 'PayslipController@upload_attendance');
+
+     //Tax
+     Route::get('tax', 'TaxController@tax');
+     Route::post('new-tax','TaxController@new');
+     Route::post('edit-tax/{id}', 'TaxController@edit_tax');
+     Route::delete('delete-tax/{id}', 'TaxController@delete_tax');
 
     // Company
     Route::get('company', 'CompanyController@company_index');

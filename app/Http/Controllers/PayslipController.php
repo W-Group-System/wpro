@@ -11,6 +11,8 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use App\AttSummary;
 use App\Company;
+use App\Imports\PayRegImport;
+use App\PayrollRecord;
 use App\ScheduleData;
 
 class PayslipController extends Controller
@@ -27,19 +29,38 @@ class PayslipController extends Controller
     }
     public function payroll_datas()
     {
-        $payrolls = Payroll::select('date_from','date_to','auditdate','created_at')->orderBy('date_from','desc')->get()->unique('date_from');
-        $payroll_employees = Payroll::orderBy('name','asc')->get();
-        $attendances =  AttSummary::orderBy('employee','asc')->get();
-        // dd($payrolls);
+        // $payrolls = Payroll::select('date_from','date_to','auditdate','created_at')->orderBy('date_from','desc')->get()->unique('date_from');
+        // $payroll_employees = Payroll::orderBy('name','asc')->get();
+        // $attendances =  AttSummary::orderBy('employee','asc')->get();
+        // // dd($payrolls);
+        // return view('payroll.pay_reg',
+        // array(
+        //     'header' => 'Payroll',
+        //     'payrolls' => $payrolls,
+        //     'payroll_employees' => $payroll_employees,
+        //     'attendances' => $attendances,
+            
+        // ));
+        $payrolls = PayrollRecord::select('payroll_date_from','payroll_date_to')->orderBy('payroll_date_from','desc')->get()->unique('payroll_date_from');
+        $payroll_employees = PayrollRecord::orderBy('name','asc')->get();
+        $pay_reg = PayrollRecord::all();
         return view('payroll.pay_reg',
         array(
             'header' => 'Payroll',
             'payrolls' => $payrolls,
             'payroll_employees' => $payroll_employees,
-            'attendances' => $attendances,
-            
-        ));
+        )
+        );
     }
+
+    public function importPayRegExcel(Request $request)
+    {
+        Excel::import(new PayRegImport,request()->file('import_file'));
+           
+        return back();
+    }
+    
+    
     public function attendances()
     {
         $attendances =  AttSummary::orderBy('employee','asc')->get();

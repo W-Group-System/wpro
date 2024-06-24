@@ -429,6 +429,21 @@
                     </li>
                     @endif
 
+                    @if (checkUserPrivilege('tax',auth()->user()->id) == 'yes')
+                    <li class="nav-item @if ($header == 'Tax') active @endif">
+                        <a class="nav-link" data-toggle="collapse" href="#Tax" aria-expanded="@if ($header == 'Tax') true @else false @endif" aria-controls="ui-basic">
+                            <i class="icon-grid menu-icon"></i>
+                            <span class="menu-title">Tax</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse @if ($header == 'Tax') show @endif" id="Tax">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('tax') }}">Tax</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
+
                     @if (checkUserPrivilege('employees_view',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'employees') active @endif ">
                         <a class="nav-link" href="{{ url('/employees') }}" onclick='show()'>
