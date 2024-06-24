@@ -434,7 +434,7 @@
                         <th>Status </th>
                         <th>Approvers </th>
                         <th>Uploaded File</th>
-                        <th>Action </th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
