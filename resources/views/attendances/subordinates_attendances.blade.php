@@ -362,7 +362,7 @@
                                         @endphp
 
                                     </td>
-                                    <td></td>
+                                    {{-- <td></td> --}}
                                     <td>OB</td>
                                 @elseif($if_has_wfh)
                                     @php
