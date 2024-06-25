@@ -10,4 +10,9 @@ class Attendance extends Model
     {
         return $this->belongsTo(Employee::class,'employee_code','employee_number')->select('id','user_id','employee_number','first_name','last_name','middle_name','company_id','department_id');
     }
+
+    public function leave()
+    {
+        return $this->hasMany(Leave::class,'leave_type','id');
+    }
 }

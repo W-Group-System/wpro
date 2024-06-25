@@ -649,4 +649,26 @@ function checkEmployeeLeaveCredits($user_id, $leave_type){
     }
 }
 
+function documentTypes() {
+  $documentTypes = array(
+    '1' => 'ID',
+    '2' => 'Diploma',
+    '3' => 'Transcript of Records',
+    '4' => 'Original Clearance (NBI / Police / Barangay)',
+    '5' => 'SSS',
+    '6' => 'PAGIBIG',
+    '7' => 'PHILHEALTH',
+    '8' => 'Birth Certificate',
+    '9' => 'Training Certificate',
+    '10' => 'PRC License',
+    '11' => 'Passport',
+    '12' => 'Marriage Certificate',
+    '13' => "Child's Birth Certificate",
+    '14' => 'Certificate of Employment',
+    '15' => 'BIR 2316',
+    '16' => 'Medical Examination'
+  );
+
+  return $documentTypes;
+}
 

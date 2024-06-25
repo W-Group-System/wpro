@@ -7,6 +7,7 @@ use App\Employee;
 use App\PersonnelEmployee;
 use App\Company;
 use App\ScheduleData;
+use App\EmployeeLeave;
 use App\SeabasedAttendance;
 use App\HikAttLog;
 use App\HikVisionAttendance;
@@ -535,7 +536,7 @@ class AttendanceController extends Controller
             $data = collect();
         }
 
-        // Group data by name and calculate the number of days with tardiness
+        // Tardiness
         $tardinessData = $data->filter(function ($item) {
             return $item->late_min > 0;
         })->groupBy('name')->map(function ($group) {
@@ -543,14 +544,64 @@ class AttendanceController extends Controller
                 'company_code' => $group->first()->company->company_code,
                 'name' => $group->first()->name,
                 'tardiness_days' => $group->count(),
-                'remarks' => $group->first()->remarks // Adjust if remarks should be handled differently
+                'remarks' => $group->first()->remarks
+            ];
+        })->filter(function ($item) {
+            return $item['tardiness_days'] >= 7;
+        });
+
+        // Leave without pay
+        $leaveWithoutData = $data->filter(function ($item) {
+            return $item->lv_w_pay > 0;
+        })->groupBy('name')->map(function ($group) {
+            $employeeLeaveData = EmployeeLeave::where('user_id', $group->first()->user_id)->first();
+            return [
+                'company_code' => $group->first()->company->company_code,
+                'name' => $group->first()->name,
+                'remarks' => $group->first()->remarks,
+                'leave_data' => $employeeLeaveData  
             ];
         });
+
+
+        // Leaves 5 more consecutive
+        // $consecLeaveData = $data->filter(function ($item) {
+        //     return $item->lv_w_pay > 0;
+        // })->groupBy('name')->map(function ($group) {
+        //     return [
+        //         'company_code' => $group->first()->company->company_code,
+        //         'name' => $group->first()->name,
+        //         'remarks' => $group->first()->remarks
+        //     ];
+        // });
+        
+        $overtimeData = $data->filter(function ($item) {
+            return $item->reg_hrs > 0;
+        })->groupBy('company_id')->map(function ($group) {
+            $totalRegHrs = $group->sum('reg_hrs');
+            $totalOt = collect(['reg_ot', 'rst_ot', 'lh_ot', 'sh_ot', 'rst_lh_ot', 'rst_sh_ot'])
+                ->sum(function ($ot) use ($group) {
+                    return $group->sum($ot);
+                });
+        
+            return [
+                'company_code' => $group->first()->company->company_code,
+                'total_reg_hrs' => $totalRegHrs,
+                'total_ot' => $totalOt,
+                'percent_overtime' => $totalRegHrs > 0 ? ($totalOt / $totalRegHrs) * 100 : 0,
+                'remarks' => $group->first()->remarks
+            ];
+        });
+        
+
 
         // Pass the filtered data to the view
         return view('reports.attendance_report', [
             'header' => 'attendance-report',
             'tardinessData' => $tardinessData,
+            'leaveWithoutData' => $leaveWithoutData,
+            // 'consecLeaveData' => $consecLeaveData,
+            'overtimeData' => $overtimeData,
             'selectedMonth' => $selectedMonth,
             'selectedYear' => $selectedYear
         ]);
