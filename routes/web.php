@@ -332,10 +332,27 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reset-ot/{id}','TimekeepingDashboardController@reset_ot');
     Route::get('/reset-dtr/{id}','TimekeepingDashboardController@reset_dtr');
 
+    // Daily Schedule
     Route::get('/daily-schedule', 'DailyScheduleController@index');
     Route::get('/export-schedule', 'DailyScheduleController@export');
     Route::post('/upload-schedule', 'DailyScheduleController@upload');
     Route::post('/update-schedule/{id}', 'DailyScheduleController@update');
+
+    // HR Portal
+    // NTE Files
+    Route::get('/nte-upload', 'NteFileController@index');
+    Route::post('/add-nte', 'NteFileController@store');
+    Route::post('/update-nte/{id}', 'NteFileController@update');
+    
+    // 201 Files
+    Route::get('/employee-documents', 'EmployeeDocumentController@index');
+    Route::post('/upload-employee-document/{id}', 'EmployeeDocumentController@upload');
+    
+    // Training
+    Route::get('/employee-training', 'EmployeeTrainingController@index');
+    Route::post('/add-employee-training', 'EmployeeTrainingController@store');
+    Route::post('/update-employee-training/{id}', 'EmployeeTrainingController@update');
+    Route::post('/delete-employee-training/{id}', 'EmployeeTrainingController@delete');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
