@@ -331,6 +331,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reset-wfh/{id}','TimekeepingDashboardController@reset_wfh');
     Route::get('/reset-ot/{id}','TimekeepingDashboardController@reset_ot');
     Route::get('/reset-dtr/{id}','TimekeepingDashboardController@reset_dtr');
+
+    Route::get('/daily-schedule', 'DailyScheduleController@index');
+    Route::get('/export-schedule', 'DailyScheduleController@export');
+    Route::post('/upload-schedule', 'DailyScheduleController@upload');
+    Route::post('/update-schedule/{id}', 'DailyScheduleController@update');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
