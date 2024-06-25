@@ -10,6 +10,7 @@ use App\EmployeeEarnedLeave;
 use App\EmployeeLeaveCredit;
 use App\Holiday;
 use App\Attendance;
+use App\DailySchedule;
 use App\EmployeeOvertime;
 use App\EmployeeWfh;
 use App\EmployeeOb;
@@ -130,7 +131,19 @@ function dateRange( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
 }
 
 
-function employeeSchedule($schedules = array(), $check_date, $schedule_id){
+function employeeSchedule($schedules = array(), $check_date, $schedule_id, $empNum=""){
+    $dailySchedule = DailySchedule::where('employee_number', $empNum)
+      ->where('log_date', $check_date)
+      ->orderBy('id', 'DESC')
+      ->first();
+    
+    if (!empty($dailySchedule)) {
+      if($dailySchedule['log_date'] == $check_date && $dailySchedule['employee_number'] == $empNum){
+        
+        return $dailySchedule;
+      }
+    }
+    
     $schedule_name = date('l',strtotime($check_date));
     if(count($schedules) > 0){
         foreach($schedules as $item){

@@ -332,6 +332,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reset-ot/{id}','TimekeepingDashboardController@reset_ot');
     Route::get('/reset-dtr/{id}','TimekeepingDashboardController@reset_dtr');
 
+
+    // Daily Schedule
+    Route::get('/daily-schedule', 'DailyScheduleController@index');
+    Route::get('/export-schedule', 'DailyScheduleController@export');
+    Route::post('/upload-schedule', 'DailyScheduleController@upload');
+    Route::post('/update-schedule/{id}', 'DailyScheduleController@update');
+
     // HR Portal
     // NTE Files
     Route::get('/nte-upload', 'NteFileController@index');

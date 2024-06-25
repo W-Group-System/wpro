@@ -37,6 +37,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\AttendanceLog;
+use App\DailySchedule;
 use App\Exports\EmployeesExport;
 use App\Exports\EmployeeHRExport;
 use App\Exports\AttendancePerLocationExport;
@@ -1407,7 +1408,7 @@ class EmployeeController extends Controller
             
             
 
-            $emp_data = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id')
+            $emp_data = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number')
                                     ->with(['schedule_info','attendances' => function ($query) use ($from_date, $to_date) {
                                             $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
                                                     ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
@@ -1439,7 +1440,6 @@ class EmployeeController extends Controller
         $companies = Company::whereHas('employee_has_company')
                                 ->whereIn('id',$allowed_companies)
                                 ->get();
-
         return view(
             'attendances.employee_attendance',
             array(

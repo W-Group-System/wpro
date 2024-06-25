@@ -635,6 +635,9 @@
             </ul>
           </div>
         </li>
+        <li class="nav-item">
+          <a href="{{url('daily-schedule')}}" class="nav-link">Schedule</a>
+        <li>
         @endif
         @endif
         </ul>
