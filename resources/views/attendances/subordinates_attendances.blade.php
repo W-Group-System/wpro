@@ -271,8 +271,39 @@
                                         }
 
                                     @endphp
-                                    <td>{{date('h:i A',strtotime($if_has_ob->date_from))}}</td>
-                                    <td>{{date('h:i A',strtotime($if_has_ob->date_to))}}</td>
+                                    <td>@php
+                                        $time_start = "";
+                                        $time_end = "";
+                                        if($time_in != null)
+                                        {
+                                            if($if_has_ob->date_from < $time_in->time_in)
+                                            {
+                                                $time_start = date('h:i A',strtotime($if_has_ob->date_from));
+                                            }
+                                            else {
+                                                $time_start = date('h:i A',strtotime($time_in->time_in));
+                                            }
+                                            
+                                        }
+                                        
+                                        if($time_in != null){
+                                                // dd($time_in);
+                                            if($time_in->time_out != null)
+                                            {
+                                                if($if_has_ob->date_to > $time_in->time_out)
+                                                {
+                                                   $time_end = date('h:i A',strtotime($if_has_ob->date_to));
+                                                }
+                                                else {
+                                                    
+                                                    $time_end = date('h:i A',strtotime($time_in->time_out));
+                                                }
+                                                
+                                            }
+                                        }
+                                        @endphp
+                                        {{$time_start}}</td>
+                                    <td>{{$time_end}}</td>
                                     <td>{{ $ob_diff->h }} hrs. {{ $ob_diff->i }} mins. </td>
                                     <td>
                                         {{-- Lates --}}
