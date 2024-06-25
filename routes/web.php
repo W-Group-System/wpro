@@ -332,6 +332,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reset-ot/{id}','TimekeepingDashboardController@reset_ot');
     Route::get('/reset-dtr/{id}','TimekeepingDashboardController@reset_dtr');
 
+
     // Daily Schedule
     Route::get('/daily-schedule', 'DailyScheduleController@index');
     Route::get('/export-schedule', 'DailyScheduleController@export');

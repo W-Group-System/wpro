@@ -86,6 +86,72 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($leaveWithoutData as $index => $withoutLeave)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $withoutLeave['company_code'] }}</td>
+                                        <td>{{ $withoutLeave['name'] }}</td>
+                                        <td>{{ $withoutLeave['leave_data'] }}</td>
+                                        <td></td>
+                                        <td>{{ $withoutLeave['remarks'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <label>B. Leave Deviations</label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Name</th>
+                                    <th>Leave Date(s)</th>
+                                    <th>Leave Type</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <label>C. Leaves more than 5 consecutive days</label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Name</th>
+                                    <th>Leave Date(s)</th>
+                                    <th>Leave Type</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                        <label><b>III. Overtime</b></label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Regular Working Hours</th>
+                                    <th>Overtime Hours Total</th>
+                                    <th>% of Overtime</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($overtimeData as $index => $overtime)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $overtime['company_code'] }}</td>
+                                        <td>{{ number_format($overtime['total_reg_hrs'], 2) }}</td>
+                                        <td>{{ number_format($overtime['total_ot'], 2) }}</td>
+                                        <td>{{ number_format($overtime['percent_overtime'], 2) }}%</td>
+                                        <td>{{ $overtime['remarks'] }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
