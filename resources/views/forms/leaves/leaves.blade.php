@@ -552,7 +552,7 @@
                               @endif
                             @endif
                              
-                            @if(date('Y-m-d',strtotime($employee_leave->date_from)) > date('Y-m-d'))
+                            @if(date('Y-m-d',strtotime($employee_leave->date_from)) >= date('Y-m-d', strtotime('-3 days')))
                                 <button title='Cancel' id="{{ $employee_leave->id }}" onclick="cancel(this.id)"
                                   class="btn btn-rounded btn-danger btn-icon">
                                   <i class="fa fa-ban"></i>
