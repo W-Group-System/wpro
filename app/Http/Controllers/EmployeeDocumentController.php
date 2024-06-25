@@ -24,7 +24,7 @@ class EmployeeDocumentController extends Controller
       ])
     ->where('status', 'Active')
     // ->where('id', 117)
-    ->get();
+    ->paginate(10);
 
     return view('hr-portal.employee-document',
       array(
