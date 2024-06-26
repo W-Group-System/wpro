@@ -1,0 +1,66 @@
+<?php
+ 
+namespace App;
+ 
+use Illuminate\Database\Eloquent\Model;
+ 
+class PayrollRecord extends Model
+{
+    protected $table = 'payroll_records';
+    public $fillable =[
+        'payroll_date_from',
+        'payroll_date_to',
+        'name',
+        'employee_code', 
+        'bank_account_number',
+        'bank',
+        'position',
+        'department',
+        'location',
+        'date_hired',
+        'monthly_pay',
+        'semi_monthly_pay',
+        'daily_pay',
+        'gross_pay',
+        'taxable',
+        'total_deduction',
+        'net_pay',
+        'witholding_tax',
+        'absences',
+        'late',
+        'undertime',
+        'salary_adjustment',
+        'overime',
+        'meal_allowance',
+        'salary_allowance',
+        'out_of_town_allowance',
+        'incentive_allowance',
+        'rellocation_allowance',
+        'disc_allowance',
+        'transporatation_allowance',
+        'load_allowance',
+        'sick_leave',
+        'vacation_leave',
+        'work_from_home',
+        'official_business',
+        'sl_no_pay',
+        'vl_no_pay',
+        'sss_reg_ee',
+        'sss_mpf_ee',
+        'phic_ee',
+        'hdmf_ee',
+        'hdmf_salary_loan',
+        'sss_salary_loan',
+        'sss_calamity_loan',
+        'salary_non_tax',
+        'salary_loan',
+        'company_loan',
+        'others',
+        'sss_reg_er',
+        'sss_mpf_er',
+        'sss_ec',
+        'phic_er',
+        'hdmf_er',
+        'payroll_status',
+    ];
+}
