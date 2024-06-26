@@ -89,6 +89,7 @@
                   <table class="table table-hover table-bordered tablewithSearch">
                     <thead>
                       <tr>
+                        <th>Action </th>
                         <th>Date Filed</th>
                         <th>Date</th>
                         <th>Time In-Out</th>
@@ -97,13 +98,55 @@
                         <th>Purpose</th>
                         <th>Status </th>
                         <th>Approvers </th>
-                        <th>View Filled Form </th>
-                        <th>Action </th>
+                        <th>View Filled Form </th>                        
                       </tr>
                     </thead>
                     <tbody>
                       @foreach ($obs as $ob)
                       <tr>
+                      <td id="tdActionId{{ $ob->id }}" data-id="{{ $ob->id }}">
+                          @if ($ob->status == 'Pending' and $ob->level == 0)
+                          <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
+                            data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
+                            <i class="ti-eye"></i>
+                          </button>            
+                            <button type="button" id="edit{{ $ob->id }}" class="btn btn-info btn-rounded btn-icon"
+                              data-target="#edit_ob{{ $ob->id }}" data-toggle="modal" title='Edit'>
+                              <i class="ti-pencil-alt"></i>
+                            </button>
+                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
+                              class="btn btn-rounded btn-danger btn-icon">
+                              <i class="fa fa-ban"></i>
+                            </button>
+                          @elseif ($ob->status == 'Pending' and $ob->level > 0)
+                            <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
+                              data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
+                              <i class="ti-eye"></i>
+                            </button>            
+                              <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
+                                class="btn btn-rounded btn-danger btn-icon">
+                                <i class="fa fa-ban"></i>
+                              </button>
+                          @elseif ($ob->status == 'Approved')   
+                          <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
+                            data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
+                            <i class="ti-eye"></i>
+                          </button> 
+                          <button type="button" id="uploadFile{{ $ob->id }}" class="btn btn-info btn-rounded btn-icon"
+                            data-target="#upload_obForm{{ $ob->id }}" data-toggle="modal" title='Upload'>
+                            <i class="ti-eye"></i>
+                          </button>                                    
+                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
+                              class="btn btn-rounded btn-danger btn-icon">
+                              <i class="fa fa-ban"></i>
+                            </button>  
+                          @else
+                            <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
+                              data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
+                              <i class="ti-eye"></i>
+                            </button>                                                                               
+                          @endif
+                        </td> 
                         <td> {{ date('M. d, Y', strtotime($ob->created_at)) }} </td>
                         <td> {{ date('M. d, Y', strtotime($ob->applied_date)) }} </td>
                         <td> {{ date('M. d, Y h:i A', strtotime($ob->date_from)) }} - {{ date('M. d, Y h:i A', strtotime($ob->date_to)) }}  </td>
@@ -153,49 +196,6 @@
                       <a href="{{ url($ob->ob_file) }}" target="_blank">View Filled Form</a>
                       @endif
                       </td>
-                        <td id="tdActionId{{ $ob->id }}" data-id="{{ $ob->id }}">
-                          @if ($ob->status == 'Pending' and $ob->level == 0)
-                          <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
-                            data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
-                            <i class="ti-eye"></i>
-                          </button>            
-                            <button type="button" id="edit{{ $ob->id }}" class="btn btn-info btn-rounded btn-icon"
-                              data-target="#edit_ob{{ $ob->id }}" data-toggle="modal" title='Edit'>
-                              <i class="ti-pencil-alt"></i>
-                            </button>
-                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
-                              class="btn btn-rounded btn-danger btn-icon">
-                              <i class="fa fa-ban"></i>
-                            </button>
-                          @elseif ($ob->status == 'Pending' and $ob->level > 0)
-                            <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
-                              data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
-                              <i class="ti-eye"></i>
-                            </button>            
-                              <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
-                                class="btn btn-rounded btn-danger btn-icon">
-                                <i class="fa fa-ban"></i>
-                              </button>
-                          @elseif ($ob->status == 'Approved')   
-                          <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
-                            data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
-                            <i class="ti-eye"></i>
-                          </button> 
-                          <button type="button" id="uploadFile{{ $ob->id }}" class="btn btn-success btn-rounded btn-icon"
-                            data-target="#upload_obForm{{ $ob->id }}" data-toggle="modal" title='Upload'>
-                            <i class="ti-upload"></i>
-                          </button>                                    
-                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
-                              class="btn btn-rounded btn-danger btn-icon">
-                              <i class="fa fa-ban"></i>
-                            </button>  
-                          @else
-                            <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
-                              data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
-                              <i class="ti-eye"></i>
-                            </button>                                                                               
-                          @endif
-                        </td> 
                       </tr>
                     @endforeach
                     </tbody>

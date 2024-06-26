@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('void-to-cancel-leave/{id}', 'EmployeeLeaveController@void_request_to_cancel');
     Route::get('approve-request-to-cancel-leave/{id}', 'EmployeeLeaveController@approve_request_to_cancel');
     Route::get('decline-request-to-cancel-leave/{id}', 'EmployeeLeaveController@decline_request_to_cancel');
+    Route::post('upload-attachment/{id}', 'EmployeeLeaveController@upload_attachment');
 
     Route::post('approve-leave-all','FormApprovalController@approveLeaveAll');
     Route::post('disapprove-leave-all','FormApprovalController@disapproveLeaveAll');
@@ -71,7 +72,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('new-overtime','EmployeeOvertimeController@new');
     Route::post('edit-overtime/{id}', 'EmployeeOvertimeController@edit_overtime');
     Route::get('disable-overtime/{id}', 'EmployeeOvertimeController@disable_overtime');    
-    Route::get('check-valid-overtime', 'EmployeeOvertimeController@checkValidOvertime');    
+    Route::get('check-valid-overtime', 'EmployeeOvertimeController@checkValidOvertime');
+    Route::post('upload-overtime-attachments/{id}', 'EmployeeOvertimeController@uploadOvertimeAttachments');
 
     //Work-from-home
     Route::get('work-from-home', 'EmployeeWfhController@wfh');
@@ -341,6 +343,36 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/reset-wfh/{id}','TimekeepingDashboardController@reset_wfh');
     Route::get('/reset-ot/{id}','TimekeepingDashboardController@reset_ot');
     Route::get('/reset-dtr/{id}','TimekeepingDashboardController@reset_dtr');
+
+
+    // Daily Schedule
+    Route::get('/daily-schedule', 'DailyScheduleController@index');
+    Route::get('/export-schedule', 'DailyScheduleController@export');
+    Route::post('/upload-schedule', 'DailyScheduleController@upload');
+    Route::post('/update-schedule/{id}', 'DailyScheduleController@update');
+
+    // HR Portal
+    // NTE Files
+    Route::get('/nte-upload', 'NteFileController@index');
+    Route::post('/add-nte', 'NteFileController@store');
+    Route::post('/update-nte/{id}', 'NteFileController@update');
+    
+    // 201 Files
+    Route::get('/employee-documents', 'EmployeeDocumentController@index');
+    Route::post('/upload-employee-document/{id}', 'EmployeeDocumentController@upload');
+    
+    // Training
+    Route::get('/employee-training', 'EmployeeTrainingController@index');
+    Route::post('/add-employee-training', 'EmployeeTrainingController@store');
+    Route::post('/update-employee-training/{id}', 'EmployeeTrainingController@update');
+    Route::post('/delete-employee-training/{id}', 'EmployeeTrainingController@delete');
+
+    // Payroll Setting
+    // Tax Mapping
+    Route::get('/tax-mapping', 'TaxMappingController@index');
+    Route::post('/add-tax-mapping', 'TaxMappingController@addTaxMapping');
+    Route::post('/update-tax-mapping/{id}', 'TaxMappingController@updateTaxMapping');
+    Route::post('/delete-tax-mapping/{id}', 'TaxMappingController@deleteTaxMapping');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

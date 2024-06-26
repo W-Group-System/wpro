@@ -245,6 +245,25 @@ class EmployeeOvertimeController extends Controller
             'end_time' => $end_time,
             'type' => $type
         ];
+      
+      
+    }
 
+    public function uploadOvertimeAttachments(Request $request, $id) {
+      $request->validate([
+        'file' => 'mimes:jpg,png,pdf,doc,docx|max:2048'
+      ]);
+
+      $file = $request->file('file');
+      $fileName = time().'_'.$file->getClientOriginalName();
+      $file->move(public_path().'/storage/overtime_attachments/', $fileName);
+
+      $overtime = EmployeeOvertime::findOrFail($id);
+      $overtime->file_path = '/storage/overtime_attachments/'.$fileName;
+      $overtime->file_name = $fileName;
+      $overtime->save();
+
+      Alert::success('Successfully Uploaded.')->persistent('Dismiss');
+      return back();
     }
 }

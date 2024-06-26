@@ -7,7 +7,7 @@
                 <div class="card-body">
                     <h4 class="card-title">Attendance Reports</h4>
                     <p class="card-description">
-                    <form method='GET' action="{{ route('reports') }}" enctype="multipart/form-data">
+                    <form method='GET' onsubmit="show()" action="{{ route('reports') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class='col-md-4'>
@@ -61,23 +61,130 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @php
-                                $tardinessData = $data->filter(function ($item) {
-                                    return $item->late_min > 0;
-                                });
-                            @endphp
-                            @foreach($tardinessData as $tardiness)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $tardiness->company->company_code }}</td>
-                                    <td>{{ $tardiness->name }}</td>
-                                    <td>{{ $tardiness->tardiness_days }}</td>
-                                    <td>{{ $tardiness->remarks }}</td>
-                                </tr>
-                            @endforeach
+                                @foreach($tardinessData as $index => $tardiness)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $tardiness['company_code'] }}</td>
+                                        <td>{{ $tardiness['name'] }}</td>
+                                        <td>{{ $tardiness['tardiness_days'] }}</td>
+                                        <td>Excessive; for NOD issuance</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
-                        <!-- Rest of the tables remain unchanged -->
+                        <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
+                        <label>A. Leave without Pay</label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Name</th>
+                                    <th>No. of LWOP days</th>
+                                    <th>Reason</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($leaveWithoutData as $index => $withoutLeave)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $withoutLeave['company_code'] }}</td>
+                                        <td>{{ $withoutLeave['name'] }}</td>
+                                        <td>{{ $withoutLeave['no_lwop_days'] }}</td>
+                                        <td></td>
+                                        <td>No leave Credits balance</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <label>B. Leave Deviations</label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Name</th>
+                                    <th>Leave Date(s)</th>
+                                    <th>Leave Type</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($leaveDeviationsData as $index => $leaveDeviations)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $leaveDeviations['company_code'] }}</td>
+                                        <td>{{ $leaveDeviations['name'] }}</td>
+                                        <td>{{ $leaveDeviations['leave_date'] }}</td> 
+                                        <td>
+                                            @foreach($leaveDeviations['leave_types'] as $leaveType)
+                                                {{ $leaveType == 1 ? 'Vacation Leave' : 'Sick Leave' }}
+                                                <br>
+                                            @endforeach
+                                        </td>
+                                        <td></td> 
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <label>C. Leaves more than 5 consecutive days</label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Name</th>
+                                    <th>Leave Date(s)</th>
+                                    <th>Leave Type</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($consecLeaveData as $index => $consecLeave)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $consecLeave['company_code'] }}</td>
+                                        <td>{{ $consecLeave['name'] }}</td>
+                                        <td></td> 
+                                        <td>
+                                            @foreach($consecLeave['leave_types'] as $leaveTypeGroup)
+                                                @foreach($leaveTypeGroup as $leaveType)
+                                                    {{ $leaveType == 1 ? 'Vacation Leave' : 'Sick Leave' }}
+                                                    <br>
+                                                @endforeach
+                                            @endforeach
+                                        </td>
+                                        <td></td> 
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <label><b>III. Overtime</b></label>
+                        <table class="table table-hover table-bordered tablewithSearch">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Regular Working Hours</th>
+                                    <th>Overtime Hours Total</th>
+                                    <th>% of Overtime</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($overtimeData as $index => $overtime)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $overtime['company_code'] }}</td>
+                                        <td>{{ number_format($overtime['total_reg_hrs'], 2) }}</td>
+                                        <td>{{ number_format($overtime['total_ot'], 2) }}</td>
+                                        <td>{{ number_format($overtime['percent_overtime'], 2) }}%</td>
+                                        <td>{{ $overtime['remarks'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

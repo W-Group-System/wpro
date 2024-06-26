@@ -209,7 +209,7 @@
                                             {{$employee->last_name}}, {{$employee->first_name}}  </small>
                                         </td>
                                         <td>
-                                            @if($employee->company){{$employee->company->company_name}}@endif
+                                            @if($employee->company){{$employee->company->company_code}}@endif
                                         </td>
                                         <td>@if($employee->department){{$employee->department->name}}@endif</td>
                                         <td>{{$employee->classification_info ? $employee->classification_info->name : ""}}</td>

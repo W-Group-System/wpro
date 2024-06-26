@@ -16,8 +16,6 @@ use DateTime;
 
 class EmployeeLeaveController extends Controller
 {
-
- 
     public function leaveBalances(Request $request)
     {
 
@@ -74,7 +72,6 @@ class EmployeeLeaveController extends Controller
                 $allowed_to_file = false;
             }
         }
-
 
         return view('forms.leaves.leaves',
         array(
@@ -177,10 +174,8 @@ class EmployeeLeaveController extends Controller
             Alert::success('Successfully Stored')->persistent('Dismiss');
             return back();
         }
-
         
     }
-
 
     public function edit_leave(Request $request, $id)
     {
@@ -302,8 +297,22 @@ class EmployeeLeaveController extends Controller
         Alert::success('Request to Cancel Leave has been Declined.')->persistent('Dismiss');
         return back();
         
-    }
-    
+    }        
 
-        
+    public function upload_attachment(Request $request, $id)
+    {
+        $request->validate([
+            'leave_file' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048'
+        ]);
+
+        $file = $request->file('leave_file');
+        $fileName = time().'_'.$file->getClientOriginalName();
+        $filePath = $file->storeAs('leaves', $fileName, 'public');
+
+        $attachment = EmployeeLeave::findOrFail($id);
+        $attachment->leave_file = $filePath;
+        $attachment->save();
+
+        return response()->json(['success' => 'File uploaded successfully']);
+    }
 }

@@ -106,10 +106,14 @@ class Employee extends Model implements Auditable
     public function employee_leave_credits() {
         return $this->hasMany(EmployeeLeaveCredit::class,'user_id','user_id')->orderBy('leave_type','ASC');
     }
-
     public function setEmployeeCodeAttribute($value)
     {
         $this->attributes['employee_code'] = str_replace('-', '', $value);
     }
-    
+    public function employeeDocuments() {
+      return $this->hasMany(EmployeeDocument::class);
+    }
+    public function employeeTraining() {
+      return $this->hasMany(EmployeeTraining::class);
+    }
 }
