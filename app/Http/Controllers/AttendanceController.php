@@ -552,29 +552,73 @@ class AttendanceController extends Controller
 
         // Leave without pay
         $leaveWithoutData = $data->filter(function ($item) {
-            return $item->lv_w_pay > 0;
+            return $item->abs == 1 && $item->lv_w_pay == 0;
         })->groupBy('name')->map(function ($group) {
-            $employeeLeaveData = EmployeeLeave::where('user_id', $group->first()->user_id)->first();
             return [
                 'company_code' => $group->first()->company->company_code,
                 'name' => $group->first()->name,
+                'no_lwop_days' => $group->count(), // Count the number of days matching the criteria
                 'remarks' => $group->first()->remarks,
-                'leave_data' => $employeeLeaveData  
+            ];
+        })->filter(function ($item) {
+            return $item['no_lwop_days'] >= 2;
+        });
+
+        // Leave Deviations
+        $leaveDeviationsData = $data->filter(function ($item) {
+            return $item->abs > 1 && $item->lv_w_pay > 1 ;
+        })->map(function ($item) {
+            // Retrieve the employee related to this attendance record
+            $employee = Employee::where('employee_code', $item->employee_no)->first();
+        
+            // Initialize an empty array for leave_types
+            $leaveTypes = [];
+        
+            if ($employee) {
+                // Retrieve leave_type from related EmployeeLeave records for this employee
+                $leaveTypes = EmployeeLeave::where('user_id', $employee->user_id)
+                    ->where('date_from', $item->log_date)  // Ensure date_from matches log_date
+                    ->pluck('leave_type')
+                    ->unique()
+                    ->toArray();
+            }
+            
+            return [
+                'company_code' => optional($item->company)->company_code,
+                'name' => $item->name,
+                'leave_date' => $item->log_date,
+                'leave_types' => $leaveTypes,
+            ];
+        });        
+
+        // Leaves 5 more consecutive
+        $consecLeaveData = $data->filter(function ($item) {
+            return $item->abs > 1 && $item->lv_w_pay > 0;
+        })->groupBy('name')->map(function ($group) {
+            $firstAttendance = $group->first(); // Get the first attendance record
+            
+            // Retrieve employees based on employee_no from $firstAttendance
+            $employees = Employee::where('employee_code', $firstAttendance->employee_no)->get();
+            
+            // Initialize an empty array for leave_types
+            $leaveTypes = [];
+        
+            // Iterate through each employee to fetch leave_types
+            foreach ($employees as $employee) {
+                $leaveTypes[] = EmployeeLeave::where('user_id', $employee->user_id)
+                                             ->pluck('leave_type')
+                                             ->unique()
+                                             ->toArray();
+            }
+            
+            return [
+                'company_code' => optional($firstAttendance->company)->company_code,
+                'name' => $firstAttendance->name,
+                'leave_types' => $leaveTypes,
             ];
         });
 
-
-        // Leaves 5 more consecutive
-        // $consecLeaveData = $data->filter(function ($item) {
-        //     return $item->lv_w_pay > 0;
-        // })->groupBy('name')->map(function ($group) {
-        //     return [
-        //         'company_code' => $group->first()->company->company_code,
-        //         'name' => $group->first()->name,
-        //         'remarks' => $group->first()->remarks
-        //     ];
-        // });
-        
+        // Overtime
         $overtimeData = $data->filter(function ($item) {
             return $item->reg_hrs > 0;
         })->groupBy('company_id')->map(function ($group) {
@@ -594,13 +638,13 @@ class AttendanceController extends Controller
         });
         
 
-
         // Pass the filtered data to the view
         return view('reports.attendance_report', [
             'header' => 'attendance-report',
             'tardinessData' => $tardinessData,
             'leaveWithoutData' => $leaveWithoutData,
-            // 'consecLeaveData' => $consecLeaveData,
+            'consecLeaveData' => $consecLeaveData,
+            'leaveDeviationsData' => $leaveDeviationsData,
             'overtimeData' => $overtimeData,
             'selectedMonth' => $selectedMonth,
             'selectedYear' => $selectedYear
