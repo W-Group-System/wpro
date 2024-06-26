@@ -315,77 +315,90 @@
                   </div>
                 </div>
               </div>                             
-              <div class="col-md-5">
-                <div class="row">
-                  <div class="card" style="overflow-y: scroll; height:700px;">
-                    <div class="card-body">
-                      <div class="card-title">
-                        Employee Anniversaries
-                      </div>
-                      <ul class="icon-data-list" >
-                        @foreach($employee_anniversaries as $emp)
-                        @php
-                          $date_from = new DateTime($emp->original_date_hired);
-                          $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
-                          $s = $date_diff->format('%y') > 1 ? 's' : '';
-                        @endphp
-                        <li>
-                          <div class="d-flex">
-                            <img src="{{URL::asset($emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
-                            <div>
-                              <p class="text-info mb-1"><small>{{$emp->first_name}} {{$emp->last_name}}</small></p>
-                              <p class="mb-0"><small>{{$emp->company->company_name}}</small></p>
-                              <p class="mb-0"><small>{{$emp->position}}</small></p>
-                              <p class="mb-0"><small>{{date('M d',strtotime($emp->original_date_hired))}}</small></p>
-                              <p class="mb-0"><small>{{$date_diff->format('%y Year'.$s.' Anniversary')}}</small></p>
-                            </div>
-                          </div>
-                        </li>
-                        @endforeach
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+              <div class="col-md-2">
+             
               </div>
-            @endif
-            <div class="col-md-3 ">
+              <div class="col-md-3">
+                
               <div class='row'>
                 <div class="col-md-12">
-                  <div class="card mt-2">
-                    <div class="card-body " style="overflow-y: scroll; height:400px;">
-                      <p class="card-title">Welcome new Hires</p>
-                      <ul class="icon-data-list" >
-                        @foreach($employees_new_hire as $employee)
-                        <li>
-                          <div class="d-flex">
-                            <img src="{{URL::asset($employee->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
-                            <div>
-                              <p class="text-info mb-1"><small>{{$employee->first_name}} {{$employee->last_name}}</small></p>
-                              <p class="mb-0"><small>{{$employee->company->company_name}}</small></p>
-                              <p class="mb-0"><small>{{$employee->position}}</small></p>
-                              <small>{{date('M. d',strtotime($employee->original_date_hired))}}</small>
-                            </div>
-                          </div>
-                        </li>
-                        @endforeach
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class='row'>
-                <div class="col-md-12">
-                  <div class="card mt-2">
-                    <div class="card-body " style="overflow-y: scroll; height:400px;">
+                  <div class="card ">
+                    <div class="card-body " >
                       <p class="card-title">Birthday Celebrants</p>
-                      <ul class="icon-data-list" >
+                      <ul class="icon-data-list w-100"  style="overflow-y: scroll; height:300px;">
                         @foreach($employee_birthday_celebrants as $celebrant)
                         <li>
                           <div class="d-flex">
                             <img src="{{URL::asset($celebrant->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
                             <div>
-                              <p class="text-info mb-1"><small>{{$celebrant->first_name}} {{$celebrant->last_name}}</small></p>
+                              <p class="text-info mb-1"><small>{{$celebrant->first_name}} {{$celebrant->last_name}} - ({{$celebrant->company->company_code}})</small></p>
                               <small>{{date('M d',strtotime($celebrant->birth_date))}}</small>
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+             
+              </div>
+            @endif
+            <div class="col-md-3 ">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card" >
+                    <div class="card-body">
+                      <div class="card-title">
+                        Employee Anniversaries
+                      </div>
+                      <ul class="icon-data-list w-100" style="overflow-y: scroll; height:300px;" >
+                        @foreach($employee_anniversaries->sortBy('original_date_hired') as $emp)
+                        @php
+                          $original_date_hired = new DateTime($emp->original_date_hired);
+                          $current_date = new DateTime();
+                          $current_anniversary = new DateTime($current_date->format('Y') . '-' . $original_date_hired->format('m-d'));
+                          $s = $current_date->diff($original_date_hired)->format('%y') > 1 ? 's' : '';
+                          
+                          if ($current_anniversary >= $current_date) {
+                            $anniv_year = $current_date->diff($original_date_hired)->y + 1;
+                          }
+                          else {
+                            $anniv_year = $current_date->diff($original_date_hired)->y;
+                          }
+                          
+                        @endphp
+                        <li>
+                          <div class="d-flex">
+                            <img src="{{URL::asset($emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
+                            <div>
+                              <p class="text-info mb-1"><small>{{$emp->first_name}} {{$emp->last_name}}</small> <i>(<small class='text-danger'>{{$anniv_year.' year'.$s.' of service'}}</small>)</i></p>
+                              <p class="mb-0"><small>{{$emp->company->company_code}}</small> - <small>{{$emp->department->name}}</small></p>
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class='row'>
+                <div class="col-md-12">
+                  <div class="card mt-2">
+                    <div class="card-body " >
+                      <p class="card-title">Welcome new Hires</p>
+                      <ul class="icon-data-list w-100"  style="overflow-y: scroll; height:300px;">
+                        @foreach($employees_new_hire as $employee)
+                        <li>
+                          <div class="d-flex">
+                            <img src="{{URL::asset($employee->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
+                            <div>
+                              <p class="text-info mb-1"><small>{{$employee->first_name}} {{$employee->last_name}}</small> <i>(<small>{{date('M. d',strtotime($employee->original_date_hired))}}</small>)</i> - <small>{{$employee->company->company_code}}</small></p>
+                          
+                              <p class="mb-0"><small>{{$employee->position}}</small> - <small>{{$employee->department->name}}</small></p>
+                             
                             </div>
                           </div>
                         </li>
@@ -423,67 +436,9 @@
 
 @endsection
 @section('footer')
-<script>
-      var holidays = {!! json_encode($holidays->toArray()) !!};
-      var celebrants = {!! json_encode($birth_date_celebrants->toArray()) !!};
-      const d = new Date();
-      let year = d.getFullYear();
-      var data_holidays = [];
-      for(i=0;i<holidays.length;i++)
-      {
 
-        var hol_date = new Date(holidays[i].holiday_date);
-        var month = hol_date.getUTCMonth() + 1; //months from 1-12
-        if(month < 10)
-        {
-          month = "0"+month;
-        }
-       
-        var day = hol_date.getUTCDate();
-        if(day < 10)
-        {
-          day = "0"+day;
-        }
-        var data = {};
-            data.title = holidays[i].holiday_name;
-            data.start = year + "-"+month+"-"+day;
-            data.type = holidays[i].holiday_type;
-            data.color = '#257e4a';
-            if(holidays[i].holiday_type == "Special Holiday")
-            {
-              data.color = '#ff6600';
-            }
-            data.imageurl = 'images/1666674015_1661130183_icon.png';
-            data_holidays.push(data);
-      }
-      for(ii=0;ii<celebrants.length;ii++)
-      {
-        var birth_date = new Date(celebrants[ii].birth_date);
-        var month = birth_date.getUTCMonth() + 1; //months from 1-12
-        if(month < 10)
-        {
-          month = "0"+month;
-        }
-       
-        var day = birth_date.getUTCDate();
-        if(day < 10)
-        {
-          day = "0"+day;
-        }
-        // console.log(celebrants[ii]);
-        var data = {};
-        data.title = celebrants[ii].first_name+" "+celebrants[ii].last_name;
-        data.start = year + "-"+month+"-"+day;
-        data.type = "Birthday Celebrant";
-        data.color = '#ff0000';
-        data_holidays.push(data);
-      }
-      
-</script>
 <script src="{{asset('./body_css/js/tooltips.js')}}"></script>
 <script src="{{asset('./body_css/js/popover.js')}}"></script>
 <script src="{{asset('./body_css/vendors/moment/moment.min.js')}}"></script>
-<script src="{{asset('./body_css/vendors/fullcalendar/fullcalendar.min.js')}}"></script>
-<script src="{{asset('./body_css/js/calendar.js')}}"></script>
 
 @endsection

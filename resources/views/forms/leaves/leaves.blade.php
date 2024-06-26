@@ -564,7 +564,6 @@
                             No file uploaded
                           @endif
                         </td>
-                                               
                       </tr>
                     @endforeach                      
                     </tbody>
