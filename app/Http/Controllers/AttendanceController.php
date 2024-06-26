@@ -561,7 +561,7 @@ class AttendanceController extends Controller
                 'remarks' => $group->first()->remarks,
             ];
         })->filter(function ($item) {
-            return $item['no_lwop_days'] >= 2;
+            return $item['no_lwop_days'] >= 3;
         });
 
         // Leave Deviations

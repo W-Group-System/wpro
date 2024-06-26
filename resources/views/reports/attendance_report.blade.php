@@ -50,7 +50,7 @@
                     <div class="col-12">
                         <h3 id="reportTitle"></h3><br>
                         <label><b>I. Tardiness</b></label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -74,7 +74,7 @@
                         </table>
                         <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
                         <label>A. Leave without Pay</label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -99,7 +99,7 @@
                             </tbody>
                         </table>
                         <label>B. Leave Deviations</label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -129,7 +129,7 @@
                             </tbody>
                         </table>
                         <label>C. Leaves more than 5 consecutive days</label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -141,7 +141,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($consecLeaveData as $index => $consecLeave)
+                                {{-- @foreach($consecLeaveData as $index => $consecLeave)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $consecLeave['company_code'] }}</td>
@@ -157,11 +157,11 @@
                                         </td>
                                         <td></td> 
                                     </tr>
-                                @endforeach
+                                @endforeach --}}
                             </tbody>
                         </table>
                         <label><b>III. Overtime</b></label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
