@@ -516,6 +516,18 @@
                             </ul>
                         </div>
                     </li>
+                    <li class="nav-item @if ($header == 'payrollSetting') active @endif">
+                      <a class="nav-link" data-toggle="collapse" href="#payrollSetting" aria-expanded="false" aria-controls="ui-basic">
+                        <i class="icon-align-center menu-icon"></i>
+                        <span class="menu-title">Payroll Setting</span>
+                        <i class="menu-arrow"></i>
+                      </a>
+                      <div class="collapse" id="payrollSetting">
+                        <ul class="nav flex-column sub-menu">
+                          <li class="nav-item"> <a class="nav-link" href="{{ url('tax-mapping') }}">Tax Mapping</a></li>
+                        </ul>
+                      </div>
+                    </li>
                     @endif
 
                     
