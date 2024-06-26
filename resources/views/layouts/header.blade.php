@@ -491,7 +491,8 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/schedules') }}">Schedules</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/handbooks') }}">Handbook</a></li>
+                                {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/handbooks') }}">Handbook</a></li> --}}
+
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/leavee-settings') }}">Leave Type</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/announcements') }}">Announcements</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/logos') }}">Logos</a></li>
@@ -499,6 +500,8 @@
                             </ul>
                         </div>
                     </li>
+                    @endif
+                    @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'Payroll') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#payroll" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-align-center menu-icon"></i>
@@ -594,6 +597,8 @@
                         <a class="nav-link" href="{{ url('/employee-earned-leaves') }}">Employee Earned Leaves</a>
                     </li>
                     @endif
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
                 </ul>
             </div>
         </li>
@@ -648,7 +653,10 @@
           </div>
         </li>
         <li class="nav-item">
-          <a href="{{url('daily-schedule')}}" class="nav-link">Schedule</a>
+          <a href="{{url('daily-schedule')}}" class="nav-link">
+            <i class="fa fa-calendar menu-icon"></i>
+            Daily Schedule
+          </a>
         <li>
         @endif
         @endif
