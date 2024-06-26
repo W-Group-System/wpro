@@ -98,16 +98,26 @@
   
                             @foreach($date_range as $date_r)
                             @php
-                                $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id);
+                                $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_number);
                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                             @endphp
                             <tr>
                                 <td>{{$emp->employee_code}}</td>
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
-                                    @if($employee_schedule)
-                                        <small>{{$emp->schedule_info->schedule_name}}</small>
+                                    @if($employee_schedule != null)
+                                      <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                      
+                                      @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                        <small>(Flexi)</small>
+                                      @endif
+                                    @else 
+                                      <small>RESTDAY</small>
                                     @endif
+
+                                    {{-- @if($employee_schedule)
+                                      <small>{{$emp->schedule_info->schedule_name}}</small>
+                                    @endif --}}
                                 </td>
                                 <td class="@if($employee_schedule) @else bg-danger text-white @endif">{{date('d/m/Y',strtotime($date_r))}}</td>
                                 <td>{{date('l',strtotime($date_r))}}</td>

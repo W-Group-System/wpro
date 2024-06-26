@@ -84,9 +84,15 @@
                                 <td>{{$emp->employee_code}}</td>
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
-                                    @if($employee_schedule)
-                                        <small>{{$emp->schedule_info->schedule_name}}</small>
+                                    @if($employee_schedule != null)
+                                    <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                    
+                                    @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                      <small>(Flexi)</small>
                                     @endif
+                                  @else 
+                                    <small>RESTDAY</small>
+                                  @endif
                                 </td>
                                 <td class="@if($employee_schedule) @else bg-danger text-white @endif">{{date('d/m/Y',strtotime($date_r))}}</td>
                                 <td>{{date('l',strtotime($date_r))}}</td>

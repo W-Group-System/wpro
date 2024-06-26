@@ -202,7 +202,9 @@
                           @endif
                         </td>
                         <td>
+                          @if(!empty($overtime->file_path))
                           <a href="{{url($overtime->file_path)}}" target="_blank">{{$overtime->file_name}}</a>
+                          @endif
                         </td>
                           
                       </tr>
