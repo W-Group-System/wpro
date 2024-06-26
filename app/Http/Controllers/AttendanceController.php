@@ -14,6 +14,7 @@ use App\HikVisionAttendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\AttendanceLog;
+use Barryvdh\DomPDF\Facade as PDF;
 
 use App\Exports\AttedancePerCompanyExport;;
 
@@ -638,6 +639,23 @@ class AttendanceController extends Controller
         });
         
 
+        if($request->type == 'pdf')
+        {
+            $pdf = Pdf::loadView('attendances.attendance_report',
+                array(
+                    
+                    'header' => 'attendance-report',
+                    'tardinessData' => $tardinessData,
+                    'leaveWithoutData' => $leaveWithoutData,
+                    // 'consecLeaveData' => $consecLeaveData,
+                    'overtimeData' => $overtimeData,
+                    'selectedMonth' => $selectedMonth,
+                    'selectedYear' => $selectedYear
+                )
+            );
+            
+            return $pdf->stream('attendance_report-'.$selectedMonth.'-'.$selectedYear.'.pdf');
+        }
         // Pass the filtered data to the view
         return view('reports.attendance_report', [
             'header' => 'attendance-report',
