@@ -7,7 +7,7 @@
                 <div class="card-body">
                     <h4 class="card-title">Attendance Reports</h4>
                     <p class="card-description">
-                    <form method='GET' action="{{ route('reports') }}" enctype="multipart/form-data">
+                    <form method='GET' onsubmit="show()" action="{{ route('reports') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class='col-md-4'>
@@ -67,7 +67,7 @@
                                         <td>{{ $tardiness['company_code'] }}</td>
                                         <td>{{ $tardiness['name'] }}</td>
                                         <td>{{ $tardiness['tardiness_days'] }}</td>
-                                        <td>{{ $tardiness['remarks'] }}</td>
+                                        <td>Excessive; for NOD issuance</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -91,9 +91,9 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $withoutLeave['company_code'] }}</td>
                                         <td>{{ $withoutLeave['name'] }}</td>
-                                        <td>{{ $withoutLeave['leave_data'] }}</td>
+                                        <td>{{ $withoutLeave['no_lwop_days'] }}</td>
                                         <td></td>
-                                        <td>{{ $withoutLeave['remarks'] }}</td>
+                                        <td>No leave Credits balance</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -111,6 +111,21 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($leaveDeviationsData as $index => $leaveDeviations)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $leaveDeviations['company_code'] }}</td>
+                                        <td>{{ $leaveDeviations['name'] }}</td>
+                                        <td>{{ $leaveDeviations['leave_date'] }}</td> 
+                                        <td>
+                                            @foreach($leaveDeviations['leave_types'] as $leaveType)
+                                                {{ $leaveType == 1 ? 'Vacation Leave' : 'Sick Leave' }}
+                                                <br>
+                                            @endforeach
+                                        </td>
+                                        <td></td> 
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                         <label>C. Leaves more than 5 consecutive days</label>
@@ -126,7 +141,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                @foreach($consecLeaveData as $index => $consecLeave)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $consecLeave['company_code'] }}</td>
+                                        <td>{{ $consecLeave['name'] }}</td>
+                                        <td></td> 
+                                        <td>
+                                            @foreach($consecLeave['leave_types'] as $leaveTypeGroup)
+                                                @foreach($leaveTypeGroup as $leaveType)
+                                                    {{ $leaveType == 1 ? 'Vacation Leave' : 'Sick Leave' }}
+                                                    <br>
+                                                @endforeach
+                                            @endforeach
+                                        </td>
+                                        <td></td> 
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                         <label><b>III. Overtime</b></label>
