@@ -10,4 +10,14 @@ class AttendanceDetailedReport extends Model
    {
     return $this->belongsTo(Company::class);
    }
+
+   // public function employee()
+   //  {
+   //      return $this->belongsTo(Employee::class, 'employee_no', 'employee_code');
+   //  }
+
+   public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_no', 'employee_code');
+    }
 }

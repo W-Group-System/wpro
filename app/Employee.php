@@ -84,7 +84,7 @@ class Employee extends Model implements Auditable
     }
 
     public function approved_leaves_with_pay() {
-        return $this->hasMany(EmployeeLeave::class,'user_id','user_id')->where('with_pay','1')->where('status','Approved');
+        return $this->hasMany(EmployeeLeave::class,'user_id','user_id')->where('withpay','1')->where('status','Approved');
     }
 
     public function approved_obs() {
@@ -106,4 +106,10 @@ class Employee extends Model implements Auditable
     public function employee_leave_credits() {
         return $this->hasMany(EmployeeLeaveCredit::class,'user_id','user_id')->orderBy('leave_type','ASC');
     }
+
+    public function setEmployeeCodeAttribute($value)
+    {
+        $this->attributes['employee_code'] = str_replace('-', '', $value);
+    }
+    
 }

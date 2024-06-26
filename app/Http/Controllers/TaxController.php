@@ -52,4 +52,15 @@ class TaxController extends Controller
         $tax->delete(); 
         return back()->with('status', 'Tax deleted successfully!');
     }
+
+    public function compute_tax()
+{
+    $employee_salary = 470000;
+    $computed_salary = compute_tax($employee_salary);
+
+    return view('taxes.compute_tax', [
+        'header' => 'Tax',
+        'computed_taxes' => $computed_salary,
+    ]);
+}
 }

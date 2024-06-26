@@ -11,6 +11,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 use App\AttSummary;
 use App\Company;
+use App\EmployeeOb;
 use App\Imports\PayRegImport;
 use App\PayrollRecord;
 use App\ScheduleData;
@@ -319,27 +320,64 @@ class PayslipController extends Controller
     //         ));
     // }
 
-    public function generatedAttendances(Request $request)
-    {
+    // public function generatedAttendances(Request $request)
+    // {
         
-        //02-20-24 JunJihad Commented This Code 
+    //     //02-20-24 JunJihad Commented This Code 
 
-        // $attendances =  AttSummary::orderBy('employee','asc')->get();
-        // return view('payroll.timekeeping',
-        // array(
-        //     'header' => 'Timekeeping',
-        //     'attendances' => $attendances,
-        //     'attendances' => $attendances,
+    //     // $attendances =  AttSummary::orderBy('employee','asc')->get();
+    //     // return view('payroll.timekeeping',
+    //     // array(
+    //     //     'header' => 'Timekeeping',
+    //     //     'attendances' => $attendances,
+    //     //     'attendances' => $attendances,
             
-        // ));
+    //     // ));
+    //     $generated_timekeepings = [];
+    //     $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+
+    //     $companies = Company::whereHas('employee_has_company')
+    //     ->whereIn('id',$allowed_companies)
+    //     ->get();
+
+    //     $attendance_controller = new AttendanceDetailedReport;
+    //     $company = isset($request->company) ? $request->company : "";
+
+    //     $from_date = $request->from;
+    //     $to_date = $request->to;
+
+    //     // $schedules = [];
+    //     $attendances = [];
+       
+    //     if ($from_date != null) {
+           
+    //         $generated_timekeepings = AttendanceDetailedReport::where('company_id',$request->company)->whereBetween('log_date',[$from_date,$to_date])->get();
+    //    }
+    //     // $schedules = ScheduleData::all();
+    //     return view('payroll.attendance_detailed_report',
+    //     array(
+    //             'header' => 'Timekeeping',
+    //             'from_date' => $from_date,
+    //             'to_date' => $to_date,
+    //             'companies' => $companies,
+    //             'company' => $company,
+    //             // 'attendances' => $attendances,
+    //             // 'schedules' => $schedules,
+    //             'generated_timekeepings' => $generated_timekeepings
+    //         ));
+    // }
+
+    
+
+   public function generatedAttendances(Request $request)
+    {
         $generated_timekeepings = [];
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
 
         $companies = Company::whereHas('employee_has_company')
-        ->whereIn('id',$allowed_companies)
-        ->get();
+            ->whereIn('id', $allowed_companies)
+            ->get();
 
-        $attendance_controller = new AttendanceDetailedReport;
         $company = isset($request->company) ? $request->company : "";
 
         $from_date = $request->from;
@@ -347,22 +385,63 @@ class PayslipController extends Controller
 
         $schedules = [];
         $attendances = [];
-       
+
         if ($from_date != null) {
-           
-            $generated_timekeepings = AttendanceDetailedReport::where('company_id',$request->company)->whereBetween('log_date',[$from_date,$to_date])->get();
-       }
+            $generated_timekeepings = AttendanceDetailedReport::with(['employee.approved_obs', 'employee.approved_leaves_with_pay', 'employee.approved_leaves'])
+                ->where('company_id', $request->company)
+                ->whereBetween('log_date', [$from_date, $to_date])
+                ->get();
+                foreach ($generated_timekeepings as $timekeeping) {
+                    $employee = $timekeeping->employee;
+                    if ($employee) {
+                        $approved_obs = $employee->approved_obs;
+                        $approved_leaves_with_pay = $employee->approved_leaves_with_pay;
+                        $approved_leaves_without_pay = $employee->approved_leaves;
+                        $timekeeping->leaves = "";
+                        $timekeeping->OB = "";
+            
+                        if ($approved_obs) {
+                            $approved_ob = $approved_obs->where('date_from', '<=', $timekeeping->log_date)
+                                                        ->where('date_to', '>=', $timekeeping->log_date)
+                                                        ->first();
+            
+                            if ($approved_ob) {
+                                $timekeeping->OB = "OB";
+                            }
+                        }
+
+                        if ($approved_leaves_with_pay) {
+                            $approved_leave_with_pay = $approved_leaves_with_pay->where('date_from', '<=', $timekeeping->log_date)
+                                                        ->where('date_to', '>=', $timekeeping->log_date)
+                                                        ->first();
+                            if ($approved_leave_with_pay) {
+                                $timekeeping->LWP = $approved_leave_with_pay->leave->leave_type . " With Pay";
+                            }
+                        }
+                        elseif($approved_leaves_without_pay) {
+                            $approved_leave_without_pay = $approved_leaves_without_pay->where('date_from', '<=', $timekeeping->log_date)
+                            ->where('date_to', '>=', $timekeeping->log_date)
+                            ->first();
+                            if ($approved_leave_without_pay) {
+                                $timekeeping->LWP = $approved_leave_without_pay->leave->leave_type . " Without Pay";
+                            }
+                        }
+                    }
+                    
+                }
+        }
+
         $schedules = ScheduleData::all();
-        return view('payroll.attendance_detailed_report',
-        array(
-                'header' => 'Timekeeping',
-                'from_date' => $from_date,
-                'to_date' => $to_date,
-                'companies' => $companies,
-                'company' => $company,
-                'attendances' => $attendances,
-                'schedules' => $schedules,
-                'generated_timekeepings' => $generated_timekeepings
-            ));
-    }
+        return view('payroll.attendance_detailed_report', [
+            'header' => 'Timekeeping',
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'companies' => $companies,
+            'company' => $company,
+            'attendances' => $attendances,
+            'schedules' => $schedules,
+            'generated_timekeepings' => $generated_timekeepings
+        ]);
+    }  
+
 }
