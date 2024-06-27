@@ -638,30 +638,27 @@ class AttendanceController extends Controller
             ];
         });
         
-        if($request->type == 'pdf')
-        {
-            $pdf = Pdf::loadView('attendances.attendance_report',
-                array(
-                    
-                    'header' => 'attendance-report',
-                    'tardinessData' => $tardinessData,
-                    'leaveWithoutData' => $leaveWithoutData,
-                    // 'consecLeaveData' => $consecLeaveData,
-                    'overtimeData' => $overtimeData,
-                    'selectedMonth' => $selectedMonth,
-                    'selectedYear' => $selectedYear
-                )
-            );
-            
-            return $pdf->stream('attendance_report-'.$selectedMonth.'-'.$selectedYear.'.pdf');
+        if ($request->type == 'pdf') {
+            $pdf = PDF::loadView('reports.print_attendance', [
+                'header' => 'attendance-report',
+                'tardinessData' => $tardinessData,
+                'leaveWithoutData' => $leaveWithoutData,
+                'leaveDeviationsData' => $leaveDeviationsData,
+                'overtimeData' => $overtimeData,
+                'selectedMonth' => $selectedMonth,
+                'selectedYear' => $selectedYear
+            ])->setPaper('a4', 'portrait');
+    
+            return $pdf->stream('attendance_report' . $selectedMonth . '-' . $selectedYear . '.pdf');
         }
+
         // Pass the filtered data to the view
         return view('reports.attendance_report', [
             'header' => 'attendance-report',
             'tardinessData' => $tardinessData,
             'leaveWithoutData' => $leaveWithoutData,
-            'consecLeaveData' => $consecLeaveData,
             'leaveDeviationsData' => $leaveDeviationsData,
+            // 'consecLeaveData' => $consecLeaveData,
             'overtimeData' => $overtimeData,
             'selectedMonth' => $selectedMonth,
             'selectedYear' => $selectedYear
