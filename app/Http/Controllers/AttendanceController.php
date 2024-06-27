@@ -602,7 +602,7 @@ class AttendanceController extends Controller
             $employees = Employee::where('employee_code', $firstAttendance->employee_no)->get();
             
             // Initialize an empty array for leave_types
-            $leaveTypes = 
+            $leaveTypes = [];
         
             // Iterate through each employee to fetch leave_types
             foreach ($employees as $employee) {
