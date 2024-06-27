@@ -15,7 +15,7 @@
                     </div>
                 @endforeach
             @endif
-        @include('links')
+        
         <div id="payroll" class="tab-pane  active">
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
@@ -31,7 +31,7 @@
                         Download Format
                     </button></a>
                 </h4>
-               
+
                 <div class="table-responsive">
                   <table class="table table-hover table-bordered">
                     <thead>
@@ -46,15 +46,25 @@
                         </tr>
                     </thead>
                     <tbody>
+                         {{-- @foreach($pay_reg as $payReg)
+                            <tr>
+                                <td>{{date('M d, Y',strtotime($payReg->payroll_date_from))}} - {{date('M d, Y',strtotime($payReg->payroll_date_to))}}</td>
+                                <td>{{ $payReg->employee_count }}</td>
+                                <td>{{ $payReg->total_gross_pay }}</td>
+                                <td>{{ $payReg->tax_total }}</td>
+                                <td>{{ $payReg->total_deduction }}</td>
+                                <td>{{ $payReg->net_pay_total }}</td>
+
+                            </tr>
+                        @endforeach --}}
                         @foreach($payrolls as $payroll)
                             <tr>
-                                <td>{{date('M d, Y',strtotime($payroll->date_from))}} - {{date('M d, Y',strtotime($payroll->date_to))}}</td>
-                                <!-- <td>{{date('M d, Y',strtotime($payroll->created_at))}}</td> -->
-                                <td><a href='#' data-toggle="modal" data-target="#view_payroll{{$payroll->date_from}}"> {{count($payroll_employees->where('date_from',$payroll->date_from))}} </a></td>
-                                <td>{{number_format($payroll_employees->where('date_from',$payroll->date_from)->sum('gross_pay'),2)}}</td>
-                                <td>{{number_format($payroll_employees->where('date_from',$payroll->date_from)->sum('witholding_tax'),2)}}</td>
-                                <td>{{number_format($payroll_employees->where('date_from',$payroll->date_from)->sum('total_deduction'),2)}}</td>
-                                <td>{{number_format($payroll_employees->where('date_from',$payroll->date_from)->sum('netpay'),2)}}</td>
+                                <td>{{date('M d, Y',strtotime($payroll->payroll_date_from))}} - {{date('M d, Y',strtotime($payroll->payroll_date_to))}}</td>
+                                <td><a href='#' data-toggle="modal" data-target="#view_payroll{{$payroll->payroll_date_from}}"> {{count($payroll_employees->where('payroll_date_from',$payroll->payroll_date_from))}} </a></td>
+                                <td>{{number_format($payroll_employees->where('payroll_date_from',$payroll->payroll_date_from)->sum('gross_pay'),2)}}</td>
+                                <td>{{number_format($payroll_employees->where('payroll_date_from',$payroll->payroll_date_from)->sum('witholding_tax'),2)}}</td>
+                                <td>{{number_format($payroll_employees->where('payroll_date_from',$payroll->payroll_date_from)->sum('total_deduction'),2)}}</td>
+                                <td>{{number_format($payroll_employees->where('payroll_date_from',$payroll->payroll_date_from)->sum('net_pay'),2)}}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -71,4 +81,5 @@
     @endforeach
     @include('payroll.upload_payroll')
 @endsection
+
 

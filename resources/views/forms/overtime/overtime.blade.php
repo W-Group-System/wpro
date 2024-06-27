@@ -89,6 +89,7 @@
                   <table class="table table-hover table-bordered tablewithSearch">
                     <thead>
                       <tr>
+                        <th>Action </th>
                         <th>Date Filed</th>
                         <th>OT Date</th> 
                         <th>OT Time</th> 
@@ -100,12 +101,53 @@
                         <th>Status </th>
                         <th>Approvers </th>
                         <th>View Attachments</th>
-                        <th>Action </th>
                       </tr>
                     </thead>
                     <tbody>
                       @foreach ($overtimes as $overtime)
                       <tr>
+                      <td id="tdActionId{{ $overtime->id }}" data-id="{{ $overtime->id }}">
+                          @if ($overtime->status == 'Pending' and $overtime->level == 0)
+                            <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
+                              data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
+                              <i class="ti-eye"></i>
+                            </button>            
+                            <button type="button" id="edit{{ $overtime->id }}" class="btn btn-info btn-rounded btn-icon"
+                              data-target="#edit_overtime{{ $overtime->id }}" data-toggle="modal" title='Edit'>
+                              <i class="ti-pencil-alt"></i>
+                            </button>
+                            <button title='Cancel' id="{{ $overtime->id }}" onclick="cancel(this.id)"
+                              class="btn btn-rounded btn-danger btn-icon">
+                              <i class="fa fa-ban"></i>
+                            </button>
+                          @elseif ($overtime->status == 'Pending' && $overtime->level > 1)
+                            <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
+                              data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
+                              <i class="ti-eye"></i>
+                            </button>            
+                              <button title='Cancel' id="{{ $overtime->id }}" onclick="cancel(this.id)"
+                                class="btn btn-rounded btn-danger btn-icon">
+                                <i class="fa fa-ban"></i>
+                              </button>
+                          @elseif ($overtime->status == 'Approved')   
+                          <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
+                            data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
+                            <i class="ti-eye"></i>
+                          </button>                            
+                            <button title='Cancel' id="{{ $overtime->id }}" onclick="cancel(this.id)"
+                              class="btn btn-rounded btn-danger btn-icon">
+                              <i class="fa fa-ban"></i>
+                            </button>
+                            <button type="button" class="btn btn-success btn-rounded btn-icon" title="Upload Attachments" data-toggle="modal" data-target="#uploadOvertimeAttachments-{{$overtime->id}}">
+                              <i class="ti-upload"></i>
+                            </button>
+                          @else
+                            <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
+                              data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
+                              <i class="ti-eye"></i>
+                            </button>                                                                               
+                          @endif
+                        </td> 
                         <td> {{ date('M. d, Y h:i A', strtotime($overtime->created_at)) }}</td>
                         <td> {{ date('M. d, Y ', strtotime($overtime->ot_date)) }}</td>
                         <td> {{ date('M. d, Y h:i A', strtotime($overtime->start_time)) }} - {{ date('M. d, Y h:i A', strtotime($overtime->end_time)) }}</td>
@@ -164,48 +206,7 @@
                           <a href="{{url($overtime->file_path)}}" target="_blank">{{$overtime->file_name}}</a>
                           @endif
                         </td>
-                        <td id="tdActionId{{ $overtime->id }}" data-id="{{ $overtime->id }}">
-                          @if ($overtime->status == 'Pending' and $overtime->level == 0)
-                            <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
-                              data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
-                              <i class="ti-eye"></i>
-                            </button>            
-                            <button type="button" id="edit{{ $overtime->id }}" class="btn btn-info btn-rounded btn-icon"
-                              data-target="#edit_overtime{{ $overtime->id }}" data-toggle="modal" title='Edit'>
-                              <i class="ti-pencil-alt"></i>
-                            </button>
-                            <button title='Cancel' id="{{ $overtime->id }}" onclick="cancel(this.id)"
-                              class="btn btn-rounded btn-danger btn-icon">
-                              <i class="fa fa-ban"></i>
-                            </button>
-                          @elseif ($overtime->status == 'Pending' && $overtime->level > 1)
-                            <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
-                              data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
-                              <i class="ti-eye"></i>
-                            </button>            
-                              <button title='Cancel' id="{{ $overtime->id }}" onclick="cancel(this.id)"
-                                class="btn btn-rounded btn-danger btn-icon">
-                                <i class="fa fa-ban"></i>
-                              </button>
-                          @elseif ($overtime->status == 'Approved')   
-                          <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
-                            data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
-                            <i class="ti-eye"></i>
-                          </button>                            
-                            <button title='Cancel' id="{{ $overtime->id }}" onclick="cancel(this.id)"
-                              class="btn btn-rounded btn-danger btn-icon">
-                              <i class="fa fa-ban"></i>
-                            </button>
-                            <button type="button" class="btn btn-success btn-rounded btn-icon" title="Upload Attachments" data-toggle="modal" data-target="#uploadOvertimeAttachments-{{$overtime->id}}">
-                              <i class="ti-upload"></i>
-                            </button>
-                          @else
-                            <button type="button" id="view{{ $overtime->id }}" class="btn btn-primary btn-rounded btn-icon"
-                              data-target="#view_overtime{{ $overtime->id }}" data-toggle="modal" title='View'>
-                              <i class="ti-eye"></i>
-                            </button>                                                                               
-                          @endif
-                        </td>   
+                          
                       </tr>
                     @endforeach                                            
                     </tbody>

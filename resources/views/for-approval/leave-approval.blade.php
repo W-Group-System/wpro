@@ -112,6 +112,7 @@
                             Select
                           </th>
                         @endif
+                        <th>Action </th> 
                         <th>Date Filed</th>
                         <th>Employee Name</th>
                         <th>Form Type</th>
@@ -124,7 +125,6 @@
                         <th>Reason/Remarks</th> 
                         <th>Attachment</th>
                         <th>Approved Date</th>
-                        <th>Action </th> 
                       </tr>
                     </thead>
                     <tbody> 
@@ -141,6 +141,32 @@
                             @endforeach
                           </td>
                         @endif
+                        <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
+                          @php
+                              $approver_last = '';
+                          @endphp
+                          @foreach($form_approval->approver as $k => $approver)
+                            @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
+                              <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#leave-approved-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Approve">
+                                <i class="ti-check btn-icon-prepend"></i>                                                    
+                              </button>
+                              <button type="button" class="btn btn-danger btn-sm" id="{{ $form_approval->id }}" data-target="#leave-declined-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Decline">
+                                <i class="ti-close btn-icon-prepend"></i>                                                    
+                              </button> 
+                            @endif<br> 
+
+                            @php
+                                $approver_last = $approver->approver_id;
+                            @endphp
+                          @endforeach
+
+                          @if($approver_last == $approver_id && $form_approval->request_to_cancel == '1')
+                            <button type="button" id="view{{ $form_approval->id }}" class="btn btn-warning btn-rounded btn-icon"
+                              data-target="#requestToCancelLeave{{ $form_approval->id }}" data-toggle="modal" title='Request to Cancel'>
+                              <i class="fa fa-ban"></i>
+                          @endif
+
+                        </td>
                         <td>{{date('M. d, Y h:i A', strtotime($form_approval->created_at))}}</td>
                         <td>
                             <strong>{{$form_approval->user->employee->last_name . ' ' . $form_approval->user->employee->first_name }}</strong> <br>
@@ -203,33 +229,7 @@
                           @endif
                         
                         </td>
-                        <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
-                          @php
-                              $approver_last = '';
-                          @endphp
-                          @foreach($form_approval->approver as $k => $approver)
-                            @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
-                              <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#leave-approved-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Approve">
-                                <i class="ti-check btn-icon-prepend"></i>                                                    
-                              </button>
-                              <button type="button" class="btn btn-danger btn-sm" id="{{ $form_approval->id }}" data-target="#leave-declined-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Decline">
-                                <i class="ti-close btn-icon-prepend"></i>                                                    
-                              </button> 
-                            @endif<br> 
-
-                            @php
-                                $approver_last = $approver->approver_id;
-                            @endphp
-                          @endforeach
-
-                          @if($approver_last == $approver_id && $form_approval->request_to_cancel == '1')
-                            <button type="button" id="view{{ $form_approval->id }}" class="btn btn-warning btn-rounded btn-icon"
-                              data-target="#requestToCancelLeave{{ $form_approval->id }}" data-toggle="modal" title='Request to Cancel'>
-                              <i class="fa fa-ban"></i>
-                          @endif
-
-                        </td>
-                        </tr>
+                      </tr>
                       @endforeach                        
                     </tbody>
                   </table>

@@ -7,7 +7,7 @@
                 <div class="card-body">
                     <h4 class="card-title">Attendance Reports</h4>
                     <p class="card-description">
-                    <form method='GET' action="{{ route('reports') }}" enctype="multipart/form-data">
+                    <form method='GET' onsubmit="show()" action="{{ route('reports') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class='col-md-4'>
@@ -50,7 +50,7 @@
                     <div class="col-12">
                         <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?month='.$selectedMonth.'&year='.$selectedYear.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br>
                         <label><b>I. Tardiness</b></label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -67,14 +67,14 @@
                                         <td>{{ $tardiness['company_code'] }}</td>
                                         <td>{{ $tardiness['name'] }}</td>
                                         <td>{{ $tardiness['tardiness_days'] }}</td>
-                                        <td>{{ $tardiness['remarks'] }}</td>
+                                        <td>Excessive; for NOD issuance</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                         <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
                         <label>A. Leave without Pay</label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -91,15 +91,15 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $withoutLeave['company_code'] }}</td>
                                         <td>{{ $withoutLeave['name'] }}</td>
-                                        <td>{{ $withoutLeave['leave_data'] }}</td>
+                                        <td>{{ $withoutLeave['no_lwop_days'] }}</td>
                                         <td></td>
-                                        <td>{{ $withoutLeave['remarks'] }}</td>
+                                        <td>No leave Credits balance</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                         <label>B. Leave Deviations</label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -111,10 +111,25 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($leaveDeviationsData as $index => $leaveDeviations)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $leaveDeviations['company_code'] }}</td>
+                                        <td>{{ $leaveDeviations['name'] }}</td>
+                                        <td>{{ $leaveDeviations['leave_date'] }}</td> 
+                                        <td>
+                                            @foreach($leaveDeviations['leave_types'] as $leaveType)
+                                                {{ $leaveType == 1 ? 'Vacation Leave' : 'Sick Leave' }}
+                                                <br>
+                                            @endforeach
+                                        </td>
+                                        <td></td> 
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                         <label>C. Leaves more than 5 consecutive days</label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -126,11 +141,27 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                {{-- @foreach($consecLeaveData as $index => $consecLeave)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $consecLeave['company_code'] }}</td>
+                                        <td>{{ $consecLeave['name'] }}</td>
+                                        <td></td> 
+                                        <td>
+                                            @foreach($consecLeave['leave_types'] as $leaveTypeGroup)
+                                                @foreach($leaveTypeGroup as $leaveType)
+                                                    {{ $leaveType == 1 ? 'Vacation Leave' : 'Sick Leave' }}
+                                                    <br>
+                                                @endforeach
+                                            @endforeach
+                                        </td>
+                                        <td></td> 
+                                    </tr>
+                                @endforeach --}}
                             </tbody>
                         </table>
                         <label><b>III. Overtime</b></label>
-                        <table class="table table-hover table-bordered tablewithSearch">
+                        <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
                                     <th>No.</th>
