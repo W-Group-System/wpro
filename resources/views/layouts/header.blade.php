@@ -601,6 +601,7 @@
                     @endif
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-benefits') }}">Employee Benefits</a></li>
                 </ul>
             </div>
         </li>
