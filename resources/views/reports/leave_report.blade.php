@@ -58,9 +58,11 @@
 							<div class="col-lg-12 grid-margin stretch-card">
 							  <div class="card">
 								<div class="card-body">
-								  <h4 class="card-title">Leave Report <a href="/leave-report-export?company={{$company}}&from={{$from}}&to={{$to}}&status={{$status}}" title="Export" class="btn btn-outline-primary btn-icon-text btn-sm text-center"><i class="ti-arrow-down btn-icon-prepend"></i></a></h4>
+								  <h4 class="card-title">Leave Report 
+									{{-- <a href="/leave-report-export?company={{$company}}&from={{$from}}&to={{$to}}&status={{$status}}" title="Export" class="btn btn-outline-primary btn-icon-text btn-sm text-center"><i class="ti-arrow-down btn-icon-prepend"></i></a> --}}
+									</h4>
 								  <div class="table-responsive">
-									<table class="table table-hover table-bordered tablewithSearch">
+									<table class="table table-hover table-bordered table-detailed">
 									  <thead>
 										<tr>
 										  
@@ -124,6 +126,35 @@
 			</div>
 		</div>
 	</div>
+	
+<!-- DataTables CSS and JS includes -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
+
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    new DataTable('.table-detailed', {
+      // pagelenth:25,
+      paginate:false,
+      dom: 'Bfrtip',
+      buttons: [
+          'copy', 'excel'
+      ],
+      columnDefs: [{
+        "defaultContent": "-",
+        "targets": "_all"
+      }],
+      order: [] 
+    });
+  });
+</script>
+
 @php
 function get_count_days($data,$date_from,$date_to,$halfday)
  {
