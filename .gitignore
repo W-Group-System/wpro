@@ -10,4 +10,5 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /public/nte_files
-public/employee_documents
+/public/employee_documents
+/public/uploads
