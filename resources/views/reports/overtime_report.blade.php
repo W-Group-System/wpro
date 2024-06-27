@@ -13,10 +13,10 @@
                                     <div class='col-md-2'>
                                         <div class="form-group">
                                             <label class="text-right">Company</label>
-                                            <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company' required>
-                                                <option value="">-- Select Company --</option>
+                                            <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company[]' multiple required>
+                                                <option value="">-- Select Employee --</option>
                                                 @foreach($companies as $comp)
-                                                <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
+                                                <option value="{{$comp->id}}" @if (in_array($comp->id,$company)) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -37,7 +37,8 @@
                                         <div class="form-group">
                                             <label class="text-right">Status</label>
                                             <select data-placeholder="Select Status" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='status' required>
-                                                <option value="">-- Select Status --</option>
+                                                <option value=""></option>
+                                                <option value="ALL" @if ('ALL' == $status) selected  @endif>All</option>
                                                 <option value="Approved" @if ('Approved' == $status) selected @endif>Approved</option>
                                                 <option value="Pending" @if ('Pending' == $status) selected @endif>Pending</option>
                                                 <option value="Cancelled" @if ('Cancelled' == $status) selected @endif>Cancelled</option>
@@ -51,7 +52,9 @@
                                 </div>
                             </form>
                         </p>
-                        <h4 class="card-title">Overtime Report <a href="/overtime-report-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" title="Export" class="btn btn-outline-primary btn-icon-text btn-sm text-center"><i class="ti-arrow-down btn-icon-prepend"></i></a></h4>
+                        <h4 class="card-title">Overtime Report 
+                            {{-- <a href="/overtime-report-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" title="Export" class="btn btn-outline-primary btn-icon-text btn-sm text-center"><i class="ti-arrow-down btn-icon-prepend"></i></a> --}}
+                        </h4>
 
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered tablewithSearch" id="overtime_report">

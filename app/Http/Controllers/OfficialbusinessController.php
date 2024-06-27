@@ -28,7 +28,7 @@ class OfficialbusinessController extends Controller
                                 ->whereIn('id',$allowed_companies)
                                 ->get();
 
-        $company = isset($request->company) ? $request->company : "";
+        $company = isset($request->company) ? $request->company : [];
         $from = isset($request->from) ? $request->from : "";
         $to =  isset($request->to) ? $request->to : "";
         $status =  isset($request->status) ? $request->status : "Approved";
@@ -38,10 +38,14 @@ class OfficialbusinessController extends Controller
                                         ->whereDate('applied_date','>=',$from)
                                         ->whereDate('applied_date','<=',$to)
                                         ->whereHas('employee',function($q) use($company){
-                                            $q->where('company_id',$company);
+                                            $q->whereIn('company_id',$company);
                                         })
-                                        ->where('status',$status)
                                         ->get();
+
+            if($status != "ALL")
+            {
+                $employee_obs = $employee_obs->where('status',$status);
+            }
         }
         
 
