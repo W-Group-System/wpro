@@ -635,8 +635,11 @@
             </ul>
           </div>
         </li>
+       
+        @endif
+        @if (checkUserPrivilege('upload_daily_schedule',auth()->user()->id) == 'yes')
         <li class="nav-item">
-          <a href="{{url('daily-schedule')}}" class="nav-link">Schedule</a>
+            <a href="{{url('daily-schedule')}}" class="nav-link">Schedule</a>
         <li>
         @endif
         @endif
