@@ -46,7 +46,7 @@ class LeaveController extends Controller
                                 ->whereIn('id',$allowed_companies)
                                 ->get();
         // dd($request->company);
-        $company = isset($request->company) ? $request->company : "";
+        $company = isset($request->company) ? $request->company : [];
         $from = isset($request->from) ? $request->from : "";
         $to =  isset($request->to) ? $request->to : "";
         $status =  isset($request->status) ? $request->status : "";
