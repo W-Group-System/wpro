@@ -422,7 +422,7 @@
                         </a>
                         <div class="collapse @if ($header == 'Timekeeping') show @endif" id="Timekeeping">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Timekeeping</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Forms</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-timekeeping') }}">Generated Timekeeping</a></li>
                             </ul>
                         </div>
