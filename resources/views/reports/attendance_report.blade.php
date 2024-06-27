@@ -56,6 +56,8 @@
                         </div>
                     </div>
                     <div class="col-12">
+                        <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?month='.$selectedMonth.'&year='.$selectedYear.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br>
+
                         <label><b>I. Tardiness</b></label>
                         <table class="table table-hover table-bordered">
                             <thead>
@@ -135,7 +137,10 @@
                                 @endforeach
                             </tbody>
                         </table>
+
                         {{-- <label>C. Leaves more than 5 consecutive days</label>
+
+
                         <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
@@ -148,7 +153,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($consecLeaveData as $index => $consecLeave)
+                                {{-- @foreach($consecLeaveData as $index => $consecLeave)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $consecLeave['company_code'] }}</td>
@@ -164,7 +169,7 @@
                                         </td>
                                         <td></td> 
                                     </tr>
-                                @endforeach
+                                @endforeach --}}
                             </tbody>
                         </table> --}}
                         <label><b>III. Overtime</b></label>
