@@ -19,7 +19,6 @@
 											<option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
 											@endforeach
 										</select>
-									
 									</div>
 								</div>
 								<div class='col-md-2'>
@@ -39,8 +38,8 @@
 								<div class='col-md-2 mr-2'>
 									<div class="form-group">
 										<label class="text-right">Status</label>
-										<select data-placeholder="Select Status" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='status' required>
-											<option value="">-- Select Status --</option>
+										<select data-placeholder="Select Status" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='status' >
+											<option value="">(ALL)</option>
 											<option value="Approved" @if ('Approved' == $status) selected @endif>Approved</option>
 											<option value="Pending" @if ('Pending' == $status) selected @endif>Pending</option>
 											<option value="Cancelled" @if ('Cancelled' == $status) selected @endif>Cancelled</option>

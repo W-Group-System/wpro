@@ -53,13 +53,17 @@ class LeaveController extends Controller
         $employee_leaves = [];
         if(isset($request->from) && isset($request->to)){
             $employee_leaves = EmployeeLeave::with('user','leave')
-                                        ->whereDate('date_from','>=',$from)
-                                        ->whereDate('date_from','<=',$to)
-                                        ->whereHas('employee',function($q) use($company){
-                                            $q->where('company_id',$company);
-                                        })
-                                        ->where('status',$status)
-                                        ->get();
+            ->whereDate('date_from','>=',$from)
+            ->whereDate('date_from','<=',$to)
+            ->whereHas('employee',function($q) use($company){
+                $q->where('company_id',$company);
+            })
+            ->get();
+            if($status)
+            {
+                $employee_leaves = $employee_leaves->where('status',$status);
+            }
+          
         }
         
 
