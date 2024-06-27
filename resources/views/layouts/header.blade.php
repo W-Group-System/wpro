@@ -620,6 +620,7 @@
                 </ul>
             </div>
         </li>
+        @endif
         <li class="nav-item  @if ($header == 'hrPortal') active @endif">
           <a class="nav-link" data-toggle="collapse" href="#hrPortal" aria-expanded="false" aria-controls="ui-basic">
             <i class="icon-paper menu-icon"></i>
@@ -635,13 +636,18 @@
             </ul>
           </div>
         </li>
-        <li class="nav-item">
+        <li class="nav-item @if($header=='schedule') active @endif ">
           <a href="{{url('daily-schedule')}}" class="nav-link">
             <i class="fa fa-calendar menu-icon"></i>
             Daily Schedule
           </a>
         <li>
-        @endif
+        <li class="nav-item @if($header == 'upload') active @endif">
+          <a href="{{url('upload')}}" class="nav-link">
+            <i class="ti-upload menu-icon"></i>
+            Upload OB/OT/Leaves
+          </a>
+        <li>
         @endif
         </ul>
         </nav>

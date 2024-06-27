@@ -354,6 +354,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/add-employee-training', 'EmployeeTrainingController@store');
     Route::post('/update-employee-training/{id}', 'EmployeeTrainingController@update');
     Route::post('/delete-employee-training/{id}', 'EmployeeTrainingController@delete');
+
+    // Upload Module
+    Route::get('/upload', 'UploadController@index');
+    Route::post('/upload-ob', 'UploadController@upload');
+    Route::post('/export-template', 'UploadController@export');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
