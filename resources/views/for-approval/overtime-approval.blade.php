@@ -82,6 +82,7 @@
                   <table class="table table-hover table-bordered tablewithSearch">
                     <thead>
                       <tr>
+                        <th>Action </th> 
                         <th>Employee Name</th>
                         <th>Date Filed</th>
                         <th>OT Details</th> 
@@ -91,13 +92,24 @@
                         <th>Total Approved (Hrs)</th>
                         <th>Remarks </th>
                         <th>Approvers </th>
-                        <th>Status </th>
-                        <th>Action </th> 
+                        <th>Status </th>                        
                       </tr>
                     </thead>
                     <tbody> 
                       @foreach ($overtimes as $form_approval)
                       <tr>
+                        <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
+                          @foreach($form_approval->approver as $k => $approver)
+                            @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
+                              <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#approve-ot-hrs-{{ $form_approval->id }}" data-toggle="modal" title='Approve'>
+                                <i class="ti-check btn-icon-prepend"></i>                                                    
+                              </button>
+                              <button type="button" class="btn btn-danger btn-sm" id="{{ $form_approval->id }}" data-target="#overtime-declined-remarks-{{ $form_approval->id }}" data-toggle="modal" title='Decline'>
+                                <i class="ti-close btn-icon-prepend"></i>                                                    
+                              </button> 
+                            @endif<br> 
+                          @endforeach
+                        </td>
                         <td>
                             <strong>{{$form_approval->user->name}}</strong> <br>
                             <small>Position : {{$form_approval->user->employee_info->position}}</small> <br>
@@ -157,21 +169,7 @@
                             <label class="badge badge-danger" title="{{$form_approval->approval_remarks}}">{{ $form_approval->status }}</label>
                           @endif  
                         </td>
-                        <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
-
-                          @foreach($form_approval->approver as $k => $approver)
-                            @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
-                              <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#approve-ot-hrs-{{ $form_approval->id }}" data-toggle="modal" title='Approve'>
-                                <i class="ti-check btn-icon-prepend"></i>                                                    
-                              </button>
-                              <button type="button" class="btn btn-danger btn-sm" id="{{ $form_approval->id }}" data-target="#overtime-declined-remarks-{{ $form_approval->id }}" data-toggle="modal" title='Decline'>
-                                <i class="ti-close btn-icon-prepend"></i>                                                    
-                              </button> 
-                            @endif<br> 
-                          @endforeach
-
-                          
-                        </td>
+                        
                         </tr>
                       @endforeach                        
                     </tbody>

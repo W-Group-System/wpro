@@ -1,8 +1,8 @@
-<div class="modal fade" id="view_payroll{{$payroll->date_from}}" tabindex="-1" role="dialog" aria-labelledby="view_payrolldata" aria-hidden="true">
+<div class="modal fade" id="view_payroll{{$payroll->payroll_date_from}}" tabindex="-1" role="dialog" aria-labelledby="view_payrolldata" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="view_payrolldata">View Payroll {{date('M d, Y',strtotime($payroll->date_from))}} - {{date('M d, Y',strtotime($payroll->date_to))}}</h5>
+        <h5 class="modal-title" id="view_payrolldata">View Payroll {{date('M d, Y',strtotime($payroll->payroll_date_from))}} - {{date('M d, Y',strtotime($payroll->payroll_date_to))}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -68,11 +68,11 @@
               </tr>
             </thead>
             <tbody>
-              @foreach($payroll_employees->where('date_from',$payroll->date_from) as $employee)
+              @foreach($payroll_employees->where('payroll_date_from',$payroll->payroll_date_from) as $employee)
               <tr>
                 <td>{{$employee->name}}</td>
-                <td>{{$employee->emp_code}}</td>
-                <td>{{$employee->bank_acctno}}</td>
+                <td>{{$employee->employee_code}}</td>
+                <td>{{$employee->bank_account_number}}</td>
                 <td>{{$employee->bank}}</td>
                 <td>{{$employee->position}}</td>
                 <td>{{$employee->department}}</td>

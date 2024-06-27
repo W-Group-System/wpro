@@ -211,10 +211,22 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Payroll
     Route::get('pay-reg', 'PayslipController@payroll_datas');
+    Route::post('importPayRegExcel', 'PayslipController@importPayRegExcel');
+
+    
+     
     Route::get('timekeeping', 'PayslipController@attendances');
     Route::get('generated-timekeeping', 'PayslipController@generatedAttendances');
     Route::post('pay-reg', 'PayslipController@import');
     Route::post('upload-attendance', 'PayslipController@upload_attendance');
+
+     //Tax
+     Route::get('tax', 'TaxController@tax');
+     Route::post('new-tax','TaxController@new');
+     Route::post('edit-tax/{id}', 'TaxController@edit_tax');
+     Route::delete('delete-tax/{id}', 'TaxController@delete_tax');
+     Route::get('compute_tax', 'TaxController@compute_tax');
+
 
     // Company
     Route::get('company', 'CompanyController@company_index');
@@ -354,6 +366,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/add-employee-training', 'EmployeeTrainingController@store');
     Route::post('/update-employee-training/{id}', 'EmployeeTrainingController@update');
     Route::post('/delete-employee-training/{id}', 'EmployeeTrainingController@delete');
+
+    // Upload Module
+    Route::get('/upload', 'UploadController@index');
+    Route::post('/upload-ob', 'UploadController@upload');
+    Route::post('/export-template', 'UploadController@export');
+
+    // Payroll Setting
+    // Tax Mapping
+    Route::get('/tax-mapping', 'TaxMappingController@index');
+    Route::post('/add-tax-mapping', 'TaxMappingController@addTaxMapping');
+    Route::post('/update-tax-mapping/{id}', 'TaxMappingController@updateTaxMapping');
+    Route::post('/delete-tax-mapping/{id}', 'TaxMappingController@deleteTaxMapping');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

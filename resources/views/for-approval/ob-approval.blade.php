@@ -97,6 +97,7 @@
                             Select
                           </th>
                         @endif
+                        <th>Action </th> 
                         <th>Employee Name</th>
                         <th>Date Filed</th>
                         <th>Date</th>
@@ -107,23 +108,34 @@
                         <th>Approvers</th> 
                         <th>Attachment</th>
                         <th>Status</th>
-                        <th>Action </th> 
                       </tr>
                     </thead>
                     <tbody> 
                       @foreach ($obs as $form_approval)
                       <tr>
                         @if(empty($status) || $status == 'Pending')
-                            <td align="center">
-                              @foreach($form_approval->approver as $k => $approver)
-                                @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
-                                  
-                                    <input type="checkbox" class="checkbox-item" data-id="{{$form_approval->id}}">
-                                  </td>
-                                @endif
-                              @endforeach
-                            </td>
-                          @endif
+                          <td align="center">
+                            @foreach($form_approval->approver as $k => $approver)
+                              @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
+                                
+                                  <input type="checkbox" class="checkbox-item" data-id="{{$form_approval->id}}">
+                                </td>
+                              @endif
+                            @endforeach
+                          </td>
+                        @endif
+                        <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
+                          @foreach($form_approval->approver as $k => $approver)
+                            @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
+                              <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#ob-approved-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Approve">
+                                <i class="ti-check btn-icon-prepend"></i>                                                    
+                              </button>
+                              <button type="button" class="btn btn-danger btn-sm" id="{{ $form_approval->id }}" data-target="#ob-declined-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Decline">
+                                <i class="ti-close btn-icon-prepend"></i>                                                    
+                              </button> 
+                            @endif<br> 
+                          @endforeach
+                        </td>
                         <td>
                             <strong>{{$form_approval->user->name}}</strong> <br>
                             <small>Position : {{$form_approval->user->employee->position}}</small> <br>
@@ -170,21 +182,6 @@
                           @elseif($form_approval->status == 'Declined' || $form_approval->status == 'Cancelled')
                             <label class="badge badge-danger" title="{{$form_approval->approval_remarks}}">{{ $form_approval->status }}</label>
                           @endif  
-                        </td>
-                        <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
-
-                          @foreach($form_approval->approver as $k => $approver)
-                            @if($approver->approver_id == $approver_id && $form_approval->level == $k && $form_approval->status == 'Pending')
-                              <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#ob-approved-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Approve">
-                                <i class="ti-check btn-icon-prepend"></i>                                                    
-                              </button>
-                              <button type="button" class="btn btn-danger btn-sm" id="{{ $form_approval->id }}" data-target="#ob-declined-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Decline">
-                                <i class="ti-close btn-icon-prepend"></i>                                                    
-                              </button> 
-                            @endif<br> 
-                          @endforeach
-
-                          
                         </td>
                         </tr>
                       @endforeach                        

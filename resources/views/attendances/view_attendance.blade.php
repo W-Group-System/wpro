@@ -85,6 +85,7 @@
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
                                     @if($employee_schedule != null)
+
                                       @if($employee_schedule->time_in_from != '00:00')
                                         <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
                                         @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)

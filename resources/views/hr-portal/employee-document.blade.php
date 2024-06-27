@@ -1,4 +1,11 @@
 @extends('layouts.header')
+@section('css_header')
+  <style>
+    .pagination {
+      float: right;
+    }
+  </style>
+@endsection
 
 @section('content')
   <div class="main-panel">
@@ -8,7 +15,7 @@
           <div class="card grid-margin stretch-card">
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-hover table-bordered tablewithSearch">
+                <table class="table table-hover table-bordered mb-4">
                   <thead>
                     <tr>
                       <th>Employee Number</th>
@@ -42,6 +49,8 @@
                     @endforeach
                   </tbody>
                 </table>
+
+                {!! $employee->links() !!}
               </div>
             </div>
           </div>
