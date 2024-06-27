@@ -422,7 +422,7 @@
                         </a>
                         <div class="collapse @if ($header == 'Timekeeping') show @endif" id="Timekeeping">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Timekeeping</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Forms</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-timekeeping') }}">Generated Timekeeping</a></li>
                             </ul>
                         </div>
@@ -489,14 +489,21 @@
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/holidays') }}">Holidays</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/schedules') }}">Schedules</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/handbooks') }}">Handbook</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
+                                {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/handbooks') }}">Handbook</a></li> --}}
+
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/leavee-settings') }}">Leave Type</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/announcements') }}">Announcements</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/logos') }}">Logos</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/hr-approver-setting') }}">HR Approver Setting</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/tax') }}">Tax</a></li>
+
                             </ul>
                         </div>
                     </li>
+                    @endif
+                    @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'Payroll') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#payroll" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-align-center menu-icon"></i>
@@ -510,7 +517,19 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
                             </ul>
                         </div>
-        </li>
+                    </li>
+                    <li class="nav-item @if ($header == 'payrollSetting') active @endif">
+                      <a class="nav-link" data-toggle="collapse" href="#payrollSetting" aria-expanded="false" aria-controls="ui-basic">
+                        <i class="icon-align-center menu-icon"></i>
+                        <span class="menu-title">Payroll Setting</span>
+                        <i class="menu-arrow"></i>
+                      </a>
+                      <div class="collapse" id="payrollSetting">
+                        <ul class="nav flex-column sub-menu">
+                          <li class="nav-item"> <a class="nav-link" href="{{ url('tax-mapping') }}">Tax Mapping</a></li>
+                        </ul>
+                      </div>
+                    </li>
                     @endif
 
                     
@@ -636,7 +655,9 @@
             </ul>
           </div>
         </li>
-        <li class="nav-item @if($header=='schedule') active @endif ">
+        @endif
+        @if (checkUserPrivilege('upload_daily_schedule',auth()->user()->id) == 'yes')
+        <li class="nav-item">
           <a href="{{url('daily-schedule')}}" class="nav-link">
             <i class="fa fa-calendar menu-icon"></i>
             Daily Schedule

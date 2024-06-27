@@ -15,6 +15,7 @@ use App\EmployeeOvertime;
 use App\EmployeeWfh;
 use App\EmployeeOb;
 use App\EmployeeDtr;
+use App\Tax;
 
 function employee_name($employee_names,$employee_number){
     foreach($employee_names as $item){
@@ -660,6 +661,25 @@ function checkEmployeeLeaveCredits($user_id, $leave_type){
     }else{
         return 0;
     }
+}
+function compute_tax($employee_salary) {
+    $taxes = Tax::all();
+
+    foreach ($taxes as $tax) 
+    {
+        // if ($employee_salary >= $tax->from_gross && ($tax->to_gross == 0 || $employee_salary <= $tax->to_gross)) {
+        //     $excess_income = $employee_salary - $tax->excess_over;
+        //     $computed_tax = $tax->tax_plus + ($excess_income * ($tax->percentage / 100));
+        //     return $computed_tax;
+        // }
+        if ($employee_salary >= $tax->from_gross && ($tax->to_gross == 0 || $employee_salary <= $tax->to_gross)) {
+            $excess_income = $employee_salary - $tax->excess_over;
+            $computed_tax = $tax->tax_plus + ($excess_income * ($tax->percentage / 100));
+            return $computed_tax;
+        }
+    }
+
+    return 0; 
 }
 
 function documentTypes() {

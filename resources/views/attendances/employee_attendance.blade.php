@@ -106,13 +106,14 @@
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
                                     @if($employee_schedule != null)
-                                      <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                      
-                                      @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                        <small>(Flexi)</small>
-                                      @endif
-                                    @else 
+                                      @if($employee_schedule->time_in_from != '00:00')
+                                        <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                        @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                          <small>(Flexi)</small>
+                                        @endif
+                                      @else 
                                       <small>RESTDAY</small>
+                                      @endif
                                     @endif
 
                                     {{-- @if($employee_schedule)
@@ -892,6 +893,7 @@
                                                     $if_leave = '';
                                                     $if_attendance_holiday = '';
                                                     $if_attendance_holiday_status = '';
+                                                    $if_restday = '';
                                                     if($check_if_holiday){
                                                         $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                         if($if_attendance_holiday){
@@ -924,6 +926,7 @@
                                                     }else{
                                                         $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                         if(empty($if_leave)){
+                                                          if ($employee_schedule->time_in_from != '00:00') {
                                                             if(empty($if_has_dtr)){
                                                                 if($dtr_correction_time_out == null){
                                                                     if($time_out == null){
@@ -931,20 +934,30 @@
                                                                     }
                                                                 }
                                                             }
+                                                          }
+                                                          else {
+                                                            $if_restday = 'Restday';
+                                                          }
                                                         } 
                                                     }
-                                                        
                                                 @endphp
                                                 {{$if_leave}}
                                                 {{$is_absent}}
                                                 {{$if_dtr_correction}}
                                                 {{$if_attendance_holiday_status}}
+                                                {{$if_restday}}
                                             @endif
                                         @else
                                             @php
                                                 $is_absent = '';
                                                 $if_leave = '';
+                                                $if_restday = '';
+                                                
                                                 if($employee_schedule){
+                                                    if($employee_schedule->time_in_from == '00:00') {
+                                                      $if_restday = 'Restday';
+                                                    }
+                                                  
                                                     if($time_out_data == null){
                                                         $is_absent = 'Absent';
                                                     }
