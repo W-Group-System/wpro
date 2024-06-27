@@ -30,7 +30,7 @@ class DailyScheduleImport implements WithHeadingRow, ToCollection
         
         $employee = Employee::where('status', 'Active')
           ->whereIn('company_id', $allowed_companies)
-          ->where('employee_code', $row['employee_code'])
+          ->where('employee_number', $row['employee_number'])
           ->first();
         
         if (empty($employee)) {
