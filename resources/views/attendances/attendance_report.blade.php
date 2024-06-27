@@ -130,7 +130,129 @@
     </style>
 </head>
 <body style="margin: 0; padding: 0; text-align: left; ">
-  
+  <header>
+    <table style='width:100%;' border="1" cellspacing="0" cellpadding="0">
+        <tr style='height:90px;'>
+            <td  align='center' width='50px' style='width:30%;' rowspan='2'> 
+                <img src='{{ asset('/images/wgroup.PNG')}}' width='170px' >
+            </td>
+            <td class='text-center' colspan='3' >
+                <span  style='font-size:29;text-align: center;'><b>Attendance Report</b>
+                </span>
+            </td>
+        </tr>
+    </table>
+</header>
+<div class="col-12">
+  <h3 id="reportTitle"></h3> <br>
+  <label><b>I. Tardiness</b></label>
+  <table class="table table-hover table-bordered tablewithSearch">
+      <thead>
+          <tr>
+              <th>No.</th>
+              <th>Company</th>
+              <th>Name</th>
+              <th>No. of Days with Tardiness</th>
+              <th>Remarks/ Recommendation</th>
+          </tr>
+      </thead>
+      <tbody>
+          @foreach($tardinessData as $index => $tardiness)
+              <tr>
+                  <td>{{ $loop->iteration }}</td>
+                  <td>{{ $tardiness['company_code'] }}</td>
+                  <td>{{ $tardiness['name'] }}</td>
+                  <td>{{ $tardiness['tardiness_days'] }}</td>
+                  <td>{{ $tardiness['remarks'] }}</td>
+              </tr>
+          @endforeach
+      </tbody>
+  </table>
+  <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
+  <label>A. Leave without Pay</label>
+  <table class="table table-hover table-bordered tablewithSearch">
+      <thead>
+          <tr>
+              <th>No.</th>
+              <th>Company</th>
+              <th>Name</th>
+              <th>No. of LWOP days</th>
+              <th>Reason</th>
+              <th>Remarks/ Recommendation</th>
+          </tr>
+      </thead>
+      <tbody>
+          @foreach($leaveWithoutData as $index => $withoutLeave)
+              <tr>
+                  <td>{{ $loop->iteration }}</td>
+                  <td>{{ $withoutLeave['company_code'] }}</td>
+                  <td>{{ $withoutLeave['name'] }}</td>
+                  <td>{{ $withoutLeave['leave_data'] }}</td>
+                  <td></td>
+                  <td>{{ $withoutLeave['remarks'] }}</td>
+              </tr>
+          @endforeach
+      </tbody>
+  </table>
+  <label>B. Leave Deviations</label>
+  <table class="table table-hover table-bordered tablewithSearch">
+      <thead>
+          <tr>
+              <th>No.</th>
+              <th>Company</th>
+              <th>Name</th>
+              <th>Leave Date(s)</th>
+              <th>Leave Type</th>
+              <th>Remarks/ Recommendation</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+  </table>
+  <label>C. Leaves more than 5 consecutive days</label>
+  <table class="table table-hover table-bordered tablewithSearch">
+      <thead>
+          <tr>
+              <th>No.</th>
+              <th>Company</th>
+              <th>Name</th>
+              <th>Leave Date(s)</th>
+              <th>Leave Type</th>
+              <th>Remarks/ Recommendation</th>
+          </tr>
+      </thead>
+      <tbody>
+          
+      </tbody>
+  </table>
+  <label><b>III. Overtime</b></label>
+  <table class="table table-hover table-bordered tablewithSearch">
+      <thead>
+          <tr>
+              <th>No.</th>
+              <th>Company</th>
+              <th>Regular Working Hours</th>
+              <th>Overtime Hours Total</th>
+              <th>% of Overtime</th>
+              <th>Remarks/ Recommendation</th>
+          </tr>
+      </thead>
+      <tbody>
+          @foreach($overtimeData as $index => $overtime)
+              <tr>
+                  <td>{{ $loop->iteration }}</td>
+                  <td>{{ $overtime['company_code'] }}</td>
+                  <td>{{ number_format($overtime['total_reg_hrs'], 2) }}</td>
+                  <td>{{ number_format($overtime['total_ot'], 2) }}</td>
+                  <td>{{ number_format($overtime['percent_overtime'], 2) }}%</td>
+                  <td>{{ $overtime['remarks'] }}</td>
+              </tr>
+          @endforeach
+      </tbody>
+  </table>
+</div>
+
+
 </body>
 </html>
 
