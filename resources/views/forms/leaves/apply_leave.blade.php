@@ -44,6 +44,8 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_splw && $leave_type->code == 'SPLW')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_el && $leave_type->code == 'EL')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_splvv && $leave_type->code == 'SPLVV')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
@@ -137,6 +139,7 @@
               spl_balance : '<?php echo $spl_balance; ?>',
               splw_balance : '<?php echo $splw_balance; ?>',
               splvv_balance : '<?php echo $splvv_balance; ?>',
+              el_balance : '<?php echo $el_balance; ?>',
           },
           methods: {
             validateLeave() {
@@ -192,6 +195,14 @@
               else if(this.leave_type == '9'){ // SPLVV
                   if(Number(this.splvv_balance) > 0){
                     this.leave_balances = this.splvv_balance;
+                    this.isAllowedWithPay = false;
+                  }else{
+                    this.isAllowedWithPay = true;
+                  }
+              }
+              else if(this.leave_type == '6'){ // EL
+                  if(Number(this.el_balance) > 0){
+                    this.leave_balances = this.el_balance;
                     this.isAllowedWithPay = false;
                   }else{
                     this.isAllowedWithPay = true;
