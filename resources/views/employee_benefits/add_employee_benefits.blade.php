@@ -1,4 +1,4 @@
-<div class="modal fade" id="uploadNteModal">
+<div class="modal fade" id="addEmployeeBenefitsModal">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -7,18 +7,13 @@
       <form action="{{url('add-employee-benefits')}}" method="post" enctype="multipart/form-data" onsubmit="show()">
         {{csrf_field()}}
 
+        <input type="hidden" name="user_id" value="{{$user->id}}">
         <div class="modal-body">
           <div class="row">
             <div class="col-md-12 mb-2">
-              Employee:
-              <select name="employee" class="form-control required js-example-basic-single" style="width: 100%" required>
-                <option value="">-Employee-</option>
-                @foreach ($employee as $emp)
-                  <option value="{{$emp->id}}">{{$emp->employee_code}} - {{$emp->last_name.', '.$emp->first_name.' '.$emp->middle_name}}</option>
-                @endforeach
-              </select>
-            </div>
-            <div class="col-md-12 mb-2">
+              @php
+                $benefits = benefits();
+              @endphp
               Benefits:
               <select name="benefits" class="form-control required js-example-basic-single" style="width: 100%" required>
                 <option value="">-Benefits-</option>

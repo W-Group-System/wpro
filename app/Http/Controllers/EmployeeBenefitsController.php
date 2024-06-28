@@ -30,7 +30,7 @@ class EmployeeBenefitsController extends Controller
 
   public function store(Request $request) {
     $employeeBenefits = new EmployeeBenefits;
-    $employeeBenefits->user_id = $request->employee;
+    $employeeBenefits->user_id = $request->user_id;
     $employeeBenefits->benefits_name = $request->benefits;
     $employeeBenefits->date = date('Y-m-d');
     $employeeBenefits->amount = $request->amount;
@@ -44,7 +44,7 @@ class EmployeeBenefitsController extends Controller
   public function update(Request $request, $id) {
 
     $employeeBenefits = EmployeeBenefits::findOrFail($id);
-    $employeeBenefits->user_id = $request->employee;
+    $employeeBenefits->user_id = $request->user_id;
     $employeeBenefits->benefits_name = $request->benefits;
     $employeeBenefits->date = date('Y-m-d');
     $employeeBenefits->amount = $request->amount;
