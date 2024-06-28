@@ -645,17 +645,17 @@
         <li class="nav-item  @if ($header == 'hrPortal') active @endif">
           <a class="nav-link" data-toggle="collapse" href="#hrPortal" aria-expanded="false" aria-controls="ui-basic">
             <i class="icon-paper menu-icon"></i>
-            <span class="menu-title">HR Portal</span>
+            <span class="menu-title">HR Report</span>
             <i class="menu-arrow"></i>
           </a>
           
-          <div class="collapse" id="hrPortal">
+          {{-- <div class="collapse" id="hrPortal">
             <ul class="nav flex-column sub-menu">
               <li class="nav-item"> <a class="nav-link" href="{{url('nte-upload')}}">NTE Upload</a></li>
               <li class="nav-item"> <a class="nav-link" href="{{url('employee-training')}}">Training</a></li>
               <li class="nav-item"> <a class="nav-link" href="{{url('employee-documents')}}">201 Files</a></li>
             </ul>
-          </div>
+          </div> --}}
         </li>
         @endif
         @if (checkUserPrivilege('upload_daily_schedule',auth()->user()->id) == 'yes')

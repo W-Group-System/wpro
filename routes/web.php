@@ -359,7 +359,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     // 201 Files
     Route::get('/employee-documents', 'EmployeeDocumentController@index');
-    Route::post('/upload-employee-document/{id}', 'EmployeeDocumentController@upload');
+    Route::post('/upload-employee-document', 'EmployeeDocumentController@upload');
     
     // Training
     Route::get('/employee-training', 'EmployeeTrainingController@index');
