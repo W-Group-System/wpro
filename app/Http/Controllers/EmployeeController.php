@@ -43,6 +43,7 @@ use App\Exports\EmployeeHRExport;
 use App\Exports\AttendancePerLocationExport;
 use App\Exports\EmployeeAssociateExport;
 use Barryvdh\DomPDF\Facade as PDF;
+use App\EmployeeBenefits;
 use App\EmployeeTraining;
 use App\NteFile;
 use App\EmployeeDocument;
@@ -1073,6 +1074,8 @@ class EmployeeController extends Controller
                             ->orWhere('name',$user->employee->level)
                             ->first();
 
+        $employeeBenefits = EmployeeBenefits::where('user_id', $user->id)->get();
+        
         $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->id)->get();
         $employeeNte = NteFile::where('employee_id', $user->employee->id)->get();
         $employeeDocument = EmployeeDocument::with('employee')->where('employee_id', $user->employee->id)->get();
@@ -1093,6 +1096,7 @@ class EmployeeController extends Controller
             'schedules' => $schedules,
             'companies' => $companies,
             'level_id' => $level_id,
+            'employeeBenefits' => $employeeBenefits
             'employeeTraining' => $employeeTraining,
             'employeeNte' => $employeeNte,
             'employeeDocuments' => $employeeDocument
