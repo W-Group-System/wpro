@@ -379,6 +379,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/update-tax-mapping/{id}', 'TaxMappingController@updateTaxMapping');
     Route::post('/delete-tax-mapping/{id}', 'TaxMappingController@deleteTaxMapping');
 
+
+    Route::get('/employee-benefits', 'EmployeeBenefitsController@index');
+    Route::post('/add-employee-benefits', 'EmployeeBenefitsController@store');
+    Route::post('/update-employee-benefits/{id}', 'EmployeeBenefitsController@update');
+    Route::post('/delete-employee-benefits/{id}', 'EmployeeBenefitsController@delete');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

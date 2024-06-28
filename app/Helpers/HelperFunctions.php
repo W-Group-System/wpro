@@ -705,3 +705,14 @@ function documentTypes() {
   return $documentTypes;
 }
 
+function benefits() {
+  $benefits = array(
+    'SL' => 'Salary Loan',
+    'EA' => 'Educational Assistance',
+    'WG' => 'Wedding Gifts',
+    'BA' => 'Bereavement Assistance',
+    'HMO' => 'Health Card (HMO)'
+  );
+
+  return $benefits;
+}
