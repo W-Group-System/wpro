@@ -13,14 +13,31 @@ use Illuminate\Support\Facades\Input;
 
 class DailyScheduleController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
+      $allowedCompanies = getUserAllowedCompanies(auth()->user()->id);
 
-      $dailySchedule = DailySchedule::get();
+      $employee = Employee::whereIn('company_id', $allowedCompanies)->where('status', 'Active')->get();
 
+      $dailySchedule = DailySchedule::query();
+
+      if (!empty($request->employee)) {
+        $dailySchedule = $dailySchedule->where('employee_number', $request->employee);
+      }
+      
+      if (!empty($request->date_from) && !empty($request->date_to)) {
+        $dailySchedule = $dailySchedule->whereBetween('log_date', [$request->date_from, $request->date_to]);
+      }
+
+      $dailySchedule = $dailySchedule->get();
+      // dd($dailySchedule);
       return view('schedules.daily_schedule',
         array(
           'header' => 'schedule',
-          'dailySchedule' => $dailySchedule
+          'dailySchedule' => $dailySchedule,
+          'employee' => $employee,
+          'empNum' => $request->employee,
+          'dateFrom' => $request->date_from,
+          'dateTo' => $request->date_to
         )
       );
     }
