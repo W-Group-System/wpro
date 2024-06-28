@@ -304,6 +304,18 @@
                                         Timekeeping Dashboard
                                         <br>
                                         <br>
+                                        @if($user->user_privilege)
+                                            @if($user->user_privilege->upload_daily_schedule == 'on')
+                                                <input type="checkbox" name="upload_daily_schedule" id="upload_daily_schedule{{$user->id}}" value="{{ $user->user_privilege->upload_daily_schedule }}" checked>
+                                            @else
+                                                <input type="checkbox" name="upload_daily_schedule" id="upload_daily_schedule{{$user->id}}">
+                                            @endif
+                                        @else
+                                            <input type="checkbox" name="upload_daily_schedule" id="upload_daily_schedule{{$user->id}}">
+                                        @endif
+                                        Daily Schedule
+                                        <br>
+                                        <br>
                                     </div>
                                     {{-- Settings --}}
                                     <div class="col-md-6 form-group">

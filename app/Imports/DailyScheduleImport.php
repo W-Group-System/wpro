@@ -30,7 +30,7 @@ class DailyScheduleImport implements WithHeadingRow, ToCollection
         
         $employee = Employee::where('status', 'Active')
           ->whereIn('company_id', $allowed_companies)
-          ->where('employee_code', $row['employee_code'])
+          ->where('employee_number', $row['employee_number'])
           ->first();
         
         if (empty($employee)) {
@@ -39,16 +39,17 @@ class DailyScheduleImport implements WithHeadingRow, ToCollection
           return back();
         }
         else {
+          
           $dailySchedule = new DailySchedule;
           $dailySchedule->company = $row['company'];
           $dailySchedule->employee_number = $row['employee_number'];
           $dailySchedule->employee_code = $row['employee_code'];
           $dailySchedule->employee_name = $row['employee_name'];
           $dailySchedule->log_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['log_date']);
-          $dailySchedule->time_in_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_in_from']);
-          $dailySchedule->time_in_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_in_to']);
-          $dailySchedule->time_out_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_out_from']);
-          $dailySchedule->time_out_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_out_to']);
+          $dailySchedule->time_in_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_in_from'])->format('H:i');
+          $dailySchedule->time_in_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_in_to'])->format('H:i');
+          $dailySchedule->time_out_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_out_from'])->format('H:i');
+          $dailySchedule->time_out_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_out_to'])->format('H:i');
           $dailySchedule->working_hours = $row['working_hours'];
           $dailySchedule->save();
         }

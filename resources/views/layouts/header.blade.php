@@ -497,6 +497,8 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/announcements') }}">Announcements</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/logos') }}">Logos</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/hr-approver-setting') }}">HR Approver Setting</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/tax') }}">Tax</a></li>
+
                             </ul>
                         </div>
                     </li>
@@ -652,6 +654,9 @@
             </ul>
           </div>
         </li>
+       
+        @endif
+        @if (checkUserPrivilege('upload_daily_schedule',auth()->user()->id) == 'yes')
         <li class="nav-item">
           <a href="{{url('daily-schedule')}}" class="nav-link">
             <i class="fa fa-calendar menu-icon"></i>

@@ -45,24 +45,27 @@ class LeaveController extends Controller
         $companies = Company::whereHas('employee_has_company')
                                 ->whereIn('id',$allowed_companies)
                                 ->get();
-
-        $company = isset($request->company) ? $request->company : "";
+        // dd($request->company);
+        $company = isset($request->company) ? $request->company : [];
         $from = isset($request->from) ? $request->from : "";
         $to =  isset($request->to) ? $request->to : "";
         $status =  isset($request->status) ? $request->status : "";
         $employee_leaves = [];
         if(isset($request->from) && isset($request->to)){
             $employee_leaves = EmployeeLeave::with('user','leave')
-                                        ->whereDate('date_from','>=',$from)
-                                        ->whereDate('date_from','<=',$to)
-                                        ->whereHas('employee',function($q) use($company){
-                                            $q->where('company_id',$company);
-                                        })
-                                        ->where('status',$status)
-                                        ->get();
+            ->whereDate('date_from','>=',$from)
+            ->whereDate('date_from','<=',$to)
+            ->whereHas('employee',function($q) use($company){
+                $q->whereIn('company_id',$company);
+            })
+            ->get();
+            if($status != "ALL")
+            {
+                $employee_leaves = $employee_leaves->where('status',$status);
+            }
+          
         }
         
-
         return view('reports.leave_report', array(
             'header' => 'reports',
             'company'=>$company,

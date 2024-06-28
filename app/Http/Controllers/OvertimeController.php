@@ -18,7 +18,7 @@ class OvertimeController extends Controller
 {
     //
     public function overtime_report(Request $request){
-        $company = $request->company;
+        $company = isset($request->company) ? $request->company : [];
         $from_date = $request->from;
         $to_date = $request->to;
         $status = isset($request->status) ? $request->status : "Approved";
@@ -37,10 +37,14 @@ class OvertimeController extends Controller
                                                     ->whereDate('ot_date','>=',$from_date)
                                                     ->whereDate('ot_date','<=',$to_date)
                                                     ->whereHas('employee',function($q) use($company){
-                                                        $q->where('company_id',$company);
+                                                        $q->whereIn('company_id',$company);
                                                     })
-                                                    ->where('status',$status)
                                                     ->get();
+
+                        if($status != "ALL")
+                        {
+                            $employee_overtimes = $employee_overtimes->where('status',$status);
+                        }
         }
 
         return view('reports.overtime_report',

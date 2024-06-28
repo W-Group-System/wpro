@@ -651,7 +651,7 @@ class AttendanceController extends Controller
     
             return $pdf->stream('attendance_report' . $selectedMonth . '-' . $selectedYear . '.pdf');
         }
-    
+
         // Pass the filtered data to the view
         return view('reports.attendance_report', [
             'header' => 'attendance-report',
