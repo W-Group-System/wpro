@@ -367,6 +367,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/update-employee-training/{id}', 'EmployeeTrainingController@update');
     Route::post('/delete-employee-training/{id}', 'EmployeeTrainingController@delete');
 
+    // Upload Module
+    Route::get('/upload', 'UploadController@index');
+    Route::post('/upload-ob', 'UploadController@upload');
+    Route::post('/export-template', 'UploadController@export');
+
     // Payroll Setting
     // Tax Mapping
     Route::get('/tax-mapping', 'TaxMappingController@index');
@@ -374,10 +379,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/update-tax-mapping/{id}', 'TaxMappingController@updateTaxMapping');
     Route::post('/delete-tax-mapping/{id}', 'TaxMappingController@deleteTaxMapping');
 
+
     Route::get('/employee-benefits', 'EmployeeBenefitsController@index');
     Route::post('/add-employee-benefits', 'EmployeeBenefitsController@store');
     Route::post('/update-employee-benefits/{id}', 'EmployeeBenefitsController@update');
     Route::post('/delete-employee-benefits/{id}', 'EmployeeBenefitsController@delete');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

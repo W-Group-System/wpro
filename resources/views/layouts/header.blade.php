@@ -423,6 +423,7 @@
                         <div class="collapse @if ($header == 'Timekeeping') show @endif" id="Timekeeping">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Forms</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping') }}">Timekeeping</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-timekeeping') }}">Generated Timekeeping</a></li>
                             </ul>
                         </div>
@@ -640,6 +641,7 @@
                 </ul>
             </div>
         </li>
+        @endif
         <li class="nav-item  @if ($header == 'hrPortal') active @endif">
           <a class="nav-link" data-toggle="collapse" href="#hrPortal" aria-expanded="false" aria-controls="ui-basic">
             <i class="icon-paper menu-icon"></i>
@@ -655,7 +657,6 @@
             </ul>
           </div>
         </li>
-       
         @endif
         @if (checkUserPrivilege('upload_daily_schedule',auth()->user()->id) == 'yes')
         <li class="nav-item">
@@ -664,7 +665,12 @@
             Daily Schedule
           </a>
         <li>
-        @endif
+        <li class="nav-item @if($header == 'upload') active @endif">
+          <a href="{{url('upload')}}" class="nav-link">
+            <i class="ti-upload menu-icon"></i>
+            Upload OB/OT/Leaves
+          </a>
+        <li>
         @endif
         </ul>
         </nav>
