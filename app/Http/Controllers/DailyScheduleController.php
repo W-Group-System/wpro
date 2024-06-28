@@ -28,8 +28,8 @@ class DailyScheduleController extends Controller
         $dailySchedule = $dailySchedule->whereBetween('log_date', [$request->date_from, $request->date_to]);
       }
 
-      $dailySchedule = $dailySchedule->get();
-      // dd($dailySchedule);
+      $dailySchedule = $dailySchedule->where('created_by', auth()->user()->id)->get();
+      
       return view('schedules.daily_schedule',
         array(
           'header' => 'schedule',
@@ -60,6 +60,7 @@ class DailyScheduleController extends Controller
       $dailySchedule->time_out_from = $request->time_out_from;
       $dailySchedule->time_out_to = $request->time_out_to;
       $dailySchedule->working_hours = $request->working_hours;
+      $dailySchedule->created_by = auth()->user()->id;
       $dailySchedule->save();
 
       Alert::success('Successfully Updated')->persistent('Dismiss');
