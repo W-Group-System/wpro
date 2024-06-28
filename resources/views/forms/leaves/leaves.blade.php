@@ -27,6 +27,7 @@
                           $is_allowed_to_file_spl = false;
                           $is_allowed_to_file_splw = false;
                           $is_allowed_to_file_splvv = false;
+                          $is_allowed_to_file_el = false;
 
                           $vl_balance = 0;
                           $sl_balance = 0;
@@ -113,6 +114,8 @@
                                 {{$leave->count}}
                             @elseif ($leave->leave->id == '8')
                                 {{$leave->count}}
+                            @elseif ($leave->leave->id == '6')
+                                {{$leave->count}}
                             @endif
                           </td>
                           <td>
@@ -132,6 +135,8 @@
                                 {{$used_splw}}
                             @elseif ($leave->leave->id == '8')
                                 {{$used_splvv}}
+                            @elseif ($leave->leave->id == '6')
+                                {{$used_el}}
                             @endif
                           </td>
                           <td>
@@ -297,6 +302,17 @@
                                     $is_allowed_to_file_splvv = false;
                                   }
                                   $splvv_balance = $count_splvv;
+                                @endphp
+                            @elseif ($leave->leave->id == '6')
+                                {{($leave->count) - $used_el}}
+                                @php
+                                  $count_el = ($leave->count) - $used_el;
+                                  if($count_el > 0){
+                                    $is_allowed_to_file_el = true;
+                                  }else{
+                                    $is_allowed_to_file_el = false;
+                                  }
+                                  $el_balance = $count_el;
                                 @endphp
                             @endif
                           </td>
