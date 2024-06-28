@@ -51,6 +51,7 @@ class DailyScheduleImport implements WithHeadingRow, ToCollection
           $dailySchedule->time_out_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_out_from'])->format('H:i');
           $dailySchedule->time_out_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['time_out_to'])->format('H:i');
           $dailySchedule->working_hours = $row['working_hours'];
+          $dailySchedule->created_by = auth()->user()->id;
           $dailySchedule->save();
         }
       }
