@@ -36,6 +36,7 @@
                           $spl_balance = 0;
                           $splw_balance = 0;
                           $splvv_balance = 0;
+                          $el_balance = 0;
                       @endphp
 
                       @if(count($leave_balances) > 0)
