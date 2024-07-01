@@ -1096,7 +1096,7 @@ class EmployeeController extends Controller
             'schedules' => $schedules,
             'companies' => $companies,
             'level_id' => $level_id,
-            'employeeBenefits' => $employeeBenefits
+            'employeeBenefits' => $employeeBenefits,
             'employeeTraining' => $employeeTraining,
             'employeeNte' => $employeeNte,
             'employeeDocuments' => $employeeDocument
