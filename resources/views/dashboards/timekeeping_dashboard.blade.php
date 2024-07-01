@@ -69,11 +69,11 @@
                                             <i class="ti-check btn-icon-prepend"></i>                                                    
                                           </button>
                                           <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#leave-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-check btn-icon-prepend"></i>                                                    
+                                            <i class="ti-close btn-icon-prepend"></i>                                                    
                                           </button>
                                         @elseif ($item->status == 'Approved')
                                           <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#leave-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-check btn-icon-prepend"></i>                                                    
+                                            <i class="ti-close btn-icon-prepend"></i>                                                    
                                           </button>
                                           <button type="button" id="edit{{ $item->id }}" class="btn btn-info btn-sm"
                                             data-target="#edit_leave-{{ $item->id }}" data-toggle="modal" title='Edit'>
@@ -154,11 +154,11 @@
                                           <i class="ti-check btn-icon-prepend"></i>                                                    
                                         </button>
                                         <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#ob-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-check btn-icon-prepend"></i>                                                    
+                                            <i class="ti-close btn-icon-prepend"></i>                                                    
                                           </button>
                                       @elseif ($item->status == 'Approved')
                                         <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#ob-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                          <i class="ti-check btn-icon-prepend"></i>                                                    
+                                          <i class="ti-close btn-icon-prepend"></i>                                                    
                                         </button>
                                       @endif
                                     </td>
@@ -301,11 +301,11 @@
                                           <i class="ti-check btn-icon-prepend"></i>                                                    
                                         </button>
                                         <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#overtime-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-check btn-icon-prepend"></i>                                                    
+                                            <i class="ti-close btn-icon-prepend"></i>                                                    
                                           </button>
                                       @elseif ($item->status == 'Approved')
                                         <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#overtime-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                          <i class="ti-check btn-icon-prepend"></i>                                                    
+                                          <i class="ti-close btn-icon-prepend"></i>                                                    
                                         </button>
                                       @endif
                                     </td>
