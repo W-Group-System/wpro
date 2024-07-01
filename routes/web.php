@@ -388,6 +388,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/update-employee-benefits/{id}', 'EmployeeBenefitsController@update');
     Route::post('/delete-employee-benefits/{id}', 'EmployeeBenefitsController@delete');
 
+    // HR Side
+    Route::get('/nte-reports', 'NteFileController@nteReports');
+    Route::get('/employee-training-reports', 'EmployeeTrainingController@employeeTrainingReports');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

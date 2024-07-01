@@ -66,4 +66,16 @@ class NteFileController extends Controller
     Alert::success('Successfully updated.')->persistent('Dismiss');
     return back();
   }
+
+  public function nteReports () {
+
+    $employeeNte = NteFile::with('employee')->get();
+
+    return view('hr_report.nte_report',
+      array(
+        'header' => 'hrReport',
+        'employeeNte' => $employeeNte
+      )
+    );
+  }
 }
