@@ -222,9 +222,7 @@
 
         $("[name='date_from']").removeAttr('max');
         $("[name='date_to']").removeAttr('max');
-      } 
-      
-      if ($(this).val() == 2) {
+      } else if ($(this).val() == 2) {
         
         $("[name='date_from']").attr({
           'min': "{{date('Y-m-d', strtotime('-3 weekday'))}}",
@@ -235,6 +233,11 @@
           'min': "{{date('Y-m-d', strtotime('-3 weekday'))}}",
           'max': "{{date('Y-m-d', strtotime('-1 weekday'))}}"
         });
+      }
+      else {
+        $("[name='date_from']").removeAttr('min max');
+
+        $("[name='date_to']").removeAttr('min max');
       }
     })
   })
