@@ -568,29 +568,29 @@
                         <a class="nav-link" href="{{ url('/loan-type') }}">Loan Types</a>
                     </li>
                     @endif
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-incentive') }}">Employee Incentives</a>
-                    </li>
+                    </li> --}}
                     @if(checkUserPrivilege('masterfiles_employee_allowances',auth()->user()->id) == 'yes')
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a>
                     </li>
                     @endif
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/salary-management') }}">Salary Management</a>
-                    </li>
-                    <li class="nav-item">
+                    </li> --}}
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-companies') }}">Employee Groups</a>
-                    </li>
+                    </li> --}}
                     @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-leave-credits') }}">Employee Leave Credits</a>
                     </li>
                     @endif
                     @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/manual-employee-earned-leaves') }}">Manual Earned Leaves</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-leave-balances') }}">Employee Leave Balances</a>
                     </li>
@@ -600,8 +600,8 @@
                         <a class="nav-link" href="{{ url('/employee-earned-leaves') }}">Employee Earned Leaves</a>
                     </li>
                     @endif
-                    <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
+                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li> --}}
+                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li> --}}
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-benefits') }}">Employee Benefits</a></li> --}}
                 </ul>
             </div>
