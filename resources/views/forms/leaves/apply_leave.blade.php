@@ -140,6 +140,7 @@
               splw_balance : '<?php echo $splw_balance; ?>',
               splvv_balance : '<?php echo $splvv_balance; ?>',
               el_balance : '<?php echo $el_balance; ?>',
+              bl_balance : '<?php echo $bl_balance; ?>',
           },
           methods: {
             validateLeave() {
@@ -203,6 +204,14 @@
               else if(this.leave_type == '6'){ // EL
                   if(Number(this.el_balance) > 0){
                     this.leave_balances = this.el_balance;
+                    this.isAllowedWithPay = false;
+                  }else{
+                    this.isAllowedWithPay = true;
+                  }
+              }
+              else if(this.leave_type == '11'){ // BL
+                  if(Number(this.bl_balance) > 0){
+                    this.leave_balances = this.bl_balance;
                     this.isAllowedWithPay = false;
                   }else{
                     this.isAllowedWithPay = true;
