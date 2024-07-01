@@ -54,7 +54,7 @@ class UploadImport implements ToCollection, WithHeadingRow
               $employeeOb->date_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['start_date'])->format('Y-m-d').':'.date('H:i:s', strtotime($row['start_time']));
               $employeeOb->date_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['end_date'])->format('Y-m-d').':'.date('H:i:s', strtotime($row['end_time']));
               $employeeOb->approved_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
-              $employeeOb->status = 'Approved';
+              $employeeOb->status = $row['status'];
               $employeeOb->created_by = $uid;
               $employeeOb->save();
             }
@@ -62,7 +62,7 @@ class UploadImport implements ToCollection, WithHeadingRow
               $employeeOb->date_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['start_date'])->format('Y-m-d').':'.date('H:i:s', strtotime($row['start_time']));
               $employeeOb->date_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['end_date'])->format('Y-m-d').':'.date('H:i:s', strtotime($row['end_time']));
               $employeeOb->approved_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
-              $employeeOb->status = 'Approved';
+              $employeeOb->status = $row['status'];
               $employeeOb->created_by = $uid;
               $employeeOb->save();
             }
@@ -79,7 +79,7 @@ class UploadImport implements ToCollection, WithHeadingRow
               $employeeOt->start_time = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['start_date_time'])->format('Y-m-d H:i:s');
               $employeeOt->end_time = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['end_date_time'])->format('Y-m-d H:i:s');
               $employeeOt->approved_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
-              $employeeOt->status = 'Approved';
+              $employeeOt->status = $row['status'];
               $employeeOt->created_by = $uid;
               $employeeOt->save();
             }
@@ -87,7 +87,7 @@ class UploadImport implements ToCollection, WithHeadingRow
               $employeeOt->start_time = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['start_date_time'])->format('Y-m-d H:i:s');
               $employeeOt->end_time = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['end_date_time'])->format('Y-m-d H:i:s');
               $employeeOt->approved_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
-              $employeeOt->status = 'Approved';
+              $employeeOt->status = $row['status'];
               $employeeOt->created_by = $uid;
               $employeeOt->save();
             }
@@ -121,7 +121,7 @@ class UploadImport implements ToCollection, WithHeadingRow
             $leaves->date_from = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['start_date'])->format('Y-m-d');
             $leaves->date_to = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['end_date'])->format('Y-m-d');
             $leaves->approved_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
-            $leaves->status = 'Approved';
+            $leaves->status = $row['status'];
             $leaves->created_by = $uid;
             $leaves->save();
           }
