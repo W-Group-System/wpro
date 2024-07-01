@@ -13,10 +13,10 @@
                                     <div class='col-md-2'>
                                         <div class="form-group">
                                             <label class="text-right">Company</label>
-                                            <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company' required>
-                                                <option value="">-- Select Company --</option>
+                                            <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company[]' multiple required>
+                                                <option value="">-- Select Employee --</option>
                                                 @foreach($companies as $comp)
-                                                <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
+                                                <option value="{{$comp->id}}" @if (in_array($comp->id,$company)) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -38,7 +38,8 @@
                                         <div class="form-group">
                                             <label class="text-right">Status</label>
                                             <select data-placeholder="Select Status" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='status' required>
-                                                <option value="">-- Select Status --</option>
+                                                <option value=""></option>
+                                                <option value="ALL" @if ('ALL' == $status) selected  @endif>All</option>
                                                 <option value="Approved" @if ('Approved' == $status) selected @endif>Approved</option>
                                                 <option value="Pending" @if ('Pending' == $status) selected @endif>Pending</option>
                                                 <option value="Cancelled" @if ('Cancelled' == $status) selected @endif>Cancelled</option>
@@ -52,10 +53,13 @@
                                 </div>
                             </form>
                         </p>
-                        <h4 class="card-title">OB Report <a href="/ob-report-export?company={{$company}}&from={{$from}}&to={{$to}}" title="Export" class="btn btn-outline-primary btn-icon-text btn-sm text-center"><i class="ti-arrow-down btn-icon-prepend"></i></a></h4>
+                        <h4 class="card-title">OB Report 
+                            {{-- <a href="/ob-report-export?company={{$company}}&from={{$from}}&to={{$to}}" title="Export" class="btn btn-outline-primary btn-icon-text btn-sm text-center"><i class="ti-arrow-down btn-icon-prepend"></i></a> --}}
+                        
+                        </h4>
 
                         <div class="table-responsive">
-                            <table class="table table-hover table-bordered tablewithSearch" id="ob_report">
+                            <table class="table table-hover table-bordered table-detailed" id="ob_report">
                                 <thead>
                                     <tr>
                                         {{-- <th>User ID</th> --}}
@@ -99,7 +103,33 @@
         </div>
     </div>
 </div>
+<!-- DataTables CSS and JS includes -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
 
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    new DataTable('.table-detailed', {
+      // pagelenth:25,
+      paginate:false,
+      dom: 'Bfrtip',
+      buttons: [
+          'copy', 'excel'
+      ],
+      columnDefs: [{
+        "defaultContent": "-",
+        "targets": "_all"
+      }],
+      order: [] 
+    });
+  });
+</script>
 @php
 function get_count_days($data,$date_from,$date_to)
  {

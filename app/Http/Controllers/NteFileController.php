@@ -33,7 +33,7 @@ class NteFileController extends Controller
     $file->move(public_path().'/nte_files/', $fileName);
 
     $nteFile = new NteFile;
-    $nteFile->employee_id = $request->employee;
+    $nteFile->employee_id = $request->user_id;
     $nteFile->violation = $request->violation;
     $nteFile->file_path = '/nte_files/'.$fileName;
     $nteFile->file_name = $fileName;
@@ -49,7 +49,7 @@ class NteFileController extends Controller
     ]);
 
     $nteFile = NteFile::findOrFail($id);
-    $nteFile->employee_id = $request->employee;
+    $nteFile->employee_id = $request->user_id;
     $nteFile->violation = $request->violation;
 
     if ($request->hasFile('file')) {

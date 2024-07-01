@@ -75,6 +75,10 @@
                                           <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#leave-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
                                             <i class="ti-close btn-icon-prepend"></i>                                                    
                                           </button>
+                                          <button type="button" id="edit{{ $item->id }}" class="btn btn-info btn-sm"
+                                            data-target="#edit_leave-{{ $item->id }}" data-toggle="modal" title='Edit'>
+                                            <i class="ti-pencil-alt"></i>
+                                          </button>
                                         @endif
                                         </td>
                                         <td>
@@ -536,6 +540,7 @@
 @foreach ($leaves as $leave)
   @include('for-approval.remarks.leave_approved_remarks')
   @include('for-approval.remarks.leave_declined_remarks')
+  @include('for-approval.remarks.leave_approved_edit')
 @endforeach
 
 @foreach ($obs as $ob)

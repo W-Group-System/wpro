@@ -12,7 +12,7 @@
                         <p class="card-description">
                             <form method='get' onsubmit='show();' enctype="multipart/form-data">
                                 <div class=row>
-                                    <div class='col-md-2'>
+                                    <div class='col-md-4'>
                                         <div class="form-group">
                                             <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company' required>
                                                 <option value="">-- Select Employee --</option>
@@ -22,7 +22,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class='col-md-2'>
+                                    {{-- <div class='col-md-2'>
                                         <div class="form-group">
                                             <select data-placeholder="Select Department" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='department'>
                                                 <option value="">-- Select Department --</option>
@@ -41,7 +41,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class='col-md-2'>
                                         <div class="form-group">
                                             <input type="date" value='{{$from_date}}' class="form-control" name="from" max='{{date('d/m/Y')}}' onchange='get_min(this.value);' required />
@@ -72,23 +72,42 @@
                                         <td colspan='5'>{{$emp->emp_code}} - {{$emp->first_name}} {{$emp->last_name}}</td>
                                     </tr> --}}
                                     <tr>
-                                        <td>Employee Code</td>
-                                        <td>Schedule</td>
-                                        <td>Name</td>
-                                        <td>Date</td>
-                                        <td>Time In</td>
-                                        <td>Time Out</td>
-                                        <td>Work </td>
-                                        <td>Remarks </td>
-
-                                        {{-- <td>Lates </td>
-                                        <td>Undertime</td>
-                                        <td>Overtime</td>
-                                        <td>Approved Overtime</td>
-                                        <td>Night Diff</td>
-                                        <td>OT Night Diff</td>
-                                        <td>Remarks</th> --}}
-
+                                        <th>Company</th>
+                                        <th>Employee #</th>
+                                        <th>Name</th>
+                                        <th>Log Date</th>
+                                        <th>Shift</th>
+                                        <th>IN</th>
+                                        <th>OUT</th>
+                                        <th>ABS</th>
+                                        <th>LV W/ PAY</th>
+                                        <th>REG HRS</th>
+                                        <th>LATE (min)</th>
+                                        <th>Undertime (min)</th>
+                                        <th>REG OT</th>
+                                        <th>REG ND</th>
+                                        <th>REG OT ND</th>
+                                        <th>RST OT</th>
+                                        <th>RST OT > 8</th>
+                                        <th>RST ND</th>
+                                        <th>RST ND > 8</th>
+                                        <th>LH OT</th>
+                                        <th>LH OT > 8</th>
+                                        <th>LH ND</th>
+                                        <th>LH ND > 8</th>
+                                        <th>SH OT</th>
+                                        <th>SH OT > 8</th>
+                                        <th>SH ND</th>
+                                        <th>SH ND > 8</th>
+                                        <th>RST LH OT</th>
+                                        <th>RST LH OT > 8</th>
+                                        <th>RST LH ND</th>
+                                        <th>RST LH ND > 8</th>
+                                        <th>RST SH OT</th>
+                                        <th>RST SH OT > 8</th>
+                                        <th>RST SH ND</th>
+                                        <th>RST SH ND > 8</th>
+                                        <th>Remarks</th>
                                     </tr>
                                 </thead>
 
@@ -107,16 +126,32 @@
 
                                     @foreach($date_range as $date_r)
                                     @php
-                                        $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id);
+                                        $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_number);
                                     @endphp
                                     <tr>
+                                        <td>{{$emp->company->company_code}}</td>
                                         <td>{{$emp->employee_code}}</td>
                                         <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
+                                        <td class="@if($employee_schedule) @else bg-danger text-white @endif">{{date('d/m/Y',strtotime($date_r))}}</td>
                                         <td> @if($employee_schedule)
                                             <small>{{$emp->schedule_info->schedule_name}}</small>
                                         @endif</td>
+                                        <td> 
+                                          @if($employee_schedule != null)
+                                            @if($employee_schedule->time_in_from != '00:00')
+                                              <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                              @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                <small>(Flexi)</small>
+                                              @endif
+                                            @else 
+                                            <small>RESTDAY</small>
+                                            @endif
+                                          @endif
+                                          {{-- @if($employee_schedule)
+                                            <small>{{$emp->schedule_info->schedule_name}}</small>
+                                          @endif --}}
+                                        </td>
                                         <td class="@if($employee_schedule) @else bg-danger text-white @endif">{{date('d/m/Y',strtotime($date_r))}}</td>
-
                                         @php
                                             $if_has_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
                                             $if_has_wfh = employeeHasWFHDetails($emp->approved_wfhs,date('Y-m-d',strtotime($date_r)));
@@ -275,6 +310,7 @@
                                                                 $is_absent = '';
                                                                 $if_leave = '';
                                                                 $if_attendance_holiday = '';
+                                                                $if_restday = '';
                                                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                                                                 $if_attendance_holiday_status = '';
                                                                 if($check_if_holiday){
@@ -298,7 +334,6 @@
                                                                         }
                                                                         else{
                                                                             $check_attendance = checkHasAttendanceHolidayStatus($emp->attendances,$if_attendance_holiday);
-
                                                                             if(empty($check_attendance)){
                                                                                 $is_absent = 'Absent';
                                                                             }else{
@@ -309,12 +344,17 @@
                                                                 }else{
                                                                     $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                     if(empty($if_leave)){
-                                                                        if(empty($if_has_dtr)){
-                                                                            if($dtr_correction_time_out == null){
-                                                                                if($time_out == null){
-                                                                                    $is_absent = 'Absent';
-                                                                                }
-                                                                            }
+                                                                        if($employee_schedule->time_in_from != '00:00') {
+                                                                          if(empty($if_has_dtr)){
+                                                                              if($dtr_correction_time_out == null){
+                                                                                  if($time_out == null){
+                                                                                      $is_absent = 'Absent';
+                                                                                  }
+                                                                              }
+                                                                          }
+                                                                        }
+                                                                        else {
+                                                                          $if_restday = 'Restday';
                                                                         }
                                                                     } 
                                                                 }
@@ -323,10 +363,12 @@
                                                             {{$if_leave}}
                                                             {{$is_absent}}
                                                             {{$if_attendance_holiday_status}}
+                                                            {{$if_restday}}
                                                         @endif
                                                     @else
                                                         @php
                                                             $is_absent = '';
+                                                            $if_restday = '';
                                                             // if($time_out_data == null){
                                                             //     $is_absent = 'Absent';
                                                             // }
@@ -336,6 +378,7 @@
                                                         @endphp  
                                                         {{$if_leave}}
                                                         {{$is_absent}}
+                                                        {{$if_restday}}
                                                     @endif
                                                 </td>
                                             @endif

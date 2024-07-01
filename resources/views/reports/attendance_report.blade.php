@@ -47,8 +47,17 @@
                         </div>
                     </form>
                     </p>
+                    <div class="row col-md-12 mb-3">
+                        <div class="col-md-3" style="margin-top: 5px;">
+                            <h3 id="reportTitle"></h3> 
+                        </div>
+                        <div class="col-md-9">
+                            <a href="{{ url('/attendance-report?month=' . $selectedMonth . '&year=' . $selectedYear . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a>
+                        </div>
+                    </div>
                     <div class="col-12">
-                        <h3 id="reportTitle"></h3><br>
+                        <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?month='.$selectedMonth.'&year='.$selectedYear.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br>
+
                         <label><b>I. Tardiness</b></label>
                         <table class="table table-hover table-bordered">
                             <thead>
@@ -128,7 +137,10 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <label>C. Leaves more than 5 consecutive days</label>
+
+                        {{-- <label>C. Leaves more than 5 consecutive days</label>
+
+
                         <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
@@ -159,7 +171,7 @@
                                     </tr>
                                 @endforeach --}}
                             </tbody>
-                        </table>
+                        </table> --}}
                         <label><b>III. Overtime</b></label>
                         <table class="table table-hover table-bordered">
                             <thead>

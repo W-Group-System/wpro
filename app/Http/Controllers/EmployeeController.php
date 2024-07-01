@@ -44,8 +44,10 @@ use App\Exports\EmployeeHRExport;
 use App\Exports\AttendancePerLocationExport;
 use App\Exports\EmployeeAssociateExport;
 use Barryvdh\DomPDF\Facade as PDF;
-
-
+use App\EmployeeBenefits;
+use App\EmployeeTraining;
+use App\NteFile;
+use App\EmployeeDocument;
 class EmployeeController extends Controller
 {
     //
@@ -1073,7 +1075,13 @@ class EmployeeController extends Controller
         $level_id = Level::where('id',$user->employee->level)
                             ->orWhere('name',$user->employee->level)
                             ->first();
+
+        $employeeBenefits = EmployeeBenefits::where('user_id', $user->id)->get();
         
+        $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->id)->get();
+        $employeeNte = NteFile::where('employee_id', $user->employee->id)->get();
+        $employeeDocument = EmployeeDocument::with('employee')->where('employee_id', $user->employee->id)->get();
+
         return view('employees.employee_settings_hr',
         array(
             'header' => 'employees',
@@ -1091,6 +1099,10 @@ class EmployeeController extends Controller
             'companies' => $companies,
             'level_id' => $level_id,
             'employee_movements' => $employee_movement,
+            'employeeBenefits' => $employeeBenefits,
+            'employeeTraining' => $employeeTraining,
+            'employeeNte' => $employeeNte,
+            'employeeDocuments' => $employeeDocument
         ));
     
     }
@@ -1705,7 +1717,8 @@ class EmployeeController extends Controller
         $employees = [];
         
         if ($from_date != null) {
-            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','location','schedule_id','employee_code')
+            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','location','schedule_id','employee_code','company_id')
+                                ->with('company')
                                 ->with(['attendances' => function ($query) use ($from_date, $to_date) {
                                     $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
                                     ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
@@ -1747,7 +1760,7 @@ class EmployeeController extends Controller
                 $emp_data = $emp_data->where('location', $location);
             }
 
-            $emp_data =  $emp_data->where('status','Active')->get();
+            $emp_data =  $emp_data->where('status','Active')->get()->take('5');
             
             $date_range =  $attendance_controller->dateRange($from_date, $to_date);
         }
