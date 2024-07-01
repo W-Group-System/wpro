@@ -28,6 +28,7 @@
                           $is_allowed_to_file_splw = false;
                           $is_allowed_to_file_splvv = false;
                           $is_allowed_to_file_el = false;
+                          $is_allowed_to_file_bl = false;
 
                           $vl_balance = 0;
                           $sl_balance = 0;
@@ -37,6 +38,7 @@
                           $splw_balance = 0;
                           $splvv_balance = 0;
                           $el_balance = 0;
+                          $bl_balance = 0;
                       @endphp
 
                       @if(count($leave_balances) > 0)
@@ -117,6 +119,8 @@
                                 {{$leave->count}}
                             @elseif ($leave->leave->id == '6')
                                 {{$leave->count}}
+                            @elseif ($leave->leave->id == '11')
+                                {{$leave->count}}
                             @endif
                           </td>
                           <td>
@@ -138,6 +142,8 @@
                                 {{$used_splvv}}
                             @elseif ($leave->leave->id == '6')
                                 {{$used_el}}
+                            @elseif ($leave->leave->id == '11')
+                                {{$used_bl}}
                             @endif
                           </td>
                           <td>
@@ -314,6 +320,17 @@
                                     $is_allowed_to_file_el = false;
                                   }
                                   $el_balance = $count_el;
+                                @endphp
+                            @elseif ($leave->leave->id == '11')
+                                {{($leave->count) - $used_bl}}
+                                @php
+                                  $count_bl = ($leave->count) - $used_bl;
+                                  if($count_bl > 0){
+                                    $is_allowed_to_file_bl = true;
+                                  }else{
+                                    $is_allowed_to_file_bl = false;
+                                  }
+                                  $bl_balance = $count_bl;
                                 @endphp
                             @endif
                           </td>
