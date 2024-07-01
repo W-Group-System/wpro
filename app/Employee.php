@@ -116,4 +116,16 @@ class Employee extends Model implements Auditable
     public function employeeTraining() {
       return $this->hasMany(EmployeeTraining::class);
     }
+
+    public function employeeMovement(){
+        return $this->hasMany(EmployeeMovement::class,'user_id','user_id');
+    }
+    protected $fillable = [
+        'department_id', 
+        'project',
+        'position',
+        'level',
+        'classification',
+        'immediate_sup',
+    ];
 }

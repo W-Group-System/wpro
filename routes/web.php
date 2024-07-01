@@ -132,6 +132,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('account-setting-hr/{user}', 'EmployeeController@employeeSettingsHR');
     Route::post('account-setting-hr/updateInfoHR/{id}', 'EmployeeController@updateInfoHR');
     Route::post('account-setting-hr/updateEmpInfoHR/{id}', 'EmployeeController@updateEmpInfoHR');
+    Route::post('account-setting-hr/updateEmpMovementHR/{id}', 'EmployeeController@updateEmpMovementHR');
     Route::post('account-setting-hr/updateContactInfoHR/{id}', 'EmployeeController@updateContactInfoHR');
     Route::post('account-setting-hr/updateBeneficiariesHR/{id}', 'EmployeeController@updateBeneficiariesHR');
     Route::get('account-setting-hr/getBeneficiariesHR/{id}', 'EmployeeController@getBeneficiariesHR');

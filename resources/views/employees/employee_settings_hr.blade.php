@@ -314,6 +314,7 @@
                                             <h3>Employment Information 
                                                 @if (checkUserPrivilege('employees_edit',auth()->user()->id) == 'yes')
                                                     <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Edit Employee Information" data-toggle="modal" data-target="#editEmpInfo"><i class="fa fa-pencil"></i></button>
+                                                    <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Notice of Personnel Action" data-toggle="modal" data-target="#createNopa"><i class="fa fa-pencil-square-o"></i></button>
                                                 @endif
                                             </h3>
                                         </strong>
@@ -499,6 +500,49 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane fade" id="v-pills-history" role="tabpanel" aria-labelledby="v-pills-contact-tab">
+                        <div class="card">
+                            <div class="template-demo">
+                                <div class='row m-2'>
+                                    <div class='col-md-12 text-center mt-3 mb-3'>
+                                        <strong>
+                                            <h3>Notice of Personnel Action
+                                            </h3>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class='row  m-2 border-bottom'>
+                                    <div class='col-md-3'>
+                                        <small> Changed By: </small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small> Changed At: </small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small>View Changes</small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small>Attachment</small>
+                                    </div>
+                                </div>
+                                @foreach ($user->employee->employeeMovement as $movement)
+                                <div class='row m-2 border-bottom'>
+                                    <div class='col-md-3'>
+                                        {{ $movement->user_info->name }}
+                                    </div>
+                                    <div class='col-md-3'>
+                                        {{date('M d, Y',strtotime($movement->changed_at ))}}
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <a href='#' data-toggle="modal" data-target="#viewNopa{{$movement->id}}">View</a>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        @if ($movement->nopa_attachment)
+                                        <a href="{{ url($movement->nopa_attachment) }}" target="_blank">Attachment</a>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
                     <div class="tab-pane fade" id="v-pills-bank" role="tabpanel" aria-labelledby="v-pills-bank-tab">
                         <div class="card">
                             <div class="template-demo">
@@ -600,4 +644,9 @@
 @include('employees.edit_employee_info')
 @include('employees.edit_contact_info')
 @include('employees.edit_beneficiaries')
+@include('employees.create_nopa')
+
+@foreach($user->employee->employeeMovement as $movement)
+        @include('employees.view_nopa')   
+    @endforeach
 @endsection
