@@ -100,7 +100,7 @@ class EmployeeEarnedLeaveController extends Controller
     }
     public function addLeave()
     {
-        $employees = Employee::where('status','Active')->whereHas('employee_leave_credits')->get()->take(1);
+        $employees = Employee::where('status','Active')->whereHas('employee_leave_credits')->get();
 
       
         $f_d = date('Y-m-01');
