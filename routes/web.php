@@ -30,6 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     //employees
     Route::get('/dashboard', 'HomeController@index')->name('home');
+    Route::post('/edit-prob/{id}','HomeController@edit_prob');
     Route::get('', 'HomeController@index');
     Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@index')->name('home');
@@ -57,6 +58,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('file-leave', 'EmployeeLeaveController@leaveBalances');
     Route::post('new-leave','EmployeeLeaveController@new');
     Route::post('edit-leave/{id}', 'EmployeeLeaveController@edit_leave');
+    Route::post('hr-edit-leave/{id}', 'EmployeeLeaveController@hr_edit_leave');
     Route::get('disable-leave/{id}', 'EmployeeLeaveController@disable_leave');
     Route::post('request-to-cancel-leave/{id}', 'EmployeeLeaveController@request_to_cancel');
     Route::get('void-to-cancel-leave/{id}', 'EmployeeLeaveController@void_request_to_cancel');
