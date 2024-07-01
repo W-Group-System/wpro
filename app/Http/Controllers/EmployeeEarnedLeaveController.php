@@ -100,7 +100,7 @@ class EmployeeEarnedLeaveController extends Controller
     }
     public function addLeave()
     {
-        $employees = Employee::where('status','Active')->whereHas('employee_leave_credits')->get();
+        $employees = Employee::where('status','Active')->whereHas('employee_leave_credits')->get()->take(1);
 
       
         $f_d = date('Y-m-01');
@@ -119,7 +119,7 @@ class EmployeeEarnedLeaveController extends Controller
             $leave_credits = ($employee->employee_leave_credits)->where('leave_type',1)->first();
             if($leave_credits != null)
             {
-                $fdate = date('Y-m-01');
+                $fdate = date('Y-06-01');
                 $tdate = date('Y-01-01');
                 if($employee->date_regularized != null)
                 {
@@ -130,7 +130,8 @@ class EmployeeEarnedLeaveController extends Controller
                 $datetime2 = new DateTime($tdate);
                 $interval = $datetime1->diff($datetime2);
                 $days = $interval->format('%a');
-                $leave_c = ($leave_credits->count/$days)*$days_d;
+                $leave_c = (($leave_credits->count/$days)*366)/12;
+                // dd($leave_c);
                 $check_if_exist_vl = EmployeeEarnedLeave::where('user_id',$employee->user_id)
                 ->where(function($q) use($month,$year){
                     $q->whereMonth('earned_date',$month)
