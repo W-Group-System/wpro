@@ -393,14 +393,15 @@
                           </ul>
                         </div>
                       </li>
-                      <li class="nav-item @if ($header == 'Proof') active @endif">
+                    
+                    </ul>
+                    @endif
+                    <li class="nav-item @if ($header == 'Proof') active @endif">
                         <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">
                             <i class="fa fa-money menu-icon"></i>
                             <span class="menu-title">Proof of Availment</span>
                         </a>
                       </li>
-                    </ul>
-                    @endif
                     @if (auth()->user()->employee_under->count() != 0)
                     <li class="nav-item">
                         <hr>
