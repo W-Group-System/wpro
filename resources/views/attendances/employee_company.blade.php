@@ -128,6 +128,7 @@
                                     @php
                                         $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_number);
                                         $rest = "";
+                                        $if_leave = "";
                                     @endphp
                                     <tr>
                                         <td>{{$emp->company->company_code}}</td>
@@ -272,7 +273,7 @@
                                                         }
                                                     }else{
                                                         $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
-                                                    
+                                                        
                                                         if(empty($if_leave)){
                                                             if($employee_schedule->time_in_from != '00:00') {
                                                             if(empty($if_has_dtr)){
@@ -299,11 +300,6 @@
                                                
                                                 // $abs=0;
                                             @endphp  
-                                        @endif
-                                        @if($employee_schedule->time_in_from != null)
-                                                @php
-                                                    $if_leave = "";
-                                                @endphp
                                         @endif
                                         <td>{{$time_start}}</td>
                                         <td>{{$time_end}}</td>
@@ -454,7 +450,7 @@
                                         <td>0.00</td> {{--RST SH OT > 8--}}
                                         <td>0.00</td> {{--RST SH ND--}}
                                         <td>0.00</td> {{--RST SH ND > 8	--}}
-                                        <td>{{$if_leave}}
+                                        {{-- <td>{{$if_leave}} --}}
                                             
                                         @if($if_has_ob)
                                         OB
