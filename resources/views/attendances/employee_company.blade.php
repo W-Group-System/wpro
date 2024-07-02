@@ -409,10 +409,12 @@
                                                         $late = 0;
                                                         $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
                                                     }
+                                                
 
                                                    
                                                 }
                                                 else{
+                                                    $work = ($schedule_hours/2);
                                                     $late = 0;
                                                     $undertime_hrs = 0;
                                                 }
