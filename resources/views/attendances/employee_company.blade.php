@@ -127,6 +127,7 @@
                                     @foreach($date_range as $date_r)
                                     @php
                                         $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_number);
+                                        $rest = "";
                                     @endphp
                                     <tr>
                                         <td>{{$emp->company->company_code}}</td>
@@ -142,7 +143,16 @@
                                               @endif
                                             @else 
                                             <small>RESTDAY</small>
+                                            @php
+                                                $rest = "RESTDAY";
+                                            @endphp
                                             @endif
+                                          @else
+                                          <small>RESTDAY</small>
+                                            @php
+                                                $rest = "RESTDAY";
+                                            @endphp
+
                                           @endif
                                           {{-- @if($employee_schedule)
                                             <small>{{$emp->schedule_info->schedule_name}}</small>
@@ -237,18 +247,15 @@
                                                         if($if_attendance_holiday){
 
                                                             $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($if_attendance_holiday)),$employee_schedule);
-                                                            $check_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($if_attendance_holiday)));
                                                         
-                                                            if($check_leave  || $check_ob ){
+                                                            if($check_leave){
                                                                 $if_attendance_holiday_status = 'With-Pay';
                                                                 $abs =0;
                                                                 if($check_leave){
                                                                     if($check_leave == 'SL Without-Pay' || $check_leave == 'VL Without-Pay'){
                                                                         $if_attendance_holiday_status = 'Without-Pay';
-                                                                        $abs = 1;
                                                                     }else{
                                                                         $if_attendance_holiday_status = 'With-Pay';
-                                                                        $abs =0;
                                                                     }
                                                                 }
                                                             }
@@ -289,28 +296,66 @@
                                                 $if_restday = '';
                                                 
                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
-                                                $abs=0;
+                                                // $abs=0;
                                             @endphp  
                                         @endif
                                         <td>{{$time_start}}</td>
                                         <td>{{$time_end}}</td>
-                                        <td>{{$abs}}</td>
+                                
                                         @php
                                             $leave_count = 0;
                                             if($if_leave)
                                             {
                                                 $l = explode('-',$if_leave);
-                                                $leave_count = $l[2];
+                                                $leave_count = $l[1];
                                             }
                                         @endphp
-                                        <td>{{$leave_count}}</td>
+                                     
                                         @php
                                             $work =0;
+                                            $undertime_hrs = 0;
+                                            $undertime = 0;
                                         @endphp
                                         @if(($time_start)&&($time_end))    
                                             @php
-                                                    $work =  round((((strtotime($time_end) - strtotime($time_start)))/3600),2);
-                                                    @endphp                                            
+                                                $work =  round((((strtotime($time_end) - strtotime($time_start)))/3600),2);
+                                                $schedule_hours = 0;
+                                            
+                                                $sched = $employee_schedule->working_hours;
+                                                if($employee_schedule->time_in_from)
+                                                {
+                                                    if($employee_schedule->working_hours > 8)
+                                                    {
+                                                        $schedule_hours =  $employee_schedule->working_hours-1;
+                                                        $sched = $employee_schedule->working_hours+1;
+                                                    }
+                                                    else {
+                                                        $schedule_hours = $employee_schedule->working_hours;
+                                                    }
+
+                                                    if($work > $schedule_hours)
+                                                    {
+                                                        $work = $schedule_hours;
+                                                    }
+                                                    if($schedule_hours > $work)
+                                                    {
+                                                        $undertime = (double) number_format($schedule_hours - $work,2);
+                                                    }
+                                                    if($leave_count == .5)
+                                                    {
+                                                        if($work > $schedule_hours)
+                                                        {
+
+                                                            $work = $schedule_hours/2;
+                                                        }
+                                                        else {
+                                                            $work = $work;
+
+                                                        }
+                                                    }
+                                                }
+
+                                            @endphp                                            
                                         @endif
                                         @php
                                         $late_diff_hours=0;
@@ -325,16 +370,82 @@
                                             if(date('Y-m-d H:i',strtotime($time_in_data_full)) > date('Y-m-d H:i',strtotime($schedule_time_in))){
                                                 $late_diff = $schedule_time_in_final->diff(new DateTime($time_in_data_full));
                                                 $late_diff_hours = round($late_diff->s / 3600 + $late_diff->i / 60 + $late_diff->h + $late_diff->days * 24, 2);
-                                            }
+                                            }   
+                                            
+                                            if($undertime > 0){
+                                                        if($late_diff_hours > 0){
+                                                            $undertime_hrs = $undertime - $late_diff_hours;
+                                                        }else{
+                                                            $undertime_hrs = $undertime;
+                                                        }
+                                                    }  
                                         }
                                         @endphp
-                                        <td>
-                                           
-                                                    
-                                            {{$work}}
+                                        @if($work > 0)
+                                            @php
+                                                $abs = 0;
+                                            @endphp
+                                        @endif
+                                        @if(($leave_count != 0) && ($abs == 0))
+                                            @php
+                                                $abs = $leave_count;
+                                            @endphp
+                                        @endif
+                                        @if($rest)
+                                            @php
+                                                $abs =0;
+                                                $leave_count =0;
+                                            @endphp
+                                        @endif
+                                        @php
+                                            $late = $late_diff_hours*60;
+                                            if($leave_count == .5)
+                                            {
+                                                if($work < $schedule_hours)
+                                                {
+                                                    $late = ($schedule_hours/2)-$work;
+                                                    if($work < $schedule_hours/2)
+                                                    {
+                                                        $late = 0;
+                                                    }
+                                                    $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
+                                                }
+                                            }
+                                        @endphp
+                                        <td>{{$abs}}</td>
+                                        <td>{{$leave_count}}</td>
+                                        <td>{{$work}}</td>
+                                        <td>{{$late}}</td>
+                                        <td>{{$undertime_hrs*60}}</td>
+                                        <td>0.00</td> {{--reg ot--}}
+                                        <td>0.00</td> {{--reg nd--}}
+                                        <td>0.00</td> {{--rst ot--}}
+                                        <td>0.00</td> {{--RST OT > 8--}}
+                                        <td>0.00</td> {{--RST ND--}}
+                                        <td>0.00</td> {{--RST ND > 8--}}
+                                        <td>0.00</td> {{--RST ND > 8--}}
+                                        <td>0.00</td> {{--LH OT--}}
+                                        <td>0.00</td> {{--LH OT > 8--}}
+                                        <td>0.00</td> {{--LH ND	--}}
+                                        <td>0.00</td> {{--LH ND > 8--}}
+                                        <td>0.00</td> {{--SH OT	--}}
+                                        <td>0.00</td> {{--	SH OT > 8	--}}
+                                        <td>0.00</td> {{--SH ND	--}}
+                                        <td>0.00</td> {{--SH ND > 8	--}}
+                                        <td>0.00</td> {{--RST LH OT	--}}
+                                        <td>0.00</td> {{--RST LH OT > 8--}}
+                                        <td>0.00</td> {{--RST LH ND--}}
+                                        <td>0.00</td> {{--RST LH ND > 8--}}
+                                        <td>0.00</td> {{--RST SH OT--}}
+                                        <td>0.00</td> {{--RST SH OT > 8--}}
+                                        <td>0.00</td> {{--RST SH ND--}}
+                                        <td>0.00</td> {{--RST SH ND > 8	--}}
+                                        <td>{{$if_leave}}
                                             
-                                        </td>
-                                        <td>{{$late_diff_hours*60}}</td>
+                                        @if($if_has_ob)
+                                        OB
+                                        @endif
+                                    </td> {{--Remarks--}}
                                                    
                                     </tr>
                                     @endforeach
