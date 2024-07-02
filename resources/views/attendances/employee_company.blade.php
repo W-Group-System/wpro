@@ -452,6 +452,7 @@
                                         <td>0.00</td> {{--RST SH ND > 8	--}}
                                         {{-- <td>{{$if_leave}} --}}
                                         <td>
+                                            {{$if_leave}}
                                         @if($if_has_ob)
                                         OB
                                         @endif
