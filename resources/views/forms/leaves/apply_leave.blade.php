@@ -50,6 +50,8 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_bl && $leave_type->code == 'BL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_el && $leave_type->code == 'EL')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
                       </select>
