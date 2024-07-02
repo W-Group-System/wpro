@@ -296,8 +296,14 @@
                                                 $if_restday = '';
                                                 
                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                               
                                                 // $abs=0;
                                             @endphp  
+                                        @endif
+                                        @if($employee_schedule->time_in_from != null)
+                                                @php
+                                                    $if_leave = "";
+                                                @endphp
                                         @endif
                                         <td>{{$time_start}}</td>
                                         <td>{{$time_end}}</td>
