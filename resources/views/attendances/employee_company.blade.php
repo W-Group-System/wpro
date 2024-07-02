@@ -401,7 +401,7 @@
                                             $late = $late_diff_hours*60;
                                             if($leave_count == .5)
                                             {
-                                                if($work < $schedule_hours)
+                                                if($work < ($schedule_hours/2))
                                                 {
                                                     $late = ($schedule_hours/2)-$work;
                                                     if($work < $schedule_hours/2)
