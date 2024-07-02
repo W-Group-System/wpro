@@ -48,6 +48,9 @@ use App\EmployeeBenefits;
 use App\EmployeeTraining;
 use App\NteFile;
 use App\EmployeeDocument;
+use App\EmployeeSalary;
+use App\SalaryMovement;
+
 class EmployeeController extends Controller
 {
     //
@@ -1309,7 +1312,7 @@ class EmployeeController extends Controller
             ]);
         }
     
-       
+
         //Employee Vessel
         if($request->classification == 4 && $request->vessel_name){
             $employee_vessel = EmployeeVessel::where('user_id', $employee->user_id)->first();
@@ -1349,6 +1352,61 @@ class EmployeeController extends Controller
 
     }
 
+    public function updateEmpSalaryMovementHR(Request $request, $id){
+        
+        // $employee = Employee::findOrFail($id);
+        $salaries = EmployeeSalary::findOrFail($id);
+
+
+        $oldValues = [];
+        $newValues = [];
+        $data = [];
+        $nopa_attachment = null;
+
+        if ($request->filled('basic_salary_to') && $request->basic_salary_to !== $salaries->basic_salary) {
+            $oldValues['basic_salary'] = $salaries->basic_salary;
+            $newValues['basic_salary'] = $request->input('basic_salary_to');
+            $data['basic_salary'] = $newValues['basic_salary'];
+        }
+        if ($request->filled('de_minimis_to') && $request->de_minimis_to !== $salaries->de_minimis) {
+            $oldValues['de_minimis'] = $salaries->de_minimis;
+            $newValues['de_minimis'] = $request->input('de_minimis_to');
+            $data['de_minimis'] = $newValues['de_minimis'];
+        }
+    
+        if ($request->filled('other_allowance_to') && $request->other_allowance_to !== $salaries->other_allowance) {
+            $oldValues['other_allowance'] = $salaries->other_allowance;
+            $newValues['other_allowance'] = $request->input('other_allowance_to');
+            $data['other_allowance'] = $newValues['other_allowance'];
+        }
+    
+        if ($request->file('file')) {
+            $attachment = $request->file('file');
+            $original_name = $attachment->getClientOriginalName();
+            $name = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->move(public_path() . '/nopa_att/', $name);
+            $file_name = '/nopa_att/' . $name;
+            $nopa_attachment = $file_name;
+        }
+    
+    
+        if (!empty($data)) {
+            $salaries->update($data);
+    
+            SalaryMovement::create([
+                'user_id' => $salaries->user_id,
+                'old_values' => json_encode($oldValues),
+                'new_values' => json_encode($newValues),
+                'salary_nopa_attachment'=>$nopa_attachment,
+                'changed_by' => auth()->user()->id,
+                'changed_at' => now(),
+            ]);
+        }
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+
+    }
+
     public function updateContactInfoHR(Request $request, $id){
 
         $employee = Employee::findOrFail($id);
@@ -1374,6 +1432,32 @@ class EmployeeController extends Controller
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
+
+    public function updateEmpSalary(Request $request, $id){
+        $employee = Employee::where('user_id',$id)->first();
+
+        if($employee){
+            $employee_salary = EmployeeSalary::where('user_id',$employee->user_id)->first();
+
+            if(empty($employee_salary)){
+                $salary = new EmployeeSalary;
+                $salary->user_id = $employee->user_id;
+                $salary->basic_salary = $request->basic_salary;
+                $salary->de_minimis = $request->de_minimis;
+                $salary->other_allowance = $request->other_allowance;
+                $salary->save();
+            }else{
+                $employee_salary->basic_salary = $request->basic_salary;
+                $employee_salary->de_minimis = $request->de_minimis;
+                $employee_salary->other_allowance = $request->other_allowance;
+                $employee_salary->save();
+            }
+        }
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+    
 
     public function updateBeneficiariesHR(Request $request, $id){
 

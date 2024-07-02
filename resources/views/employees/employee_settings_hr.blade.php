@@ -396,6 +396,48 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="template-demo">
+                                <div class='row m-2'>
+                                    <div class='col-md-12 text-center mt-3 mb-3'>
+                                        <strong>
+                                            <h3>Salary Information 
+                                                @if (checkUserPrivilege('employees_edit',auth()->user()->id) == 'yes')
+                                                @if (empty($user->employee->employee_salary))
+                                                    <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Employee Salary" data-toggle="modal" data-target="#createEmpSalary">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                @endif
+                                                    <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Salary Notice of Personnel Action" data-toggle="modal" data-target="#createSalaryNopa"><i class="fa fa-pencil-square-o"></i></button>
+                                                @endif
+                                            </h3>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class='row  m-2 border-bottom'>
+                                    <div class='col-md-3'>
+                                        <small> Basic Salary </small>
+                                    </div>
+                                    <div class='col-md-9'>
+                                        {{ $user->employee->employee_salary ? $user->employee->employee_salary->basic_salary : ""}}
+                                    </div>
+                                </div>
+                                <div class='row m-2 border-bottom'>
+                                    <div class='col-md-3 '>
+                                        <small>De Minimis</small>
+                                    </div>
+                                    <div class='col-md-9'>
+                                        {{ $user->employee->employee_salary ? $user->employee->employee_salary->de_minimis : ""}}
+                                    </div>
+                                </div>
+                                <div class='row m-2 border-bottom'>
+                                    <div class='col-md-3 '>
+                                        <small>Other Allowances </small>
+                                    </div>
+                                    <div class='col-md-9'>
+                                        {{ $user->employee->employee_salary ? $user->employee->employee_salary->other_allowance : ""}}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="v-pills-schedule" role="tabpanel" aria-labelledby="v-pills-schedule-tab">
@@ -555,6 +597,55 @@
                                     </div>
                                 </div>
                                 @endforeach
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="template-demo">
+                                <div class='row m-2'>
+                                    <div class='col-md-12 text-center mt-3 mb-3'>
+                                        <strong>
+                                            <h3>Salary Notice of Personnel Action
+                                            </h3>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class='row  m-2 border-bottom'>
+                                    <div class='col-md-3'>
+                                        <small> Changed By: </small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small> Changed At: </small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small>View Changes</small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small>Attachment</small>
+                                    </div>
+                                </div>
+                                @foreach ($user->employee->salaryMovement as $movement)
+                                <div class='row m-2 border-bottom'>
+                                    <div class='col-md-3'>
+                                        {{ $movement->user_info->name }}
+                                    </div>
+                                    <div class='col-md-3'>
+                                        {{date('M d, Y',strtotime($movement->changed_at ))}}
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <a href='#' data-toggle="modal" data-target="#viewSalaryNopa{{$movement->id}}">View</a>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        @if ($movement->salary_nopa_attachment)
+                                        <a href="{{ url($movement->salary_nopa_attachment) }}" target="_blank">Attachment</a>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="tab-pane fade" id="v-pills-bank" role="tabpanel" aria-labelledby="v-pills-bank-tab">
                         <div class="card">
                             <div class="template-demo">
@@ -841,9 +932,14 @@
 @include('employees.edit_contact_info')
 @include('employees.edit_beneficiaries')
 @include('employees.create_nopa')
+@include('employees.create_salary_nopa')
+@include('employees.add_salary')
 @foreach($user->employee->employeeMovement as $movement)
         @include('employees.view_nopa')   
-    @endforeach
+@endforeach
+@foreach($user->employee->salaryMovement as $movement)
+        @include('employees.view_salary_nopa')   
+@endforeach
 @include('employee_benefits.add_employee_benefits')
 @include('hr-portal.new-training')
 @include('hr-portal.new-nte')
