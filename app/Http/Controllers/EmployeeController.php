@@ -1760,7 +1760,7 @@ class EmployeeController extends Controller
                 $emp_data = $emp_data->where('location', $location);
             }
 
-            $emp_data =  $emp_data->where('status','Active')->get()->take('5');
+            $emp_data =  $emp_data->where('status','Active')->get();
             
             $date_range =  $attendance_controller->dateRange($from_date, $to_date);
         }

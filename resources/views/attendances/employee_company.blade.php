@@ -316,7 +316,7 @@
                                             $undertime_hrs = 0;
                                             $undertime = 0;
                                         @endphp
-                                        @if(($time_start)&&($time_end))    
+                                        @if((($time_start)&&($time_end)) && $employee_schedule)    
                                             @php
                                                 $work =  round((((strtotime($time_end) - strtotime($time_start)))/3600),2);
                                                 $schedule_hours = 0;
