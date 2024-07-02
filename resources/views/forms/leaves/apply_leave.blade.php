@@ -48,6 +48,8 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_splvv && $leave_type->code == 'SPLVV')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_bl && $leave_type->code == 'BL')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
                       </select>
