@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Handbook;
 use App\Employee;
 use App\Announcement;
+use App\Classification;
 use App\ScheduleData;
 use App\Holiday;
 
@@ -14,6 +15,7 @@ use App\EmployeeOvertime;
 use App\EmployeeWfh;
 use App\EmployeeOb;
 use App\EmployeeDtr;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class HomeController extends Controller
 {
@@ -66,11 +68,11 @@ class HomeController extends Controller
         $employees_under = auth()->user()->subbordinates;
         // dd(auth()->user()->employee);
         $attendance_employees = $attendance_controller->get_attendances_employees(date('Y-m-d'),date('Y-m-d'),$employees_under->pluck('employee_number')->toArray());
-   
+        $attendance_employees->load('employee.approved_leaves_with_pay');
         // dd($attendance_employees);
         $announcements = Announcement::with('user')->where('expired',null)
         ->orWhere('expired',">=",date('Y-m-d'))->get();
-      
+        
 
         $holidays = Holiday::where('status','Permanent')
         ->whereMonth('holiday_date',date('m'))
@@ -85,10 +87,12 @@ class HomeController extends Controller
           ->whereMonth('original_date_hired', date('m'))
           ->get();
 
-        $probationary_employee = Employee::with('department', 'company')
+        $probationary_employee = Employee::with('department', 'company', 'user_info', 'classification_info')
             ->where('classification', "1")
             ->where('status', "Active")
             ->get();
+
+        $classifications = Classification::get();
         
         return view('dashboards.home',
         array(
@@ -104,7 +108,8 @@ class HomeController extends Controller
             'employee_birthday_celebrants' => $employee_birthday_celebrants ,
             'employees_new_hire' => $employees_new_hire ,
             'employee_anniversaries' => $employee_anniversaries,
-            'probationary_employee' => $probationary_employee
+            'probationary_employee' => $probationary_employee,
+            'classifications' =>$classifications
         ));
     }
 
@@ -149,6 +154,28 @@ class HomeController extends Controller
                                     // ->whereDate('created_at','<=',$to_date)
                                     ->count();
     }
+    public function edit_prob(Request $request, $id) {
+        $employee = Employee::findOrFail($id);
+    
+        $classification = $request->input('classification');
+    
+        if ($classification) {
+            if ($classification == 'for_regularization') {
+                $employee->classification = '2';
+                $employee->date_regularized = $request->input('date_regular');
+            } elseif ($classification == 'for_resignation') {
+                $employee->status = 'Inactive';
+                $employee->date_resigned = $request->input('date_resigned');
+            }
+    
+            $employee->save();
+            Alert::success('Successfully Updated')->persistent('Dismiss');
+            return back();
+        } else {
+            return back()->withErrors(['classification' => 'Classification is required.']);
+        }
+    }
+    
     public function pending_wfh_count($approver_id){
     
         $today = date('Y-m-d');

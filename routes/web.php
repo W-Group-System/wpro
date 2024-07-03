@@ -27,9 +27,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('updateEmpInfo/{id}', 'UserController@updateEmpInfo');
     Route::post('updateEmpContactInfo/{id}', 'UserController@updateEmpContactInfo');
     
+    
 
     //employees
     Route::get('/dashboard', 'HomeController@index')->name('home');
+    Route::post('/edit-prob/{id}','HomeController@edit_prob');
     Route::get('', 'HomeController@index');
     Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@index')->name('home');
@@ -57,6 +59,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('file-leave', 'EmployeeLeaveController@leaveBalances');
     Route::post('new-leave','EmployeeLeaveController@new');
     Route::post('edit-leave/{id}', 'EmployeeLeaveController@edit_leave');
+    Route::post('hr-edit-leave/{id}', 'EmployeeLeaveController@hr_edit_leave');
     Route::get('disable-leave/{id}', 'EmployeeLeaveController@disable_leave');
     Route::post('request-to-cancel-leave/{id}', 'EmployeeLeaveController@request_to_cancel');
     Route::get('void-to-cancel-leave/{id}', 'EmployeeLeaveController@void_request_to_cancel');
@@ -132,6 +135,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('account-setting-hr/{user}', 'EmployeeController@employeeSettingsHR');
     Route::post('account-setting-hr/updateInfoHR/{id}', 'EmployeeController@updateInfoHR');
     Route::post('account-setting-hr/updateEmpInfoHR/{id}', 'EmployeeController@updateEmpInfoHR');
+    Route::post('account-setting-hr/updateEmpMovementHR/{id}', 'EmployeeController@updateEmpMovementHR');
+    Route::post('account-setting-hr/updateEmpSalaryMovementHR/{id}', 'EmployeeController@updateEmpSalaryMovementHR');
+    Route::post('account-setting-hr/updateEmpSalary/{id}', 'EmployeeController@updateEmpSalary');
     Route::post('account-setting-hr/updateContactInfoHR/{id}', 'EmployeeController@updateContactInfoHR');
     Route::post('account-setting-hr/updateBeneficiariesHR/{id}', 'EmployeeController@updateBeneficiariesHR');
     Route::get('account-setting-hr/getBeneficiariesHR/{id}', 'EmployeeController@getBeneficiariesHR');
@@ -359,7 +365,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     // 201 Files
     Route::get('/employee-documents', 'EmployeeDocumentController@index');
-    Route::post('/upload-employee-document/{id}', 'EmployeeDocumentController@upload');
+    Route::post('/upload-employee-document', 'EmployeeDocumentController@upload');
     
     // Training
     Route::get('/employee-training', 'EmployeeTrainingController@index');
@@ -367,12 +373,28 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/update-employee-training/{id}', 'EmployeeTrainingController@update');
     Route::post('/delete-employee-training/{id}', 'EmployeeTrainingController@delete');
 
+    // Upload Module
+    Route::get('/upload', 'UploadController@index');
+    Route::post('/upload-ob', 'UploadController@upload');
+    Route::post('/export-template', 'UploadController@export');
+
     // Payroll Setting
     // Tax Mapping
     Route::get('/tax-mapping', 'TaxMappingController@index');
     Route::post('/add-tax-mapping', 'TaxMappingController@addTaxMapping');
     Route::post('/update-tax-mapping/{id}', 'TaxMappingController@updateTaxMapping');
     Route::post('/delete-tax-mapping/{id}', 'TaxMappingController@deleteTaxMapping');
+
+
+    Route::get('/employee-benefits', 'EmployeeBenefitsController@index');
+    Route::post('/add-employee-benefits', 'EmployeeBenefitsController@store');
+    Route::post('/update-employee-benefits/{id}', 'EmployeeBenefitsController@update');
+    Route::post('/delete-employee-benefits/{id}', 'EmployeeBenefitsController@delete');
+
+    // HR Side
+    Route::get('/nte-reports', 'NteFileController@nteReports');
+    Route::get('/employee-training-reports', 'EmployeeTrainingController@employeeTrainingReports');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

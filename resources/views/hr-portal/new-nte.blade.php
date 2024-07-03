@@ -4,20 +4,12 @@
       <div class="modal-header">
         <h5 class="card-title">Upload NTE</h5>
       </div>
-      <form action="{{url('add-nte')}}" method="post" enctype="multipart/form-data">
+      <form action="{{url('add-nte')}}" method="post" enctype="multipart/form-data" onsubmit="show()">
         {{csrf_field()}}
 
+        <input type="hidden" name="user_id" value="{{$user->id}}">
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-12 mb-2">
-              Employee:
-              <select name="employee" class="form-control required js-example-basic-single" style="width: 100%" required>
-                <option value="">-Employee-</option>
-                @foreach ($employee as $emp)
-                  <option value="{{$emp->id}}">{{$emp->employee_code}} - {{$emp->last_name.', '.$emp->first_name.' '.$emp->middle_name}}</option>
-                @endforeach
-              </select>
-            </div>
             <div class="col-md-12 mb-2">
               Violation:
               <textarea name="violation" rows="5" class="form-control" required></textarea>

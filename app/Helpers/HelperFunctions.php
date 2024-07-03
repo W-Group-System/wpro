@@ -171,6 +171,8 @@ function isRestDay( $date ) {
 }
 
 function employeeHasLeave($employee_leaves = array(), $check_date,$schedule = array()){
+    
+    $halfday=1;
     if(count($employee_leaves) > 0 && $schedule){
         foreach($employee_leaves as $item){
             if($item['date_from'] == $item['date_to']){
@@ -180,9 +182,10 @@ function employeeHasLeave($employee_leaves = array(), $check_date,$schedule = ar
                         $status = 'With-Pay';
                     }
                     if($item['halfday'] == '1'){
-                        return $item['leave']['code'] . ' ' . $item['halfday_status'] . ' ' . $status;
+                        $halfday=.5;
+                        return $item['leave']['code'] . '-' . $halfday . '-' . $status;
                     }else{
-                        return $item['leave']['code'] . ' ' . $status;
+                        return $item['leave']['code'] . '-' . $halfday . '-' . $status;
                     }
                 }
             }else{
@@ -195,10 +198,11 @@ function employeeHasLeave($employee_leaves = array(), $check_date,$schedule = ar
                                 $status = 'With-Pay';
                             }
                             if($item['halfday'] == '1'){
+                                $halfday=.5;
                                 
-                                return $item['leave']['code'] . ' ' . $item['halfday_status'] . ' ' . $status;
+                                return $item['leave']['code'] . '-' . $halfday . ' ' . $status;
                             }else{
-                                return $item['leave']['code'] . ' ' . $status;
+                                return $item['leave']['code'] . '-' . $halfday . ' ' .$status;
                             }
                         }
                     }
@@ -846,3 +850,14 @@ function documentTypes() {
   return $documentTypes;
 }
 
+function benefits() {
+  $benefits = array(
+    'SL' => 'Salary Loan',
+    'EA' => 'Educational Assistance',
+    'WG' => 'Wedding Gifts',
+    'BA' => 'Bereavement Assistance',
+    'HMO' => 'Health Card (HMO)'
+  );
+
+  return $benefits;
+}
