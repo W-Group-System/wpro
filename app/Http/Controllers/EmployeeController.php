@@ -38,13 +38,16 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\AttendanceLog;
 use App\DailySchedule;
+use App\EmployeeMovement;
 use App\Exports\EmployeesExport;
 use App\Exports\EmployeeHRExport;
 use App\Exports\AttendancePerLocationExport;
 use App\Exports\EmployeeAssociateExport;
 use Barryvdh\DomPDF\Facade as PDF;
-
-
+use App\EmployeeBenefits;
+use App\EmployeeTraining;
+use App\NteFile;
+use App\EmployeeDocument;
 class EmployeeController extends Controller
 {
     //
@@ -1040,6 +1043,7 @@ class EmployeeController extends Controller
 
         $employees = Employee::with('department', 'payment_info', 'ScheduleData', 'immediate_sup_data', 'user_info', 'company','classification_info','level_info')->get();
         
+        $employee_movement = EmployeeMovement::with('department','immediate_sup_data', 'user_info', 'classification_info','level_info')->get();
         
         $employee_approvers = Employee::where('status','Active')
                                         ->pluck('user_id')
@@ -1071,7 +1075,13 @@ class EmployeeController extends Controller
         $level_id = Level::where('id',$user->employee->level)
                             ->orWhere('name',$user->employee->level)
                             ->first();
+
+        $employeeBenefits = EmployeeBenefits::where('user_id', $user->id)->get();
         
+        $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->id)->get();
+        $employeeNte = NteFile::where('employee_id', $user->employee->id)->get();
+        $employeeDocument = EmployeeDocument::with('employee')->where('employee_id', $user->employee->id)->get();
+
         return view('employees.employee_settings_hr',
         array(
             'header' => 'employees',
@@ -1087,7 +1097,12 @@ class EmployeeController extends Controller
             'banks' => $banks,
             'schedules' => $schedules,
             'companies' => $companies,
-            'level_id' => $level_id
+            'level_id' => $level_id,
+            'employee_movements' => $employee_movement,
+            'employeeBenefits' => $employeeBenefits,
+            'employeeTraining' => $employeeTraining,
+            'employeeNte' => $employeeNte,
+            'employeeDocuments' => $employeeDocument
         ));
     
     }
@@ -1181,6 +1196,120 @@ class EmployeeController extends Controller
             }
         }
 
+        //Employee Vessel
+        if($request->classification == 4 && $request->vessel_name){
+            $employee_vessel = EmployeeVessel::where('user_id', $employee->user_id)->first();
+
+            if($employee_vessel){
+                $employee_vessel->vessel_name = $request->vessel_name;
+                $employee_vessel->save();
+            }else{
+                $new_employee_vessel = new EmployeeVessel;
+                $new_employee_vessel->user_id = $employee->user_id;
+                $new_employee_vessel->vessel_name = $request->vessel_name;
+                $new_employee_vessel->save();
+            }
+        }
+
+        if($request->level != 1){ 
+            $check_user_allowed_overtime = UserAllowedOvertime::where('user_id',$employee->user_id)->first();
+            if(empty($check_user_allowed_overtime)){
+                $new_user_allowed_overtime = new UserAllowedOvertime;
+                $new_user_allowed_overtime->user_id = $employee->user_id;
+                $new_user_allowed_overtime->allowed_overtime = $request->allowed_overtime;
+                $new_user_allowed_overtime->save();
+            }else{
+                $check_user_allowed_overtime->allowed_overtime = $request->allowed_overtime;
+                $check_user_allowed_overtime->save();
+            }
+        }else{
+            $check_user_allowed_overtime = UserAllowedOvertime::where('user_id',$employee->user_id)->first();
+            if($check_user_allowed_overtime){
+                $check_user_allowed_overtime->allowed_overtime = null;
+                $check_user_allowed_overtime->save();
+            }
+        }
+        
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+
+    }
+
+    public function updateEmpMovementHR(Request $request, $id){
+        
+        $employee = Employee::findOrFail($id);
+
+        $oldValues = [];
+        $newValues = [];
+        $data = [];
+        $nopa_attachment = null;
+
+        if ($request->filled('department_to') && $request->department_to !== $employee->department_id) {
+            $oldValues['department_id'] = $employee->department_id;
+            $newValues['department_id'] = $request->input('department_to');
+            $data['department_id'] = $newValues['department_id'];
+        }
+    
+        if ($request->filled('project_name_to') && $request->project_name_to !== $employee->project_name) {
+            $oldValues['project'] = $request->input('project_name_from');
+            $newValues['project'] = $request->input('project_name_to');
+            $data['project'] = $newValues['project'];
+        }
+    
+        if ($request->filled('position_to') && $request->position_to !== $employee->position) {
+            $oldValues['position'] = $employee->position;
+            $newValues['position'] = $request->input('position_to');
+            $data['position'] = $newValues['position'];
+        }
+    
+        if ($request->filled('level_to') && $request->level_to !== $employee->level) {
+            $oldValues['level'] = $employee->level;
+            $newValues['level'] = $request->input('level_to');
+            $data['level'] = $newValues['level'];
+        }
+    
+        if ($request->filled('classification_to') && $request->classification_to !== $employee->classification) {
+            $oldValues['classification'] = $employee->classification;
+            $newValues['classification'] = $request->input('classification_to');
+            $data['classification'] = $newValues['classification'];
+        }
+
+        if ($request->filled('immediate_supervisor_to') && $request->immediate_supervisor_to !== $employee->immediate_sup) {
+            $oldValues['immediate_sup'] = $employee->immediate_sup;
+            $newValues['immediate_sup'] = $request->input('immediate_supervisor_to');
+            $data['immediate_sup'] = $newValues['immediate_sup'];
+        }
+        if ($request->filled('date_from')) {
+            $oldValues['date_from'] = $request->input('date_from');
+        }
+        
+        if ($request->filled('date_to')) {
+            $newValues['date_to'] = $request->input('date_to');
+        }
+        if ($request->file('file')) {
+            $attachment = $request->file('file');
+            $original_name = $attachment->getClientOriginalName();
+            $name = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->move(public_path() . '/nopa_att/', $name);
+            $file_name = '/nopa_att/' . $name;
+            $nopa_attachment = $file_name;
+        }
+    
+    
+        if (!empty($data)) {
+            $employee->update($data);
+    
+            EmployeeMovement::create([
+                'user_id' => $employee->id,
+                'old_values' => json_encode($oldValues),
+                'new_values' => json_encode($newValues),
+                'nopa_attachment'=>$nopa_attachment,
+                'changed_by' => auth()->user()->id,
+                'changed_at' => now(),
+            ]);
+        }
+    
+       
         //Employee Vessel
         if($request->classification == 4 && $request->vessel_name){
             $employee_vessel = EmployeeVessel::where('user_id', $employee->user_id)->first();
@@ -1588,7 +1717,8 @@ class EmployeeController extends Controller
         $employees = [];
         
         if ($from_date != null) {
-            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','location','schedule_id','employee_code')
+            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','location','schedule_id','employee_code','company_id')
+                                ->with('company')
                                 ->with(['attendances' => function ($query) use ($from_date, $to_date) {
                                     $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
                                     ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])

@@ -188,6 +188,18 @@
                     <a class="nav-link" id="v-pills-benefits-tab" data-toggle="pill" href="#v-pills-benefits" role="tab" aria-controls="v-pills-benefits" aria-selected="false"><i class="fa fa-star" aria-hidden="true"></i>&nbsp;Benefits</a>
                     <a class="nav-link" id="v-pills-bank-tab" data-toggle="pill" href="#v-pills-bank" role="tab" aria-controls="v-pills-bank" aria-selected="false"><i class="fa fa-bank" aria-hidden="true"></i>&nbsp;Bank Details</a>
                     <a class="nav-link" id="v-pills-government-tab" data-toggle="pill" href="#v-pills-government" role="tab" aria-controls="v-pills-government" aria-selected="false"><i class="fa fa-files-o" aria-hidden="true"></i>&nbsp;Government Records and Licenses</a>
+                    <a class="nav-link" id="v-pills-training-tab" data-toggle="pill" href="#v-pills-training" role="tab" aria-controls="v-pills-training" aria-selected="false">
+                      <i class="fa fa-book" aria-hidden="true"></i>
+                      &nbsp;Training
+                    </a>
+                    <a class="nav-link" id="v-pills-nte-tab" data-toggle="pill" href="#v-pills-nte" role="tab" aria-controls="v-pills-nte" aria-selected="false">
+                      <i class="fa fa-ban" aria-hidden="true"></i>
+                      &nbsp;NTE Uploads
+                    </a>
+                    <a class="nav-link" id="v-employee-documents-tab" data-toggle="pill" href="#v-employee-documents" role="tab" aria-controls="v-employee-documents" aria-selected="false">
+                      <i class="fa fa-file" aria-hidden="true"></i>
+                      &nbsp;201 Files
+                    </a>
                 </div>
             </div>
             <div class="col-9">
@@ -314,6 +326,7 @@
                                             <h3>Employment Information 
                                                 @if (checkUserPrivilege('employees_edit',auth()->user()->id) == 'yes')
                                                     <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Edit Employee Information" data-toggle="modal" data-target="#editEmpInfo"><i class="fa fa-pencil"></i></button>
+                                                    <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Notice of Personnel Action" data-toggle="modal" data-target="#createNopa"><i class="fa fa-pencil-square-o"></i></button>
                                                 @endif
                                             </h3>
                                         </strong>
@@ -499,6 +512,49 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane fade" id="v-pills-history" role="tabpanel" aria-labelledby="v-pills-contact-tab">
+                        <div class="card">
+                            <div class="template-demo">
+                                <div class='row m-2'>
+                                    <div class='col-md-12 text-center mt-3 mb-3'>
+                                        <strong>
+                                            <h3>Notice of Personnel Action
+                                            </h3>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class='row  m-2 border-bottom'>
+                                    <div class='col-md-3'>
+                                        <small> Changed By: </small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small> Changed At: </small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small>View Changes</small>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <small>Attachment</small>
+                                    </div>
+                                </div>
+                                @foreach ($user->employee->employeeMovement as $movement)
+                                <div class='row m-2 border-bottom'>
+                                    <div class='col-md-3'>
+                                        {{ $movement->user_info->name }}
+                                    </div>
+                                    <div class='col-md-3'>
+                                        {{date('M d, Y',strtotime($movement->changed_at ))}}
+                                    </div>
+                                    <div class='col-md-3'>
+                                        <a href='#' data-toggle="modal" data-target="#viewNopa{{$movement->id}}">View</a>
+                                    </div>
+                                    <div class='col-md-3'>
+                                        @if ($movement->nopa_attachment)
+                                        <a href="{{ url($movement->nopa_attachment) }}" target="_blank">Attachment</a>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endforeach
                     <div class="tab-pane fade" id="v-pills-bank" role="tabpanel" aria-labelledby="v-pills-bank-tab">
                         <div class="card">
                             <div class="template-demo">
@@ -526,6 +582,66 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-benefits" role="tabpanel" aria-labelledby="v-pills-benefits">
+                        <div class="card p-5">
+                          <div class="template-demo">
+                            <div class='row m-2'>
+                                <div class='col-md-12 text-center mt-3 mb-3'>
+                                    <strong>
+                                        <h3>Employee Benefits
+                                          <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#addEmployeeBenefitsModal">
+                                            <i class="fa fa-plus"></i>
+                                          </button>
+                                        </h3>
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                              <table class="table table-hover table-bordered tablewithSearch">
+                                <thead>
+                                  <tr>
+                                    <th>Employee Name</th>
+                                    <th>Benefits</th>
+                                    <th>Amount</th>
+                                    <th>Date Posted</th>
+                                    <th>Posted By</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @foreach ($employeeBenefits as $eb)
+                                    <tr>
+                                      <td>{{$eb->user->name}}</td>
+                                      <td>
+                                        @switch($eb->benefits_name)
+                                            @case('SL')
+                                              Salary Loan
+                                                @break
+                                            @case('EA')
+                                              Educational Assistance
+                                                @break
+                                            @case('WG')
+                                              Wedding Gift
+                                                @break
+                                            @case('BA')
+                                              Bereavement Assistance
+                                                @break
+                                            @case('HMO')
+                                              Health Card (HMO)
+                                                @break
+                                            @default
+                                        @endswitch
+                                      </td>
+                                      <td><span>&#8369;</span>{{$eb->amount}}</td>
+                                      <td>{{date('M. d, Y', strtotime($eb->date))}}</td>
+                                      <td>{{$eb->postedBy->name}}</td>
+                                    </tr>
+                                  @endforeach
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="v-pills-government" role="tabpanel" aria-labelledby="v-pills-government-tab">
@@ -569,6 +685,130 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane fade" id="v-pills-training" role="tabpanel" aria-labelledby="v-pills-training">
+                      <div class="card p-2">
+                        <div class="template-demo">
+                          <div class='row m-2'>
+                            <div class='col-md-12 text-center mt-3 mb-3'>
+                              <h3>Training
+                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#addTrainingModal">
+                                  <i class="fa fa-plus"></i>
+                                </button>
+                              </h3>
+                            </div>
+                          </div>
+                          <table class="table table-bordered table-hover tablewithSearch">
+                            <thead>
+                              <tr>
+                                <th>Training</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Amount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              @if(count($employeeTraining) > 0)
+                                @foreach ($employeeTraining as $et)
+                                  <tr>
+                                    <td>{{$et->training}}</td>
+                                    <td>{{date('M. d, Y', strtotime($et->start_date))}}</td>
+                                    <td>{{date('M. d, Y', strtotime($et->end_date))}}</td>
+                                    <td><span>&#8369;</span>{{$et->amount}}</td>
+                                  </tr>
+                                @endforeach
+                              @else
+                                <tr>
+                                  <td colspan="4" class="text-center">No data available.</td>
+                                </tr>
+                              @endif
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-nte" role="tabpanel" aria-labelledby="v-pills-nte">
+                      <div class="card p-2">
+                        <div class="template-demo">
+                          <div class='row m-2'>
+                            <div class='col-md-12 text-center mt-3 mb-3'>
+                              <h3>Employee NTE
+                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#uploadNteModal">
+                                  <i class="fa fa-plus"></i>
+                                </button>
+                              </h3>
+                            </div>
+                          </div>
+                          <div class="table-responsive">
+                            <table class="table table-hover table-bordered tablewithSearch">
+                              <thead>
+                                <tr>
+                                  <th>File</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @foreach ($employeeNte as $nte)
+                                  <tr>
+                                    <td>
+                                      <a href="{{url($nte->file_path)}}" title="View file" target="_blank">
+                                        {{$nte->file_name}}
+                                      </a>
+                                    </td>
+                                  </tr>
+                                @endforeach
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-employee-documents" role="tabpanel" aria-labelledby="v-employee-documents">
+                      <div class="card p-4">
+                        <div class="template-demo">
+                          <div class='row m-2'>
+                            <div class='col-md-12 text-center mt-3 mb-3'>
+                              <h3>Employee Documents
+                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#empDocsModal">
+                                  <i class="fa fa-plus"></i>
+                                </button>
+                              </h3>
+                            </div>
+                          </div>
+                          @php
+                            $documentTypes = documentTypes();
+                          @endphp
+                          @foreach ($documentTypes as $key=>$docs)
+                            <div class="row">
+                              <div class="col-md-4 border border-1 border-secondary border-top-bottom border-left-right" style="width: 100%;">
+                                {{$docs}}
+                              </div>
+                                <div class="col-md-4 border border-1 border-secondary border-top-bottom border-left-right" style="width: 100%;">
+                                  @php
+                                    $empty = false;
+                                  @endphp
+                                  @foreach ($employeeDocuments as $item)
+                                    @if($key === $item->document_type)
+                                      Passed
+                                      @php
+                                        $empty = true;
+                                      @endphp
+                                    @endif
+                                  @endforeach
+                                  @if(!$empty)
+                                    Not Yet Submitted
+                                  @endif
+                                </div>
+                              <div class="col-md-4 border border-1 border-secondary border-top-bottom border-left-right" style="width: 100%;">
+                                @foreach ($employeeDocuments as $item)
+                                  @if($key == $item->document_type)
+                                    <a href="{{url($item->file_path)}}" target="_blank">{{$item->file_name}}</a>
+                                  @endif
+                                @endforeach
+                              </div>
+                            </div>
+                          @endforeach
+                        </div>
+                      </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -600,4 +840,12 @@
 @include('employees.edit_employee_info')
 @include('employees.edit_contact_info')
 @include('employees.edit_beneficiaries')
+@include('employees.create_nopa')
+@foreach($user->employee->employeeMovement as $movement)
+        @include('employees.view_nopa')   
+    @endforeach
+@include('employee_benefits.add_employee_benefits')
+@include('hr-portal.new-training')
+@include('hr-portal.new-nte')
+@include('hr-portal.edit-employee-document')
 @endsection

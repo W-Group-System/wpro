@@ -21,6 +21,7 @@ class TimekeepingDashboardController extends Controller
 
         $from = isset($request->from) ? $request->from : "";
         $to =  isset($request->to) ? $request->to : "";
+        $status =  isset($request->status) ? $request->status : "";
 
         $leaves = EmployeeLeave::with('approver.approver_info','user')
                                 ->whereHas('employee',function($q) use($allowed_companies){
@@ -36,7 +37,14 @@ class TimekeepingDashboardController extends Controller
                                         $q->whereIn('project',$allowed_projects);
                                     });
                                 })
-                                ->where('status','Pending')
+                                ->where(function ($query) use ($status) {
+                                    if ($status == 'All') {
+                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                    } else {
+                                        $query->where('status', $status);
+                                    }
+                                })
+                                // ->where('status',$status)
                                 ->whereDate('date_from','>=',$from)
                                 ->whereDate('date_from','<=',$to)
                                 ->orderBy('created_at','DESC')
@@ -55,7 +63,15 @@ class TimekeepingDashboardController extends Controller
                                         $q->whereIn('project',$allowed_projects);
                                     });
                                 })
-                                ->where('status','Pending')
+                                ->where(function ($query) use ($status) {
+                                    if ($status == 'All') {
+                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                    } else {
+                                        $query->where('status', $status);
+                                    }
+                                })
+                                // ->where('status','Pending')
+                                // ->where('status',$status)
                                 ->whereDate('applied_date','>=',$from)
                                 ->whereDate('applied_date','<=',$to)
                                 ->orderBy('created_at','DESC')
@@ -75,7 +91,15 @@ class TimekeepingDashboardController extends Controller
                                         $q->whereIn('project',$allowed_projects);
                                     });
                                 })
-                                ->where('status','Pending')
+                                ->where(function ($query) use ($status) {
+                                    if ($status == 'All') {
+                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                    } else {
+                                        $query->where('status', $status);
+                                    }
+                                })
+                                // ->where('status','Pending')
+                                // ->where('status',$status)
                                 ->whereDate('applied_date','>=',$from)
                                 ->whereDate('applied_date','<=',$to)
                                 ->orderBy('created_at','DESC')
@@ -95,7 +119,15 @@ class TimekeepingDashboardController extends Controller
                                         $q->whereIn('project',$allowed_projects);
                                     });
                                 })
-                                ->where('status','Pending')
+                                ->where(function ($query) use ($status) {
+                                    if ($status == 'All') {
+                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                    } else {
+                                        $query->where('status', $status);
+                                    }
+                                })
+                                // ->where('status','Pending')
+                                // ->where('status',$status)
                                 ->whereDate('ot_date','>=',$from)
                                 ->whereDate('ot_date','<=',$to)
                                 ->orderBy('created_at','DESC')
@@ -115,7 +147,15 @@ class TimekeepingDashboardController extends Controller
                                         $q->whereIn('project',$allowed_projects);
                                     });
                                 })
-                                ->where('status','Pending')
+                                ->where(function ($query) use ($status) {
+                                    if ($status == 'All') {
+                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                    } else {
+                                        $query->where('status', $status);
+                                    }
+                                })
+                                // ->where('status','Pending')
+                                // ->where('status',$status)
                                 ->whereDate('dtr_date','>=',$from)
                                 ->whereDate('dtr_date','<=',$to)
                                 ->orderBy('created_at','DESC')
@@ -142,6 +182,7 @@ class TimekeepingDashboardController extends Controller
                         'header' => 'Timekeeping',
                         'from' => $from,
                         'to' => $to,
+                        'status' => $status,
                         'leaves' => $leaves,
                         'obs' => $obs,
                         'wfhs' => $wfhs,

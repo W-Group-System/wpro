@@ -373,12 +373,29 @@
                             <span class="menu-title">Loans</span>
                         </a>
                     </li>
+                    {{-- <ul class="nav">
+                      <li class="nav-item  @if ($header == 'hrReport') active @endif">
+                        <a class="nav-link" data-toggle="collapse" href="#hrReport" aria-expanded="false" aria-controls="ui-basic">
+                          <i class="icon-paper menu-icon"></i>
+                          <span class="menu-title">HR Portal</span>
+                          <i class="menu-arrow"></i>
+                        </a>
+                        
+                        <div class="collapse" id="hrReport">
+                          <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{{url('nte-reports')}}">NTE Upload</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
+                          </ul>
+                        </div>
+                      </li>
+                    
+                    </ul> --}}
                     <li class="nav-item @if ($header == 'Proof') active @endif">
                         <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">
                             <i class="fa fa-money menu-icon"></i>
                             <span class="menu-title">Proof of Availment</span>
                         </a>
-                    </li>
+                      </li>
                     @if (auth()->user()->employee_under->count() != 0)
                     <li class="nav-item">
                         <hr>
@@ -422,7 +439,8 @@
                         </a>
                         <div class="collapse @if ($header == 'Timekeeping') show @endif" id="Timekeeping">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Timekeeping</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Forms</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping') }}">Timekeeping</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-timekeeping') }}">Generated Timekeeping</a></li>
                             </ul>
                         </div>
@@ -567,29 +585,29 @@
                         <a class="nav-link" href="{{ url('/loan-type') }}">Loan Types</a>
                     </li>
                     @endif
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-incentive') }}">Employee Incentives</a>
-                    </li>
+                    </li> --}}
                     @if(checkUserPrivilege('masterfiles_employee_allowances',auth()->user()->id) == 'yes')
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a>
                     </li>
                     @endif
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/salary-management') }}">Salary Management</a>
-                    </li>
-                    <li class="nav-item">
+                    </li> --}}
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-companies') }}">Employee Groups</a>
-                    </li>
+                    </li> --}}
                     @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-leave-credits') }}">Employee Leave Credits</a>
                     </li>
                     @endif
                     @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/manual-employee-earned-leaves') }}">Manual Earned Leaves</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-leave-balances') }}">Employee Leave Balances</a>
                     </li>
@@ -599,8 +617,9 @@
                         <a class="nav-link" href="{{ url('/employee-earned-leaves') }}">Employee Earned Leaves</a>
                     </li>
                     @endif
-                    <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
+                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li> --}}
+                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li> --}}
+                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-benefits') }}">Employee Benefits</a></li> --}}
                 </ul>
             </div>
         </li>
@@ -639,10 +658,11 @@
                 </ul>
             </div>
         </li>
-        <li class="nav-item  @if ($header == 'hrPortal') active @endif">
+        @endif
+        {{-- <li class="nav-item  @if ($header == 'hrPortal') active @endif">
           <a class="nav-link" data-toggle="collapse" href="#hrPortal" aria-expanded="false" aria-controls="ui-basic">
             <i class="icon-paper menu-icon"></i>
-            <span class="menu-title">HR Portal</span>
+            <span class="menu-title">HR Report</span>
             <i class="menu-arrow"></i>
           </a>
           
@@ -653,8 +673,7 @@
               <li class="nav-item"> <a class="nav-link" href="{{url('employee-documents')}}">201 Files</a></li>
             </ul>
           </div>
-        </li>
-       
+        </li> --}}
         @endif
         @if (checkUserPrivilege('upload_daily_schedule',auth()->user()->id) == 'yes')
         <li class="nav-item">
@@ -663,7 +682,12 @@
             Daily Schedule
           </a>
         <li>
-        @endif
+        <li class="nav-item @if($header == 'upload') active @endif">
+          <a href="{{url('upload')}}" class="nav-link">
+            <i class="ti-upload menu-icon"></i>
+            Upload OB/OT/Leaves
+          </a>
+        <li>
         @endif
         </ul>
         </nav>
