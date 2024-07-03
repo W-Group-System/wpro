@@ -4,19 +4,15 @@
       <div class="modal-header">
         <h5 class="card-title">Add Training</h5>
       </div>
-      <form action="{{url('add-employee-training')}}" method="post" enctype="multipart/form-data">
+      <form action="{{url('add-employee-training')}}" method="post" onsubmit="show()">
         {{csrf_field()}}
-
+        
+        <input type="hidden" name="user_id" value="{{$user->id}}">
         <div class="modal-body">
           <div class="row">
             <div class="col-md-12 mb-2">
-              Employee:
-              <select name="employee" class="form-control required js-example-basic-single" style="width: 100%" required>
-                <option value="">-Employee-</option>
-                @foreach ($employee as $emp)
-                  <option value="{{$emp->id}}">{{$emp->employee_code}} - {{$emp->last_name.', '.$emp->first_name.' '.$emp->middle_name}}</option>
-                @endforeach
-              </select>
+              Training:
+              <input type="text" name="training" id="training" class="form-control">
             </div>
             <div class="col-md-12 mb-2">
               Start Date:
@@ -28,7 +24,7 @@
             </div>
             <div class="col-md-12 mb-2">
               Amount:
-              <input type="number" name="amount" class="form-control" required>
+              <input type="number" name="amount" class="form-control" placeholder="0.00" step=".01" required>
             </div>
           </div>
         </div>

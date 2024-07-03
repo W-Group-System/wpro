@@ -253,6 +253,17 @@ class EmployeeLeaveController extends Controller
         }
     }
 
+    public function hr_edit_leave(Request $request, $id)
+    {
+        $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $new_leave = EmployeeLeave::findOrFail($id);
+        $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
+        $new_leave->save();
+
+            Alert::success('Successfully Updated')->persistent('Dismiss');
+            return back();
+        }
+
     public function disable_leave($id)
     {
         EmployeeLeave::Where('id', $id)->update(['status' => 'Cancelled']);

@@ -25,10 +25,11 @@ class EmployeeTrainingController extends Controller
 
   public function store(Request $request) {
     $employeeTraining = new EmployeeTraining;
-    $employeeTraining->employee_id = $request->employee;
+    $employeeTraining->employee_id = $request->user_id;
     $employeeTraining->start_date = $request->start_date;
     $employeeTraining->end_date = $request->end_date;
     $employeeTraining->amount = $request->amount;
+    $employeeTraining->training = $request->training;
     $employeeTraining->save();
 
     Alert::success('Successfully Added')->persistent('Dismiss');
@@ -41,6 +42,7 @@ class EmployeeTrainingController extends Controller
     $employeeTraining->start_date = $request->start_date;
     $employeeTraining->end_date = $request->end_date;
     $employeeTraining->amount = $request->amount;
+    $employeeTraining->training = $request->training;
     $employeeTraining->save();
     
     Alert::success('Successfully Updated')->persistent('Dismiss');
@@ -53,5 +55,17 @@ class EmployeeTrainingController extends Controller
 
     Alert::success('Successfully Deleted')->persistent('Dismiss');
     return back();
+  }
+
+  public function employeeTrainingReports() {
+
+    $employeeTraining = EmployeeTraining::get();
+
+    return view('hr_report.training',
+      array(
+        'header' => 'hrReport',
+        'employeeTraining' => $employeeTraining
+      )
+    );
   }
 }

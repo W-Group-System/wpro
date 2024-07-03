@@ -44,7 +44,13 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_splw && $leave_type->code == 'SPLW')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_el && $leave_type->code == 'EL')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_splvv && $leave_type->code == 'SPLVV')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_bl && $leave_type->code == 'BL')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_el && $leave_type->code == 'EL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
@@ -137,6 +143,8 @@
               spl_balance : '<?php echo $spl_balance; ?>',
               splw_balance : '<?php echo $splw_balance; ?>',
               splvv_balance : '<?php echo $splvv_balance; ?>',
+              el_balance : '<?php echo $el_balance; ?>',
+              bl_balance : '<?php echo $bl_balance; ?>',
           },
           methods: {
             validateLeave() {
@@ -197,6 +205,22 @@
                     this.isAllowedWithPay = true;
                   }
               }
+              else if(this.leave_type == '6'){ // EL
+                  if(Number(this.el_balance) > 0){
+                    this.leave_balances = this.el_balance;
+                    this.isAllowedWithPay = false;
+                  }else{
+                    this.isAllowedWithPay = true;
+                  }
+              }
+              else if(this.leave_type == '11'){ // BL
+                  if(Number(this.bl_balance) > 0){
+                    this.leave_balances = this.bl_balance;
+                    this.isAllowedWithPay = false;
+                  }else{
+                    this.isAllowedWithPay = true;
+                  }
+              }
               
             }
           },
@@ -211,9 +235,7 @@
 
         $("[name='date_from']").removeAttr('max');
         $("[name='date_to']").removeAttr('max');
-      } 
-      
-      if ($(this).val() == 2) {
+      } else if ($(this).val() == 2) {
         
         $("[name='date_from']").attr({
           'min': "{{date('Y-m-d', strtotime('-3 weekday'))}}",
@@ -224,6 +246,11 @@
           'min': "{{date('Y-m-d', strtotime('-3 weekday'))}}",
           'max': "{{date('Y-m-d', strtotime('-1 weekday'))}}"
         });
+      }
+      else {
+        $("[name='date_from']").removeAttr('min max');
+
+        $("[name='date_to']").removeAttr('min max');
       }
     })
   })

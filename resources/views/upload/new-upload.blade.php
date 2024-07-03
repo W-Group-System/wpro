@@ -1,18 +1,22 @@
-<div class="modal fade" id="uploadNteModal">
+<div class="modal fade" id="uploadModal">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="card-title">Upload NTE</h5>
+        <h5 class="card-title">Upload OB/OT/Leaves</h5>
       </div>
-      <form action="{{url('add-nte')}}" method="post" enctype="multipart/form-data" onsubmit="show()">
+      <form action="{{url('upload-ob')}}" method="post" enctype="multipart/form-data" onsubmit="show()">
         {{csrf_field()}}
 
-        <input type="hidden" name="user_id" value="{{$user->id}}">
         <div class="modal-body">
           <div class="row">
             <div class="col-md-12 mb-2">
-              Violation:
-              <textarea name="violation" rows="5" class="form-control" required></textarea>
+              Type:
+              <select name="type" class="form-control required js-example-basic-single" style="width: 100%" required>
+                <option value="">-Type-</option>
+                <option value="VL/SL">Vacation Leave & Sick Leave</option>
+                <option value="OB">Official Business</option>
+                <option value="OT">Overtime</option>
+              </select>
             </div>
             <div class="col-md-12 mb-2">
               Files:
