@@ -373,29 +373,26 @@
                             <span class="menu-title">Loans</span>
                         </a>
                     </li>
-                    {{-- <ul class="nav">
-                      <li class="nav-item  @if ($header == 'hrReport') active @endif">
-                        <a class="nav-link" data-toggle="collapse" href="#hrReport" aria-expanded="false" aria-controls="ui-basic">
-                          <i class="icon-paper menu-icon"></i>
-                          <span class="menu-title">HR Portal</span>
-                          <i class="menu-arrow"></i>
-                        </a>
-                        
-                        <div class="collapse" id="hrReport">
-                          <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="{{url('nte-reports')}}">NTE Upload</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
-                          </ul>
-                        </div>
-                      </li>
-                    
-                    </ul> --}}
                     <li class="nav-item @if ($header == 'Proof') active @endif">
                         <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">
                             <i class="fa fa-money menu-icon"></i>
                             <span class="menu-title">Proof of Availment</span>
                         </a>
-                      </li>
+                    </li>
+                    <li class="nav-item  @if ($header == 'hrReport') active @endif">
+                        <a class="nav-link" data-toggle="collapse" href="#hrReport" aria-expanded="false" aria-controls="ui-basic">
+                            <i class="icon-paper menu-icon"></i>
+                            <span class="menu-title">Employees</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        
+                        <div class="collapse" id="hrReport">
+                            <ul class="nav flex-column sub-menu">
+                            <li class="nav-item"> <a class="nav-link" href="{{url('nte-reports')}}">NTE Upload</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
+                            </ul>
+                        </div>
+                    </li>
                     @if (auth()->user()->employee_under->count() != 0)
                     <li class="nav-item">
                         <hr>
