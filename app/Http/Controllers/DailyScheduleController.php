@@ -13,62 +13,66 @@ use Illuminate\Support\Facades\Input;
 
 class DailyScheduleController extends Controller
 {
-    public function index(Request $request) {
-      $allowedCompanies = getUserAllowedCompanies(auth()->user()->id);
+    public function index(Request $request)
+    {
+        $allowedCompanies = getUserAllowedCompanies(auth()->user()->id);
 
-      $employee = Employee::whereIn('company_id', $allowedCompanies)->where('status', 'Active')->get();
+        $employee = Employee::whereIn('company_id', $allowedCompanies)->where('status', 'Active')->get();
 
-      $dailySchedule = DailySchedule::query();
+        $dailySchedule = DailySchedule::query();
 
-      if (!empty($request->employee)) {
-        $dailySchedule = $dailySchedule->where('employee_number', $request->employee);
-      }
-      
-      if (!empty($request->date_from) && !empty($request->date_to)) {
-        $dailySchedule = $dailySchedule->whereBetween('log_date', [$request->date_from, $request->date_to]);
-      }
+        if (!empty($request->employee)) {
+            $dailySchedule = $dailySchedule->where('employee_number', $request->employee);
+        }
 
-      $dailySchedule = $dailySchedule->where('created_by', auth()->user()->id)->get();
-      
-      return view('schedules.daily_schedule',
-        array(
-          'header' => 'schedule',
-          'dailySchedule' => $dailySchedule,
-          'employee' => $employee,
-          'empNum' => $request->employee,
-          'dateFrom' => $request->date_from,
-          'dateTo' => $request->date_to
-        )
-      );
+        if (!empty($request->date_from) && !empty($request->date_to)) {
+            $dailySchedule = $dailySchedule->whereBetween('log_date', [$request->date_from, $request->date_to]);
+        }
+
+        $dailySchedule = $dailySchedule->where('created_by', auth()->user()->id)->get();
+
+        return view(
+            'schedules.daily_schedule',
+            array(
+                'header' => 'schedule',
+                'dailySchedule' => $dailySchedule,
+                'employee' => $employee,
+                'empNum' => $request->employee,
+                'dateFrom' => $request->date_from,
+                'dateTo' => $request->date_to
+            )
+        );
     }
 
-    public function upload(Request $request) {
-      $request->validate([
-        'file' => 'max:10240'
-      ]);
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'file' => 'max:1024'
+        ]);
 
-      Excel::import(new DailyScheduleImport, $request->file);
+        Excel::import(new DailyScheduleImport, $request->file);
 
-      return back();
+        return back();
     }
 
-    public function update(Request $request, $id) {
-      $dailySchedule = DailySchedule::findOrFail($id);
-      $dailySchedule->log_date = $request->log_date;
-      $dailySchedule->time_in_from = $request->time_in_from;
-      $dailySchedule->time_in_to = $request->time_in_to;
-      $dailySchedule->time_out_from = $request->time_out_from;
-      $dailySchedule->time_out_to = $request->time_out_to;
-      $dailySchedule->working_hours = $request->working_hours;
-      $dailySchedule->created_by = auth()->user()->id;
-      $dailySchedule->save();
+    // public function update(Request $request, $id)
+    // {
+    //     $dailySchedule = DailySchedule::findOrFail($id);
+    //     $dailySchedule->log_date = $request->log_date;
+    //     $dailySchedule->time_in_from = $request->time_in_from;
+    //     $dailySchedule->time_in_to = $request->time_in_to;
+    //     $dailySchedule->time_out_from = $request->time_out_from;
+    //     $dailySchedule->time_out_to = $request->time_out_to;
+    //     $dailySchedule->working_hours = $request->working_hours;
+    //     $dailySchedule->created_by = auth()->user()->id;
+    //     $dailySchedule->save();
 
-      Alert::success('Successfully Updated')->persistent('Dismiss');
-      return back();
-    }
+    //     Alert::success('Successfully Updated')->persistent('Dismiss');
+    //     return back();
+    // }
 
-    public function export(Request $request) {
-      
-      return Excel::download(new DailyScheduleExport, 'Daily Schedule Template.xlsx');
+    public function export(Request $request)
+    {
+        return Excel::download(new DailyScheduleExport, 'Daily Schedule Template.xlsx');
     }
 }

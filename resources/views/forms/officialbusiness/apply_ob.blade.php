@@ -29,7 +29,7 @@
               Date
             </div>
             <div class='col-md-4'>
-              <input type="date" name='applied_date' class="form-control" v-model="applied_date" min="{{date("Y-m-d")}}" @change="validateDates" required>
+              <input type="date" name='applied_date' class="form-control" v-model="applied_date" @change="validateDates" required>
             </div>
           </div>
           <div class="form-group row">

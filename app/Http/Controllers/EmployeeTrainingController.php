@@ -56,4 +56,16 @@ class EmployeeTrainingController extends Controller
     Alert::success('Successfully Deleted')->persistent('Dismiss');
     return back();
   }
+
+  public function employeeTrainingReports() {
+
+    $employeeTraining = EmployeeTraining::get();
+
+    return view('hr_report.training',
+      array(
+        'header' => 'hrReport',
+        'employeeTraining' => $employeeTraining
+      )
+    );
+  }
 }

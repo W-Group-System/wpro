@@ -18,6 +18,10 @@ class Employee extends Model implements Auditable
         return $this->hasOne(EmployeeContactPerson::class,'user_id','user_id');
     }
 
+    public function employee_salary(){
+        return $this->hasOne(EmployeeSalary::class,'user_id','user_id');
+    }
+
     public function classification_info()
     {
         return $this->belongsTo(Classification::class,'classification','id');
@@ -116,4 +120,20 @@ class Employee extends Model implements Auditable
     public function employeeTraining() {
       return $this->hasMany(EmployeeTraining::class);
     }
+
+    public function employeeMovement(){
+        return $this->hasMany(EmployeeMovement::class,'user_id','user_id');
+    }
+
+    public function salaryMovement(){
+        return $this->hasMany(SalaryMovement::class,'user_id','user_id');
+    }
+    protected $fillable = [
+        'department_id', 
+        'project',
+        'position',
+        'level',
+        'classification',
+        'immediate_sup',
+    ];
 }

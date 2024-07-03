@@ -18,7 +18,7 @@ use App\EmployeeContactPerson;
 use App\MaritalStatus;
 use App\Classification;
 use App\EmployeeCompany;
-
+use App\EmployeeSalary;
 use App\Project;
 use App\Location;
 

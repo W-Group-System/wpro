@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\AttendanceLog;
 use App\DailySchedule;
+use App\EmployeeMovement;
 use App\Exports\EmployeesExport;
 use App\Exports\EmployeeHRExport;
 use App\Exports\AttendancePerLocationExport;
@@ -47,6 +48,9 @@ use App\EmployeeBenefits;
 use App\EmployeeTraining;
 use App\NteFile;
 use App\EmployeeDocument;
+use App\EmployeeSalary;
+use App\SalaryMovement;
+
 class EmployeeController extends Controller
 {
     //
@@ -1042,6 +1046,7 @@ class EmployeeController extends Controller
 
         $employees = Employee::with('department', 'payment_info', 'ScheduleData', 'immediate_sup_data', 'user_info', 'company','classification_info','level_info')->get();
         
+        $employee_movement = EmployeeMovement::with('department','immediate_sup_data', 'user_info', 'classification_info','level_info')->get();
         
         $employee_approvers = Employee::where('status','Active')
                                         ->pluck('user_id')
@@ -1096,6 +1101,7 @@ class EmployeeController extends Controller
             'schedules' => $schedules,
             'companies' => $companies,
             'level_id' => $level_id,
+            'employee_movements' => $employee_movement,
             'employeeBenefits' => $employeeBenefits,
             'employeeTraining' => $employeeTraining,
             'employeeNte' => $employeeNte,
@@ -1208,6 +1214,120 @@ class EmployeeController extends Controller
             }
         }
 
+        if($request->level != 1){ 
+            $check_user_allowed_overtime = UserAllowedOvertime::where('user_id',$employee->user_id)->first();
+            if(empty($check_user_allowed_overtime)){
+                $new_user_allowed_overtime = new UserAllowedOvertime;
+                $new_user_allowed_overtime->user_id = $employee->user_id;
+                $new_user_allowed_overtime->allowed_overtime = $request->allowed_overtime;
+                $new_user_allowed_overtime->save();
+            }else{
+                $check_user_allowed_overtime->allowed_overtime = $request->allowed_overtime;
+                $check_user_allowed_overtime->save();
+            }
+        }else{
+            $check_user_allowed_overtime = UserAllowedOvertime::where('user_id',$employee->user_id)->first();
+            if($check_user_allowed_overtime){
+                $check_user_allowed_overtime->allowed_overtime = null;
+                $check_user_allowed_overtime->save();
+            }
+        }
+        
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+
+    }
+
+    public function updateEmpMovementHR(Request $request, $id){
+        
+        $employee = Employee::findOrFail($id);
+
+        $oldValues = [];
+        $newValues = [];
+        $data = [];
+        $nopa_attachment = null;
+
+        if ($request->filled('department_to') && $request->department_to !== $employee->department_id) {
+            $oldValues['department_id'] = $employee->department_id;
+            $newValues['department_id'] = $request->input('department_to');
+            $data['department_id'] = $newValues['department_id'];
+        }
+    
+        if ($request->filled('project_name_to') && $request->project_name_to !== $employee->project_name) {
+            $oldValues['project'] = $request->input('project_name_from');
+            $newValues['project'] = $request->input('project_name_to');
+            $data['project'] = $newValues['project'];
+        }
+    
+        if ($request->filled('position_to') && $request->position_to !== $employee->position) {
+            $oldValues['position'] = $employee->position;
+            $newValues['position'] = $request->input('position_to');
+            $data['position'] = $newValues['position'];
+        }
+    
+        if ($request->filled('level_to') && $request->level_to !== $employee->level) {
+            $oldValues['level'] = $employee->level;
+            $newValues['level'] = $request->input('level_to');
+            $data['level'] = $newValues['level'];
+        }
+    
+        if ($request->filled('classification_to') && $request->classification_to !== $employee->classification) {
+            $oldValues['classification'] = $employee->classification;
+            $newValues['classification'] = $request->input('classification_to');
+            $data['classification'] = $newValues['classification'];
+        }
+
+        if ($request->filled('immediate_supervisor_to') && $request->immediate_supervisor_to !== $employee->immediate_sup) {
+            $oldValues['immediate_sup'] = $employee->immediate_sup;
+            $newValues['immediate_sup'] = $request->input('immediate_supervisor_to');
+            $data['immediate_sup'] = $newValues['immediate_sup'];
+        }
+        if ($request->filled('date_from')) {
+            $oldValues['date_from'] = $request->input('date_from');
+        }
+        
+        if ($request->filled('date_to')) {
+            $newValues['date_to'] = $request->input('date_to');
+        }
+        if ($request->file('file')) {
+            $attachment = $request->file('file');
+            $original_name = $attachment->getClientOriginalName();
+            $name = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->move(public_path() . '/nopa_att/', $name);
+            $file_name = '/nopa_att/' . $name;
+            $nopa_attachment = $file_name;
+        }
+    
+    
+        if (!empty($data)) {
+            $employee->update($data);
+    
+            EmployeeMovement::create([
+                'user_id' => $employee->id,
+                'old_values' => json_encode($oldValues),
+                'new_values' => json_encode($newValues),
+                'nopa_attachment'=>$nopa_attachment,
+                'changed_by' => auth()->user()->id,
+                'changed_at' => now(),
+            ]);
+        }
+    
+
+        //Employee Vessel
+        if($request->classification == 4 && $request->vessel_name){
+            $employee_vessel = EmployeeVessel::where('user_id', $employee->user_id)->first();
+
+            if($employee_vessel){
+                $employee_vessel->vessel_name = $request->vessel_name;
+                $employee_vessel->save();
+            }else{
+                $new_employee_vessel = new EmployeeVessel;
+                $new_employee_vessel->user_id = $employee->user_id;
+                $new_employee_vessel->vessel_name = $request->vessel_name;
+                $new_employee_vessel->save();
+            }
+        }
+
         if($request->level != 1){ // Validate if User not Rank and File
             $check_user_allowed_overtime = UserAllowedOvertime::where('user_id',$employee->user_id)->first();
             if(empty($check_user_allowed_overtime)){
@@ -1227,6 +1347,61 @@ class EmployeeController extends Controller
             }
         }
         
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+
+    }
+
+    public function updateEmpSalaryMovementHR(Request $request, $id){
+        
+        // $employee = Employee::findOrFail($id);
+        $salaries = EmployeeSalary::findOrFail($id);
+
+
+        $oldValues = [];
+        $newValues = [];
+        $data = [];
+        $nopa_attachment = null;
+
+        if ($request->filled('basic_salary_to') && $request->basic_salary_to !== $salaries->basic_salary) {
+            $oldValues['basic_salary'] = $salaries->basic_salary;
+            $newValues['basic_salary'] = $request->input('basic_salary_to');
+            $data['basic_salary'] = $newValues['basic_salary'];
+        }
+        if ($request->filled('de_minimis_to') && $request->de_minimis_to !== $salaries->de_minimis) {
+            $oldValues['de_minimis'] = $salaries->de_minimis;
+            $newValues['de_minimis'] = $request->input('de_minimis_to');
+            $data['de_minimis'] = $newValues['de_minimis'];
+        }
+    
+        if ($request->filled('other_allowance_to') && $request->other_allowance_to !== $salaries->other_allowance) {
+            $oldValues['other_allowance'] = $salaries->other_allowance;
+            $newValues['other_allowance'] = $request->input('other_allowance_to');
+            $data['other_allowance'] = $newValues['other_allowance'];
+        }
+    
+        if ($request->file('file')) {
+            $attachment = $request->file('file');
+            $original_name = $attachment->getClientOriginalName();
+            $name = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->move(public_path() . '/nopa_att/', $name);
+            $file_name = '/nopa_att/' . $name;
+            $nopa_attachment = $file_name;
+        }
+    
+    
+        if (!empty($data)) {
+            $salaries->update($data);
+    
+            SalaryMovement::create([
+                'user_id' => $salaries->user_id,
+                'old_values' => json_encode($oldValues),
+                'new_values' => json_encode($newValues),
+                'salary_nopa_attachment'=>$nopa_attachment,
+                'changed_by' => auth()->user()->id,
+                'changed_at' => now(),
+            ]);
+        }
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
 
@@ -1257,6 +1432,32 @@ class EmployeeController extends Controller
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
+
+    public function updateEmpSalary(Request $request, $id){
+        $employee = Employee::where('user_id',$id)->first();
+
+        if($employee){
+            $employee_salary = EmployeeSalary::where('user_id',$employee->user_id)->first();
+
+            if(empty($employee_salary)){
+                $salary = new EmployeeSalary;
+                $salary->user_id = $employee->user_id;
+                $salary->basic_salary = $request->basic_salary;
+                $salary->de_minimis = $request->de_minimis;
+                $salary->other_allowance = $request->other_allowance;
+                $salary->save();
+            }else{
+                $employee_salary->basic_salary = $request->basic_salary;
+                $employee_salary->de_minimis = $request->de_minimis;
+                $employee_salary->other_allowance = $request->other_allowance;
+                $employee_salary->save();
+            }
+        }
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+    
 
     public function updateBeneficiariesHR(Request $request, $id){
 
@@ -1643,7 +1844,7 @@ class EmployeeController extends Controller
                 $emp_data = $emp_data->where('location', $location);
             }
 
-            $emp_data =  $emp_data->where('status','Active')->get()->take('5');
+            $emp_data =  $emp_data->where('status','Active')->get();
             
             $date_range =  $attendance_controller->dateRange($from_date, $to_date);
         }
