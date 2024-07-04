@@ -382,7 +382,7 @@
                     <li class="nav-item  @if ($header == 'hrReport') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#hrReport" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-paper menu-icon"></i>
-                            <span class="menu-title">Employees</span>
+                            <span class="menu-title">Employee</span>
                             <i class="menu-arrow"></i>
                         </a>
                         
