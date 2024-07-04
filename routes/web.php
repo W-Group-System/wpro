@@ -224,11 +224,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('upload-attendance', 'PayslipController@upload_attendance');
 
      //Tax
-     Route::get('tax', 'TaxController@tax');
-     Route::post('new-tax','TaxController@new');
-     Route::post('edit-tax/{id}', 'TaxController@edit_tax');
-     Route::delete('delete-tax/{id}', 'TaxController@delete_tax');
-     Route::get('compute_tax', 'TaxController@compute_tax');
+    Route::get('tax', 'TaxController@tax');
+    Route::post('new-tax','TaxController@new');
+    Route::post('edit-tax/{id}', 'TaxController@edit_tax');
+    Route::delete('delete-tax/{id}', 'TaxController@delete_tax');
+    Route::get('compute_tax', 'TaxController@compute_tax');
 
 
     // Company
