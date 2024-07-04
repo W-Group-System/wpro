@@ -14,6 +14,7 @@ use App\HikVisionAttendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\AttendanceLog;
+use App\Level;
 use Barryvdh\DomPDF\Facade as PDF;
 
 use App\Exports\AttedancePerCompanyExport;;
@@ -525,18 +526,27 @@ class AttendanceController extends Controller
         // Get the selected month and year from the request
         $selectedMonth = $request->input('month');
         $selectedYear = $request->input('year');
+        $selectedLevel = $request->input('level');
 
         // Validate that both month and year are provided
         if ($selectedMonth && $selectedYear) {
             // Filter the data based on the selected month and year
             $data = AttendanceDetailedReport::whereYear('log_date', $selectedYear)
                                             ->whereMonth('log_date', $selectedMonth)
+                                            ->with('company', 'employee')
+                                            ->when($selectedLevel && $selectedLevel != 'All', function ($query) use ($selectedLevel) {
+                                                return $query->whereHas('employee', function ($q) use ($selectedLevel) {
+                                                    $q->where('level', $selectedLevel);
+                                                });
+                                            })
                                             ->get();
         } else {
             // If no month or year is selected, set data to empty collection
             $data = collect();
         }
 
+        $levels = Level::all();
+        
         // Tardiness
         $tardinessData = $data->filter(function ($item) {
             return $item->late_min > 0;
@@ -660,8 +670,10 @@ class AttendanceController extends Controller
             'leaveDeviationsData' => $leaveDeviationsData,
             // 'consecLeaveData' => $consecLeaveData,
             'overtimeData' => $overtimeData,
+            'levels' => $levels,
             'selectedMonth' => $selectedMonth,
-            'selectedYear' => $selectedYear
+            'selectedYear' => $selectedYear,
+            'selectedLevel' => $selectedLevel
         ]);
     }
 }
