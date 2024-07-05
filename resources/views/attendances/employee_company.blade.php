@@ -425,8 +425,8 @@
                                         <td>{{$abs}}</td>
                                         <td>{{$leave_count}}</td>
                                         <td>{{$work}}</td>
-                                        <td>{{$late}}</td>
-                                        <td>{{$undertime_hrs*60}}</td>
+                                        <td>@if($late<0)0.00 @else {{$late}}@endif</td>
+                                        <td>@if($undertime_hrs<0)0.00 @else {{$undertime_hrs*60}}</td>
                                         <td>0.00</td> {{--reg ot--}}
                                         <td>0.00</td> {{--reg nd--}}
                                         <td>0.00</td> {{--rst ot--}}
