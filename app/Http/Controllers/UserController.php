@@ -179,6 +179,7 @@ class UserController extends Controller
                 $user_privilege->biometrics_per_seabased = $request->biometrics_per_seabased;
                 $user_privilege->biometrics_per_hik_vision = $request->biometrics_per_hik_vision;
                 $user_privilege->biometrics_sync = $request->biometrics_sync;
+                $user_privilege->payroll_view = $request->allow_payroll_view;
                 $user_privilege->timekeeping_dashboard = $request->timekeeping_dashboard;
                 $user_privilege->upload_daily_schedule = $request->upload_daily_schedule;
                 $user_privilege->allow_prob = $request->allow_prob;
