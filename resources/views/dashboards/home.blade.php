@@ -188,7 +188,12 @@
                               <div class="d-flex">
                                 <img src="{{URL::asset($prob_emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
                                 <div>
-                                  <p class="text-info mb-1"><small>{{$prob_emp->first_name}} {{$prob_emp->last_name}}</small></p>
+                                  <div>
+                                    <p class="text-info mb-1"><small>{{$prob_emp->first_name}} {{$prob_emp->last_name}}</small><a id="edit{{ $prob_emp->id }}" 
+                                      data-target="#edit_prob{{ $prob_emp->id }}" data-toggle="modal" title='Edit'>
+                                      <i class="ti-pencil-alt"></i>
+                                    </a></p>
+                                  </div>
                                   <p class="mb-0"><small>{{$prob_emp->company->company_name}}</small></p>
                                   <p class="mb-0"><small>{{$prob_emp->position}}</small></p>
                                   <p class="mb-0"><small>{{date('M d, Y',strtotime($prob_emp->original_date_hired))}}</small></p>
@@ -202,10 +207,6 @@
                                     @endphp
                                     {{$date_diff->format('%y Year'.$y_s.' %m month'.$m_s.' %d day'.$d_s.'')}}</small>
                                   </p>
-                                  <button type="button" id="edit{{ $prob_emp->id }}" class="btn btn-info btn-rounded btn-icon"
-                                    data-target="#edit_prob{{ $prob_emp->id }}" data-toggle="modal" title='Edit'>
-                                    <i class="ti-pencil-alt"></i>
-                                  </button>
                                 </div>
                               </div>
                             </li>
