@@ -177,19 +177,19 @@
                             <td>LH OT Amount	</td>
                             <td>{{$name->total_lh_ot_over_eight}}</td>
                             <td>LH OT OVER 8 AMOUNT</td>
-                            <td>REG ND	</td>
+                            <td>{{$name->total_reg_nd}}</td>
                             <td>REG ND AMOUNT	</td>
-                            <td>REG OT	</td>
+                            <td>{{$name->total_reg_ot}}</td>
                             <td>REG OT AMOUNT</td>
-                            <td>REG OT ND	</td>
+                            <td>{{$name->total_reg_ot_nd}}</td>
                             <td>REG OT ND AMOUNT	</td>
-                            <td>RST ND	</td>
+                            <td>{{$name->total_rst_nd}}</td>
                             <td>RST ND AMOUNT</td>
-                            <td>RST ND GE</td>
+                            <td>{{$name->total_rst_nd_over_eight}}</td>
                             <td>RST ND GE AMOUNT	</td>
-                            <td>RST OT</td>
+                            <td>{{$name->total_rst_ot}}</td>
                             <td>RST OT AMOUNT</td>
-                            <td>RST OT OVER 8</td>
+                            <td>{{$name->total_rst_ot_over_eight}}</td>
                             <td>RST OT OVER 8 AMOUNT	</td>
                             <td>OVERTIME TOTAL</td>
                             <td>PL</td>
@@ -202,11 +202,11 @@
                             <td>SALARY ADJUSTMENT	</td>
                             <td>TAXABLE BENEFITS TOTAL</td>
                             <td>GROSS TAXABLE INCOME</td>
-                            <td>DAYS ABSENT</td>
+                            <td>{{$name->total_abs}}</td>
                             <td>ABSENT AMOUNT</td>
-                            <td>TARDINESS TOTAL	</td>
+                            <td>{{$name->total_late_min}}</td>
                             <td>TARDINESS AMOUNT</td>
-                            <td>UNDERTIME TOTAL</td>
+                            <td>{{$name->total_undertime_min}}</td>
                             <td>UNDERTIME AMOUNT	</td>
                             <td>SSS EC</td>
                             <td>SSS EMPLOYEE SHARE	</td>
