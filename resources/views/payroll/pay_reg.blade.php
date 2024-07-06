@@ -364,9 +364,9 @@
                             <td>{{number_format($wesla_loan,2)}}</td> --}}
                             {{-- <td></td> --}}
                             <td>{{number_format($loans,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$allowances,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$allowances+$de_minimis,2)}}</td>
                             <td>{{number_format($taxable_deductable_total+$loans,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$taxable_deductable_total-$loans+$allowances,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$taxable_deductable_total-$loans+$allowances+$de_minimis,2)}}</td>
                         </tr>
                         @endforeach
                     </tbody>
