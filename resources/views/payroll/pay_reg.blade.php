@@ -130,14 +130,14 @@
                             <th>NET TAXABLE INCOME</th>
                             <th>WITHHOLDING TAX</th>
                             <th>DEMINIMIS</th>
-                            <th>DEMINIMIS ADJUSTMENT</th>
+                            {{-- <th>DEMINIMIS ADJUSTMENT</th>
                             <th>LOAD ALLOWANCE</th>
                             <th>OTHER ALLOWANCES</th>
                             <th>OTHER NTA</th>
                             <th>SSS LOAN REFUND</th>
-                            <th>SUBLIQ</th>
+                            <th>SUBLIQ</th> --}}
                             <th>NONTAXABLE BENEFITS TOTAL</th>
-                            <th>CANTEEN</th>
+                            {{-- <th>CANTEEN</th>
                             <th>EMERGENCY</th>
                             <th>HDMF CALAMITY LOAN</th>
                             <th>HDMF CONTRIBUTION UPGRADE</th>
@@ -147,7 +147,8 @@
                             <th>SSS CALAMITY LOAN</th>
                             <th>SSS LOAN</th>
                             <th>STAFF HOUSE</th>
-                            <th>WESLA LOAN</th>
+                            <th>WESLA LOAN</th> --}}
+                            {{-- <th>Loans</th> --}}
                             <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
                             <th>GROSS PAY</th>
                             <th>DEDUCTIONS TOTAL</th>
@@ -156,6 +157,127 @@
                     </thead>
                     <tbody>
                         @foreach($names as $key => $name)
+                        @php
+                            $payroll_b = $dates->where('log_date',25)->first();
+                            $payroll_a = $dates->where('log_date',10)->first();
+                            $pay_rate = 0.00;
+                            $basic_pay = 0.00;
+                            $hourly_rate = 0.00;
+                            $daily_rate = 0.00;
+                            $de_minimis = 0.00;
+                            $pl = 0.00;
+                            $pl_amount = 0.00;
+                            $sl = 0.00;
+                            $sl_amount = 0.00;
+                            $vl = 0.00;
+                            $vl_amount = 0.00;
+                            $salary_adjustment = 0.00;
+                            $sss_ecc= 0.00;
+                            $sss_er= 0.00;
+                            $sss_ee= 0.00;
+                            $hdmf = 0.00;
+                            $philhealth = 0.00;
+                            $wisp_ee = 0.00;
+                            $wisp_er = 0.00;
+                            $de_minimis_adj = 0.00;
+                            $load_allowance = 0.00;
+                            $other_allowances = 0.00;
+                            $other_nta = 0.00;
+                            $sss_loan_refund = 0.00;
+                            $subliq = 0.00;
+
+                            $canteen = 0.00;
+                            $emergency = 0.00;
+                            $hdmf_calamity_loan = 0.00;
+                            $hdmf_contribution_upgrade = 0.00;
+                            $hdmf_loan = 0.00;
+                            $motorcycle_loan = 0.00;
+                            $rice_loan = 0.00;
+                            $sss_calamity_loan = 0.00;
+                            $sss_loan = 0.00;
+                            $staff_loan = 0.00;
+                            $wesla_loan = 0.00;
+                            
+                            $loans = 0.00;
+                            $allowances = 0.00;
+                            
+                            
+                            $leave_total_amount = $pl_amount+$sl_amount+$vl_amount;
+                            if($name->employee->salary)
+                            {
+                              $pay_rate = $name->employee->salary->basic_salary;
+                              $basic_pay = $name->employee->salary->basic_salary/2;
+                              $daily_rate = ($name->employee->salary->basic_salary)*12/313;
+                              $hourly_rate = $daily_rate/8;
+                              $de_minimis = $name->employee->salary->de_minimis/2;
+                            }
+                            if($name->employee->loan)
+                            {
+                              $loa = ($name->employee->loan);
+                              $loans = $loa->sum('monthly_ammort_amt');
+                            }
+                            if($name->employee->allowances)
+                            {
+                              
+                              $allow = ($name->employee->allowances);
+                              $every_cut_off = $allow->where('schedule','Every cut off')->sum('allowance_amount');
+                              if($payroll_a)
+                              {
+                                $allowances = ($allow->where('schedule','Every 1st cut off'))->sum('allowance_amount');
+                              }
+                              else {
+                                
+                                $allowances = ($allow->where('schedule','Every 2nd cut off'))->sum('allowance_amount');
+                              }
+                              $allowances = $allowances+$every_cut_off;
+                             
+                            }
+
+                            $total_lh_nd_amount = $name->total_lh_nd*$hourly_rate*.2;
+                            $total_lh_nd_over_eight = $name->total_lh_nd_over_eight*$hourly_rate*.26;
+                            $total_lh_ot = $name->total_lh_ot*$hourly_rate;
+                            $total_lh_ot_over_eight = $name->total_lh_ot_over_eight*$hourly_rate*2.6;
+                            $total_reg_nd = $name->total_reg_nd*$hourly_rate*.1;
+                            $total_reg_ot = $name->total_reg_ot*$hourly_rate*1.25;
+                            $total_reg_ot_nd = $name->total_reg_ot_nd*$hourly_rate*.1;
+                            $total_rst_nd = $name->total_rst_nd*$hourly_rate*.13;
+                            $total_rst_nd_over_eight = $name->total_rst_nd_over_eight*$hourly_rate*.13;
+                            $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
+                            $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
+                            $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight;
+                            $total_taxable_benefits = $salary_adjustment;
+                            $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
+                            
+                            $total_late_min = $name->total_late_min/60*$hourly_rate;
+                            $total_undertime_min = $name->total_undertime_min/60*$hourly_rate;
+                            
+                            $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
+                            $total_abs = $total_abs_count*$daily_rate;
+                            
+                            $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
+                            if($payroll_b)
+                            {
+                              $sss_amount = $sss->where('salary_from','>=',$government_amount)->first();
+                              $sss_ecc = $sss_amount->ecc;
+                              $sss_ee = $sss_amount->regular_ee;
+                              $sss_er = $sss_amount->regular_er;
+                              $wisp_ee = $sss_amount->wisp_ee;
+                              $wisp_er = $sss_amount->wisp_er;
+                              $hdmf = 200.00;
+                              $philhealth = ($pay_rate*.05)/2;
+                            }
+                            
+                            $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
+                            $taxable_deductable_total = $statutory+$total_abs+$total_late_min+$total_undertime_min;
+                            $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
+                            $tax = compute_tax($net_taxable_income);
+                            $load_allowance = 0.00;
+                            $other_allowances = 0.00;
+                            $other_nta = 0.00;
+                            $sss_loan_refund = 0.00;
+                            $subliq = 0.00;
+                            $non_taxable_benefits = $load_allowance+$other_allowances+$other_nta+$sss_loan_refund+$subliq;
+                        @endphp
                         <tr>
                             <td>{{$key+1}}</td>
                             <td>{{$name->employee_no}}</td>
@@ -165,91 +287,86 @@
                             <td>{{$name->employee->department->name}}</td>
                             <td></td>
                             <td>{{$name->employee->bank_account_number}}</td>
-                            <td>@if($name->employee->salary){{number_format($name->employee->salary->basic_salary,2)}}@else 0.00 @endif</td>
+                            <td>{{number_format($pay_rate,2)}}</td>
                             <td></td>
                             <td></td>
-                            <td>@if($name->employee->salary){{number_format($name->employee->salary->basic_salary/2,2)}}@else 0.00 @endif</td>
-                            <td>{{$name->total_lh_nd}}</td>
-                            <td>LH ND AMOUNT	</td>
-                            <td>{{$name->total_lh_nd_over_eight}}</td>
-                            <td>LH ND GE AMOUNT	</td>
-                            <td>{{$name->total_lh_ot}}</td>
-                            <td>LH OT Amount	</td>
-                            <td>{{$name->total_lh_ot_over_eight}}</td>
-                            <td>LH OT OVER 8 AMOUNT</td>
-                            <td>{{$name->total_reg_nd}}</td>
-                            <td>REG ND AMOUNT	</td>
-                            <td>{{$name->total_reg_ot}}</td>
-                            <td>REG OT AMOUNT</td>
-                            <td>{{$name->total_reg_ot_nd}}</td>
-                            <td>REG OT ND AMOUNT	</td>
-                            <td>{{$name->total_rst_nd}}</td>
-                            <td>RST ND AMOUNT</td>
-                            <td>{{$name->total_rst_nd_over_eight}}</td>
-                            <td>RST ND GE AMOUNT	</td>
-                            <td>{{$name->total_rst_ot}}</td>
-                            <td>RST OT AMOUNT</td>
-                            <td>{{$name->total_rst_ot_over_eight}}</td>
-                            <td>RST OT OVER 8 AMOUNT	</td>
-                            <td>OVERTIME TOTAL</td>
-                            <td>PL</td>
-                            <td>PL AMOUNT	</td>
-                            <td>SL	</td>
-                            <td>SL AMOUNT	</td>
-                            <td>VL	</td>
-                            <td>VL AMOUNT	</td>
-                            <td>LEAVE AMOUNT TOTAL</td>
-                            <td>SALARY ADJUSTMENT	</td>
-                            <td>TAXABLE BENEFITS TOTAL</td>
-                            <td>GROSS TAXABLE INCOME</td>
-                            <td>{{$name->total_abs}}</td>
-                            <td>ABSENT AMOUNT</td>
-                            <td>{{$name->total_late_min}}</td>
-                            <td>TARDINESS AMOUNT</td>
-                            <td>{{$name->total_undertime_min}}</td>
-                            <td>UNDERTIME AMOUNT	</td>
-                            <td>SSS EC</td>
-                            <td>SSS EMPLOYEE SHARE	</td>
-                            <td>SSS EMPLOYER SHARE</td>
-                            <td>HDMF EMPLOYEE SHARE</td>
-                            <td>HDMF EMPLOYER SHARE	</td>
-                            <td>PHIC EMPLOYEE SHARE	</td>
-                            <td>PHIC EMPLOYER SHARE</td>
-                            <td>MPF EMPLOYEE SHARE</td>
-                            <td>MPF EMPLOYER SHARE	</td>
-                            <td>STATUTORY TOTAL	</td>
-                            <td>TAXABLE DEDUCTIBLE TOTAL	</td>
-                            <td>NET TAXABLE INCOME	</td>
-                            <td>WITHHOLDING TAX	</td>
-                            <td>DEMINIMIS</td>
-                            <td>DEMINIMIS ADJUSTMENT</td>
-                            <td>LOAD ALLOWANCE</td>
-                            <td>OTHER ALLOWANCES</td>
-                            <td>OTHER NTA</td>
-                            <td>SSS LOAN REFUND</td>
-                            <td>SSS LOAN REFUND</td>
-                            <td>NONTAXABLE BENEFITS TOTAL</td>
-                            <td>CANTEEN</td>
-                            <td>EMERGENCY</td>
-                            <td>HDMF CALAMITY LOAN</td>
-                            <td>HDMF CONTRIBUTION UPGRADE</td>
-                            <td>HDMF LOAN</td>
-                            <td>MOTORCYCLE LOAN</td>
-                            <td>RICE LOAN</td>
-                            <td>SSS CALAMITY LOAN</td>
-                            <td>SSS LOAN</td>
-                            <td>STAFF HOUSE</td>
-                            <td>WESLA LOAN</td>
-                            <td>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</td>
-                            <td>GROSS PAY</td>
-                            <td>DEDUCTIONS TOTAL</td>
-                            <td>NETPAY</td>
-                            {{-- <td>{{$name->company->company_code}}</td>
-                            <td>@if($name->employee->salary){{number_format($name->employee->salary->de_minimis,2)}}@else 0.00 @endif</td>
-                            <td>@if($name->employee->salary){{number_format(($name->employee->salary->basic_salary/313)*8,2)}}@else 0.00 @endif</td>
-                            <td>@if($name->employee->salary){{number_format($name->employee->salary->basic_salary/313,2)}}@else 0.00 @endif</td>
-                            <td>{{$name->total_abs}}</td>
-                            <td>{{$name->total_lv_w_pay}}</td> --}}
+                            <td>{{number_format($basic_pay,2)}}</td>
+                            <td>{{number_format($name->total_lh_nd,2)}}</td>
+                            <td>{{number_format($total_lh_nd_amount,2)}}</td>
+                            <td>{{number_format($name->total_lh_nd_over_eight,2)}}</td>
+                            <td>{{number_format($total_lh_nd_over_eight,2)}}</td>
+                            <td>{{number_format($name->total_lh_ot,2)}}</td>
+                            <td>{{number_format($total_lh_ot,2)}}</td>
+                            <td>{{number_format($name->total_lh_ot_over_eight,2)}}</td>
+                            <td>{{number_format($total_lh_ot_over_eight,2)}}</td>
+                            <td>{{number_format($name->total_reg_nd,2)}}</td>
+                            <td>{{number_format($total_reg_nd,2)}}</td>
+                            <td>{{number_format($name->total_reg_ot,2)}}</td>
+                            <td>{{number_format($total_reg_ot,2)}}</td>
+                            <td>{{number_format($name->total_reg_ot_nd,2)}}</td>
+                            <td>{{number_format($total_reg_ot_nd,2)}}</td>
+                            <td>{{number_format($name->total_rst_nd,2)}}</td>
+                            <td>{{number_format($total_rst_nd,2)}}</td>
+                            <td>{{number_format($name->total_rst_nd_over_eight,2)}}</td>
+                            <td>{{number_format($total_rst_nd_over_eight,2)}}</td>
+                            <td>{{number_format($name->total_rst_ot,2)}}</td>
+                            <td>{{number_format($total_rst_ot,2)}}</td>
+                            <td>{{number_format($name->total_rst_ot_over_eight,2)}}</td>
+                            <td>{{number_format($total_rst_ot_over_eight,2)}}</td>
+                            <td>{{number_format($total_ot_pay,2)}}</td>
+                            <td>{{number_format($pl,2)}}</td>
+                            <td>{{number_format($pl_amount,2)}}</td>
+                            <td>{{number_format($sl,2)}}</td>
+                            <td>{{number_format($sl_amount,2)}}</td>
+                            <td>{{number_format($vl,2)}}</td>
+                            <td>{{number_format($vl_amount,2)}}</td>
+                            <td>{{number_format($leave_total_amount,2)}}</td>
+                            <td>{{number_format($salary_adjustment,2)}}</td>
+                            <td>{{number_format($total_taxable_benefits,2)}}</td>
+                            <td>{{number_format($gross_taxable_income,2)}}</td>
+                            <td>{{number_format($total_abs_count,2)}}</td>
+                            <td>{{number_format($total_abs,2)}}</td>
+                            <td>{{number_format($name->total_late_min,2)}}</td>
+                            <td>{{number_format($total_late_min,2)}}</td>
+                            <td>{{number_format($name->total_undertime_min,2)}}</td>
+                            <td>{{number_format($total_undertime_min,2)}}</td>
+                            <td>{{number_format($sss_ecc,2)}}</td>
+                            <td>{{number_format($sss_ee,2)}}</td>
+                            <td>{{number_format($sss_er,2)}}</td>
+                            <td>{{number_format($hdmf,2)}}</td>
+                            <td>{{number_format($hdmf,2)}}</td>
+                            <td>{{number_format($philhealth,2)}}</td>
+                            <td>{{number_format($philhealth,2)}}</td>
+                            <td>{{number_format($wisp_ee,2)}}</td>
+                            <td>{{number_format($wisp_er,2)}}</td>
+                            <td>{{number_format($statutory,2)}}</td>
+                            <td>{{number_format($taxable_deductable_total,2)}}</td>
+                            <td>{{number_format($net_taxable_income,2)}}</td>
+                            <td>{{number_format($tax,2)}}</td>
+                            <td>{{number_format($de_minimis,2)}}</td>
+                            {{-- <td>{{number_format($de_minimis_adj,2)}}</td> --}}
+                            {{-- <td>{{number_format($load_allowance,2)}}</td>
+                            <td>{{number_format($other_allowances,2)}}</td>
+                            <td>{{number_format($other_nta,2)}}</td>
+                            <td>{{number_format($sss_loan_refund,2)}}</td>
+                            <td>{{number_format($subliq,2)}}</td> --}}
+                            <td>{{number_format($allowances,2)}}</td>
+                            {{-- <td>{{number_format($canteen,2)}}</td>
+                            <td>{{number_format($emergency,2)}}</td>
+                            <td>{{number_format($hdmf_calamity_loan,2)}}</td>
+                            <td>{{number_format($hdmf_contribution_upgrade,2)}}</td>
+                            <td>{{number_format($hdmf_loan,2)}}</td>
+                            <td>{{number_format($motorcycle_loan,2)}}</td>
+                            <td>{{number_format($rice_loan,2)}}</td>
+                            <td>{{number_format($sss_calamity_loan,2)}}</td>
+                            <td>{{number_format($sss_loan,2)}}</td>
+                            <td>{{number_format($staff_loan,2)}}</td>
+                            <td>{{number_format($wesla_loan,2)}}</td> --}}
+                            {{-- <td></td> --}}
+                            <td>{{number_format($loans,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$allowances,2)}}</td>
+                            <td>{{number_format($taxable_deductable_total+$loans,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$taxable_deductable_total-$loans+$allowances,2)}}</td>
                         </tr>
                         @endforeach
                     </tbody>

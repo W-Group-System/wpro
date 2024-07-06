@@ -15,6 +15,7 @@ use App\EmployeeOb;
 use App\Imports\PayRegImport;
 use App\PayrollRecord;
 use App\ScheduleData;
+use App\ContributionSSS;
 
 class PayslipController extends Controller
 {
@@ -37,10 +38,13 @@ class PayslipController extends Controller
         $to_date = $request->to;
         $cutoff = $request->cut_off;
         $names = [];
+        $dates = [];
+        $sss = ContributionSSS::orderBy('salary_from','asc')->get();
         if($request->company)
         {
+            $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date',)->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get();
             $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
-            $names = AttendanceDetailedReport::with(['employee.salary'])
+            $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances'])
             ->select('company_id', 'employee_no', 'name', 
             DB::raw('SUM(abs) as total_abs'),
             DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
@@ -80,6 +84,8 @@ class PayslipController extends Controller
             'company' => $company,
             'cutoff' => $cutoff,
             'names' => $names,
+            'sss' => $sss,
+            'dates' => $dates,
         )
         );
     }

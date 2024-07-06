@@ -132,6 +132,14 @@ class Employee extends Model implements Auditable
     {
         return $this->belongsTo(EmployeeSalary::class,'user_id','user_id');
     }
+    public function loan()
+    {
+        return $this->hasMany(Loan::class);
+    }
+    public function allowances()
+    {
+        return $this->hasMany(EmployeeAllowance::class,'user_id','user_id');
+    }
     protected $fillable = [
         'department_id', 
         'project',
