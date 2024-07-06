@@ -530,6 +530,8 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-reg') }}">Payroll Register</a>
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-instruction') }}">Payroll Instruction</a></li>
+
                             </ul>
                         </div>
                     </li>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AttendanceDetailedReport;
+use App\Imports\PayInstructionImport;
 use Excel;
 use App\Payroll;
 use App\Employee;
@@ -13,6 +14,7 @@ use App\AttSummary;
 use App\Company;
 use App\EmployeeOb;
 use App\Imports\PayRegImport;
+use App\PayInstruction;
 use App\PayrollRecord;
 use App\ScheduleData;
 
@@ -87,6 +89,53 @@ class PayslipController extends Controller
     public function importPayRegExcel(Request $request)
     {
         Excel::import(new PayRegImport,request()->file('import_file'));
+           
+        return back();
+    }
+
+    public function payroll_instruction(Request $request)
+    {
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $company = isset($request->company) ? $request->company : "";
+        $cut_off = [];
+        $from_date = $request->from;
+        $to_date = $request->to;
+        $cutoff = $request->cut_off;
+        $names = [];
+        // if($request->company)
+        // {
+        //     // $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
+        //     $names = PayInstruction::all()
+        //     // ->select('company_id', 'employee_no', 'name', 
+        //     // )
+        //     // ->where('company_id', $request->company)
+        //     // // ->where('cut_off_date', $cutoff)
+        //     // ->groupBy('company_id', 'employee_no', 'name')
+        //     ->get(); // dd($names);
+        // }
+        $names = PayInstruction::all();
+       $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+
+      
+        return view('payroll.pay_instruction',
+        array(
+            'header' => 'Payroll',
+            // 'cut_off' => $cut_off,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'companies' => $companies,
+            'company' => $company,
+            'cutoff' => $cutoff,
+            'names' => $names,
+        )
+        );
+    }
+
+    public function importPayInstructionExcel(Request $request)
+    {
+        Excel::import(new PayInstructionImport,request()->file('import_file'));
            
         return back();
     }

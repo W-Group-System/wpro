@@ -219,6 +219,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('pay-reg', 'PayslipController@payroll_datas');
     Route::post('importPayRegExcel', 'PayslipController@importPayRegExcel');
 
+    Route::get('pay-instruction', 'PayslipController@payroll_instruction');
+    Route::post('importPayinstructionExcel', 'PayslipController@importPayInstructionExcel');
     
      
     Route::get('timekeeping', 'PayslipController@attendances');
