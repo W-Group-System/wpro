@@ -61,10 +61,8 @@ class PayslipController extends Controller
             DB::raw('SUM(rst_ot_over_eight) as total_rst_ot_over_eight'),
             DB::raw('SUM(abs) as total_abs'),
             DB::raw('SUM(late_min) as total_late_min'),
-            DB::raw('SUM(undertime_min) as total_undertime_min'),
-
-            )
-            ->where('company_id', $request->company)
+            DB::raw('SUM(undertime_min) as total_undertime_min')
+            )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
             ->get(); // dd($names);
