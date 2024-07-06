@@ -65,30 +65,191 @@
                   <table class="table table-hover table-bordered">
                     <thead>
                         <tr>
-                            <th>Company</th>
-                            <th>Emp Code</th>
-                            <th>Name</th>
-                            <th>Basic Salary</th>
-                            <th>De Menimis</th>
-                            <th>Daily Rate</th>
-                            <th>Hourly Rate</th>
-                            <th>ABS</th>
-                            <th>Lv W Pay</th>
+                            <th>Row No</th>
+                            <th>Employee No</th>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Department</th>
+                            <th>Cost Center</th>
+                            <th>Account No</th>
+                            <th>Pay Rate</th>
+                            <th>Tax Status</th>
+                            <th>DAYS RENDERED</th>
+                            <th>BASIC PAY</th>
+                            <th>LH ND</th>
+                            <th>LH ND AMOUNT</th>
+                            <th>LH ND GE</th>
+                            <th>LH ND GE AMOUNT</th>
+                            <th>LH OT</th>
+                            <th>LH OT Amount</th>
+                            <th>LH OT OVER 8</th>
+                            <th>LH OT OVER 8 AMOUNT</th>
+                            <th>REG ND</th>
+                            <th>REG ND AMOUNT</th>
+                            <th>REG OT</th>
+                            <th>REG OT AMOUNT</th>
+                            <th>REG OT ND</th>
+                            <th>REG OT ND AMOUNT</th>
+                            <th>RST ND</th>
+                            <th>RST ND AMOUNT</th>
+                            <th>RST ND GE</th>
+                            <th>RST ND GE AMOUNT</th>
+                            <th>RST OT</th>
+                            <th>RST OT AMOUNT</th>
+                            <th>RST OT OVER 8</th>
+                            <th>RST OT OVER 8 AMOUNT</th>
+                            <th>OVERTIME TOTAL</th>
+                            <th>PL</th>
+                            <th>PL AMOUNT</th>
+                            <th>SL</th>
+                            <th>SL AMOUNT</th>
+                            <th>VL</th>
+                            <th>VL AMOUNT</th>
+                            <th>LEAVE AMOUNT TOTAL</th>
+                            <th>SALARY ADJUSTMENT</th>
+                            <th>TAXABLE BENEFITS TOTAL</th>
+                            <th>GROSS TAXABLE INCOME</th>
+                            <th>DAYS ABSENT</th>
+                            <th>ABSENT AMOUNT</th>
+                            <th>TARDINESS TOTAL</th>
+                            <th>TARDINESS AMOUNT</th>
+                            <th>UNDERTIME TOTAL</th>
+                            <th>UNDERTIME AMOUNT</th>
+                            <th>SSS EC</th>
+                            <th>SSS EMPLOYEE SHARE</th>
+                            <th>SSS EMPLOYER SHARE</th>
+                            <th>HDMF EMPLOYEE SHARE</th>
+                            <th>HDMF EMPLOYER SHARE</th>
+                            <th>PHIC EMPLOYEE SHARE</th>
+                            <th>PHIC EMPLOYER SHARE</th>
+                            <th>MPF EMPLOYEE SHARE</th>
+                            <th>MPF EMPLOYER SHARE</th>
+                            <th>STATUTORY TOTAL</th>
+                            <th>TAXABLE DEDUCTIBLE TOTAL</th>
+                            <th>NET TAXABLE INCOME</th>
+                            <th>WITHHOLDING TAX</th>
+                            <th>DEMINIMIS</th>
+                            <th>DEMINIMIS ADJUSTMENT</th>
+                            <th>LOAD ALLOWANCE</th>
+                            <th>OTHER ALLOWANCES</th>
+                            <th>OTHER NTA</th>
+                            <th>SSS LOAN REFUND</th>
+                            <th>SUBLIQ</th>
+                            <th>NONTAXABLE BENEFITS TOTAL</th>
+                            <th>CANTEEN</th>
+                            <th>EMERGENCY</th>
+                            <th>HDMF CALAMITY LOAN</th>
+                            <th>HDMF CONTRIBUTION UPGRADE</th>
+                            <th>HDMF LOAN</th>
+                            <th>MOTORCYCLE LOAN</th>
+                            <th>RICE LOAN</th>
+                            <th>SSS CALAMITY LOAN</th>
+                            <th>SSS LOAN</th>
+                            <th>STAFF HOUSE</th>
+                            <th>WESLA LOAN</th>
+                            <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
+                            <th>GROSS PAY</th>
+                            <th>DEDUCTIONS TOTAL</th>
+                            <th>NETPAY</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($names as $name)
                         <tr>
-                            <td>{{$name->company->company_code}}</td>
+                            <td>Row No</td>
                             <td>{{$name->employee_no}}</td>
                             <td>{{$name->name}}</td>
+                            <td>first name</td>
+                            <td>middle name</td>
+                            <td>department</td>
+                            <td>cost center</td>
+                            <td>Account no</td>
+                            <td>pay rate</td>
+                            <td>Tax Status</td>
+                            <td>DAYS RENDERED</td>
                             <td>@if($name->employee->salary){{number_format($name->employee->salary->basic_salary,2)}}@else 0.00 @endif</td>
+                            <td>LH ND</td>
+                            <td>LH ND AMOUNT	</td>
+                            <td>LH ND GE</td>
+                            <td>LH ND GE AMOUNT	</td>
+                            <td>LH OT</td>
+                            <td>LH OT Amount	</td>
+                            <td>LH OT OVER 8	</td>
+                            <td>LH OT OVER 8 AMOUNT</td>
+                            <td>REG ND	</td>
+                            <td>REG ND AMOUNT	</td>
+                            <td>REG OT	</td>
+                            <td>REG OT AMOUNT</td>
+                            <td>REG OT ND	</td>
+                            <td>REG OT ND AMOUNT	</td>
+                            <td>RST ND	</td>
+                            <td>RST ND AMOUNT</td>
+                            <td>RST ND GE</td>
+                            <td>RST ND GE AMOUNT	</td>
+                            <td>RST OT</td>
+                            <td>RST OT AMOUNT</td>
+                            <td>RST OT OVER 8</td>
+                            <td>RST OT OVER 8 AMOUNT	</td>
+                            <td>OVERTIME TOTAL</td>
+                            <td>PL</td>
+                            <td>PL AMOUNT	</td>
+                            <td>SL	</td>
+                            <td>SL AMOUNT	</td>
+                            <td>VL	</td>
+                            <td>VL AMOUNT	</td>
+                            <td>LEAVE AMOUNT TOTAL</td>
+                            <td>SALARY ADJUSTMENT	</td>
+                            <td>TAXABLE BENEFITS TOTAL</td>
+                            <td>GROSS TAXABLE INCOME</td>
+                            <td>DAYS ABSENT</td>
+                            <td>ABSENT AMOUNT</td>
+                            <td>TARDINESS TOTAL	</td>
+                            <td>TARDINESS AMOUNT</td>
+                            <td>UNDERTIME TOTAL</td>
+                            <td>UNDERTIME AMOUNT	</td>
+                            <td>SSS EC</td>
+                            <td>SSS EMPLOYEE SHARE	</td>
+                            <td>SSS EMPLOYER SHARE</td>
+                            <td>HDMF EMPLOYEE SHARE</td>
+                            <td>HDMF EMPLOYER SHARE	</td>
+                            <td>PHIC EMPLOYEE SHARE	</td>
+                            <td>PHIC EMPLOYER SHARE</td>
+                            <td>MPF EMPLOYEE SHARE</td>
+                            <td>MPF EMPLOYER SHARE	</td>
+                            <td>STATUTORY TOTAL	</td>
+                            <td>TAXABLE DEDUCTIBLE TOTAL	</td>
+                            <td>NET TAXABLE INCOME	</td>
+                            <td>WITHHOLDING TAX	</td>
+                            <td>DEMINIMIS</td>
+                            <td>DEMINIMIS ADJUSTMENT</td>
+                            <td>LOAD ALLOWANCE</td>
+                            <td>OTHER ALLOWANCES</td>
+                            <td>OTHER NTA</td>
+                            <td>SSS LOAN REFUND</td>
+                            <td>SSS LOAN REFUND</td>
+                            <td>NONTAXABLE BENEFITS TOTAL</td>
+                            <td>CANTEEN</td>
+                            <td>EMERGENCY</td>
+                            <td>HDMF CALAMITY LOAN</td>
+                            <td>HDMF CONTRIBUTION UPGRADE</td>
+                            <td>HDMF LOAN</td>
+                            <td>MOTORCYCLE LOAN</td>
+                            <td>RICE LOAN</td>
+                            <td>SSS CALAMITY LOAN</td>
+                            <td>SSS LOAN</td>
+                            <td>STAFF HOUSE</td>
+                            <td>WESLA LOAN</td>
+                            <td>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</td>
+                            <td>GROSS PAY</td>
+                            <td>DEDUCTIONS TOTAL</td>
+                            <td>NETPAY</td>
+                            {{-- <td>{{$name->company->company_code}}</td>
                             <td>@if($name->employee->salary){{number_format($name->employee->salary->de_minimis,2)}}@else 0.00 @endif</td>
                             <td>@if($name->employee->salary){{number_format(($name->employee->salary->basic_salary/313)*8,2)}}@else 0.00 @endif</td>
                             <td>@if($name->employee->salary){{number_format($name->employee->salary->basic_salary/313,2)}}@else 0.00 @endif</td>
                             <td>{{$name->total_abs}}</td>
-                            <td>{{$name->total_lv_w_pay}}</td>
-                            
+                            <td>{{$name->total_lv_w_pay}}</td> --}}
                         </tr>
                         @endforeach
                     </tbody>
