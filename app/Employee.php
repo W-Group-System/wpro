@@ -128,6 +128,10 @@ class Employee extends Model implements Auditable
     public function salaryMovement(){
         return $this->hasMany(SalaryMovement::class,'user_id','user_id');
     }
+    public function salary()
+    {
+        return $this->belongsTo(EmployeeSalary::class,'user_id','user_id');
+    }
     protected $fillable = [
         'department_id', 
         'project',

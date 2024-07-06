@@ -61,7 +61,7 @@
 					</div>
 					<div class="row">
 						<div class="col-lg-12 form-group">
-							<label for="amount">Initial Amount</label>
+							<label for="amount">Loan Balance</label>
 							<input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required
 								min="1" value="{{ old('initial_amount') }}" placeholder="0.00">
 						</div>

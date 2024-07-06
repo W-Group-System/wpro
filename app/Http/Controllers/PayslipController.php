@@ -28,28 +28,40 @@ class PayslipController extends Controller
             
         ));
     }
-    public function payroll_datas()
+    public function payroll_datas(Request $request)
     {
-        // $payrolls = Payroll::select('date_from','date_to','auditdate','created_at')->orderBy('date_from','desc')->get()->unique('date_from');
-        // $payroll_employees = Payroll::orderBy('name','asc')->get();
-        // $attendances =  AttSummary::orderBy('employee','asc')->get();
-        // // dd($payrolls);
-        // return view('payroll.pay_reg',
-        // array(
-        //     'header' => 'Payroll',
-        //     'payrolls' => $payrolls,
-        //     'payroll_employees' => $payroll_employees,
-        //     'attendances' => $attendances,
-            
-        // ));
-        $payrolls = PayrollRecord::select('payroll_date_from','payroll_date_to')->orderBy('payroll_date_from','desc')->get()->unique('payroll_date_from');
-        $payroll_employees = PayrollRecord::orderBy('name','asc')->get();
-        $pay_reg = PayrollRecord::all();
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $company = isset($request->company) ? $request->company : "";
+        $cut_off = [];
+        $from_date = $request->from;
+        $to_date = $request->to;
+        $cutoff = $request->cut_off;
+        $names = [];
+        if($request->company)
+        {
+            $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
+            $names = AttendanceDetailedReport::with(['employee.salary'])
+            ->select('company_id', 'employee_no', 'name', DB::raw('SUM(abs) as total_abs'),DB::raw('SUM(lv_w_pay) as total_lv_w_pay'))
+            ->where('company_id', $request->company)
+            ->where('cut_off_date', $cutoff)
+            ->groupBy('company_id', 'employee_no', 'name')
+            ->get(); // dd($names);
+        }
+       $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+
+      
         return view('payroll.pay_reg',
         array(
             'header' => 'Payroll',
-            'payrolls' => $payrolls,
-            'payroll_employees' => $payroll_employees,
+            'cut_off' => $cut_off,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'companies' => $companies,
+            'company' => $company,
+            'cutoff' => $cutoff,
+            'names' => $names,
         )
         );
     }
