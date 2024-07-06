@@ -350,7 +350,7 @@
                             <td>{{number_format($other_nta,2)}}</td>
                             <td>{{number_format($sss_loan_refund,2)}}</td>
                             <td>{{number_format($subliq,2)}}</td> --}}
-                            <td>{{number_format($allowances,2)}}</td>
+                            <td>{{number_format($allowances+$de_minimis,2)}}</td>
                             {{-- <td>{{number_format($canteen,2)}}</td>
                             <td>{{number_format($emergency,2)}}</td>
                             <td>{{number_format($hdmf_calamity_loan,2)}}</td>
@@ -365,8 +365,8 @@
                             {{-- <td></td> --}}
                             <td>{{number_format($loans,2)}}</td>
                             <td>{{number_format($gross_taxable_income+$allowances+$de_minimis,2)}}</td>
-                            <td>{{number_format($taxable_deductable_total+$loans,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$taxable_deductable_total-$loans+$allowances+$de_minimis,2)}}</td>
+                            <td>{{number_format($taxable_deductable_total+$loans+$tax,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$taxable_deductable_total-$loans+$allowances+$de_minimis-$tax,2)}}</td>
                         </tr>
                         @endforeach
                     </tbody>
