@@ -168,18 +168,46 @@ class HomeController extends Controller
                 $employee->classification = '2';
                 $employee->date_regularized = $request->input('date_regular');
 
-                $leave_credit = EmployeeLeaveCredit::where('user_id',$id)
-                                            ->where('leave_type',$request->leave_type)
-                                            ->first();
-                if($leave_credit){
-                    $leave_credit->count = $request->count;
-                    $leave_credit->save();
-                }else{
-                    $leave_credit = new EmployeeLeaveCredit;
-                    $leave_credit->leave_type = $request->leave_type;
-                    $leave_credit->user_id = $id;
-                    $leave_credit->count = $request->count;
-                    $leave_credit->save();
+                // $leave_credit = EmployeeLeaveCredit::where('user_id',$id)
+                //                             ->where('leave_type',$request->leave_type)
+                //                             ->first();
+                // if($leave_credit){
+                //     $leave_credit->count = $request->count;
+                //     $leave_credit->save();
+                // }else{
+                //     $leave_credit = new EmployeeLeaveCredit;
+                //     $leave_credit->leave_type = $request->leave_type;
+                //     $leave_credit->user_id = $id;
+                //     $leave_credit->count = $request->count;
+                //     $leave_credit->save();
+                // }
+
+                $leave_credit_sick = EmployeeLeaveCredit::where('user_id', $id)
+                                                ->where('leave_type', '2')
+                                                ->first();
+                if ($leave_credit_sick) {
+                    $leave_credit_sick->count = $request->input('sl_count');
+                    $leave_credit_sick->save();
+                } else {
+                    $leave_credit_sick = new EmployeeLeaveCredit;
+                    $leave_credit_sick->leave_type = '2';
+                    $leave_credit_sick->user_id = $id;
+                    $leave_credit_sick->count = $request->input('sl_count');
+                    $leave_credit_sick->save();
+                }
+
+                $leave_credit_vacation = EmployeeLeaveCredit::where('user_id', $id)
+                                                    ->where('leave_type', '1')
+                                                    ->first();
+                if ($leave_credit_vacation) {
+                    $leave_credit_vacation->count = $request->input('vl_count');
+                    $leave_credit_vacation->save();
+                } else {
+                    $leave_credit_vacation = new EmployeeLeaveCredit;
+                    $leave_credit_vacation->leave_type = '1';
+                    $leave_credit_vacation->user_id = $id;
+                    $leave_credit_vacation->count = $request->input('vl_count');
+                    $leave_credit_vacation->save();
                 }
 
             } elseif ($classification == 'for_resignation') {
