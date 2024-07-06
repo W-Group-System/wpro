@@ -366,7 +366,7 @@
                             <td>{{number_format($loans,2)}}</td>
                             <td>{{number_format($gross_taxable_income+$allowances+$de_minimis,2)}}</td>
                             <td>{{number_format($taxable_deductable_total+$loans+$tax,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$taxable_deductable_total-$loans+$allowances+$de_minimis-$tax,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$allowances+$de_minimis-$taxable_deductable_total-$loans-$tax,2)}}</td>
                         </tr>
                         @endforeach
                     </tbody>
