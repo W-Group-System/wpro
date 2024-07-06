@@ -155,27 +155,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($names as $name)
+                        @foreach($names as $key => $name)
                         <tr>
-                            <td>Row No</td>
+                            <td>{{$key+1}}</td>
                             <td>{{$name->employee_no}}</td>
-                            <td>{{$name->name}}</td>
-                            <td>first name</td>
-                            <td>middle name</td>
-                            <td>department</td>
-                            <td>cost center</td>
-                            <td>Account no</td>
-                            <td>pay rate</td>
-                            <td>Tax Status</td>
-                            <td>DAYS RENDERED</td>
+                            <td>{{$name->employee->last_name}}</td>
+                            <td>{{$name->employee->first_name}}</td>
+                            <td>{{$name->employee->middle_name}}</td>
+                            <td>{{$name->employee->department->name}}</td>
+                            <td></td>
+                            <td>{{$name->employee->bank_account_number}}</td>
                             <td>@if($name->employee->salary){{number_format($name->employee->salary->basic_salary,2)}}@else 0.00 @endif</td>
-                            <td>LH ND</td>
+                            <td></td>
+                            <td></td>
+                            <td>@if($name->employee->salary){{number_format($name->employee->salary->basic_salary/2,2)}}@else 0.00 @endif</td>
+                            <td>{{$name->total_lh_nd}}</td>
                             <td>LH ND AMOUNT	</td>
-                            <td>LH ND GE</td>
+                            <td>{{$name->total_lh_nd_over_eight}}</td>
                             <td>LH ND GE AMOUNT	</td>
-                            <td>LH OT</td>
+                            <td>{{$name->total_lh_ot}}</td>
                             <td>LH OT Amount	</td>
-                            <td>LH OT OVER 8	</td>
+                            <td>{{$name->total_lh_ot_over_eight}}</td>
                             <td>LH OT OVER 8 AMOUNT</td>
                             <td>REG ND	</td>
                             <td>REG ND AMOUNT	</td>

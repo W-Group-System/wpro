@@ -41,7 +41,14 @@ class PayslipController extends Controller
         {
             $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
             $names = AttendanceDetailedReport::with(['employee.salary'])
-            ->select('company_id', 'employee_no', 'name', DB::raw('SUM(abs) as total_abs'),DB::raw('SUM(lv_w_pay) as total_lv_w_pay'))
+            ->select('company_id', 'employee_no', 'name', 
+            DB::raw('SUM(abs) as total_abs'),
+            DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
+            DB::raw('SUM(lh_nd) as total_lh_nd'),
+            DB::raw('SUM(lh_nd_over_eight) as total_lh_nd_over_eight'),
+            DB::raw('SUM(lh_ot) as total_lh_ot'),
+            DB::raw('SUM(lh_ot_over_eight) as total_lh_ot_over_eight'),
+            )
             ->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
