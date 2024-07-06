@@ -252,7 +252,7 @@
                             $total_undertime_min = $name->total_undertime_min/60*$hourly_rate;
                             
                             $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
-                            $total_abs = $total_abs_count*$daily_rate;
+                            $total_abs = $total_abs_count*$daily_rate*1.19;
                             
                             $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
                             if($payroll_b)
