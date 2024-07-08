@@ -426,7 +426,7 @@
                             <td><a href='#' data-toggle="modal" data-target="#loan{{$name->employee_no}}">{{number_format($total_loans,2)}}</a></td>
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}</td>
                             <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$every_cut_off_payroll_instructions,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}</td>
                         </tr>
                         
                             
