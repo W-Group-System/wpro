@@ -45,9 +45,9 @@
                     </div>
                     <div class='col-md-3'>
                         <button type="submit" class="btn btn-primary mb-2">Submit</button>
-                        @if($date_range)
+                        {{-- @if($date_range)
                             <button class='btn btn-info mb-2' onclick="exportTableToExcel('employee_attendance','{{$from_date}} - {{$to_date}}')">Export</button>
-                        @endif
+                        @endif --}}
                     
                     </div>
                   </div>
@@ -1036,10 +1036,42 @@ function night_difference($start_work,$end_work)
 }
 
 @endphp
+{{-- Datatable --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
+
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+
 <script>
     function get_min(value)
     {
-      document.getElementById("to").min = value;
+        document.getElementById("to").min = value;
     }
-  </script>
+
+    $(document).ready(function() 
+    {
+        new DataTable('.table', 
+        {
+            paginate:false,
+            dom: 'Bfrtip',
+            buttons: 
+            [
+                'copy', 
+                'excel'
+            ],
+            columnDefs: 
+            [
+                {
+                    "defaultContent": "-",
+                    "targets": "_all"
+                }
+            ],
+            order: [] 
+        });
+    });
+</script>
 @endsection
