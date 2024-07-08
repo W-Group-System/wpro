@@ -62,7 +62,7 @@
                     </div>
                   </form>
                 <div class="table-responsive">
-                  <table class="table table-hover table-bordered">
+                  <table class="table table-db table-hover table-bordered">
                     <thead>
                         <tr>
                             <th>Row No</th>
@@ -409,7 +409,7 @@
                             <td>{{number_format($other_nta,2)}}</td>
                             <td>{{number_format($sss_loan_refund,2)}}</td>
                             <td>{{number_format($subliq,2)}}</td> --}}
-                            <td>{{number_format($total_allowances,2)}}</td>
+                            <td><a href='#' data-toggle="modal" data-target="#allowances{{$name->id}}">{{number_format($total_allowances,2)}}</a></td>
                             <td>{{number_format($total_allowances+$de_minimis,2)}}</td>
                             {{-- <td>{{number_format($canteen,2)}}</td>
                             <td>{{number_format($emergency,2)}}</td>
@@ -422,12 +422,15 @@
                             <td>{{number_format($sss_loan,2)}}</td>
                             <td>{{number_format($staff_loan,2)}}</td>
                             <td>{{number_format($wesla_loan,2)}}</td> --}}
-                            <td>{{number_format($total_payroll_instructions,2)}}</td>
+                            <td><a href='#' data-toggle="modal" data-target="#payroll_instruction{{$name->id}}">{{number_format($total_payroll_instructions,2)}}</a></td>
                             <td>{{number_format($total_loans,2)}}</td>
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}</td>
                             <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}</td>
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$every_cut_off_payroll_instructions,2)}}</td>
                         </tr>
+                        
+                            
+                        
                         @endforeach
                     </tbody>
                   </table>
@@ -438,6 +441,14 @@
         </div>
     </div>
 </div>
+@foreach($names as $key => $name)
+@php
+    $payroll_b = $dates->where('log_date',25)->first();
+    $payroll_a = $dates->where('log_date',10)->first();
+@endphp
+@include('payroll.allowances')
+@include('payroll.instructions')
+@endforeach
 <!-- DataTables CSS and JS includes -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
@@ -449,7 +460,7 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function() {
-    new DataTable('.table', {
+    new DataTable('.table-db', {
       // pagelenth:25,
       paginate:false,
       dom: 'Bfrtip',
