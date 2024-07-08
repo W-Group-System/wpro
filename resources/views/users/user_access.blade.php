@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">User Access</h5>
+                <h5 class="modal-title">User Access - ({{$user->name}})</h5>
             </div>
             <form method="POST" action="{{url('module-access/'.$user->id)}}" onsubmit="show()">
                 {{ csrf_field() }}
