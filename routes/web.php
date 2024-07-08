@@ -206,6 +206,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('pmi-local', 'EmployeeController@localbio');
     Route::get('biometrics-per-company', 'EmployeeController@perCompany');
     Route::get('sync-biometrics','EmployeeController@sync');
+    Route::post('sync-bio','EmployeeController@syncBio');
     Route::get('sync-biometric-per-employee','EmployeeController@sync_per_employee');
     // Route::get('sync-biometric-per-employee-hik','EmployeeController@sync_per_employee_hik');
     Route::get('sync-biometric-per-employee-hik','EmployeeController@sync_per_employee_hik_with_upload');
@@ -221,6 +222,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('pay-instruction', 'PayslipController@payroll_instruction');
     Route::post('importPayinstructionExcel', 'PayslipController@importPayInstructionExcel');
+    Route::post('add-payroll-instruction','PayslipController@add_payroll_instruction');
+    Route::get('export-intruction-template', 'PayslipController@export');
+
     
      
     Route::get('timekeeping', 'PayslipController@attendances');
