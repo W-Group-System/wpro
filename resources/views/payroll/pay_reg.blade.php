@@ -136,7 +136,9 @@
                             <th>OTHER NTA</th>
                             <th>SSS LOAN REFUND</th>
                             <th>SUBLIQ</th> --}}
+                            <th>OTHER ALLOWANCES</th>
                             <th>NONTAXABLE BENEFITS TOTAL</th>
+                            
                             {{-- <th>CANTEEN</th>
                             <th>EMERGENCY</th>
                             <th>HDMF CALAMITY LOAN</th>
@@ -148,7 +150,7 @@
                             <th>SSS LOAN</th>
                             <th>STAFF HOUSE</th>
                             <th>WESLA LOAN</th> --}}
-                            <th>Other Deductions</th>
+                            <th>Others</th>
                             <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
                             <th>GROSS PAY</th>
                             <th>DEDUCTIONS TOTAL</th>
@@ -203,7 +205,7 @@
                             
                             
                             $leave_total_amount = $pl_amount+$sl_amount+$vl_amount;
-                            if($name->employee->salary)
+                            if(!empty($name->employee->salary))
                             {
                               $pay_rate = $name->employee->salary->basic_salary;
                               $basic_pay = $name->employee->salary->basic_salary/2;
@@ -217,12 +219,17 @@
                               // dd($absent_dat->shift);
                               $shift = $absent_dat->shift;
                               $shift = str_replace("(Semi-Flexi)", '', $shift);
+                              $shift = str_replace("(Semi - flexi)", '', $shift);
                               $shift = str_replace("(Flexi)", '', $shift);
                               // $shift = str_replace(" ", '', $shift);
                               $shift = explode("-",$shift);
                               $start = strtotime($shift[0]);
                               $end = strtotime($shift[1]);
                               $hours_count = ($end - $start)/3600;
+                              if($start > $end)
+                              {
+                                $hours_count = (($start - $end)-8)/3600;
+                              }
                               if($hours_count>8)
                               {
                                 $hours_count = $hours_count-1;
@@ -231,8 +238,9 @@
                               $hours_data = $hours_count*($absent_dat->abs-$absent_dat->lv_w_pay);
                               $hours = $hours+$hours_data;
                             }
+                          
                             $total_loans = 0;
-                            if($name->employee->loan)
+                            if(!empty($name->employee->loan))
                             {
                               $loa = ($name->employee->loan);
                               $every_cut_off_loan = $loa->where('schedule','Every cut off')->sum('monthly_ammort_amt');
@@ -248,7 +256,7 @@
                               $total_loans = $loans+$every_cut_off_loan+$every_cut_off_loan_this_cut_off;
                             }
                             $total_allowances=0;
-                            if($name->employee->allowances)
+                            if(!empty($name->employee->allowances))
                             {
                               
                               $allow = ($name->employee->allowances);
@@ -265,7 +273,7 @@
                               $total_allowances = $allowances+$every_cut_off+$every_cut_off_all;
                             }
                             $total_payroll_instructions = 0;
-                            if($name->employee->pay_instructions)
+                            if(!empty($name->employee->pay_instructions))
                             {
                               $payroll_instructions = ($name->employee->pay_instructions);
                               // dd($payroll_instructions);
@@ -401,6 +409,7 @@
                             <td>{{number_format($other_nta,2)}}</td>
                             <td>{{number_format($sss_loan_refund,2)}}</td>
                             <td>{{number_format($subliq,2)}}</td> --}}
+                            <td>{{number_format($total_allowances,2)}}</td>
                             <td>{{number_format($total_allowances+$de_minimis,2)}}</td>
                             {{-- <td>{{number_format($canteen,2)}}</td>
                             <td>{{number_format($emergency,2)}}</td>

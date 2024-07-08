@@ -70,7 +70,7 @@ class PayslipController extends Controller
             )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
-            // ->whereHas('employee.pay_instructions')
+            // ->whereDoesntHave('employee.salary')
             ->get(); 
             // dd($names);
             

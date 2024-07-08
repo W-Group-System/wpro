@@ -31,6 +31,7 @@
 										<th>Start Date</th>
 										<th>End Date</th>
 										<th >Loan Balance </th>
+										<th >Frequency</th>
 										<th>Status</th>
 										<th>Actions</th>
 									</tr>
@@ -45,7 +46,8 @@
 											<td data-title="Amount">{{ number_format($loan->amount) }}</td>
 											<td data-title="Start Date">{{ date('M d, Y', strtotime($loan->start_date)) }}</td>
 											<td data-title="End Date">{{ date('M d, Y', strtotime($loan->expiry_date)) }}</td>
-											<td data-title="Loan Balance " >{{ number_format($loan->initial_amount) }}</td>
+											<td data-title="Loan Balance" >{{ number_format($loan->initial_amount) }}</td>
+											<td data-title="Frequency">{{$loan->schedule}}</td>
 											<td></td>
 											<td>
 												<button title='View loan details' id="" data-toggle="modal" data-target="#loanDetails"

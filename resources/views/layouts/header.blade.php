@@ -531,6 +531,8 @@
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-instruction') }}">Payroll Instruction</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a></li>
+                                    <li class="nav-item">  <a class="nav-link" href="{{ url('/salary-management') }}">Salary Management</a></li>
 
                             </ul>
                         </div>
@@ -587,14 +589,7 @@
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-incentive') }}">Employee Incentives</a>
                     </li> --}}
-                    @if(checkUserPrivilege('masterfiles_employee_allowances',auth()->user()->id) == 'yes')
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/salary-management') }}">Salary Management</a>
-                    </li>
-                    @endif
+                    
                     
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-companies') }}">Employee Groups</a>

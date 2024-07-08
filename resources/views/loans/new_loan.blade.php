@@ -60,10 +60,21 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-lg-12 form-group">
+						<div class="col-lg-6 form-group">
 							<label for="amount">Loan Balance</label>
 							<input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required
 								min="1" value="{{ old('initial_amount') }}" placeholder="0.00">
+						</div>
+						<div class="col-lg-6 form-group">
+							<label for="frequency">Frequency</label>
+							<select data-placeholder="Frequency" class="form-control form-control-sm required js-example-basic-single "
+							style='width:100%;' name='frequency' required>
+							<option value="">--Frequency--</option>
+							<option value='Every cut off'>Every cut off</option>
+							<option value='This cut off'>This cut off</option>
+							<option value='Every 1st cut off'>Every 1st cut off</option>
+							<option value='Every 2nd cut off'>Every 2nd cut off</option>
+						</select>
 						</div>
 					</div>
 			</div>

@@ -44,6 +44,7 @@ class LoanController extends Controller
         $this->validate($request, [
             'loan_type' => 'required',
             'employee' => 'required',
+            'frequency' => 'required',
             'amount' => 'required', 'min:1',
             'monthly_ammort_amt' => 'required', 'min:1',
             'start_date' => 'required',
@@ -58,7 +59,7 @@ class LoanController extends Controller
         $loans->monthly_ammort_amt = $request->monthly_ammort_amt;
         $loans->initial_amount = $request->initial_amount;
         $loans->start_date = $request->start_date;
-        $loans->expiry_date = $request->expiry_date;
+        $loans->schedule = $request->frequency;
         $loans->save();
 
         Alert::success('Successfully Stored')->persistent('Dismiss');
