@@ -223,7 +223,7 @@
                               $start = strtotime($shift[0]);
                               $end = strtotime($shift[1]);
                               $hours_count = ($end - $start)/3600;
-                              if($hours>8)
+                              if($hours_count>8)
                               {
                                 $hours_count = $hours_count-1;
                               }
@@ -241,6 +241,7 @@
                               
                               $allow = ($name->employee->allowances);
                               $every_cut_off = $allow->where('schedule','Every cut off')->sum('allowance_amount');
+                              $every_cut_off = $allow->where('schedule','This cut off')->sum('allowance_amount');
                               if($payroll_a)
                               {
                                 $allowances = ($allow->where('schedule','Every 1st cut off'))->sum('allowance_amount');
@@ -250,7 +251,6 @@
                                 $allowances = ($allow->where('schedule','Every 2nd cut off'))->sum('allowance_amount');
                               }
                               $allowances = $allowances+$every_cut_off;
-                             
                             }
 
                             $total_lh_nd_amount = $name->total_lh_nd*$hourly_rate*.2;
