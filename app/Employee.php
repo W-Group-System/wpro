@@ -140,6 +140,10 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(EmployeeAllowance::class,'user_id','user_id');
     }
+    public function pay_instructions()
+    {
+        return $this->hasMany(PayInstruction::class,'site_id','employee_code');
+    }
     protected $fillable = [
         'department_id', 
         'project',

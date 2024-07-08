@@ -49,7 +49,7 @@ class PayslipController extends Controller
             $absents_data = AttendanceDetailedReport ::whereColumn('abs', '>', 'lv_w_pay')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
             
             $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
-            $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances'])
+            $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances','employee.pay_instructions'])
             ->select('company_id', 'employee_no', 'name', 
             DB::raw('SUM(abs) as total_abs'),
             DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
@@ -70,7 +70,9 @@ class PayslipController extends Controller
             )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
-            ->get(); // dd($names);
+            // ->whereHas('employee.pay_instructions')
+            ->get(); 
+            // dd($names);
             
         }
        $companies = Company::whereHas('employee_has_company')

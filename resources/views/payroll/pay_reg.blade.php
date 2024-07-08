@@ -148,7 +148,7 @@
                             <th>SSS LOAN</th>
                             <th>STAFF HOUSE</th>
                             <th>WESLA LOAN</th> --}}
-                            {{-- <th>Loans</th> --}}
+                            <th>Other Deductions</th>
                             <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
                             <th>GROSS PAY</th>
                             <th>DEDUCTIONS TOTAL</th>
@@ -231,17 +231,29 @@
                               $hours_data = $hours_count*($absent_dat->abs-$absent_dat->lv_w_pay);
                               $hours = $hours+$hours_data;
                             }
+                            $total_loans = 0;
                             if($name->employee->loan)
                             {
                               $loa = ($name->employee->loan);
-                              $loans = $loa->sum('monthly_ammort_amt');
+                              $every_cut_off_loan = $loa->where('schedule','Every cut off')->sum('monthly_ammort_amt');
+                              $every_cut_off_loan_this_cut_off = $loa->where('schedule','This cut off')->sum('monthly_ammort_amt');
+                              if($payroll_a)
+                              {
+                                $loans = ($loa->where('schedule','Every 1st cut off'))->sum('monthly_ammort_amt');
+                              }
+                              else {
+                                
+                                $loans = ($loa->where('schedule','Every 2nd cut off'))->sum('monthly_ammort_amt');
+                              }
+                              $total_loans = $loans+$every_cut_off_loan+$every_cut_off_loan_this_cut_off;
                             }
+                            $total_allowances=0;
                             if($name->employee->allowances)
                             {
                               
                               $allow = ($name->employee->allowances);
                               $every_cut_off = $allow->where('schedule','Every cut off')->sum('allowance_amount');
-                              $every_cut_off = $allow->where('schedule','This cut off')->sum('allowance_amount');
+                              $every_cut_off_all = $allow->where('schedule','This cut off')->sum('allowance_amount');
                               if($payroll_a)
                               {
                                 $allowances = ($allow->where('schedule','Every 1st cut off'))->sum('allowance_amount');
@@ -250,7 +262,26 @@
                                 
                                 $allowances = ($allow->where('schedule','Every 2nd cut off'))->sum('allowance_amount');
                               }
-                              $allowances = $allowances+$every_cut_off;
+                              $total_allowances = $allowances+$every_cut_off+$every_cut_off_all;
+                            }
+                            $total_payroll_instructions = 0;
+                            if($name->employee->pay_instructions)
+                            {
+                              $payroll_instructions = ($name->employee->pay_instructions);
+                              // dd($payroll_instructions);
+                              $every_cut_off_payroll_instructions = $payroll_instructions->where('frequency','Every cut off')->sum('amount');
+                              $every_cut_off_all_payroll_instructions = $payroll_instructions->where('frequency','This cut off')->sum('amount');
+                              // dd($every_cut_off_all_payroll_instructions);
+                              if($payroll_a)
+                              {
+                                $other = ($payroll_instructions->where('frequency','Every 1st cut off'))->sum('amount');
+                              }
+                              else {
+                                
+                                $other = ($payroll_instructions->where('frequency','Every 2nd cut off'))->sum('amount');
+                              }
+                              $total_payroll_instructions = $other+$every_cut_off_all_payroll_instructions+$every_cut_off_payroll_instructions;
+                              // dd($total_payroll_instructions);
                             }
 
                             $total_lh_nd_amount = $name->total_lh_nd*$hourly_rate*.2;
@@ -370,7 +401,7 @@
                             <td>{{number_format($other_nta,2)}}</td>
                             <td>{{number_format($sss_loan_refund,2)}}</td>
                             <td>{{number_format($subliq,2)}}</td> --}}
-                            <td>{{number_format($allowances+$de_minimis,2)}}</td>
+                            <td>{{number_format($total_allowances+$de_minimis,2)}}</td>
                             {{-- <td>{{number_format($canteen,2)}}</td>
                             <td>{{number_format($emergency,2)}}</td>
                             <td>{{number_format($hdmf_calamity_loan,2)}}</td>
@@ -382,11 +413,11 @@
                             <td>{{number_format($sss_loan,2)}}</td>
                             <td>{{number_format($staff_loan,2)}}</td>
                             <td>{{number_format($wesla_loan,2)}}</td> --}}
-                            {{-- <td></td> --}}
-                            <td>{{number_format($loans,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$allowances+$de_minimis,2)}}</td>
-                            <td>{{number_format($taxable_deductable_total+$loans+$tax,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$allowances+$de_minimis-$taxable_deductable_total-$loans-$tax,2)}}</td>
+                            <td>{{number_format($total_payroll_instructions,2)}}</td>
+                            <td>{{number_format($total_loans,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}</td>
+                            <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}</td>
+                            <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$every_cut_off_payroll_instructions,2)}}</td>
                         </tr>
                         @endforeach
                     </tbody>
