@@ -22,6 +22,10 @@ class PayInstructionImport implements ToModel, WithHeadingRow
         if (is_numeric($end_date)) {
             $end_date = Date::excelToDateTimeObject($end_date)->format('Y-m-d');
         }
+        $amount = $row['amount'];
+        if ($row['deductible'] === 'YES') {
+            $amount = -$amount; 
+        }
 
         return new PayInstruction([
             'location'     => $row['location'] ,      
@@ -30,7 +34,7 @@ class PayInstructionImport implements ToModel, WithHeadingRow
             'start_date'   => $start_date,    
             'end_date'     => $end_date,      
             'benefit_name' => $row['benefit_name'],  
-            'amount'       => $row['amount'],        
+            'amount'       => $amount,        
             'frequency'    => $row['frequency'],     
             'deductible'   => $row['deductible'],    
             'remarks'      => $row['remarks'],       
