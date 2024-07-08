@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AttendanceDetailedReport;
+use Illuminate\Support\Facades\Auth;
 use App\Imports\PayInstructionImport;
 use Excel;
 use App\Payroll;
@@ -15,6 +16,7 @@ use App\Company;
 use App\EmployeeOb;
 use App\Imports\PayRegImport;
 use App\PayInstruction;
+use App\Location;
 use App\PayrollRecord;
 use App\ScheduleData;
 
@@ -102,17 +104,9 @@ class PayslipController extends Controller
         $to_date = $request->to;
         $cutoff = $request->cut_off;
         $names = [];
-        // if($request->company)
-        // {
-        //     // $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
-        //     $names = PayInstruction::all()
-        //     // ->select('company_id', 'employee_no', 'name', 
-        //     // )
-        //     // ->where('company_id', $request->company)
-        //     // // ->where('cut_off_date', $cutoff)
-        //     // ->groupBy('company_id', 'employee_no', 'name')
-        //     ->get(); // dd($names);
-        // }
+        $locations = Location::orderBy('location','ASC')->get();
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $employees_selection = Employee::whereIn('company_id',$allowed_companies)->where('status','Active')->get();
         $names = PayInstruction::all();
        $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
@@ -129,8 +123,34 @@ class PayslipController extends Controller
             'company' => $company,
             'cutoff' => $cutoff,
             'names' => $names,
+            'locations' => $locations,
+            'employees_selection' => $employees_selection,
         )
         );
+    }
+
+    public function add_payroll_instruction(Request $request)
+    {
+        $amount = $request->amount;
+        if ($request->deductible=='YES'){
+            $amount=-$amount;
+        }
+        $payroll_instruction = new PayInstruction;
+        $payroll_instruction->location = $request->company;
+        $payroll_instruction->site_id = $request->site_id;
+        $payroll_instruction->name = $request->employee;
+        $payroll_instruction->start_date = $request->start_date;
+        $payroll_instruction->end_date = $request->start_date;
+        $payroll_instruction->benefit_name = $request->benefit_name;
+        $payroll_instruction->amount = $amount;
+        $payroll_instruction->frequency = $request->frequency;
+        $payroll_instruction->deductible = $request->deductible;
+        $payroll_instruction->remarks = $request->remarks;
+        $payroll_instruction->created_by = Auth::user()->id;
+        $payroll_instruction->save();
+
+        Alert::success('Successfully Stored')->persistent('Dismiss');
+        return back();
     }
 
     public function importPayInstructionExcel(Request $request)
