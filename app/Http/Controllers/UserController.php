@@ -156,99 +156,106 @@ class UserController extends Controller
                 $user_allowed_project = UserAllowedProject::where('user_id',$user->id)->delete();
             }
 
-            $user_privilege = UserPrivilege::where('user_id',$user->id)->first();
+            // $user_privilege = UserPrivilege::where('user_id',$user->id)->first();
             
-            if($user_privilege){
-                $user_privilege->employees_view = $request->employees_view;
-                $user_privilege->employees_edit = $request->employees_edit;
-                $user_privilege->employees_add = $request->employees_add;
-                $user_privilege->employees_export = $request->employees_export;
-                $user_privilege->employees_export_hr = $request->employees_export_hr;
-                $user_privilege->employees_rate = $request->employees_rate;
+            // if($user_privilege){
+            //     // dd('asdasd');
+            //     // $user_privilege->employees_view = $request->employees_view;
+            //     // $user_privilege->employees_edit = $request->employees_edit;
+            //     // $user_privilege->employees_add = $request->employees_add;
+            //     // $user_privilege->employees_export = $request->employees_export;
+            //     // $user_privilege->employees_export_hr = $request->employees_export_hr;
+            //     // $user_privilege->employees_rate = $request->employees_rate;
 
-                $user_privilege->reports_leave = $request->reports_leave;
-                $user_privilege->reports_overtime = $request->reports_overtime;
-                $user_privilege->reports_wfh = $request->reports_wfh;
-                $user_privilege->reports_ob = $request->reports_ob;
-                $user_privilege->reports_dtr = $request->reports_dtr;
+            //     // $user_privilege->reports_leave = $request->reports_leave;
+            //     // $user_privilege->reports_overtime = $request->reports_overtime;
+            //     // $user_privilege->reports_wfh = $request->reports_wfh;
+            //     // $user_privilege->reports_ob = $request->reports_ob;
+            //     // $user_privilege->reports_dtr = $request->reports_dtr;
 
-                $user_privilege->biometrics_per_employee = $request->biometrics_per_employee;
-                $user_privilege->biometrics_per_location = $request->biometrics_per_location;
-                $user_privilege->biometrics_per_location_hik = $request->biometrics_per_location_hik;
-                $user_privilege->biometrics_per_company = $request->biometrics_per_company;
-                $user_privilege->biometrics_per_seabased = $request->biometrics_per_seabased;
-                $user_privilege->biometrics_per_hik_vision = $request->biometrics_per_hik_vision;
-                $user_privilege->biometrics_sync = $request->biometrics_sync;
-                $user_privilege->payroll_view = $request->payroll_view;
-                $user_privilege->timekeeping_dashboard = $request->timekeeping_dashboard;
-                $user_privilege->upload_daily_schedule = $request->upload_daily_schedule;
-                $user_privilege->allow_prob = $request->allow_prob;
+            //     // $user_privilege->biometrics_per_employee = $request->biometrics_per_employee;
+            //     // $user_privilege->biometrics_per_location = $request->biometrics_per_location;
+            //     // $user_privilege->biometrics_per_location_hik = $request->biometrics_per_location_hik;
+            //     // $user_privilege->biometrics_per_company = $request->biometrics_per_company;
+            //     // $user_privilege->biometrics_per_seabased = $request->biometrics_per_seabased;
+            //     // $user_privilege->biometrics_per_hik_vision = $request->biometrics_per_hik_vision;
+            //     // $user_privilege->biometrics_sync = $request->biometrics_sync;
+            //     // $user_privilege->payroll_view = $request->payroll_view;
+            //     // $user_privilege->timekeeping_dashboard = $request->timekeeping_dashboard;
+            //     // $user_privilege->upload_daily_schedule = $request->upload_daily_schedule;
+            //     // $user_privilege->allow_prob = $request->allow_prob;
 
-                $user_privilege->settings_view = $request->settings_view;
-                $user_privilege->settings_add = $request->settings_add;
-                $user_privilege->settings_edit = $request->settings_edit;
-                $user_privilege->settings_delete = $request->settings_delete;
+            //     // $user_privilege->settings_view = $request->settings_view;
+            //     // $user_privilege->settings_add = $request->settings_add;
+            //     // $user_privilege->settings_edit = $request->settings_edit;
+            //     // $user_privilege->settings_delete = $request->settings_delete;
                 
-                $user_privilege->masterfiles_companies = $request->masterfiles_companies;
-                $user_privilege->masterfiles_departments = $request->masterfiles_departments;
-                $user_privilege->masterfiles_locations = $request->masterfiles_locations;
-                $user_privilege->masterfiles_projects = $request->masterfiles_projects;
-                $user_privilege->masterfiles_loan_types = $request->masterfiles_loan_types;
-                $user_privilege->masterfiles_employee_leave_credits = $request->masterfiles_employee_leave_credits;
-                $user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
-                $user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
+            //     // $user_privilege->masterfiles_companies = $request->masterfiles_companies;
+            //     // $user_privilege->masterfiles_departments = $request->masterfiles_departments;
+            //     // $user_privilege->masterfiles_locations = $request->masterfiles_locations;
+            //     // $user_privilege->masterfiles_projects = $request->masterfiles_projects;
+            //     // $user_privilege->masterfiles_loan_types = $request->masterfiles_loan_types;
+            //     // $user_privilege->masterfiles_employee_leave_credits = $request->masterfiles_employee_leave_credits;
+            //     // $user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
+            //     // $user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
 
-                $user_privilege->save();
-                Alert::success('Successfully Updated')->persistent('Dismiss');
-                return back();
-            }else{
-                $new_user_privilege = new UserPrivilege;
-                $new_user_privilege->user_id = $user->id;
-                $new_user_privilege->employees_view = $request->employees_view;
-                $new_user_privilege->employees_edit = $request->employees_edit;
-                $new_user_privilege->employees_add = $request->employees_add;
-                $new_user_privilege->employees_export = $request->employees_export;
-                $new_user_privilege->employees_export_hr = $request->employees_export_hr;
-                $new_user_privilege->employees_rate = $request->employees_rate;
+            //     // Timekeeping
+            //     $user_privilege->timekeeping_forms = $request->timekeeping_forms;
+            //     $user_privilege->timekeeping_timekeeping = $request->timekeeping_timekeeping;
+            //     $user_privilege->timekeeping_generated_timekeeping = $request->timekeeping_generated_timekeeping;
 
-                $new_user_privilege->reports_leave = $request->reports_leave;
-                $new_user_privilege->reports_overtime = $request->reports_overtime;
-                $new_user_privilege->reports_wfh = $request->reports_wfh;
-                $new_user_privilege->reports_ob = $request->reports_ob;
-                $new_user_privilege->reports_dtr = $request->reports_dtr;
+            //     $user_privilege->save();
+            //     Alert::success('Successfully Updated')->persistent('Dismiss');
+            //     return back();
+            // }else{
+            //     $new_user_privilege = new UserPrivilege;
+            //     $new_user_privilege->user_id = $user->id;
+            //     $new_user_privilege->employees_view = $request->employees_view;
+            //     $new_user_privilege->employees_edit = $request->employees_edit;
+            //     $new_user_privilege->employees_add = $request->employees_add;
+            //     $new_user_privilege->employees_export = $request->employees_export;
+            //     $new_user_privilege->employees_export_hr = $request->employees_export_hr;
+            //     $new_user_privilege->employees_rate = $request->employees_rate;
 
-                $new_user_privilege->biometrics_per_employee = $request->biometrics_per_employee;
-                $new_user_privilege->biometrics_per_location = $request->biometrics_per_location;
-                $new_user_privilege->biometrics_per_location_hik = $request->biometrics_per_location_hik;
-                $new_user_privilege->biometrics_per_company = $request->biometrics_per_company;
-                $new_user_privilege->biometrics_per_seabased = $request->biometrics_per_seabased;
-                $new_user_privilege->biometrics_per_hik_vision = $request->biometrics_per_hik_vision;
-                $new_user_privilege->biometrics_sync = $request->biometrics_sync;
-                $new_user_privilege->payroll_view = $request->allow_payroll_view;
-                $new_user_privilege->timekeeping_dashboard = $request->timekeeping_dashboard;
-                $new_user_privilege->upload_daily_schedule = $request->upload_daily_schedule;
-                $new_user_privilege->allow_prob = $request->allow_prob;
+            //     $new_user_privilege->reports_leave = $request->reports_leave;
+            //     $new_user_privilege->reports_overtime = $request->reports_overtime;
+            //     $new_user_privilege->reports_wfh = $request->reports_wfh;
+            //     $new_user_privilege->reports_ob = $request->reports_ob;
+            //     $new_user_privilege->reports_dtr = $request->reports_dtr;
 
-                $new_user_privilege->settings_view = $request->settings_view;
-                $new_user_privilege->settings_add = $request->settings_add;
-                $new_user_privilege->settings_edit = $request->settings_edit;
-                $new_user_privilege->settings_delete = $request->settings_delete;
+            //     $new_user_privilege->biometrics_per_employee = $request->biometrics_per_employee;
+            //     $new_user_privilege->biometrics_per_location = $request->biometrics_per_location;
+            //     $new_user_privilege->biometrics_per_location_hik = $request->biometrics_per_location_hik;
+            //     $new_user_privilege->biometrics_per_company = $request->biometrics_per_company;
+            //     $new_user_privilege->biometrics_per_seabased = $request->biometrics_per_seabased;
+            //     $new_user_privilege->biometrics_per_hik_vision = $request->biometrics_per_hik_vision;
+            //     $new_user_privilege->biometrics_sync = $request->biometrics_sync;
+            //     $new_user_privilege->payroll_view = $request->allow_payroll_view;
+            //     $new_user_privilege->timekeeping_dashboard = $request->timekeeping_dashboard;
+            //     $new_user_privilege->upload_daily_schedule = $request->upload_daily_schedule;
+            //     $new_user_privilege->allow_prob = $request->allow_prob;
 
-                $new_user_privilege->masterfiles_companies = $request->masterfiles_companies;
-                $new_user_privilege->masterfiles_departments = $request->masterfiles_departments;
-                $new_user_privilege->masterfiles_locations = $request->masterfiles_locations;
-                $new_user_privilege->masterfiles_projects = $request->masterfiles_projects;
-                $new_user_privilege->masterfiles_loan_types = $request->masterfiles_loan_types;
-                $new_user_privilege->masterfiles_employee_leave_credits = $request->masterfiles_employee_leave_credits;
-                $new_user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
-                $new_user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
+            //     $new_user_privilege->settings_view = $request->settings_view;
+            //     $new_user_privilege->settings_add = $request->settings_add;
+            //     $new_user_privilege->settings_edit = $request->settings_edit;
+            //     $new_user_privilege->settings_delete = $request->settings_delete;
+
+            //     $new_user_privilege->masterfiles_companies = $request->masterfiles_companies;
+            //     $new_user_privilege->masterfiles_departments = $request->masterfiles_departments;
+            //     $new_user_privilege->masterfiles_locations = $request->masterfiles_locations;
+            //     $new_user_privilege->masterfiles_projects = $request->masterfiles_projects;
+            //     $new_user_privilege->masterfiles_loan_types = $request->masterfiles_loan_types;
+            //     $new_user_privilege->masterfiles_employee_leave_credits = $request->masterfiles_employee_leave_credits;
+            //     $new_user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
+            //     $new_user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
                 
-                $new_user_privilege->save();
-                Alert::success('Successfully Updated')->persistent('Dismiss');
-                return back();
-            }
+            //     $new_user_privilege->save();
+            //     Alert::success('Successfully Updated')->persistent('Dismiss');
+            //     return back();
+            // }
 
-            
+            Alert::success('Successfully Updated')->persistent('Dismiss');
+            return back();
         }
     }
 
@@ -437,5 +444,125 @@ class UserController extends Controller
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return redirect('/users');
 
+    }
+
+    public function moduleAccess(Request $request, $id) {
+        // dd($request->all());
+        $user_privilege = UserPrivilege::where('user_id', $id)->first();
+        
+        if($user_privilege){
+            // Employee
+            $user_privilege->employees = $request->employees;
+
+            // Timekeeping
+            $user_privilege->timekeeping_forms = $request->timekeeping_forms;
+            $user_privilege->timekeeping_timekeeping = $request->timekeeping_timekeeping;
+            $user_privilege->timekeeping_generated_timekeeping = $request->timekeeping_generated_timekeeping;
+
+            // Biometrics
+            $user_privilege->biometrics_per_employee = $request->biometrics_per_employee;
+            $user_privilege->biometrics_per_location = $request->biometrics_per_location;
+            $user_privilege->biometrics_per_location_hik = $request->biometrics_per_location_hik;
+            $user_privilege->biometrics_per_company = $request->biometrics_per_company;
+            $user_privilege->biometrics_per_seabased = $request->biometrics_per_seabased;
+            $user_privilege->biometrics_per_hik_vision = $request->biometrics_per_hik_vision;
+            $user_privilege->biometrics_sync = $request->biometrics_sync_biometrics;
+
+            // Settings
+            $user_privilege->settings_holiday = $request->settings_holiday;
+            $user_privilege->settings_schedule = $request->settings_schedule;
+            $user_privilege->settings_allowances = $request->settings_allowances;
+            $user_privilege->settings_incentives = $request->settings_incentives;
+            $user_privilege->settings_leave_type = $request->settings_leave_type;
+            $user_privilege->settings_announcements = $request->settings_announcements;
+            $user_privilege->settings_logos = $request->settings_logos;
+            $user_privilege->settings_hr_approver_setting = $request->settings_hr_approver_setting;
+            $user_privilege->settings_tax = $request->settings_tax;
+
+            // Daily Schedule
+            $user_privilege->upload_daily_schedule = $request->daily_schedule;
+
+            // Upload OB OT Leaves
+            $user_privilege->upload_ob = $request->upload_ob_ot_leaves;
+
+            // Payroll
+            $user_privilege->payroll_payroll_register = $request->payroll_payroll_register;
+            $user_privilege->payroll_loan_register = $request->payroll_loan_register;
+
+            // Payroll Register
+            $user_privilege->payroll_register_tax_mapping = $request->payroll_register_tax_mapping;
+
+            // Master Files
+            $user_privilege->masterfiles_companies = $request->masterfiles_companies;
+            $user_privilege->masterfiles_departments = $request->masterfiles_departments;
+            $user_privilege->masterfiles_locations = $request->masterfiles_locations;
+            $user_privilege->masterfiles_projects = $request->masterfiles_projects;
+            $user_privilege->masterfiles_loan_types = $request->masterfiles_loan_types;
+            $user_privilege->masterfiles_employee_leave_credits = $request->masterfiles_employee_leave_credits;
+            $user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
+            $user_privilege->masterfiles_employee_leave_balances = $request->masterfiles_employee_leave_balances;
+            $user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
+
+            // Reports
+            $user_privilege->reports_leave = $request->reports_leave;
+            $user_privilege->reports_overtime = $request->reports_overtime;
+            $user_privilege->reports_wfh = $request->reports_wfh;
+            $user_privilege->reports_ob = $request->reports_ob;
+            $user_privilege->reports_dtr = $request->reports_dtr;
+            $user_privilege->reports_total_expenses = $request->reports_total_expenses;
+            $user_privilege->reports_loans = $request->reports_loans;
+            $user_privilege->reports_incentive = $request->reports_incentive;
+            $user_privilege->reports_payroll = $request->reports_payroll;
+            $user_privilege->reports_attendance = $request->reports_attendance;
+
+            $user_privilege->save();
+            Alert::success('Successfully Updated')->persistent('Dismiss');
+            return back();
+        }else{
+            $new_user_privilege = new UserPrivilege;
+            $new_user_privilege->user_id = $user->id;
+            $new_user_privilege->employees_view = $request->employees_view;
+            $new_user_privilege->employees_edit = $request->employees_edit;
+            $new_user_privilege->employees_add = $request->employees_add;
+            $new_user_privilege->employees_export = $request->employees_export;
+            $new_user_privilege->employees_export_hr = $request->employees_export_hr;
+            $new_user_privilege->employees_rate = $request->employees_rate;
+
+            $new_user_privilege->reports_leave = $request->reports_leave;
+            $new_user_privilege->reports_overtime = $request->reports_overtime;
+            $new_user_privilege->reports_wfh = $request->reports_wfh;
+            $new_user_privilege->reports_ob = $request->reports_ob;
+            $new_user_privilege->reports_dtr = $request->reports_dtr;
+
+            $new_user_privilege->biometrics_per_employee = $request->biometrics_per_employee;
+            $new_user_privilege->biometrics_per_location = $request->biometrics_per_location;
+            $new_user_privilege->biometrics_per_location_hik = $request->biometrics_per_location_hik;
+            $new_user_privilege->biometrics_per_company = $request->biometrics_per_company;
+            $new_user_privilege->biometrics_per_seabased = $request->biometrics_per_seabased;
+            $new_user_privilege->biometrics_per_hik_vision = $request->biometrics_per_hik_vision;
+            $new_user_privilege->biometrics_sync = $request->biometrics_sync;
+            $new_user_privilege->payroll_view = $request->allow_payroll_view;
+            $new_user_privilege->timekeeping_dashboard = $request->timekeeping_dashboard;
+            $new_user_privilege->upload_daily_schedule = $request->upload_daily_schedule;
+            $new_user_privilege->allow_prob = $request->allow_prob;
+
+            $new_user_privilege->settings_view = $request->settings_view;
+            $new_user_privilege->settings_add = $request->settings_add;
+            $new_user_privilege->settings_edit = $request->settings_edit;
+            $new_user_privilege->settings_delete = $request->settings_delete;
+
+            $new_user_privilege->masterfiles_companies = $request->masterfiles_companies;
+            $new_user_privilege->masterfiles_departments = $request->masterfiles_departments;
+            $new_user_privilege->masterfiles_locations = $request->masterfiles_locations;
+            $new_user_privilege->masterfiles_projects = $request->masterfiles_projects;
+            $new_user_privilege->masterfiles_loan_types = $request->masterfiles_loan_types;
+            $new_user_privilege->masterfiles_employee_leave_credits = $request->masterfiles_employee_leave_credits;
+            $new_user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
+            $new_user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
+            
+            $new_user_privilege->save();
+            Alert::success('Successfully Updated')->persistent('Dismiss');
+            return back();
+        }
     }
 }

@@ -426,8 +426,8 @@
                         <hr>
                         <h5>Super Admin</h5>
                     </li>
-
-                    @if (checkUserPrivilege('timekeeping_dashboard',auth()->user()->id) == 'yes')
+                    
+                    @if (checkUserPrivilege('timekeeping_forms',auth()->user()->id) == 'yes' || checkUserPrivilege('timekeeping_timekeeping',auth()->user()->id) == 'yes' || checkUserPrivilege('timekeeping_generated_timekeeping',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'Timekeeping') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#Timekeeping" aria-expanded="@if ($header == 'Timekeeping') true @else false @endif" aria-controls="ui-basic">
                             <i class="icon-grid menu-icon"></i>
@@ -436,15 +436,21 @@
                         </a>
                         <div class="collapse @if ($header == 'Timekeeping') show @endif" id="Timekeeping">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Forms</a></li>
+                                @if(checkUserPrivilege('timekeeping_forms', auth()->user()->id) == "yes")
+                                    <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Forms</a></li>
+                                @endif
+                                @if(checkUserPrivilege('timekeeping_timekeeping',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping') }}">Timekeeping</a></li>
+                                @endif
+                                @if(checkUserPrivilege('timekeeping_generated_timekeeping',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-timekeeping') }}">Generated Timekeeping</a></li>
+                                @endif
                             </ul>
                         </div>
                     </li>
                     @endif
 
-                    @if (checkUserPrivilege('employees_view',auth()->user()->id) == 'yes')
+                    @if (checkUserPrivilege('employees',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'employees') active @endif ">
                         <a class="nav-link" href="{{ url('/employees') }}" onclick='show()'>
                             <i class="icon-head menu-icon"></i>
@@ -493,7 +499,15 @@
                         </div>
                     </li>
                     @endif
-                    @if (checkUserPrivilege('settings_view',auth()->user()->id) == 'yes')
+                    @if (checkUserPrivilege('settings_holiday',auth()->user()->id) == 'yes' || 
+                    checkUserPrivilege('settings_schedule',auth()->user()->id) == 'yes' || 
+                    checkUserPrivilege('settings_allowances',auth()->user()->id) == 'yes'|| 
+                    checkUserPrivilege('settings_incentives',auth()->user()->id) == 'yes' || 
+                    checkUserPrivilege('settings_leave_type',auth()->user()->id) == 'yes' || 
+                    checkUserPrivilege('settings_announcements',auth()->user()->id) == 'yes' || 
+                    checkUserPrivilege('settings_logos',auth()->user()->id) == 'yes' || 
+                    checkUserPrivilege('settings_hr_approver_setting',auth()->user()->id) == 'yes' || 
+                    checkUserPrivilege('settings_tax',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'settings') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#settings" aria-expanded="@if ($header == 'settings') true @else false @endif" aria-controls="ui-basic">
                             <i class="icon-cog menu-icon"></i>
@@ -502,23 +516,40 @@
                         </a>
                         <div class="collapse @if ($header == 'settings') show @endif" id="settings">
                             <ul class="nav flex-column sub-menu">
+                                @if(checkUserPrivilege('settings_holiday',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/holidays') }}">Holidays</a></li>
+                                @endif
+                                @if(checkUserPrivilege('settings_schedule',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/schedules') }}">Schedules</a></li>
+                                @endif
+                                @if(checkUserPrivilege('settings_allowances',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
+                                @endif
+                                @if(checkUserPrivilege('settings_incentives',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
-                                {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/handbooks') }}">Handbook</a></li> --}}
-
+                                @endif
+                                @if(checkUserPrivilege('settings_leave_type',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/leavee-settings') }}">Leave Type</a></li>
+                                @endif
+                                @if(checkUserPrivilege('settings_announcements',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/announcements') }}">Announcements</a></li>
+                                @endif
+                                @if(checkUserPrivilege('settings_logos',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/logos') }}">Logos</a></li>
+                                @endif
+                                @if(checkUserPrivilege('settings_hr_approver_setting',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/hr-approver-setting') }}">HR Approver Setting</a></li>
+                                @endif
+                                @if(checkUserPrivilege('settings_tax',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/tax') }}">Tax</a></li>
-
+                                @endif
+                                {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/handbooks') }}">Handbook</a></li> --}}
                             </ul>
                         </div>
                     </li>
                     @endif
-                    @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
+                    @if (checkUserPrivilege('payroll_payroll_register',auth()->user()->id) == 'yes' ||
+                    checkUserPrivilege('payroll_loan_register',auth()->user()->id) == 'yes' )
                     <li class="nav-item @if ($header == 'Payroll') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#payroll" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-align-center menu-icon"></i>
@@ -527,28 +558,44 @@
                         </a>
                         <div class="collapse" id="payroll">
                             <ul class="nav flex-column sub-menu">
+                                @if(checkUserPrivilege('payroll_payroll_register',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-reg') }}">Payroll Register</a>
                                 </li>
+                                @endif
+                                @if(checkUserPrivilege('payroll_loan_register',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
+                                @endif
                             </ul>
                         </div>
                     </li>
+                    @endif
+                    @if(checkUserPrivilege('payroll_register_tax_mapping',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'payrollSetting') active @endif">
-                      <a class="nav-link" data-toggle="collapse" href="#payrollSetting" aria-expanded="false" aria-controls="ui-basic">
-                        <i class="icon-align-center menu-icon"></i>
-                        <span class="menu-title">Payroll Setting</span>
-                        <i class="menu-arrow"></i>
-                      </a>
-                      <div class="collapse" id="payrollSetting">
-                        <ul class="nav flex-column sub-menu">
-                          <li class="nav-item"> <a class="nav-link" href="{{ url('tax-mapping') }}">Tax Mapping</a></li>
-                        </ul>
-                      </div>
+                        <a class="nav-link" data-toggle="collapse" href="#payrollSetting" aria-expanded="false" aria-controls="ui-basic">
+                            <i class="icon-align-center menu-icon"></i>
+                            <span class="menu-title">Payroll Setting</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="payrollSetting">
+                            <ul class="nav flex-column sub-menu">
+                                @if(checkUserPrivilege('payroll_register_tax_mapping',auth()->user()->id) == 'yes')
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('tax-mapping') }}">Tax Mapping</a></li>
+                                @endif
+                            </ul>
+                        </div>
                     </li>
                     @endif
 
                     
-        @if (checkUserPrivilege('masterfiles_companies',auth()->user()->id) == 'yes' || checkUserPrivilege('masterfiles_departments',auth()->user()->id) == 'yes' || checkUserPrivilege('masterfiles_loan_types',auth()->user()->id) == 'yes' || checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
+        @if (checkUserPrivilege('masterfiles_companies',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_departments',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_locations',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_projects',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_loan_types',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_employee_allowances',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_employee_leave_earned',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_employee_leave_balances',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
         <li class="nav-item @if ($header == 'masterfiles') active @endif">
             <a class="nav-link" data-toggle="collapse" href="#masterfiles" aria-expanded="false" aria-controls="ui-basic">
                 <i class="icon-align-center menu-icon"></i>
@@ -602,7 +649,7 @@
                         <a class="nav-link" href="{{ url('/employee-leave-credits') }}">Employee Leave Credits</a>
                     </li>
                     @endif
-                    @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
+                    @if(checkUserPrivilege('masterfiles_employee_leave_balances',auth()->user()->id) == 'yes')
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/manual-employee-earned-leaves') }}">Manual Earned Leaves</a>
                     </li> --}}
@@ -622,7 +669,16 @@
             </div>
         </li>
         @endif
-        @if (checkUserPrivilege('reports_leave',auth()->user()->id) == 'yes' || checkUserPrivilege('reports_overtime',auth()->user()->id) == 'yes' || checkUserPrivilege('reports_wfh',auth()->user()->id) == 'yes' || checkUserPrivilege('reports_ob',auth()->user()->id) == 'yes')
+        @if (checkUserPrivilege('reports_leave',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('reports_overtime',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('reports_wfh',auth()->user()->id) == 'yes' || 
+        checkUserPrivilege('reports_ob',auth()->user()->id) == 'yes' ||
+        checkUserPrivilege('reports_total_expenses', auth()->user()->id) == "yes"||
+        checkUserPrivilege('reports_loans', auth()->user()->id) == "yes" ||
+        checkUserPrivilege('reports_incentive', auth()->user()->id) == "yes" ||
+        checkUserPrivilege('reports_payroll', auth()->user()->id) == "yes" ||
+        checkUserPrivilege('reports_attendance', auth()->user()->id) == "yes"
+        )
         <li class="nav-item @if ($header == 'reports') active @endif">
             <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="ui-basic">
                 <i class="icon-paper menu-icon"></i>
@@ -648,11 +704,21 @@
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/dtr-report') }}">DTR Reports</a></li>
                     @endif
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/dtr-report') }}">DTR Reports</a></li> --}}
+                    @if(checkUserPrivilege('reports_total_expenses', auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/totalExpense-report') }}">Total Expenses</a></li>
+                    @endif
+                    @if(checkUserPrivilege('reports_loans', auth()->user()->id) == "yes")
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-report') }}">Loans Report</a></li>
+                    @endif
+                    @if(checkUserPrivilege('reports_incentive', auth()->user()->id) == "yes")
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/incentive-report') }}">Incentive Reports</a></li>
+                    @endif
+                    @if(checkUserPrivilege('reports_payroll', auth()->user()->id) == "yes")
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/payroll-report') }}">Payroll Reports</a></li>
+                    @endif
+                    @if(checkUserPrivilege('reports_attendance', auth()->user()->id) == "yes")
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/attendance-report') }}">Attendance Reports</a></li>
+                    @endif
                 </ul>
             </div>
         </li>
@@ -675,16 +741,18 @@
         @endif
         @if (checkUserPrivilege('upload_daily_schedule',auth()->user()->id) == 'yes')
         <li class="nav-item">
-          <a href="{{url('daily-schedule')}}" class="nav-link">
+            <a href="{{url('daily-schedule')}}" class="nav-link">
             <i class="fa fa-calendar menu-icon"></i>
             Daily Schedule
-          </a>
+            </a>
         <li>
+        @endif
+        @if (checkUserPrivilege('upload_ob',auth()->user()->id) == 'yes')
         <li class="nav-item @if($header == 'upload') active @endif">
-          <a href="{{url('upload')}}" class="nav-link">
+            <a href="{{url('upload')}}" class="nav-link">
             <i class="ti-upload menu-icon"></i>
             Upload OB/OT/Leaves
-          </a>
+            </a>
         <li>
         @endif
         </ul>
@@ -1134,6 +1202,7 @@
     @yield('loanRegScripts')
     @yield('empAllowScript')
     @yield('empIncentiveScript')
+    @yield('js')
 </body>
 
 </html>
