@@ -53,10 +53,7 @@ class PayslipController extends Controller
 
             $names = AttendanceDetailedReport::with([
                 'employee.salary',
-                'employee.loan' => function ($query) use ($cutoff) {
-                    $query->where('start_date', '>=', $cutoff)
-                          ->where('expiry_date', '<=', $cutoff);
-                },
+                'employee.loan',
                 'employee.allowances',
                 'employee.pay_instructions'=> function ($query) use ($cutoff) {
                     $query->where('start_date', '>=', $cutoff)
