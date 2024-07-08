@@ -1,4 +1,4 @@
-<div class="modal fade" id="payroll_instruction{{$name->id}}" tabindex="-1" role="dialog" aria-labelledby="payrolldata" aria-hidden="true">
+<div class="modal fade" id="payroll_instruction{{$name->employee_no}}" tabindex="-1" role="dialog" aria-labelledby="payrolldata" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
