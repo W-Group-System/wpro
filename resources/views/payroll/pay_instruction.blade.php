@@ -21,12 +21,16 @@
             <div class="card">
               <div class="card-body">
                 <h4 class="card-title">Payroll Instruction
-                    <button type="button" class="btn btn-outline-danger btn-icon-text btn-sm"  data-toggle="modal" data-target="#payrollInstruction">
+                    <button type="button" class="btn btn-outline-warning btn-icon-text btn-sm"  data-toggle="modal" data-target="#payrollInstruction">
                         <i class="ti-upload btn-icon-prepend"></i>                                                    
                         Upload
                     </button>
+                    <a href="{{url('export-intruction-template')}}" class="btn btn-outline-success btn-icon-text btn-sm">
+                        <i class="ti-plus btn-icon-prepend"></i>                                                    
+                        Export Template
+                    </a>
                     
-                    <button type="button" class="btn btn-outline-success btn-icon-text btn-sm" data-toggle="modal" data-target="#addInstruction">
+                    <button type="button" class="btn btn-outline-primary btn-icon-text btn-sm" data-toggle="modal" data-target="#addInstruction">
                         <i class="ti-plus"></i>  
                     </button>
                 </h4>

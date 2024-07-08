@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AttendanceDetailedReport;
 use Illuminate\Support\Facades\Auth;
 use App\Imports\PayInstructionImport;
+use App\Exports\PayInstructionExport;
 use Excel;
 use App\Payroll;
 use App\Employee;
@@ -158,6 +159,11 @@ class PayslipController extends Controller
         Excel::import(new PayInstructionImport,request()->file('import_file'));
            
         return back();
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new PayInstructionExport, 'Payroll Instruction.xlsx');
     }
     
     
