@@ -297,6 +297,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('loans', 'LoanController@index');
     Route::get('loan-reg', 'LoanController@loan_reg');
     Route::post('new-loan', 'LoanController@store_loanReg');
+    Route::post('update-loan/{id}','LoanController@updateloanReg');
+
 
     // Reports
     Route::get('employee-report', 'EmployeeController@employee_report');

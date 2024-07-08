@@ -54,6 +54,10 @@
 													data-id="{{ $loan->id }}" class="btn  btn-rounded btn-primary btn-icon">
 													<i class="fa fa-info"></i>
 												</button>
+												<button title='View loan details' id="edit{{ $loan->id }}" data-toggle="modal" data-target="#loanDetailsedit{{ $loan->id }}"
+													data-id="{{ $loan->id }}" class="btn  btn-rounded btn-primary btn-icon">
+													<i class="fa fa-edit"></i>
+												</button>
 											</td>
 										</tr>
 									@endforeach
@@ -67,6 +71,9 @@
 	</div>
 	@include('loans.new_loan')
 	@include('loans.loan_details')
+	@foreach ($loans as $loan)
+	@include('loans.loan_details_edit')
+	@endforeach 
 
 @endsection
 @section('loanRegScripts')

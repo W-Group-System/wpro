@@ -65,6 +65,22 @@ class LoanController extends Controller
         Alert::success('Successfully Stored')->persistent('Dismiss');
         return back();
     }
+
+    public function updateloanReg(Request $request, $id)
+    {
+        $loans = Loan::findOrFail($id);
+        $loans->loan_type_id = $request->loan_type;
+        $loans->employee_id = $request->employee;
+        $loans->amount = $request->amount;
+        $loans->monthly_ammort_amt = $request->monthly_ammort_amt;
+        $loans->initial_amount = $request->initial_amount;
+        $loans->start_date = $request->start_date;
+        $loans->schedule = $request->frequency;
+        $loans->save();
+
+        Alert::success('Successfully Stored')->persistent('Dismiss');
+        return back();
+    }
     public function loan_report()
     {
         return view('reports.loan_report', array(
