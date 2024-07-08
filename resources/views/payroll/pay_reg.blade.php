@@ -211,6 +211,26 @@
                               $hourly_rate = $daily_rate/8;
                               $de_minimis = $name->employee->salary->de_minimis/2;
                             }
+                            $hours = 0;
+                            foreach($absents_data->where('employee_no',$name->employee_no) as $absent_dat)
+                            {
+                              // dd($absent_dat->shift);
+                              $shift = $absent_dat->shift;
+                              $shift = str_replace("(Semi-Flexi)", '', $shift);
+                              $shift = str_replace("(Flexi)", '', $shift);
+                              // $shift = str_replace(" ", '', $shift);
+                              $shift = explode("-",$shift);
+                              $start = strtotime($shift[0]);
+                              $end = strtotime($shift[1]);
+                              $hours_count = ($end - $start)/3600;
+                              if($hours>8)
+                              {
+                                $hours_count = $hours_count-1;
+                              }
+
+                              $hours_data = $hours_count*($absent_dat->abs-$absent_dat->lv_w_pay);
+                              $hours = $hours+$hours_data;
+                            }
                             if($name->employee->loan)
                             {
                               $loa = ($name->employee->loan);
@@ -252,7 +272,7 @@
                             $total_undertime_min = $name->total_undertime_min/60*$hourly_rate;
                             
                             $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
-                            $total_abs = $total_abs_count*$daily_rate*1.19;
+                            $total_abs = $hours*$hourly_rate;
                             
                             $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
                             if($payroll_b)

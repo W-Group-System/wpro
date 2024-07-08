@@ -39,10 +39,13 @@ class PayslipController extends Controller
         $cutoff = $request->cut_off;
         $names = [];
         $dates = [];
+        $absents_data = [];
         $sss = ContributionSSS::orderBy('salary_from','asc')->get();
         if($request->company)
         {
             $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date')->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get(); 
+            $absents_data = AttendanceDetailedReport ::whereColumn('abs', '>', 'lv_w_pay')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
+            
             $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
             $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances'])
             ->select('company_id', 'employee_no', 'name', 
@@ -66,6 +69,7 @@ class PayslipController extends Controller
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
             ->get(); // dd($names);
+            
         }
        $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
@@ -84,6 +88,7 @@ class PayslipController extends Controller
             'names' => $names,
             'sss' => $sss,
             'dates' => $dates,
+            'absents_data' => $absents_data,
         )
         );
     }
