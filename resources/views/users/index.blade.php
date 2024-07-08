@@ -62,6 +62,10 @@
                                                 Change Password
                                                 <i class="ti-key btn-icon-append"></i>
                                             </a>
+                                            <button class="btn btn-outline-info btn-icon-text btn-sm" data-toggle="modal" data-target="#accessModal-{{$user->id}}">
+                                                Module Access
+                                                <i class="ti-key btn-icon-append"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -78,9 +82,82 @@
 @foreach($users as $user)
 {{-- @include('users.edit_user_role') --}}
 @include('users.user_change_password')
+@include('users.user_access')
 @endforeach
 
 @endsection
+
+@section('js')
+<script>
+    $(document).ready(function() {
+
+        $(".timekeepingAll").on('change', function() {
+            if($(this).is(':checked')) {
+                $('.timekeeping_checkbox').prop('checked', true)
+            }
+            else {
+                $('.timekeeping_checkbox').prop('checked', false)
+            }
+        })
+        
+        $(".biometricsAll").on('change', function() {
+            if($(this).is(':checked')) {
+                $('.biometrics_checkbox').prop('checked', true)
+            }
+            else {
+                $('.biometrics_checkbox').prop('checked', false)
+            }
+        })
+
+        $(".settingsAll").on('change', function() {
+            if ($(this).is(":checked")) {
+                $('.settings_checkbox').prop('checked', true)
+            }
+            else {
+                $('.settings_checkbox').prop('checked', false)
+            }
+        })
+
+        $(".payrollAll").on('change', function() {
+            if ($(this).is(":checked")) {
+                $('.payroll_checkbox').prop('checked', true)
+            }
+            else {
+                $('.payroll_checkbox').prop('checked', false)
+            }
+        })
+
+        $(".payrollRegisterAll").on('change', function() {
+            if ($(this).is(":checked")) {
+                $('.payroll_settings_checkbox').prop('checked', true)
+            }
+            else {
+                $('.payroll_settings_checkbox').prop('checked', false)
+            }
+        })
+
+        $(".masterFilesAll").on('change', function() {
+            if ($(this).is(":checked")) {
+                $('.masterfiles_checkbox').prop('checked', true)
+            }
+            else {
+                $('.masterfiles_checkbox').prop('checked', false)
+            }
+        })
+
+        $(".reportsAll").on('change', function() {
+            if ($(this).is(":checked")) {
+                $('.report_checkbox').prop('checked', true)
+            }
+            else {
+                $('.report_checkbox').prop('checked', false)
+            }
+        })
+
+    })
+</script>
+@endsection
+
 @section('footer')
 <script src="{{ asset('body_css/vendors/inputmask/jquery.inputmask.bundle.js') }}"></script>
 <script src="{{ asset('body_css/vendors/inputmask/jquery.inputmask.bundle.js') }}"></script>

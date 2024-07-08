@@ -332,6 +332,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/update-user-role/{user}','UserController@updateUserRole');
     Route::post('/update-user-password/{user}','UserController@updateUserPassword');
 
+    // Access
+    Route::post('/module-access/{id}', 'UserController@moduleAccess');
+
 
     Route::get('users-export', 'UserController@export');
 
