@@ -100,20 +100,27 @@
                             @php
                                 $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_number);
                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                $emp_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
                             @endphp
                             <tr>
                                 <td>{{$emp->employee_code}}</td>
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
                                     @if($employee_schedule != null)
-                                      @if($employee_schedule->time_in_from != '00:00')
-                                        <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                        @if($employee_schedule->time_in_from != '00:00')
+                                            <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
                                         @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                          <small>(Flexi)</small>
+                                            <small>(Flexi)</small>
                                         @endif
-                                      @else 
-                                      <small>RESTDAY</small>
-                                      @endif
+                                        @else 
+                                            <small>RESTDAY</small>
+                                        @endif
+                                    @else
+                                        @if($emp_ob != null)
+                                            <small>{{ date('h:i A', strtotime($emp_ob->date_from)).' - '.date('h:i A', strtotime($emp_ob->date_to)) }}</small>
+                                        @else
+                                            <small>RESTDAY</small>
+                                        @endif
                                     @endif
 
                                     {{-- @if($employee_schedule)
