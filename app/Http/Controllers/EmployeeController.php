@@ -2461,4 +2461,14 @@ class EmployeeController extends Controller
         return $pdf->stream($employee->employee_code.'.pdf');
     }
 
+    public function updateEmpNo(Request $request, $id)
+    {
+        $employeeData = Employee::findOrFail($id);
+        $employeeData->employee_code = $request->employee_no;
+        $employeeData->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+
+        return back();
+    }
 }

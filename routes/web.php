@@ -397,6 +397,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/nte-reports', 'NteFileController@nteReports');
     Route::get('/employee-training-reports', 'EmployeeTrainingController@employeeTrainingReports');
 
+    Route::post('/update-employee-code/{id}', 'EmployeeController@updateEmpNo');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
