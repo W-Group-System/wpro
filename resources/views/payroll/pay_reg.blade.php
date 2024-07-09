@@ -223,6 +223,7 @@
                               $de_minimis = $name->employee->salary->de_minimis/2;
                             }
                             $hours = 0;
+                            // $hours_count =0;
                             foreach($absents_data->where('employee_no',$name->employee_no) as $absent_dat)
                             {
                               // dd($absent_dat->shift);
@@ -366,6 +367,7 @@
                             <td>{{number_format($total_taxable_benefits,2)}}</td>
                             <td>{{number_format($gross_taxable_income,2)}}</td>
                             <td>{{number_format($total_abs_count,2)}}</td>
+                            {{-- <td>{{number_format(-1*($total_abs),2)}} and {{$hours}}</td> --}}
                             <td>{{number_format(-1*($total_abs),2)}}</td>
                             <td>{{number_format($name->total_late_min,2)}}</td>
                             <td>{{number_format(-1*($total_late_min),2)}}</td>
