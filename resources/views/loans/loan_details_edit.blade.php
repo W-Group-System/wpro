@@ -15,24 +15,26 @@
                         <label for="loanType">Loan Type</label>
                         <select data-placeholder="Select Loan Type"
                             class="form-control form-control-sm required js-example-basic-single " style='width:100%;' name='loan_type'
-                            required>
+                            disabled>
                             <option value="">--Select Loan Type--</option>
                             @foreach ($loanTypes as $loanType)
                                 <option value="{{ $loanType->id }}" {{ $loan->loan_type  ? 'selected' : '' }}>
                                     {{ $loanType->loan_name }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" name="loan_type" value="{{ $loan->loan_type ? $loan->loan_type->id : '' }}">
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="employee">Employee</label>
                         <select data-placeholder="Select Employee" class="form-control form-control-sm required js-example-basic-single "
-                            style='width:100%;' name='employee' required>
+                            style='width:100%;' name='employee' disabled>
                             <option value="">--Select Employee--</option>
                             @foreach ($employees as $employee)
                                 <option value="{{ $employee->id }}" {{$loan->employee ? 'selected' : '' }}>
                                     {{ $employee->last_name . ', ' . $employee->first_name . ' ' . $employee->middle_name }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" name="employee" value="{{ $loan->employee ? $loan->employee->id : '' }}">
                     </div>
                 </div>
                 <div class="row">
@@ -44,36 +46,36 @@
                     <div class="col-lg-6 form-group">
                         <label for="ammortAmt">Ammortization Amount</label>
                         <input type="number" class="form-control form-control-sm" name="monthly_ammort_amt" id="monthly_ammort_amt"
-                            required min="1" placeholder="0.00" value="{{ $loan->monthly_ammort_amt}}">
+                            required min="1" placeholder="0.00" value="{{ $loan->monthly_ammort_amt}}" readonly>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 form-group">
                         <label for="startDate">Start Date</label>
                         <input type="date" class="form-control form-control-sm" name="start_date" id="start_date"
-                            value="{{ $loan->start_date }}">
+                            value="{{ $loan->start_date }}" readonly>
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="expiryDate">End Date</label>
                         <input type="date" class="form-control form-control-sm" name="expiry_date" id="start_date"
-                            value="{{ $loan->expiry_date }}">
+                            value="{{ $loan->expiry_date }}" readonly>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 form-group">
                         <label for="amount">Loan Balance</label>
                         <input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required
-                            min="1" value="{{ $loan->initial_amount }}" placeholder="0.00">
+                            min="1" value="{{ $loan->initial_amount }}" placeholder="0.00" readonly>
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="frequency">Frequency</label>
                         <select data-placeholder="Frequency" class="form-control form-control-sm required js-example-basic-single "
                         style='width:100%;' name='frequency' required>
                         <option value="">--Frequency--</option>
-                        <option value='Every cut off'>Every cut off</option>
-                        <option value='This cut off'>This cut off</option>
-                        <option value='Every 1st cut off'>Every 1st cut off</option>
-                        <option value='Every 2nd cut off'>Every 2nd cut off</option>
+                        <option value='Every cut off' {{$loan->schedule ? 'selected' : '' }}>Every cut off</option>
+                        <option value='This cut off' {{$loan->schedule ? 'selected' : '' }}>This cut off</option>
+                        <option value='Every 1st cut off' {{$loan->schedule ? 'selected' : '' }}>Every 1st cut off</option>
+                        <option value='Every 2nd cut off' {{$loan->schedule ? 'selected' : '' }}>Every 2nd cut off</option>
                     </select>
                     </div>
                 </div>
