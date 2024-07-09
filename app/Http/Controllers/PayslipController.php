@@ -60,6 +60,9 @@ class PayslipController extends Controller
             // $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances','employee.pay_instructions'])
 
             $names = AttendanceDetailedReport::with([
+                'employee' => function ($query) {
+                        $query->where('status','Active');
+                },
                 'employee.salary',
                 'employee.loan',
                 'employee.allowances',
@@ -68,6 +71,9 @@ class PayslipController extends Controller
                           ->where('end_date', '<=', $cutoff);
                 },
             ])
+            ->whereHas('employee', function ($query) {
+                $query->where('status', 'Active');
+            })
             ->select('company_id', 'employee_no', 'name', 
             DB::raw('SUM(abs) as total_abs'),
             DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
