@@ -381,7 +381,7 @@
                             <td>{{number_format($statutory,2)}}</td>
                             <td>{{number_format($taxable_deductable_total,2)}}</td>
                             <td>{{number_format($net_taxable_income,2)}}</td>
-                            <td>{{number_format($tax,2)}}</td>
+                            <td>{{number_format(-1*($tax),2)}}</td>
                             <td>{{number_format($de_minimis,2)}}</td>
                             {{-- <td>{{number_format($de_minimis_adj,2)}}</td> --}}
                             {{-- <td>{{number_format($load_allowance,2)}}</td>
@@ -441,9 +441,9 @@
                               $lllloan = $loans+$every_cut_off_loan;
                             }
                             @endphp
-                            <td>{{number_format($lllloan,2)}}</td>
+                            <td>{{number_format(-1*($lllloan),2)}}</td>
                             @endforeach
-                            <td>{{number_format($total_loans,2)}}</td> 
+                            <td>{{number_format(-1*($total_loans),2)}}</td> 
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}</td>
                             <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}</td>
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}</td>
