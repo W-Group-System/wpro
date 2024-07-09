@@ -90,16 +90,19 @@ class PayslipController extends Controller
             ->groupBy('company_id', 'employee_no', 'name')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
-
-            $names_all = $names->pluck('employee.user_id')->toArray();
-            $employee_ids = $names->pluck('employee.id')->toArray();
-            $employee_codes = $names->pluck('employee.employee_code')->toArray();
-            $allowances_total = EmployeeAllowance::with('allowance')->whereIn('user_id',$names_all)->select('allowance_id')->groupBy('allowance_id')->get();
-            $loans_all = Loan::with('loan_type')->whereIn('employee_id',$employee_ids)->select('loan_type_id')->groupBy('loan_type_id')->get();
-            $instructions = PayInstruction::whereIn('site_id',$employee_codes)
-            ->where('start_date', '>=', $cutoff)
-                          ->where('end_date', '<=', $cutoff)
-                          ->select('benefit_name')->groupBy('benefit_name')->get();
+            if($request->cutoff)
+            {
+                $names_all = $names->pluck('employee.user_id')->toArray();
+                $employee_ids = $names->pluck('employee.id')->toArray();
+                $employee_codes = $names->pluck('employee.employee_code')->toArray();
+                $allowances_total = EmployeeAllowance::with('allowance')->whereIn('user_id',$names_all)->select('allowance_id')->groupBy('allowance_id')->get();
+                $loans_all = Loan::with('loan_type')->whereIn('employee_id',$employee_ids)->select('loan_type_id')->groupBy('loan_type_id')->get();
+                $instructions = PayInstruction::whereIn('site_id',$employee_codes)
+                ->where('start_date', '>=', $cutoff)
+                              ->where('end_date', '<=', $cutoff)
+                              ->select('benefit_name')->groupBy('benefit_name')->get();
+            }
+          
             
         }
        $companies = Company::whereHas('employee_has_company')
