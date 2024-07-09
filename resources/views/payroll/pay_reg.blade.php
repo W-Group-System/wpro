@@ -364,11 +364,11 @@
                             <td>{{number_format($total_taxable_benefits,2)}}</td>
                             <td>{{number_format($gross_taxable_income,2)}}</td>
                             <td>{{number_format($total_abs_count,2)}}</td>
-                            <td>{{number_format(-1($total_abs),2)}}</td>
+                            <td>{{number_format(-1*($total_abs),2)}}</td>
                             <td>{{number_format($name->total_late_min,2)}}</td>
-                            <td>{{number_format(-1($total_late_min),2)}}</td>
+                            <td>{{number_format(-1*($total_late_min),2)}}</td>
                             <td>{{number_format($name->total_undertime_min,2)}}</td>
-                            <td>{{number_format(-1($total_undertime_min),2)}}</td>
+                            <td>{{number_format(-1*($total_undertime_min),2)}}</td>
                             <td>{{number_format(-1*($sss_ecc),2)}}</td>
                             <td>{{number_format(-1*($sss_ee),2)}}</td>
                             <td>{{number_format(-1*($sss_er),2)}}</td>
