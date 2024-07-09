@@ -117,19 +117,22 @@
                       'rst_sh_nd_over_eight' => 0
                   ];
                   $currentEmployeeNo = null;
+                  $currentEmployeeName = null;
+                  $currentEmployeeLogdate =null;
+                  $currentEmployeeShift = null;
                   @endphp
           
                   @foreach($generated_timekeepings as $timekeeping)
                       @if($currentEmployeeNo !== $timekeeping->employee_no)
                           @if(!is_null($currentEmployeeNo))
                           <tr class="subtotal-row">
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
                               <td><strong>Subtotal</strong></td>
+                              <td><strong>{{ $currentEmployeeNo }}</strong></td>
+                              <td><strong>{{ $currentEmployeeName }}</strong></td>
+                              <td><strong>{{ $currentEmployeeLogdate }}</strong></td>
+                              <td><strong>{{ $currentEmployeeShift }}</strong></td>
+                              <td></td>
+                              <td></td>
                               <td class="dt-type-numeric"><strong>{{ $subtotals['abs'] }}</strong></td>
                               <td class="dt-type-numeric"><strong>{{ $subtotals['lv_w_pay'] }}</strong></td>
                               <td class="dt-type-numeric"><strong>{{ $subtotals['reg_hrs'] }}</strong></td>
@@ -194,6 +197,9 @@
                               'rst_sh_nd_over_eight' => 0
                           ];
                           $currentEmployeeNo = $timekeeping->employee_no;
+                          $currentEmployeeName = $timekeeping->name;
+                          $currentEmployeeLogdate =$timekeeping->log_date;
+                          $currentEmployeeShift = $timekeeping->shift;
                           @endphp
                       @endif
                       <tr>
