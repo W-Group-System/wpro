@@ -47,6 +47,9 @@ class PayslipController extends Controller
         $names = [];
         $dates = [];
         $absents_data = [];
+        $allowances_total = [];
+        $loans_all = [];
+        $instructions = [];
         $sss = ContributionSSS::orderBy('salary_from','asc')->get();
         if($request->company)
         {
