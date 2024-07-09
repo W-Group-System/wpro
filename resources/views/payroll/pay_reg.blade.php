@@ -489,7 +489,7 @@
    var paytext = {!! json_encode($paytext) !!};
    var total_net = {!! json_encode($total_net) !!};
    var company = {!! json_encode($companyData) !!};
-    var text="PHP010000038248832"+""+"2"+total_net+"\n";
+    var text="PHP010000038248832"+"071024"+"2"+total_net+"\n";
    for (var key in paytext) {
     if(paytext[key] != undefined){
       text += "PHP10"+paytext[key].bank+"0000007"+paytext[key].amount+"\n";
@@ -500,7 +500,7 @@
       var blob = new Blob([text], {
          type: "text/plain;charset=utf-8",
       });
-      saveAs(blob, company+".txt");
+      saveAs(blob, company+"-071024.txt");
    }
 </script>
 {{-- @foreach($names as $name)
