@@ -1,7 +1,7 @@
 @extends('layouts.header')
 
 @section('content')
-
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin = "anonymous" referrerpolicy = "no-referrer"> </script>
 <div class="main-panel">
     <div class="content-wrapper">
             @if (count($errors))
@@ -62,6 +62,8 @@
                     </div>
                   </form>
                 <div class="table-responsive">
+                  
+                  <button  class='btn btn-info btn-sm' type = "button" onclick = "CreateTextFile();">Download Txt</button>
                   <table class="table table-db table-hover table-bordered">
                     <thead>
                         <tr>
@@ -167,6 +169,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                      @php
+                          $paytext = [];
+                          $total_net = 0;
+                      @endphp
                         @foreach($names as $key => $name)
                         @php
                             $payroll_b = $dates->where('log_date',25)->first();
@@ -451,10 +457,14 @@
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}</td>
                             <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}</td>
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}</td>
-                        </tr>
-                        
-                            
-                        
+                          </tr>
+                          @php
+                          $object = new stdClass();
+                          $object->bank = str_pad($name->employee->bank_account_number, 13, '0', STR_PAD_LEFT);;
+                          $object->amount = str_pad(number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2, "", ""), 13, '0', STR_PAD_LEFT);
+                          array_push($paytext,$object);
+                          $total_net = $total_net + $gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions;
+                          @endphp
                         @endforeach
                     </tbody>
                   </table>
@@ -465,6 +475,28 @@
         </div>
     </div>
 </div>
+@php
+    $total_net = str_pad(number_format($total_net,2, "", ""), 13, '0', STR_PAD_LEFT);
+    $companyData = $companies->where('id',$company)->first();
+@endphp
+<script>
+   var paytext = {!! json_encode($paytext) !!};
+   var total_net = {!! json_encode($total_net) !!};
+   var company = {!! json_encode($companyData->company_code) !!};
+    var text="PHP010000038248832"+""+"2"+total_net+"\n";
+   for (var key in paytext) {
+    if(paytext[key] != undefined){
+      text += "PHP10"+paytext[key].bank+"0000007"+paytext[key].amount+"\n";
+    }
+     
+  }
+   function CreateTextFile() {
+      var blob = new Blob([text], {
+         type: "text/plain;charset=utf-8",
+      });
+      saveAs(blob, company+".txt");
+   }
+</script>
 {{-- @foreach($names as $name)
 @php
     $payroll_b = $dates->where('log_date',25)->first();
