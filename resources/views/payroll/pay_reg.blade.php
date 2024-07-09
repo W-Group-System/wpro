@@ -364,22 +364,22 @@
                             <td>{{number_format($total_taxable_benefits,2)}}</td>
                             <td>{{number_format($gross_taxable_income,2)}}</td>
                             <td>{{number_format($total_abs_count,2)}}</td>
-                            <td>{{number_format($total_abs,2)}}</td>
+                            <td>{{number_format(-1($total_abs),2)}}</td>
                             <td>{{number_format($name->total_late_min,2)}}</td>
-                            <td>{{number_format($total_late_min,2)}}</td>
+                            <td>{{number_format(-1($total_late_min),2)}}</td>
                             <td>{{number_format($name->total_undertime_min,2)}}</td>
-                            <td>{{number_format($total_undertime_min,2)}}</td>
-                            <td>{{number_format($sss_ecc,2)}}</td>
-                            <td>{{number_format($sss_ee,2)}}</td>
-                            <td>{{number_format($sss_er,2)}}</td>
-                            <td>{{number_format($hdmf,2)}}</td>
-                            <td>{{number_format($hdmf,2)}}</td>
-                            <td>{{number_format($philhealth,2)}}</td>
-                            <td>{{number_format($philhealth,2)}}</td>
-                            <td>{{number_format($wisp_ee,2)}}</td>
-                            <td>{{number_format($wisp_er,2)}}</td>
-                            <td>{{number_format($statutory,2)}}</td>
-                            <td>{{number_format($taxable_deductable_total,2)}}</td>
+                            <td>{{number_format(-1($total_undertime_min),2)}}</td>
+                            <td>{{number_format(-1*($sss_ecc),2)}}</td>
+                            <td>{{number_format(-1*($sss_ee),2)}}</td>
+                            <td>{{number_format(-1*($sss_er),2)}}</td>
+                            <td>{{number_format(-1*($hdmf),2)}}</td>
+                            <td>{{number_format(-1*($hdmf),2)}}</td>
+                            <td>{{number_format(-1*($philhealth),2)}}</td>
+                            <td>{{number_format(-1*($philhealth),2)}}</td>
+                            <td>{{number_format(-1*($wisp_ee),2)}}</td>
+                            <td>{{number_format(-1*($wisp_er),2)}}</td>
+                            <td>{{number_format(-1*($statutory),2)}}</td>
+                            <td>{{number_format(-1($taxable_deductable_total),2)}}</td>
                             <td>{{number_format($net_taxable_income,2)}}</td>
                             <td>{{number_format(-1*($tax),2)}}</td>
                             <td>{{number_format($de_minimis,2)}}</td>
