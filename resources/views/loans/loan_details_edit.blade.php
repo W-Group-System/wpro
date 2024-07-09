@@ -15,13 +15,14 @@
                         <label for="loanType">Loan Type</label>
                         <select data-placeholder="Select Loan Type"
                             class="form-control form-control-sm required js-example-basic-single " style='width:100%;' name='loan_type'
-                            required>
+                            disabled>
                             <option value="">--Select Loan Type--</option>
                             @foreach ($loanTypes as $loanType)
-                                <option value="{{ $loanType->id }}" {{ $loan->loan_type  ? 'selected' : '' }}>
+                                <option value="{{ $loanType->id }}" {{  $loan->loan_type->loan_name ==  $loanType->loan_name ? 'selected' : '' }}>
                                     {{ $loanType->loan_name }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" name="loan_type" value="{{ $loan->loan_type ? $loan->loan_type->id : '' }}">
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="employee">Employee</label>
@@ -45,27 +46,27 @@
                     <div class="col-lg-6 form-group">
                         <label for="ammortAmt">Ammortization Amount</label>
                         <input type="number" class="form-control form-control-sm" name="monthly_ammort_amt" id="monthly_ammort_amt"
-                            required min="1" placeholder="0.00" step=".01" value="{{ $loan->monthly_ammort_amt}}">
+                            required min="1" placeholder="0.00" step=".01" value="{{ $loan->monthly_ammort_amt}}" readonly>
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="startDate">Start Date</label>
                         <input type="date" class="form-control form-control-sm" name="start_date" id="start_date"
-                            value="{{ $loan->start_date }}">
+                            value="{{ $loan->start_date }}" readonly>
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="expiryDate">End Date</label>
                         <input type="date" class="form-control form-control-sm" name="expiry_date" id="start_date"
-                            value="{{ $loan->expiry_date }}">
+                            value="{{ $loan->expiry_date }}" readonly>
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="amount">Loan Balance</label>
-                        <input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required
+                        <input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required readonly
                             min="1" value="{{ $loan->initial_amount }}" step=".01" placeholder="0.00">
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="frequency">Frequency</label>
                         <select data-placeholder="Frequency" class="form-control form-control-sm required js-example-basic-single "
-                            style='width:100%;' name='frequency' required>
+                            style='width:100%;' name='frequency' required >
                             <option value="">--Frequency--</option>
                             <option value='Every cut off' {{ $loan->schedule == 'Every cut off' ? 'selected' : '' }}>Every cut off</option>
                             <option value='This cut off' {{ $loan->schedule == 'This cut off' ? 'selected' : '' }}>This cut off</option>
