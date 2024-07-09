@@ -2456,4 +2456,14 @@ class EmployeeController extends Controller
 
         return back();
     }
+
+    public function updateAcctNo(Request $request, $id)
+    {
+        $employeeData = Employee::findOrFail($id);
+        $employeeData->bank_account_number = $request->account_no;
+        $employeeData->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
 }
