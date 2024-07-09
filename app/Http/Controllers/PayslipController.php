@@ -90,7 +90,7 @@ class PayslipController extends Controller
             ->groupBy('company_id', 'employee_no', 'name')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
-            if($request->cutoff)
+            if(!empty($names))
             {
                 $names_all = $names->pluck('employee.user_id')->toArray();
                 $employee_ids = $names->pluck('employee.id')->toArray();
