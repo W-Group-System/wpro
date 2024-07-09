@@ -237,7 +237,9 @@
                               $hours_count = ($end - $start)/3600;
                               if($start > $end)
                               {
-                                $hours_count = (($start - $end)-8)/3600;
+                                
+                                $hours_count = ((($start - $end))/3600)-8;
+                                // dd($hours_count);
                               }
                               if($hours_count>8)
                               {
