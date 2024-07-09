@@ -92,6 +92,9 @@ class PayslipController extends Controller
             ->get(); 
             if(!empty($names))
             {
+                if($cutoff != null)
+                {
+          
                 $names_all = $names->pluck('employee.user_id')->toArray();
                 $employee_ids = $names->pluck('employee.id')->toArray();
                 $employee_codes = $names->pluck('employee.employee_code')->toArray();
@@ -101,6 +104,8 @@ class PayslipController extends Controller
                 ->where('start_date', '>=', $cutoff)
                               ->where('end_date', '<=', $cutoff)
                               ->select('benefit_name')->groupBy('benefit_name')->get();
+                                        
+                }
             }
           
             
