@@ -280,7 +280,7 @@
                             $total_reg_ot = $name->total_reg_ot*$hourly_rate*1.25;
                             $total_reg_ot_nd = $name->total_reg_ot_nd*$hourly_rate*.125;
                             $total_rst_nd = $name->total_rst_nd*$hourly_rate*.13;
-                            $total_rst_nd_over_eight = $name->total_rst_nd_over_eight*$hourly_rate*.13;
+                            $total_rst_nd_over_eight = $name->total_rst_nd_over_eight*$hourly_rate*.169;
                             $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
                             $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
                             $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight;
