@@ -136,7 +136,10 @@
                             <th>OTHER NTA</th>
                             <th>SSS LOAN REFUND</th>
                             <th>SUBLIQ</th> --}}
-                            <th>OTHER ALLOWANCES</th>
+                            @foreach($allowances_total as $total_allow)
+                            <th>{{$total_allow->allowance->name}}</th>
+                            @endforeach
+                            {{-- <th>OTHER ALLOWANCES</th> --}}
                             <th>NONTAXABLE BENEFITS TOTAL</th>
                             
                             {{-- <th>CANTEEN</th>
@@ -150,7 +153,13 @@
                             <th>SSS LOAN</th>
                             <th>STAFF HOUSE</th>
                             <th>WESLA LOAN</th> --}}
-                            <th>Others</th>
+                            @foreach($instructions as $ins)
+                            <th>{{$ins->benefit_name}}</th>
+                            @endforeach
+                            {{-- <th>Others</th> --}}
+                            @foreach($loans_all as $loans_al)
+                            <th>{{$loans_al->loan_type->loan_name}}</th>
+                            @endforeach
                             <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
                             <th>GROSS PAY</th>
                             <th>DEDUCTIONS TOTAL</th>
@@ -243,53 +252,24 @@
                             if(!empty($name->employee->loan))
                             {
                               $loa = ($name->employee->loan);
-                              $every_cut_off_loan = $loa->where('schedule','Every cut off')->sum('monthly_ammort_amt');
-                              $every_cut_off_loan_this_cut_off = $loa->where('schedule','This cut off')->sum('monthly_ammort_amt');
-                              if($payroll_a)
-                              {
-                                $loans = ($loa->where('schedule','Every 1st cut off'))->sum('monthly_ammort_amt');
-                              }
-                              else {
-                                
-                                $loans = ($loa->where('schedule','Every 2nd cut off'))->sum('monthly_ammort_amt');
-                              }
-                              $total_loans = $loans+$every_cut_off_loan+$every_cut_off_loan_this_cut_off;
+                              $every_cut_off_loan = $loa->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('monthly_ammort_amt');
+                              $loans = $loa->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('monthly_ammort_amt');
+                              $total_loans = $loans+$every_cut_off_loan;
                             }
                             $total_allowances=0;
-                            if(!empty($name->employee->allowances))
-                            {
-                              
-                              $allow = ($name->employee->allowances);
-                              $every_cut_off = $allow->where('schedule','Every cut off')->sum('allowance_amount');
-                              $every_cut_off_all = $allow->where('schedule','This cut off')->sum('allowance_amount');
-                              if($payroll_a)
-                              {
-                                $allowances = ($allow->where('schedule','Every 1st cut off'))->sum('allowance_amount');
-                              }
-                              else {
-                                
-                                $allowances = ($allow->where('schedule','Every 2nd cut off'))->sum('allowance_amount');
-                              }
-                              $total_allowances = $allowances+$every_cut_off+$every_cut_off_all;
+                            if (!empty($name->employee->allowances)) {
+                                $allow = $name->employee->allowances;
+                                $every_cut_off = $allow->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('allowance_amount');
+                                $allowances = $allow->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('allowance_amount');
+                                $total_allowances = $allowances + $every_cut_off;
                             }
                             $total_payroll_instructions = 0;
                             if(!empty($name->employee->pay_instructions))
                             {
                               $payroll_instructions = ($name->employee->pay_instructions);
-                              // dd($payroll_instructions);
-                              $every_cut_off_payroll_instructions = $payroll_instructions->where('frequency','Every cut off')->sum('amount');
-                              $every_cut_off_all_payroll_instructions = $payroll_instructions->where('frequency','This cut off')->sum('amount');
-                              // dd($every_cut_off_all_payroll_instructions);
-                              if($payroll_a)
-                              {
-                                $other = ($payroll_instructions->where('frequency','Every 1st cut off'))->sum('amount');
-                              }
-                              else {
-                                
-                                $other = ($payroll_instructions->where('frequency','Every 2nd cut off'))->sum('amount');
-                              }
-                              $total_payroll_instructions = $other+$every_cut_off_all_payroll_instructions+$every_cut_off_payroll_instructions;
-                              // dd($total_payroll_instructions);
+                              $every_cut_off_payroll_instructions = $payroll_instructions->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
+                              $other = $payroll_instructions->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
+                              $total_payroll_instructions = $other+$every_cut_off_payroll_instructions;
                             }
 
                             $total_lh_nd_amount = $name->total_lh_nd*$hourly_rate*.2;
@@ -409,7 +389,20 @@
                             <td>{{number_format($other_nta,2)}}</td>
                             <td>{{number_format($sss_loan_refund,2)}}</td>
                             <td>{{number_format($subliq,2)}}</td> --}}
-                            <td><a href='#' data-toggle="modal" data-target="#allowances{{$name->employee_no}}">{{number_format($total_allowances,2)}}</a></td>
+                            @foreach($allowances_total as $total_allow)
+                            @php
+                                $allllowance = 0;
+                                 if (!empty($name->employee->allowances)) {
+                                $allow = $name->employee->allowances;
+                                $every_cut_off = $allow->where('allowance_id',$total_allow->allowance_id)->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('allowance_amount');
+                                $bbb = $allow->where('allowance_id',$total_allow->allowance_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('allowance_amount');
+                                $allllowance = $bbb+$every_cut_off;
+                                }
+                            @endphp
+                            <td>{{number_format($allllowance,2)}}</td>
+                            @endforeach
+                            {{-- <td><a href='#' data-toggle="modal" data-target="#allowances{{$name->employee_no}}">{{number_format($total_allowances,2)}}</a></td> --}}
+                            {{-- <td>{{number_format($total_allowances,2)}}</td> --}}
                             <td>{{number_format($total_allowances+$de_minimis,2)}}</td>
                             {{-- <td>{{number_format($canteen,2)}}</td>
                             <td>{{number_format($emergency,2)}}</td>
@@ -422,8 +415,35 @@
                             <td>{{number_format($sss_loan,2)}}</td>
                             <td>{{number_format($staff_loan,2)}}</td>
                             <td>{{number_format($wesla_loan,2)}}</td> --}}
-                            <td><a href='#' data-toggle="modal" data-target="#payroll_instruction{{$name->employee_no}}">{{number_format($total_payroll_instructions,2)}}</a></td>
-                            <td><a href='#' data-toggle="modal" data-target="#loan{{$name->employee_no}}">{{number_format($total_loans,2)}}</a></td>
+                            @foreach($instructions as $ins)
+                            @php
+                                $totasions = 0;
+                                if(!empty($name->employee->pay_instructions))
+                                {
+                                  $payroll_instructions = ($name->employee->pay_instructions);
+                                  $every_cut_off_payroll_instructions = $payroll_instructions->where('benefit_name',$ins->benefit_name)->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
+                                  $other = $payroll_instructions->where('benefit_name',$ins->benefit_name)->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
+                                  $totasions = $other+$every_cut_off_payroll_instructions;
+                                }
+                            @endphp
+                            <td>{{number_format($totasions,2)}}</td>
+                            @endforeach
+                            {{-- <td><a href='#' data-toggle="modal" data-target="#payroll_instruction{{$name->employee_no}}">{{number_format($total_payroll_instructions,2)}}</a></td> --}}
+                            {{-- <td><a href='#' data-toggle="modal" data-target="#loan{{$name->employee_no}}">{{number_format($total_loans,2)}}</a></td> --}}
+                            @foreach($loans_all as $loans_al)
+                            @php
+                            $lllloan = 0;
+                            if(!empty($name->employee->loan))
+                            {
+                              $loa = ($name->employee->loan);
+                              $every_cut_off_loan = $loa->where('loan_type_id',$loans_al->loan_type_id)->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('monthly_ammort_amt');
+                              $loans = $loa->where('loan_type_id',$loans_al->loan_type_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('monthly_ammort_amt');
+                              $lllloan = $loans+$every_cut_off_loan;
+                            }
+                            @endphp
+                            <td>{{number_format($lllloan,2)}}</td>
+                            @endforeach
+                            <td>{{number_format($total_loans,2)}}</td> 
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}</td>
                             <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}</td>
                             <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}</td>
@@ -441,7 +461,7 @@
         </div>
     </div>
 </div>
-@foreach($names as $name)
+{{-- @foreach($names as $name)
 @php
     $payroll_b = $dates->where('log_date',25)->first();
     $payroll_a = $dates->where('log_date',10)->first();
@@ -449,7 +469,7 @@
 @include('payroll.allowances')
 @include('payroll.instructions')
 @include('payroll.loans')
-@endforeach
+@endforeach --}}
 <!-- DataTables CSS and JS includes -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
