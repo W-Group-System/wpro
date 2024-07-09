@@ -41,14 +41,22 @@
 										<tr>
 											<td data-title="Loan Type">{{ $loan->loan_type->loan_name }}</td>
 											<td data-title="Full Name">
+                                                @if($loan->employee != null)
 												{{ $loan->employee->last_name . ', ' . $loan->employee->first_name . ' ' . $loan->employee->middle_name }}
+                                                @endif
 											</td>
 											<td data-title="Amount">{{ number_format($loan->amount) }}</td>
 											<td data-title="Start Date">{{ date('M d, Y', strtotime($loan->start_date)) }}</td>
 											<td data-title="End Date">{{ date('M d, Y', strtotime($loan->expiry_date)) }}</td>
 											<td data-title="Loan Balance" >{{ number_format($loan->initial_amount) }}</td>
 											<td data-title="Frequency">{{$loan->schedule}}</td>
-											<td></td>
+											<td>
+                                                @if($loan->status == "Active")
+                                                <div class="badge badge-success">Active</div>
+                                                @else
+                                                <div class="badge badge-danger">Inactive</div>
+                                                @endif
+                                            </td>
 											<td>
 												<button title='View loan details' id="" data-toggle="modal" data-target="#loanDetails"
 													data-id="{{ $loan->id }}" class="btn  btn-rounded btn-primary btn-icon">

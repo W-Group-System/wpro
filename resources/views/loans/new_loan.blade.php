@@ -39,12 +39,12 @@
 						<div class="col-lg-6 form-group">
 							<label for="amount">Amount</label>
 							<input type="number" class="form-control form-control-sm" name="amount" id="amount" required min="1"
-								value="{{ old('amount') }}" placeholder="0.00">
+								value="{{ old('amount') }}" step=".01" placeholder="0.00">
 						</div>
 						<div class="col-lg-6 form-group">
 							<label for="ammortAmt">Ammortization Amount</label>
 							<input type="number" class="form-control form-control-sm" name="monthly_ammort_amt" id="monthly_ammort_amt"
-								required min="1" placeholder="0.00" value="{{ old('monthly_ammort_amt') }}">
+								required min="1" placeholder="0.00" step=".01" value="{{ old('monthly_ammort_amt') }}">
 						</div>
 					</div>
 					<div class="row">
@@ -63,7 +63,7 @@
 						<div class="col-lg-6 form-group">
 							<label for="amount">Loan Balance</label>
 							<input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required
-								min="1" value="{{ old('initial_amount') }}" placeholder="0.00">
+								min="1" value="{{ old('initial_amount') }}" step=".01" placeholder="0.00">
 						</div>
 						<div class="col-lg-6 form-group">
 							<label for="frequency">Frequency</label>

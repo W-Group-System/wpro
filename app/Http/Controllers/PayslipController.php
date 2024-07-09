@@ -21,6 +21,8 @@ use App\Location;
 use App\PayrollRecord;
 use App\ScheduleData;
 use App\ContributionSSS;
+use App\EmployeeAllowance;
+use App\Loan;
 
 class PayslipController extends Controller
 {
@@ -45,6 +47,9 @@ class PayslipController extends Controller
         $names = [];
         $dates = [];
         $absents_data = [];
+        $allowances_total = [];
+        $loans_all = [];
+        $instructions = [];
         $sss = ContributionSSS::orderBy('salary_from','asc')->get();
         if($request->company)
         {
@@ -85,7 +90,24 @@ class PayslipController extends Controller
             ->groupBy('company_id', 'employee_no', 'name')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
-            // dd($names);
+            if(!empty($names))
+            {
+                if($cutoff != null)
+                {
+          
+                $names_all = $names->pluck('employee.user_id')->toArray();
+                $employee_ids = $names->pluck('employee.id')->toArray();
+                $employee_codes = $names->pluck('employee.employee_code')->toArray();
+                $allowances_total = EmployeeAllowance::with('allowance')->whereIn('user_id',$names_all)->select('allowance_id')->groupBy('allowance_id')->get();
+                $loans_all = Loan::with('loan_type')->whereIn('employee_id',$employee_ids)->select('loan_type_id')->groupBy('loan_type_id')->get();
+                $instructions = PayInstruction::whereIn('site_id',$employee_codes)
+                ->where('start_date', '>=', $cutoff)
+                              ->where('end_date', '<=', $cutoff)
+                              ->select('benefit_name')->groupBy('benefit_name')->get();
+                                        
+                }
+            }
+          
             
         }
        $companies = Company::whereHas('employee_has_company')
@@ -106,6 +128,9 @@ class PayslipController extends Controller
             'sss' => $sss,
             'dates' => $dates,
             'absents_data' => $absents_data,
+            'allowances_total' => $allowances_total,
+            'loans_all' => $loans_all,
+            'instructions' => $instructions,
         )
         );
     }
