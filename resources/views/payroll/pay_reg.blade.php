@@ -379,7 +379,7 @@
                             <td>{{number_format(-1*($wisp_ee),2)}}</td>
                             <td>{{number_format(-1*($wisp_er),2)}}</td>
                             <td>{{number_format(-1*($statutory),2)}}</td>
-                            <td>{{number_format(-1($taxable_deductable_total),2)}}</td>
+                            <td>{{number_format(-1*($taxable_deductable_total),2)}}</td>
                             <td>{{number_format($net_taxable_income,2)}}</td>
                             <td>{{number_format(-1*($tax),2)}}</td>
                             <td>{{number_format($de_minimis,2)}}</td>
