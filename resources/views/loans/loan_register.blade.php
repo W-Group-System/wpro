@@ -87,6 +87,8 @@
 @section('loanRegScripts')
 	<script>
 		$(document).ready(function() {
+            $('#loanTbl').DataTable();
+
 			$('#loanDetails').on('show.bs.modal', function(e) {
 				var _button = $(e.relatedTarget);
 				var result = "";
@@ -102,10 +104,11 @@
 				});
 				$(this).find("#container").html(result);
 			});
-		});
 
-		$(document).ready(function() {
-			$('#loanTbl').DataTable();
+            $("#loanType").on('change', function() {
+                console.log('asdas');
+                $("#loanBeneficiariesParent").removeAttr('hidden');
+            })
 		});
 	</script>
 @endsection

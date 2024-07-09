@@ -14,7 +14,7 @@
 						<div class="col-lg-6 form-group">
 							<label for="loanType">Loan Type</label>
 							<select data-placeholder="Select Loan Type"
-								class="form-control form-control-sm required js-example-basic-single " style='width:100%;' name='loan_type'
+								class="form-control form-control-sm required js-example-basic-single " id="loanType" style='width:100%;' name='loan_type'
 								required>
 								<option value="">--Select Loan Type--</option>
 								@foreach ($loanTypes as $loanType)
@@ -76,6 +76,16 @@
 							<option value='Every 2nd cut off'>Every 2nd cut off</option>
 						</select>
 						</div>
+                        <div class="col-lg-12 form-group" id="loanBeneficiariesParent" hidden>
+                            <label for="loanBeneficiaries">Loan Beneficiaries</label>
+                            <select data-placeholder="Loan Beneficiaries" class="form-control form-control-sm required js-example-basic-single"
+                            style='width:100%;' name='loan_beneficiaries[]' multiple>
+                                <option value="">--Loan Beneficiaries--</option>
+                                @foreach ($employees as $employee)
+									<option value="{{ $employee->id }}">{{ $employee->employee_code }} - {{ $employee->last_name . ', ' . $employee->first_name . ' ' . $employee->middle_name }}</option>
+								@endforeach
+                            </select>
+                        </div>
 					</div>
 			</div>
 			<div class="modal-footer">
