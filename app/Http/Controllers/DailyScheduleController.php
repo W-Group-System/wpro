@@ -29,7 +29,7 @@ class DailyScheduleController extends Controller
             $dailySchedule = $dailySchedule->whereBetween('log_date', [$request->date_from, $request->date_to]);
         }
 
-        $dailySchedule = $dailySchedule->where('created_by', auth()->user()->id)->get();
+        $dailySchedule = $dailySchedule->where('created_by', auth()->user()->id)->paginate(10);
 
         return view(
             'schedules.daily_schedule',
