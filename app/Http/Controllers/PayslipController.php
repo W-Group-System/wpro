@@ -64,7 +64,9 @@ class PayslipController extends Controller
                         $query->where('status','Active');
                 },
                 'employee.salary',
-                'employee.loan',
+                'employee.loan'=> function ($query)  {
+                    $query->where('status',"Active");
+                },
                 'employee.allowances',
                 'employee.pay_instructions'=> function ($query) use ($cutoff) {
                     $query->where('start_date', '>=', $cutoff)
