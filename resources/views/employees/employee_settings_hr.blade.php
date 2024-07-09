@@ -327,6 +327,9 @@
                                                 @if (checkUserPrivilege('employees_edit',auth()->user()->id) == 'yes')
                                                     <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Edit Employee Information" data-toggle="modal" data-target="#editEmpInfo"><i class="fa fa-pencil"></i></button>
                                                     <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Notice of Personnel Action" data-toggle="modal" data-target="#createNopa"><i class="fa fa-pencil-square-o"></i></button>
+                                                    <button class="btn btn-outline-primary btn-sm btn-icon-text" title="Edit employee no" data-toggle="modal" data-target="#editEmpNo">
+                                                        <i class="fa fa-id-card-o"></i>
+                                                    </button>
                                                 @endif
                                             </h3>
                                         </strong>
@@ -944,4 +947,5 @@
 @include('hr-portal.new-training')
 @include('hr-portal.new-nte')
 @include('hr-portal.edit-employee-document')
+@include('employees.edit_employee_no_modal')
 @endsection

@@ -297,6 +297,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('loans', 'LoanController@index');
     Route::get('loan-reg', 'LoanController@loan_reg');
     Route::post('new-loan', 'LoanController@store_loanReg');
+    Route::post('update-loan/{id}','LoanController@updateloanReg');
+
 
     // Reports
     Route::get('employee-report', 'EmployeeController@employee_report');
@@ -400,6 +402,8 @@ Route::group(['middleware' => 'auth'], function () {
     // HR Side
     Route::get('/nte-reports', 'NteFileController@nteReports');
     Route::get('/employee-training-reports', 'EmployeeTrainingController@employeeTrainingReports');
+
+    Route::post('/update-employee-code/{id}', 'EmployeeController@updateEmpNo');
 
 });
 Route::post('new-employee', 'EmployeeController@new');
