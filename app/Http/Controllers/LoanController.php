@@ -26,7 +26,7 @@ class LoanController extends Controller
     }
     public function loan_reg()
     {
-        $loans = Loan::with('loan_type', 'employee')->get();
+        $loans = Loan::with('loan_type', 'employee')->where('encoded_by', auth()->user()->id)->get();
         $loanTypes = LoanType::all();
         $employees = Employee::all();
 
@@ -40,6 +40,7 @@ class LoanController extends Controller
 
     public function store_loanReg(Request $request)
     {
+        // dd($request->all());
         // Validation
         $this->validate($request, [
             'loan_type' => 'required',
@@ -59,7 +60,11 @@ class LoanController extends Controller
         $loans->monthly_ammort_amt = $request->monthly_ammort_amt;
         $loans->initial_amount = $request->initial_amount;
         $loans->start_date = $request->start_date;
+        $loans->expiry_date = $request->expiry_date;
         $loans->schedule = $request->frequency;
+        $loans->status = "Active";
+        $loans->encoded_by = auth()->user()->id;
+
         $loans->save();
 
         Alert::success('Successfully Stored')->persistent('Dismiss');
@@ -70,15 +75,16 @@ class LoanController extends Controller
     {
         $loans = Loan::findOrFail($id);
         $loans->loan_type_id = $request->loan_type;
-        $loans->employee_id = $request->employee;
-        $loans->amount = $request->amount;
+        // $loans->employee_id = $request->employee;
+        // $loans->amount = $request->amount;
         $loans->monthly_ammort_amt = $request->monthly_ammort_amt;
         $loans->initial_amount = $request->initial_amount;
         $loans->start_date = $request->start_date;
         $loans->schedule = $request->frequency;
+        $loans->status = $request->status;
         $loans->save();
 
-        Alert::success('Successfully Stored')->persistent('Dismiss');
+        Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
     public function loan_report()
