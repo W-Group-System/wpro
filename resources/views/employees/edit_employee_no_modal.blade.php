@@ -6,7 +6,7 @@
                 {{csrf_field()}}
                 <div class="modal-body">
                     Employee No
-                    <input type="text" name="employee_no" id="employee_no" class="form-control" value="{{auth()->user()->employee->employee_code}}" required>
+                    <input type="text" name="employee_no" id="employee_no" class="form-control" value="{{$user->employee->employee_code}}" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
