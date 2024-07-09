@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Guarantor;
 use App\Loan;
 use App\LoanType;
 use Illuminate\Http\Request;
@@ -26,10 +27,12 @@ class LoanController extends Controller
     }
     public function loan_reg()
     {
-        $loans = Loan::with('loan_type', 'employee')->where('encoded_by', auth()->user()->id)->get();
-        $loanTypes = LoanType::all();
-        $employees = Employee::all();
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
 
+        $loans = Loan::with('loan_type', 'employee')->get();
+        $loanTypes = LoanType::all();
+        $employees = Employee::where('status', 'Active')->whereIn('company_id', $allowed_companies)->get();
+        
         return view('loans.loan_register', array(
             'header' => 'Payroll',
             'loans' => $loans,
@@ -64,8 +67,17 @@ class LoanController extends Controller
         $loans->schedule = $request->frequency;
         $loans->status = "Active";
         $loans->encoded_by = auth()->user()->id;
-
         $loans->save();
+
+        if (isset($request->loan_beneficiaries))
+        {
+            foreach($request->loan_beneficiaries as $loanBeneficiaries) {
+                $loan_beneficiaries = new Guarantor;
+                $loan_beneficiaries->loan_id = $loans->id;
+                $loan_beneficiaries->employee_id = $loanBeneficiaries;
+                $loan_beneficiaries->save();
+            }
+        }
 
         Alert::success('Successfully Stored')->persistent('Dismiss');
         return back();
@@ -84,6 +96,23 @@ class LoanController extends Controller
         $loans->schedule = $request->frequency;
         $loans->status = $request->status;
         $loans->save();
+
+        if (isset($request->loan_beneficiaries))
+        {
+            foreach($request->loan_beneficiaries as $guarantor) {
+                $target = array(
+                    'loan_id' => $loans->id,
+                    'employee_id' => $guarantor
+                );
+
+                $toSave = array(
+                    'loan_id' => $loans->id,
+                    'employee_id' => $guarantor
+                );
+
+                Guarantor::updateOrCreate($target, $toSave);
+            }
+        }
 
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();

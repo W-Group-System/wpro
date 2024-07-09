@@ -81,6 +81,22 @@
                             <option value="Inactive" {{ $loan->status=="Inactive"?'selected':'' }}>Inactive</option>
                         </select>
                     </div>
+
+                    @if($loan->loan_beneficiaries->isNotEmpty())
+                        @php
+                            $loanBeneficiaries = $loan->loan_beneficiaries->pluck('employee_id')->toArray();
+                        @endphp
+                        <div class="col-lg-12 form-group" id="loanBeneficiariesParent">
+                            <label for="loanBeneficiaries">Guarantor</label>
+                            <select data-placeholder="Loan Beneficiaries" class="form-control form-control-sm required js-example-basic-single"
+                            style='width:100%;' name='loan_beneficiaries[]' multiple>
+                                <option value="">--Loan Beneficiaries--</option>
+                                @foreach ($employees as $employee)
+                                    <option value="{{ $employee->id }}" {{in_array($employee->id, $loanBeneficiaries) ? 'selected' : ''}}>{{ $employee->employee_code }} - {{ $employee->last_name . ', ' . $employee->first_name . ' ' . $employee->middle_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
