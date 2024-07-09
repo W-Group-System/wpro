@@ -478,11 +478,17 @@
 @php
     $total_net = str_pad(number_format($total_net,2, "", ""), 13, '0', STR_PAD_LEFT);
     $companyData = $companies->where('id',$company)->first();
+    if($companyData)
+    {
+
+      $companyData = $companyData->company_code;
+    }
+
 @endphp
 <script>
    var paytext = {!! json_encode($paytext) !!};
    var total_net = {!! json_encode($total_net) !!};
-   var company = {!! json_encode($companyData->company_code) !!};
+   var company = {!! json_encode($companyData) !!};
     var text="PHP010000038248832"+""+"2"+total_net+"\n";
    for (var key in paytext) {
     if(paytext[key] != undefined){
