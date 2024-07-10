@@ -62,6 +62,10 @@
                                                 Change Password
                                                 <i class="ti-key btn-icon-append"></i>
                                             </a>
+                                            <button type="button" class="btn btn-icon-text btn-sm btn-outline-danger reset" data-id="{{$user->id}}">
+                                                Reset Password
+                                                <i class="fa fa-undo btn-icon-append"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -79,8 +83,49 @@
 {{-- @include('users.edit_user_role') --}}
 @include('users.user_change_password')
 @endforeach
-
 @endsection
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('.reset').on('click', function() {
+
+                var id = $(this).data('id')
+                
+                $.ajax({
+                    type: "POST",
+                    url: "{{url('reset-password')}}",
+                    data: 
+                    {
+                        id: id
+                    },
+                    headers: 
+                    {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(res)
+                    {
+                        if (res.status == 1)
+                        {
+                            Swal.fire({
+                                title: res.message,
+                                icon: 'success'
+                            })
+                        }
+                        else
+                        {
+                            Swal.fire({
+                                title: res.message,
+                                icon: 'error'
+                            })
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+@endsection
+
 @section('footer')
 <script src="{{ asset('body_css/vendors/inputmask/jquery.inputmask.bundle.js') }}"></script>
 <script src="{{ asset('body_css/vendors/inputmask/jquery.inputmask.bundle.js') }}"></script>
