@@ -54,14 +54,14 @@ class PayslipController extends Controller
         if($request->company)
         {
             $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date')->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get(); 
-            if($request->cut_off)
-            {
-            
-            $absents_data = AttendanceDetailedReport ::whereColumn('abs', '>', 'lv_w_pay')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
-            
+          
+          
             $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
             // $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances','employee.pay_instructions'])
-
+            if($request->cut_off)
+            {
+            $absents_data = AttendanceDetailedReport ::whereColumn('abs', '>', 'lv_w_pay')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
+            
             $names = AttendanceDetailedReport::with([
                 'employee' => function ($query) {
                         $query->where('status','Active');
