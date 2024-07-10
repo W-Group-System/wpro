@@ -655,7 +655,11 @@
                                 <div class='row m-2'>
                                     <div class='col-md-12 text-center mt-3 mb-3'>
                                         <strong>
-                                            <h3>Bank Details</h3>
+                                            <h3>Bank Details
+                                                <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#editAcctNo">
+                                                    <i class="fa fa-pencil"></i>
+                                                </button>
+                                            </h3>
                                         </strong>
                                     </div>
                                 </div>
@@ -948,4 +952,5 @@
 @include('hr-portal.new-nte')
 @include('hr-portal.edit-employee-document')
 @include('employees.edit_employee_no_modal')
+@include('employees.edit_bank_details')
 @endsection

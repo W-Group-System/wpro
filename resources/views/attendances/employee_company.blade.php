@@ -126,7 +126,7 @@
 
                                     @foreach($date_range as $date_r)
                                     @php
-                                        $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_number);
+                                        $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_code);
                                         $rest = "";
                                         $if_leave = "";
                                     @endphp

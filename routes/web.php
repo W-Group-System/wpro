@@ -404,7 +404,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/employee-training-reports', 'EmployeeTrainingController@employeeTrainingReports');
 
     Route::post('/update-employee-code/{id}', 'EmployeeController@updateEmpNo');
-
+    Route::post('/update-account-no/{id}', 'EmployeeController@updateAcctNo');
+    Route::post('/reset-password', 'EmployeeController@resetPassword');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

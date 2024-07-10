@@ -17,4 +17,8 @@ class Loan extends Model implements Auditable
     {
         return $this->belongsTo(Employee::class);
     }
+    public function loan_beneficiaries()
+    {
+        return $this->hasMany(Guarantor::class);
+    }
 }
