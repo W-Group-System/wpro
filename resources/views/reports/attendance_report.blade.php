@@ -10,7 +10,7 @@
                     <form method='GET' onsubmit="show()" action="{{ route('reports') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class='col-md-4'>
+                            <div class='col-md-3'>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label text-right" for="monthSelect">Month</label>
                                     <div class="col-sm-8">
@@ -31,7 +31,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class='col-md-4'>
+                            <div class='col-md-3'>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label text-right" for="yearSelect">Year</label>
                                     <div class="col-sm-8">
@@ -41,22 +41,35 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class='col-md-4'>
+                            <div class='col-md-3'>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label text-right" for="levelSelect">Level</label>
+                                    <div class="col-sm-8">
+                                        <select id="levelSelect" name="level" class="selectpicker form-control" data-live-search="true" title="Choose a level">
+                                            <option value="All">All</option>
+                                            @foreach ($levels as $level) 
+                                                <option value="{{ $level->id }}">{{ $level->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='col-md-3'>
                                 <button type="submit" id="submitBtn" class="form-control btn btn-primary mb-2 btn-sm">Generate</button>
                             </div>
                         </div>
                     </form>
                     </p>
                     <div class="row col-md-12 mb-3">
-                        <div class="col-md-3" style="margin-top: 5px;">
+                        <div class="col-md-5" style="margin-top: 5px;">
                             <h3 id="reportTitle"></h3> 
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-md-7">
                             <a href="{{ url('/attendance-report?month=' . $selectedMonth . '&year=' . $selectedYear . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a>
                         </div>
                     </div>
                     <div class="col-12">
-                        <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?month='.$selectedMonth.'&year='.$selectedYear.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br>
+                        <!-- <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?month='.$selectedMonth.'&year='.$selectedYear.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br> -->
 
                         <label><b>I. Tardiness</b></label>
                         <table class="table table-hover table-bordered">
@@ -218,14 +231,16 @@
         var currentMonth = currentDate.getMonth(); // 0-based index
         var currentYear = currentDate.getFullYear();
         var monthNames = ["January", "February", "March", "April", "May", "June", 
-                          "July", "August", "September", "October", "November", "December"];
+                        "July", "August", "September", "October", "November", "December"];
         
         var selectedMonth = "{{ $selectedMonth }}";
         var selectedYear = "{{ $selectedYear }}";
+        var selectedLevel = "{{ $selectedLevel }}";
 
         if(selectedMonth && selectedYear) {
             var monthName = monthNames[parseInt(selectedMonth) - 1];
-            var reportTitle = monthName + ' ' + selectedYear;
+            var levelName = $('#levelSelect option[value="'+selectedLevel+'"]').text() || 'All Levels';
+            var reportTitle = monthName + ' ' + selectedYear + ' - ' + (levelName ? ' ( ' + levelName + ' ) ' : '');
             $('#reportTitle').text(reportTitle);
         } else {
             $('#reportTitle').text(monthNames[currentMonth] + ' ' + currentYear);
@@ -234,16 +249,21 @@
         $('#submitBtn').on('click', function(event) {
             var selectedMonth = $('#monthSelect').val();
             var selectedYear = $('#yearSelect').val();
+            var selectedLevel = $('#levelSelect').val();
+            var levelName = $('#levelSelect option[value="'+selectedLevel+'"]').text() || 'All Levels';
             
             if(selectedMonth && selectedYear) {
                 var monthName = monthNames[parseInt(selectedMonth) - 1];
-                var reportTitle = monthName + ' ' + selectedYear;
+                var reportTitle = monthName + ' ' + selectedYear + (levelName ? ' - ' + levelName : '');
                 $('#reportTitle').text(reportTitle);
+
+                $('form').append('<input type="hidden" name="level" value="' + selectedLevel + '">');
             } else {
                 alert('Please select both month and year.');
                 event.preventDefault();
             }
         });
     });
+
 </script>
 @endsection
