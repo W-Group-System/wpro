@@ -70,10 +70,10 @@
                         </p>
                         <form method="POST" action="{{ route('attendance.store') }}" id="attendanceForm" onsubmit="return showConfirmation()" enctype="multipart/form-data">
                             @csrf
-                            {{-- @if($date_range)
-                                <a href="attendance-per-company-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" class='btn btn-info mb-1'>Export {{count($emp_data)}} Employees</a>
+                            @if($date_range)
+                                {{-- <a href="attendance-per-company-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" class='btn btn-info mb-1'>Export {{count($emp_data)}} Employees</a> --}}
                                 <button type="submit" class="btn btn-success mb-1">Post</button>
-                            @endif --}}
+                            @endif
                             <div class="table-responsive">
                                 <table border="1" class="table table-hover table-bordered employee_attendance" id='employee_attendance'>
                                     <thead>
