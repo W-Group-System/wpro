@@ -14,7 +14,7 @@
 						<div class="col-lg-6 form-group">
 							<label for="loanType">Loan Type</label>
 							<select data-placeholder="Select Loan Type"
-								class="form-control form-control-sm required js-example-basic-single " style='width:100%;' name='loan_type'
+								class="form-control form-control-sm required js-example-basic-single " id="loanType" style='width:100%;' name='loan_type'
 								required>
 								<option value="">--Select Loan Type--</option>
 								@foreach ($loanTypes as $loanType)
@@ -39,12 +39,12 @@
 						<div class="col-lg-6 form-group">
 							<label for="amount">Amount</label>
 							<input type="number" class="form-control form-control-sm" name="amount" id="amount" required min="1"
-								value="{{ old('amount') }}" placeholder="0.00">
+								value="{{ old('amount') }}" step=".01" placeholder="0.00">
 						</div>
 						<div class="col-lg-6 form-group">
 							<label for="ammortAmt">Ammortization Amount</label>
 							<input type="number" class="form-control form-control-sm" name="monthly_ammort_amt" id="monthly_ammort_amt"
-								required min="1" placeholder="0.00" value="{{ old('monthly_ammort_amt') }}">
+								required min="1" placeholder="0.00" step=".01" value="{{ old('monthly_ammort_amt') }}">
 						</div>
 					</div>
 					<div class="row">
@@ -60,11 +60,32 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-lg-12 form-group">
-							<label for="amount">Initial Amount</label>
+						<div class="col-lg-6 form-group">
+							<label for="amount">Loan Balance</label>
 							<input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required
-								min="1" value="{{ old('initial_amount') }}" placeholder="0.00">
+								min="1" value="{{ old('initial_amount') }}" step=".01" placeholder="0.00">
 						</div>
+						<div class="col-lg-6 form-group">
+							<label for="frequency">Frequency</label>
+							<select data-placeholder="Frequency" class="form-control form-control-sm required js-example-basic-single "
+							style='width:100%;' name='frequency' required>
+							<option value="">--Frequency--</option>
+							<option value='Every cut off'>Every cut off</option>
+							<option value='This cut off'>This cut off</option>
+							<option value='Every 1st cut off'>Every 1st cut off</option>
+							<option value='Every 2nd cut off'>Every 2nd cut off</option>
+						</select>
+						</div>
+                        <div class="col-lg-12 form-group" id="loanBeneficiariesParent" hidden>
+                            <label for="loanBeneficiaries">Loan Beneficiaries</label>
+                            <select data-placeholder="Loan Beneficiaries" class="form-control form-control-sm required js-example-basic-single"
+                            style='width:100%;' name='loan_beneficiaries[]' multiple>
+                                <option value="">--Loan Beneficiaries--</option>
+                                @foreach ($employees as $employee)
+									<option value="{{ $employee->id }}">{{ $employee->employee_code }} - {{ $employee->last_name . ', ' . $employee->first_name . ' ' . $employee->middle_name }}</option>
+								@endforeach
+                            </select>
+                        </div>
 					</div>
 			</div>
 			<div class="modal-footer">

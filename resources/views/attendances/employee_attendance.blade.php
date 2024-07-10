@@ -45,9 +45,9 @@
                     </div>
                     <div class='col-md-3'>
                         <button type="submit" class="btn btn-primary mb-2">Submit</button>
-                        @if($date_range)
+                        {{-- @if($date_range)
                             <button class='btn btn-info mb-2' onclick="exportTableToExcel('employee_attendance','{{$from_date}} - {{$to_date}}')">Export</button>
-                        @endif
+                        @endif --}}
                     
                     </div>
                   </div>
@@ -98,22 +98,29 @@
   
                             @foreach($date_range as $date_r)
                             @php
-                                $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_number);
+                                $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_code);
                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                $emp_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
                             @endphp
                             <tr>
                                 <td>{{$emp->employee_code}}</td>
                                 <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                 <td>
                                     @if($employee_schedule != null)
-                                      @if($employee_schedule->time_in_from != '00:00')
-                                        <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                        @if($employee_schedule->time_in_from != '00:00')
+                                            <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
                                         @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                          <small>(Flexi)</small>
+                                            <small>(Flexi)</small>
                                         @endif
-                                      @else 
-                                      <small>RESTDAY</small>
-                                      @endif
+                                        @else 
+                                            <small>RESTDAY</small>
+                                        @endif
+                                    @else
+                                        @if($emp_ob != null)
+                                            <small>{{ date('h:i A', strtotime($emp_ob->date_from)).' - '.date('h:i A', strtotime($emp_ob->date_to)) }}</small>
+                                        @else
+                                            <small>RESTDAY</small>
+                                        @endif
                                     @endif
 
                                     {{-- @if($employee_schedule)
@@ -1036,10 +1043,42 @@ function night_difference($start_work,$end_work)
 }
 
 @endphp
+{{-- Datatable --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
+
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+
 <script>
     function get_min(value)
     {
-      document.getElementById("to").min = value;
+        document.getElementById("to").min = value;
     }
-  </script>
+
+    $(document).ready(function() 
+    {
+        new DataTable('.table', 
+        {
+            paginate:false,
+            dom: 'Bfrtip',
+            buttons: 
+            [
+                'copy', 
+                'excel'
+            ],
+            columnDefs: 
+            [
+                {
+                    "defaultContent": "-",
+                    "targets": "_all"
+                }
+            ],
+            order: [] 
+        });
+    });
+</script>
 @endsection

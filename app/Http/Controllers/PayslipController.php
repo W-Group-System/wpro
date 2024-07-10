@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\AttendanceDetailedReport;
+use Illuminate\Support\Facades\Auth;
+use App\Imports\PayInstructionImport;
+use App\Exports\PayInstructionExport;
 use Excel;
 use App\Payroll;
 use App\Employee;
@@ -13,8 +16,13 @@ use App\AttSummary;
 use App\Company;
 use App\EmployeeOb;
 use App\Imports\PayRegImport;
+use App\PayInstruction;
+use App\Location;
 use App\PayrollRecord;
 use App\ScheduleData;
+use App\ContributionSSS;
+use App\EmployeeAllowance;
+use App\Loan;
 
 class PayslipController extends Controller
 {
@@ -28,28 +36,107 @@ class PayslipController extends Controller
             
         ));
     }
-    public function payroll_datas()
+    public function payroll_datas(Request $request)
     {
-        // $payrolls = Payroll::select('date_from','date_to','auditdate','created_at')->orderBy('date_from','desc')->get()->unique('date_from');
-        // $payroll_employees = Payroll::orderBy('name','asc')->get();
-        // $attendances =  AttSummary::orderBy('employee','asc')->get();
-        // // dd($payrolls);
-        // return view('payroll.pay_reg',
-        // array(
-        //     'header' => 'Payroll',
-        //     'payrolls' => $payrolls,
-        //     'payroll_employees' => $payroll_employees,
-        //     'attendances' => $attendances,
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $company = isset($request->company) ? $request->company : "";
+        $cut_off = [];
+        $from_date = $request->from;
+        $to_date = $request->to;
+        $cutoff = $request->cut_off;
+        $names = [];
+        $dates = [];
+        $absents_data = [];
+        $allowances_total = [];
+        $loans_all = [];
+        $instructions = [];
+        $sss = ContributionSSS::orderBy('salary_from','asc')->get();
+        if($request->company)
+        {
+            $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date')->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get(); 
+            $absents_data = AttendanceDetailedReport ::whereColumn('abs', '>', 'lv_w_pay')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
             
-        // ));
-        $payrolls = PayrollRecord::select('payroll_date_from','payroll_date_to')->orderBy('payroll_date_from','desc')->get()->unique('payroll_date_from');
-        $payroll_employees = PayrollRecord::orderBy('name','asc')->get();
-        $pay_reg = PayrollRecord::all();
+            $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
+            // $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances','employee.pay_instructions'])
+
+            $names = AttendanceDetailedReport::with([
+                'employee' => function ($query) {
+                        $query->where('status','Active');
+                },
+                'employee.salary',
+                'employee.loan',
+                'employee.allowances',
+                'employee.pay_instructions'=> function ($query) use ($cutoff) {
+                    $query->where('start_date', '>=', $cutoff)
+                          ->where('end_date', '<=', $cutoff);
+                },
+            ])
+            ->whereHas('employee', function ($query) {
+                $query->where('status', 'Active');
+            })
+            ->select('company_id', 'employee_no', 'name', 
+            DB::raw('SUM(abs) as total_abs'),
+            DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
+            DB::raw('SUM(lh_nd) as total_lh_nd'),
+            DB::raw('SUM(lh_nd_over_eight) as total_lh_nd_over_eight'),
+            DB::raw('SUM(lh_ot) as total_lh_ot'),
+            DB::raw('SUM(lh_ot_over_eight) as total_lh_ot_over_eight'),
+            DB::raw('SUM(reg_nd) as total_reg_nd'),
+            DB::raw('SUM(reg_ot) as total_reg_ot'),
+            DB::raw('SUM(reg_ot_nd) as total_reg_ot_nd'),
+            DB::raw('SUM(rst_nd) as total_rst_nd'),
+            DB::raw('SUM(rst_nd_over_eight) as total_rst_nd_over_eight'),
+            DB::raw('SUM(rst_ot) as total_rst_ot'),
+            DB::raw('SUM(rst_ot_over_eight) as total_rst_ot_over_eight'),
+            DB::raw('SUM(abs) as total_abs'),
+            DB::raw('SUM(late_min) as total_late_min'),
+            DB::raw('SUM(undertime_min) as total_undertime_min')
+            )->where('company_id', $request->company)
+            ->where('cut_off_date', $cutoff)
+            ->groupBy('company_id', 'employee_no', 'name')
+            // ->whereDoesntHave('employee.salary')
+            ->get(); 
+            if(!empty($names))
+            {
+                if($cutoff != null)
+                {
+          
+                $names_all = $names->pluck('employee.user_id')->toArray();
+                $employee_ids = $names->pluck('employee.id')->toArray();
+                $employee_codes = $names->pluck('employee.employee_code')->toArray();
+                $allowances_total = EmployeeAllowance::with('allowance')->whereIn('user_id',$names_all)->select('allowance_id')->groupBy('allowance_id')->get();
+                $loans_all = Loan::with('loan_type')->whereIn('employee_id',$employee_ids)->select('loan_type_id')->groupBy('loan_type_id')->get();
+                $instructions = PayInstruction::whereIn('site_id',$employee_codes)
+                ->where('start_date', '>=', $cutoff)
+                              ->where('end_date', '<=', $cutoff)
+                              ->select('benefit_name')->groupBy('benefit_name')->get();
+                                        
+                }
+            }
+          
+            
+        }
+       $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+
+      
         return view('payroll.pay_reg',
         array(
             'header' => 'Payroll',
-            'payrolls' => $payrolls,
-            'payroll_employees' => $payroll_employees,
+            'cut_off' => $cut_off,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'companies' => $companies,
+            'company' => $company,
+            'cutoff' => $cutoff,
+            'names' => $names,
+            'sss' => $sss,
+            'dates' => $dates,
+            'absents_data' => $absents_data,
+            'allowances_total' => $allowances_total,
+            'loans_all' => $loans_all,
+            'instructions' => $instructions,
         )
         );
     }
@@ -59,6 +146,76 @@ class PayslipController extends Controller
         Excel::import(new PayRegImport,request()->file('import_file'));
            
         return back();
+    }
+
+    public function payroll_instruction(Request $request)
+    {
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $company = isset($request->company) ? $request->company : "";
+        $cut_off = [];
+        $from_date = $request->from;
+        $to_date = $request->to;
+        $cutoff = $request->cut_off;
+        $names = [];
+        $locations = Location::orderBy('location','ASC')->get();
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $employees_selection = Employee::whereIn('company_id',$allowed_companies)->where('status','Active')->get();
+        $names = PayInstruction::all();
+       $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+
+      
+        return view('payroll.pay_instruction',
+        array(
+            'header' => 'Payroll',
+            // 'cut_off' => $cut_off,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'companies' => $companies,
+            'company' => $company,
+            'cutoff' => $cutoff,
+            'names' => $names,
+            'locations' => $locations,
+            'employees_selection' => $employees_selection,
+        )
+        );
+    }
+
+    public function add_payroll_instruction(Request $request)
+    {
+        $amount = $request->amount;
+        if ($request->deductible=='YES'){
+            $amount=-$amount;
+        }
+        $payroll_instruction = new PayInstruction;
+        $payroll_instruction->location = $request->company;
+        $payroll_instruction->site_id = $request->site_id;
+        $payroll_instruction->name = $request->employee;
+        $payroll_instruction->start_date = $request->start_date;
+        $payroll_instruction->end_date = $request->start_date;
+        $payroll_instruction->benefit_name = $request->benefit_name;
+        $payroll_instruction->amount = $amount;
+        $payroll_instruction->frequency = $request->frequency;
+        $payroll_instruction->deductible = $request->deductible;
+        $payroll_instruction->remarks = $request->remarks;
+        $payroll_instruction->created_by = Auth::user()->id;
+        $payroll_instruction->save();
+
+        Alert::success('Successfully Stored')->persistent('Dismiss');
+        return back();
+    }
+
+    public function importPayInstructionExcel(Request $request)
+    {
+        Excel::import(new PayInstructionImport,request()->file('import_file'));
+           
+        return back();
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new PayInstructionExport, 'Payroll Instruction.xlsx');
     }
     
     

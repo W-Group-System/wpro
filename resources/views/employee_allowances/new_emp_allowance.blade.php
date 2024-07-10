@@ -46,10 +46,15 @@
 					</div>
 					<div class="row">
 						<div class="col-lg-12 form-group">
-							<label for="schedule">Schedule</label>
-							<input type="text" class="form-control form-control-sm" name="schedule" id="schedule"
-								value="{{ old('schedule') }}" placeholder="Schedule">
-						</div>
+							<label for="frequency">Schedule</label>
+							<select data-placeholder="Schedule" class="form-control form-control-sm required js-example-basic-single "
+							style='width:100%;' name='schedule' required>
+							<option value="">--Schedule--</option>
+							<option value='Every cut off'>Every cut off</option>
+							<option value='This cut off'>This cut off</option>
+							<option value='Every 1st cut off'>Every 1st cut off</option>
+							<option value='Every 2nd cut off'>Every 2nd cut off</option>
+						</select>
 					</div>
 				</div>
 				<div class="modal-footer">

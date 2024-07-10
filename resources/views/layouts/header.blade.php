@@ -30,6 +30,7 @@
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('/body_css/css/vertical-layout-light/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('/vendor/sweetalert2/sweetalert2.min.css') }}">
     <!-- endinject -->
 
     <!-- Fonts -->
@@ -530,6 +531,10 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-reg') }}">Payroll Register</a>
                                 </li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-instruction') }}">Payroll Instruction</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a></li>
+                                    <li class="nav-item">  <a class="nav-link" href="{{ url('/salary-management') }}">Salary Management</a></li>
+
                             </ul>
                         </div>
                     </li>
@@ -585,14 +590,8 @@
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-incentive') }}">Employee Incentives</a>
                     </li> --}}
-                    @if(checkUserPrivilege('masterfiles_employee_allowances',auth()->user()->id) == 'yes')
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a>
-                    </li>
-                    @endif
-                    {{-- <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/salary-management') }}">Salary Management</a>
-                    </li> --}}
+                    
+                    
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-companies') }}">Employee Groups</a>
                     </li> --}}
@@ -734,6 +733,7 @@
     <script src="{{ asset('/body_css/vendors/inputmask/jquery.inputmask.bundle.js') }}"></script>
     <script src="{{ asset('/body_css/vendors/inputmask/jquery.inputmask.bundle.js') }}"></script>
     <script src="{{ asset('/body_css/js/inputmask.js') }}"></script>
+    <script src="{{ asset('/vendor/sweetalert2/sweetalert2.min.js') }}"></script>
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.6/dist/sweetalert2.all.min.js"></script> --}}
     {{-- <script src="{{ asset('/body_css/js/form-validation.js') }}"></script>
@@ -1133,6 +1133,7 @@
     @yield('loanRegScripts')
     @yield('empAllowScript')
     @yield('empIncentiveScript')
+    @yield('js')
 </body>
 
 </html>
