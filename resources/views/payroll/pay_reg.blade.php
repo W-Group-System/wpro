@@ -463,7 +463,7 @@
                           $object->bank = str_pad($name->employee->bank_account_number, 13, '0', STR_PAD_LEFT);;
                           $object->amount = str_pad(number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2, "", ""), 13, '0', STR_PAD_LEFT);
                           array_push($paytext,$object);
-                          $total_net = $total_net + $gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions;
+                          $total_net = $total_net + number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2,".","");
                           @endphp
                         @endforeach
                     </tbody>
