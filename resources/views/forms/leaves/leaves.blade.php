@@ -556,7 +556,8 @@
                             {{ $employee_leave->reason }}
                           </p>
                         </td>
-                        <td>{{get_count_days($employee_leave->schedule,$employee_leave->date_from,$employee_leave->date_to,$employee_leave->halfday)}}</td>
+                        <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->schedule, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday) }}</td>
+
                         <td id="tdStatus{{ $employee_leave->id }}">
                           @if ($employee_leave->status == 'Pending')
                             <label class="badge badge-warning  mt-1">{{ $employee_leave->status }}</label>
@@ -609,37 +610,7 @@
 
         </div>
     </div>
-</div>
-
-
-@php
-function get_count_days($data,$date_from,$date_to,$halfday)
- {
-
-    if($date_from == $date_to){
-        $count = 1;
-    }else{
-      $data = ($data->pluck('name'))->toArray();
-      $count = 0;
-      $startTime = strtotime($date_from);
-      $endTime = strtotime($date_to);
-
-      for ( $i = $startTime; $i <= $endTime; $i = $i + 86400 ) {
-        $thisDate = date( 'l', $i ); // 2010-05-01, 2010-05-02, etc
-        if(in_array($thisDate,$data)){
-            $count= $count+1;
-        }
-      }
-    }
-
-    if($count == 1 && $halfday == 1){
-      return '0.5';
-    }else{
-      return($count);
-    }
-    
- } 
-@endphp  
+</div> 
 
 @include('forms.leaves.apply_leave') 
 

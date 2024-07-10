@@ -71,7 +71,7 @@
 										  <th>Employee Code</th>
 										  <th>Employee Name</th>
 										  <th>Date Filed</th>
-										  <th>Form Type</th>
+										  <th>Leave Type</th>
 										  <th>From</th>
 										  <th>To</th>
 										  <th>With Pay </th>

@@ -21,7 +21,6 @@ use App\Exports\AttedancePerCompanyExport;;
 use App\Exports\AttendanceSeabasedExport;
 use App\Imports\EmployeeSeabasedAttendanceImport;
 use App\Imports\HikAttLogAttendanceImport;
-
 use App\AttendanceDetailedReport;
 
 use Excel;
@@ -518,6 +517,96 @@ class AttendanceController extends Controller
             'devices' => $devices,
         )
         );
+    }
+
+    // public function checkLogDate(Request $request, $company_id)
+    // {
+    //     try {
+    //         // Retrieve log dates for the given company within the specified date range
+    //         $fromDate = $request->input('from');
+    //         // Add logic to fetch log dates ordered by log_date for the given company_id
+    //         $logDates = AttendanceDetailedReport::where('company_id', $company_id)
+    //                                             ->whereDate('log_date', '>=', $fromDate)
+    //                                             ->orderBy('log_date')
+    //                                             ->pluck('log_date')
+    //                                             ->toArray();
+
+    //         // Format dates to 'Y-m-d' if needed
+    //         $logDates = array_map(function($date) {
+    //             return Carbon::parse($date)->format('Y-m-d');
+    //         }, $logDates);
+
+    //         return response()->json(['logDates' => $logDates]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
+    public function fetchDisabledDates($companyId)
+    {
+        try {
+            // Retrieve log dates for the given company from the attendanceDetailedReport
+            $logDates = AttendanceDetailedReport::where('company_id', $companyId)
+                ->orderBy('log_date')
+                ->pluck('log_date')
+                ->toArray();
+
+            // Format dates to 'Y-m-d' format
+            $formattedLogDates = array_map(function($date) {
+                return Carbon::parse($date)->format('Y-m-d');
+            }, $logDates);
+
+            return response()->json(['log_dates' => $formattedLogDates]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function storeAttendance(Request $request)
+    {        
+        $employees = $request->input('employees'); // Get all employee data
+
+        foreach ($employees as $employee_code => $dates) {
+            foreach ($dates as $date => $employee) {
+                AttendanceDetailedReport::create([
+                    'company_id' => $employee['company_id'],
+                    'employee_no' => $employee['employee_no'],
+                    'name' => $employee['name'],
+                    'log_date' => $employee['log_date'],
+                    'shift' => $employee['shift'],
+                    'in' => $employee['in'] ?? null,
+                    'out' => $employee['out'] ?? null,
+                    'abs' => $employee['abs'] ?? null,
+                    'lv_w_pay' => $employee['lv_w_pay'] ?? null,
+                    'reg_hrs' => $employee['reg_hrs'] ?? null,
+                    'late_min' => $employee['late_min'] ?? null,
+                    'undertime_min' => $employee['undertime_min'] ?? null,
+                    'reg_ot' => $employee['reg_ot'] ?? null,
+                    'reg_nd' => $employee['reg_nd'] ?? null,
+                    'reg_ot_nd' => $employee['reg_ot_nd'] ?? null,
+                    'rst_ot' => $employee['rst_ot'] ?? null,
+                    'rst_ot_over_eight' => $employee['rst_ot_over_eight'] ?? null,
+                    'rst_nd' => $employee['rst_nd'] ?? null,
+                    'rst_nd_over_eight' => $employee['rst_nd_over_eight'] ?? null,
+                    'lh_ot' => $employee['lh_ot'] ?? null,
+                    'lh_ot_over_eight' => $employee['lh_ot_over_eight'] ?? null,
+                    'lh_nd' => $employee['lh_nd'] ?? null,
+                    'lh_nd_over_eight' => $employee['lh_nd_over_eight'] ?? null,
+                    'sh_ot' => $employee['sh_ot'] ?? null,
+                    'sh_ot_over_eight' => $employee['sh_ot_over_eight'] ?? null,
+                    'sh_nd' => $employee['sh_nd'] ?? null,
+                    'sh_nd_over_eight' => $employee['sh_nd_over_eight'] ?? null,
+                    'rst_lh_ot' => $employee['rst_lh_ot'] ?? null,
+                    'rst_sh_ot_over_eight' => $employee['rst_sh_ot_over_eight'] ?? null,
+                    'rst_sh_nd' => $employee['rst_sh_nd'] ?? null,
+                    'rst_sh_nd_over_eight' => $employee['rst_sh_nd_over_eight'] ?? null,
+                    'cut_off_date' => $employee['to'] ?? null,
+                ]);
+            }
+        }
+        
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Attendance details stored successfully!');
     }
 
     public function reports(Request $request)

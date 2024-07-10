@@ -41,9 +41,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('attendances', 'AttendanceController@index');
     Route::get('attendance-report', 'AttendanceController@reports')->name('reports');
-
+    Route::post('/store_attendance', 'AttendanceController@storeAttendance')->name('attendance.store');
     Route::get('get-attendance-bio', 'AttendanceController@get_attendances');
-
+    // Route::get('/fetch-log-dates/{company_id}', 'AttendanceController@checkLogDate');
+    Route::get('/fetch-disabled-dates/{company_id}', 'AttendanceController@fetchDisabledDates');
 
     Route::get('attendance-per-company-export', 'AttendanceController@attendancePerCompanyExport');
 

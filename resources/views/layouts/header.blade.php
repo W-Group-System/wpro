@@ -427,7 +427,7 @@
                         <hr>
                         <h5>Super Admin</h5>
                     </li>
-
+                    
                     @if (checkUserPrivilege('timekeeping_dashboard',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'Timekeeping') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#Timekeeping" aria-expanded="@if ($header == 'Timekeeping') true @else false @endif" aria-controls="ui-basic">
@@ -438,7 +438,7 @@
                         <div class="collapse @if ($header == 'Timekeeping') show @endif" id="Timekeeping">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping-dashboard') }}">Forms</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/timekeeping') }}">Timekeeping</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/biometrics-per-company') }}">Timekeeping</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-timekeeping') }}">Generated Timekeeping</a></li>
                             </ul>
                         </div>
@@ -478,9 +478,9 @@
                                 {{-- @if (checkUserPrivilege('biometrics_per_location_hik',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/bio-per-location-hik') }}">Per Location (HIK)</a></li>
                                 @endif --}}
-                                @if (checkUserPrivilege('biometrics_per_company',auth()->user()->id) == 'yes')
+                                <!-- @if (checkUserPrivilege('biometrics_per_company',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/biometrics-per-company') }}">Per Company</a></li>
-                                @endif
+                                @endif -->
                                 {{-- @if (checkUserPrivilege('biometrics_per_seabased',auth()->user()->id) == 'yes')
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/seabased-attendances') }}">Per Seabased</a></li>
                                 @endif --}}

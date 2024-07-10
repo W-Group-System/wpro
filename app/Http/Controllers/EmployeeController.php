@@ -1755,7 +1755,6 @@ class EmployeeController extends Controller
         );
     }
 
-
     public function perCompany(Request $request)
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
@@ -1765,7 +1764,6 @@ class EmployeeController extends Controller
         $companies = Company::whereHas('employee_has_company')
                                 ->whereIn('id',$allowed_companies)
                                 ->get();
-
 
         $department_companies = Employee::where('company_id',$allowed_companies)
                                         ->groupBy('department_id')
@@ -1801,7 +1799,7 @@ class EmployeeController extends Controller
         $employees = [];
         
         if ($from_date != null) {
-            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','location','schedule_id','employee_code','company_id')
+            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id')
                                 ->with('company')
                                 ->with(['attendances' => function ($query) use ($from_date, $to_date) {
                                     $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
@@ -1869,6 +1867,7 @@ class EmployeeController extends Controller
             )
         );
     }
+    
     public function biologs_per_location(Request $request)
     {
         $from_date = $request->from;
