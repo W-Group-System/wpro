@@ -59,9 +59,9 @@
                                 </div>
                             </form>
                         </p>
-                        @if($date_range)
+                        {{-- @if($date_range)
                         <a href="attendance-per-company-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" class='btn btn-info mb-1'>Export {{count($emp_data)}} Employees</a>
-                        @endif
+                        @endif --}}
                         
                         <div class="table-responsive">
 
@@ -503,3 +503,33 @@ if($start_work >= $start_night && $start_work <= $end_night) { if($end_work>= $e
 
         </script>
         @endsection
+
+@section('js')
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
+
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+<script>
+    $(document).ready(function() 
+    {
+        new DataTable('.employee_attendance', 
+        {
+            // pagelenth:25,
+            paginate:false,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: [] 
+        });
+    });
+</script>
+@endsection
