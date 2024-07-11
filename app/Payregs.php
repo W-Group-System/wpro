@@ -8,7 +8,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class Payregs extends Model  implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
-    protected $connection = 'payregs';
+    protected $table = 'payregs';
     public function pay_allowances()
     {
         return $this->hasMany(PayregAllowance::class);
