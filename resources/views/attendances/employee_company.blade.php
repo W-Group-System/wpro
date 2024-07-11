@@ -452,6 +452,20 @@
                                                         }
                                                     }
                                                 @endphp
+                                                @php
+                                                if($work <0)
+                                                {
+                                                    $work = 0;
+                                                }
+                                                if($late <0)
+                                                {
+                                                    $late = 0;
+                                                }
+                                                if($undertime_hrs <0)
+                                                {
+                                                    $undertime_hrs = 0;
+                                                }
+                                                @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{$abs}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
