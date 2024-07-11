@@ -72,7 +72,7 @@
                             @csrf
                             @if($date_range)
                                 <a href="attendance-per-company-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" class='btn btn-info mb-1'>Export {{count($emp_data)}} Employees</a>
-                                <button type="submit" class="btn btn-success mb-1">Post</button>
+                                <button type="submit" class="btn btn-success mb-1" id="postButton">Post</button>
                             @endif
                             <div class="table-responsive">
                                 <table border="1" class="table table-hover table-bordered employee_attendance" id='employee_attendance'>
@@ -566,6 +566,66 @@
 
 <script>
 
+    // $(document).ready(function() {
+    //     var fromDateInput = document.getElementById('fromDate');
+    //     var toDateInput = document.getElementById('toDate');
+
+    //     // Initialize Flatpickr on date inputs
+    //     var fromFlatpickr = flatpickr(fromDateInput, {
+    //         dateFormat: "Y-m-d",
+    //         disable: [], // Initialize with an empty array of disabled dates
+    //     });
+
+    //     var toFlatpickr = flatpickr(toDateInput, {
+    //         dateFormat: "Y-m-d",
+    //         disable: [], // Initialize with an empty array of disabled dates
+    //     });
+
+    //     // Event listener for company select change
+    //     $("#companySelect").on('change', function() {
+    //         var selectedCompanyId = $(this).val();
+    //         if (selectedCompanyId) {
+    //             // Enable date inputs
+    //             fromDateInput.disabled = false;
+    //             toDateInput.disabled = false;
+
+    //             fromDateInput.style.backgroundColor = 'transparent';
+    //             toDateInput.style.backgroundColor = 'transparent';
+
+    //             // Fetch disabled dates via AJAX
+    //             $.ajax({
+    //                 url: "{{ url('/fetch-disabled-dates') }}/" + selectedCompanyId,
+    //                 type: 'GET',
+    //                 success: function(response) {
+    //                     var logDates = response.log_dates;
+
+    //                     // Update Flatpickr options to disable fetched dates
+    //                     fromFlatpickr.set('disable', logDates);
+    //                     toFlatpickr.set('disable', logDates);
+    //                 },
+    //                 error: function(xhr, status, error) {
+    //                     console.error('Failed to fetch disabled dates: ' + status + ' - ' + error);
+    //                 }
+    //             });
+    //         } else {
+    //             // Disable date inputs if no company is selected
+    //             fromDateInput.disabled = true;
+    //             toDateInput.disabled = true;
+
+                
+    //             // Reset Flatpickr options if no company is selected
+    //             fromFlatpickr.set('disable', []);
+    //             toFlatpickr.set('disable', []);
+    //         }
+    //     });
+    //     // Initialize with the selected company (if any)
+    //     var selectedCompanyId = $("#companySelect").val();
+    //     if (selectedCompanyId) {
+    //         // Trigger change event to fetch and disable dates for initially selected company
+    //         $("#companySelect").trigger('change');
+    //     }
+    // });
+
     $(document).ready(function() {
         var fromDateInput = document.getElementById('fromDate');
         var toDateInput = document.getElementById('toDate');
@@ -573,12 +633,12 @@
         // Initialize Flatpickr on date inputs
         var fromFlatpickr = flatpickr(fromDateInput, {
             dateFormat: "Y-m-d",
-            disable: [], // Initialize with an empty array of disabled dates
+            disable: [] // Initialize with an empty array of disabled dates
         });
 
         var toFlatpickr = flatpickr(toDateInput, {
             dateFormat: "Y-m-d",
-            disable: [], // Initialize with an empty array of disabled dates
+            disable: [] // Initialize with an empty array of disabled dates
         });
 
         // Event listener for company select change
@@ -589,6 +649,7 @@
                 fromDateInput.disabled = false;
                 toDateInput.disabled = false;
 
+                // Set background color to transparent
                 fromDateInput.style.backgroundColor = 'transparent';
                 toDateInput.style.backgroundColor = 'transparent';
 
@@ -602,6 +663,9 @@
                         // Update Flatpickr options to disable fetched dates
                         fromFlatpickr.set('disable', logDates);
                         toFlatpickr.set('disable', logDates);
+
+                        // Check if any log_date matches the fromDate and toDate
+                        checkButtonStatus(logDates, fromDateInput.value, toDateInput.value);
                     },
                     error: function(xhr, status, error) {
                         console.error('Failed to fetch disabled dates: ' + status + ' - ' + error);
@@ -612,12 +676,46 @@
                 fromDateInput.disabled = true;
                 toDateInput.disabled = true;
 
-                
                 // Reset Flatpickr options if no company is selected
                 fromFlatpickr.set('disable', []);
                 toFlatpickr.set('disable', []);
+
+                // Enable buttons if no company is selected
+                enableButtons();
             }
         });
+
+        // Event listener for date changes
+        fromFlatpickr.config.onChange.push(function(selectedDates, dateStr, instance) {
+            checkButtonStatus(instance.config.disable, dateStr, toDateInput.value);
+        });
+
+        toFlatpickr.config.onChange.push(function(selectedDates, dateStr, instance) {
+            checkButtonStatus(instance.config.disable, fromDateInput.value, dateStr);
+        });
+
+        // Function to check and disable/enable buttons based on conditions
+        function checkButtonStatus(logDates, fromDate, toDate) {
+            var disable = logDates.includes(fromDate) && logDates.includes(toDate);
+            if (disable) {
+                disableButtons();
+            } else {
+                enableButtons();
+            }
+        }
+
+        // Function to disable buttons
+        function disableButtons() {
+            $('#exportButton').prop('disabled', true);
+            $('#postButton').prop('disabled', true);
+        }
+
+        // Function to enable buttons
+        function enableButtons() {
+            $('#exportButton').prop('disabled', false);
+            $('#postButton').prop('disabled', false);
+        }
+
         // Initialize with the selected company (if any)
         var selectedCompanyId = $("#companySelect").val();
         if (selectedCompanyId) {
@@ -625,7 +723,6 @@
             $("#companySelect").trigger('change');
         }
     });
-
 
 
     function get_min(value) {
