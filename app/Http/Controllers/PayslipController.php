@@ -20,7 +20,7 @@ use App\PayInstruction;
 use App\Location;
 use App\PayrollRecord;
 use App\ScheduleData;
-use App\Payreg;
+use App\Payregs;
 use App\PayregLoan;
 use App\PayregAllowance;
 use App\PayregInstruction;
