@@ -64,6 +64,7 @@
                 <form method="POST" action="{{ url('payreg?company='.$company.'&cut_off='.$cutoff.'&from='.$from.'&to='.$to) }}" id='PagRegForm' onsubmit="return showConfirmation()" enctype="multipart/form-data">
                   @csrf
                   <div class="table-responsive">
+                    @if($cutoff)
                     <div class='row'>
                       <div class='col-md-4'>
                         Posting Date <input name='posting_date'  class="form-control form-control-sm" type='date' value='{{date('Y-m-d')}}' required>
@@ -73,8 +74,9 @@
                       </div>
 
                     </div>
-                
+                    
                     <button  class='btn btn-info btn-sm' type = "button" onclick = "CreateTextFile();">Download Txt</button>
+                    @endif
                     <table class="table table-db table-hover table-bordered">
                       <thead>
                           <tr>
