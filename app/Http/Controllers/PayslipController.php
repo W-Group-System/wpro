@@ -23,6 +23,9 @@ use App\ScheduleData;
 use App\ContributionSSS;
 use App\EmployeeAllowance;
 use App\Loan;
+use Barryvdh\DomPDF\PDF;
+use Dompdf\Options;
+use Illuminate\Support\Facades\App;
 
 class PayslipController extends Controller
 {
@@ -605,4 +608,11 @@ class PayslipController extends Controller
         ]);
     }  
 
+    public function generatePayslip()
+    {
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('payslips.generate_payslip')->setPaper('a4', 'Portrait');
+
+        return $pdf->stream();
+    }
 }
