@@ -20,7 +20,7 @@ use App\PayInstruction;
 use App\Location;
 use App\PayrollRecord;
 use App\ScheduleData;
-use App\Payregs;
+use App\Payregs\;
 use App\PayregLoan;
 use App\PayregAllowance;
 use App\PayregInstruction;
@@ -62,7 +62,7 @@ class PayslipController extends Controller
         {
             $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date')->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get(); 
           
-            $cut_off_pay_reg = Payreg::select('cut_off_date')->where('company_id',$request->company)->groupBy('cut_off_date')->pluck('cut_off_date')->toArray();
+            $cut_off_pay_reg = Payregs::select('cut_off_date')->where('company_id',$request->company)->groupBy('cut_off_date')->pluck('cut_off_date')->toArray();
             $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->whereNotIn('cut_off_date',$cut_off_pay_reg)->where('company_id',$request->company)->get();
             // $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances','employee.pay_instructions'])
             if($request->cut_off)
@@ -169,11 +169,11 @@ class PayslipController extends Controller
         $instructions = [];
         if($request->company)
         {
-            $cut_off = Payreg::select('cut_off_date')->where('company_id',$request->company)->groupBy('cut_off_date')->get();
+            $cut_off = Payregs::select('cut_off_date')->where('company_id',$request->company)->groupBy('cut_off_date')->get();
 
             if($cutoff)
             {
-                $pay_registers = Payreg::with('pay_allowances','pay_loan','pay_instructions')->where('cut_off_date',$cutoff)->where('company_id',$request->company)->get();
+                $pay_registers = Payregs::with('pay_allowances','pay_loan','pay_instructions')->where('cut_off_date',$cutoff)->where('company_id',$request->company)->get();
                 // dd($pay_registers);
 
             }
@@ -869,7 +869,7 @@ class PayslipController extends Controller
 
     public function generatePayslip(Request $request)
     {
-        $payroll = Payreg::with('pay_allowances.allowance_type')->findOrfail($request->id);
+        $payroll = Payregs::with('pay_allowances.allowance_type')->findOrfail($request->id);
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('payslips.generate_payslip',
         array(
