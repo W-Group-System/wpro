@@ -268,7 +268,7 @@
                                                         $abs = 0;
                                                     @endphp
                                                 @endif
-                                                @if($abs = 1)
+                                                @if($abs == 1)
                                                     @if($employee_schedule)
                                                         @php 
                                                             $is_absent = '';
