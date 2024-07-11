@@ -287,7 +287,7 @@
 
       // Submit button click event to perform the POST request
       $('#approveAllBtn').on('click', function() {
-          swal({
+        Swal.fire({
             title: "Are you sure?",
             text: "You want to approve this Leave?",
             icon: "warning",
@@ -319,7 +319,7 @@
                   success: function(response) {
                     console.log(response)
                     document.getElementById("loader").style.display = "none";
-                    swal(" Leave has been Approved " + "("+response+")", {
+                    Swal.fire(" Leave has been Approved " + "("+response+")", {
                       icon: "success",
                     }).then(function() {
                       location.reload();
