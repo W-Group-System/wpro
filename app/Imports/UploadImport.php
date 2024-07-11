@@ -43,7 +43,7 @@ class UploadImport implements ToCollection, WithHeadingRow
         foreach ($rows as $row) {
             
             if(isset($row['employee_no'])) {
-                $user_id = Employee::where('employee_number', $row['employee_no'])->pluck('user_id')->toArray();
+                $user_id = Employee::where('employee_code', $row['employee_no'])->pluck('user_id')->toArray();
                 $dateFiled = Date::excelToDateTimeObject($row['date_filed'])->format('Y-m-d');
             }
 
@@ -80,8 +80,8 @@ class UploadImport implements ToCollection, WithHeadingRow
                         $employeeOt = new EmployeeOvertime;
                         $employeeOt->user_id = $uid;
                         $employeeOt->ot_date = $dateFiled;
-                        $employeeOt->start_time = Date::excelToDateTimeObject($row['start_date_time'])->format('Y-m-d H:i:s');
-                        $employeeOt->end_time = Date::excelToDateTimeObject($row['end_date_time'])->format('Y-m-d H:i:s');
+                        $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row['start_date_time']));
+                        $employeeOt->end_time = date('Y-m-d h:i:s', strtotime($row['end_date_time']));
                         $employeeOt->approved_date = Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
                         $employeeOt->status = $row['status'];
                         $employeeOt->created_by = $uid;
