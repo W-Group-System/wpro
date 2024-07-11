@@ -20,6 +20,10 @@ use App\PayInstruction;
 use App\Location;
 use App\PayrollRecord;
 use App\ScheduleData;
+use App\Payreg;
+use App\PayregLoan;
+use App\PayregAllowance;
+use App\PayregInstruction;
 use App\ContributionSSS;
 use App\EmployeeAllowance;
 use App\Loan;
@@ -44,8 +48,8 @@ class PayslipController extends Controller
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $company = isset($request->company) ? $request->company : "";
         $cut_off = [];
-        $from_date = $request->from;
-        $to_date = $request->to;
+        $from = $request->from;
+        $to = $request->to;
         $cutoff = $request->cut_off;
         $names = [];
         $dates = [];
@@ -58,8 +62,8 @@ class PayslipController extends Controller
         {
             $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date')->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get(); 
           
-          
-            $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
+            $cut_off_pay_reg = Payreg::select('cut_off_date')->where('company_id',$request->company)->groupBy('cut_off_date')->pluck('cut_off_date')->toArray();
+            $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->whereNotIn('cut_off_date',$cut_off_pay_reg)->where('company_id',$request->company)->get();
             // $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances','employee.pay_instructions'])
             if($request->cut_off)
             {
@@ -106,7 +110,9 @@ class PayslipController extends Controller
             {
                 if($cutoff != null)
                 {
-          
+                    // dd($cutoff);
+                $from = (AttendanceDetailedReport::where('company_id',$request->company)->where('cut_off_date',$cutoff)->orderBy('log_date','asc')->first())->log_date;
+                $to = (AttendanceDetailedReport::where('company_id',$request->company)->where('cut_off_date',$cutoff)->orderBy('log_date','desc')->first())->log_date;
                 $names_all = $names->pluck('employee.user_id')->toArray();
                 $employee_ids = $names->pluck('employee.id')->toArray();
                 $employee_codes = $names->pluck('employee.employee_code')->toArray();
@@ -132,8 +138,8 @@ class PayslipController extends Controller
         array(
             'header' => 'Payroll',
             'cut_off' => $cut_off,
-            'from_date' => $from_date,
-            'to_date' => $to_date,
+            'from' => $from,
+            'to' => $to,
             'companies' => $companies,
             'company' => $company,
             'cutoff' => $cutoff,
@@ -147,7 +153,260 @@ class PayslipController extends Controller
         )
         );
     }
+    public function generatedPayroll(Request $request)
+    {
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $company = isset($request->company) ? $request->company : "";
+        $cut_off = [];
+        $from_date = $request->from;
+        $to_date = $request->to;
+        $cutoff = $request->cut_off;
+        $pay_registers = [];
+        $dates = [];
+        $absents_data = [];
+        $allowances_total = [];
+        $loans_all = [];
+        $instructions = [];
+        if($request->company)
+        {
+            $cut_off = Payreg::select('cut_off_date')->where('company_id',$request->company)->groupBy('cut_off_date')->get();
 
+            if($cutoff)
+            {
+                $pay_registers = Payreg::with('pay_allowances','pay_loan','pay_instructions')->where('cut_off_date',$cutoff)->where('company_id',$request->company)->get();
+                // dd($pay_registers);
+
+            }
+        }
+       $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+
+        // dd($pay_registers);
+        return view('payroll.generated-payroll',
+        array(
+            'header' => 'Payroll',
+            'cut_off' => $cut_off,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'companies' => $companies,
+            'company' => $company,
+            'cutoff' => $cutoff,
+            'pay_registers' => $pay_registers,
+            'dates' => $dates,
+            'absents_data' => $absents_data,
+            'allowances_total' => $allowances_total,
+            'loans_all' => $loans_all,
+            'instructions' => $instructions,
+        )
+        );
+    }
+    public function postPayRoll(Request $request)
+    {
+        // dd($request->get_bbb);
+        // dd($request->get_bbb);
+        foreach($request->employee_no as $key => $employee_code)
+        {
+            $pay_register = new Payreg;
+            $pay_register->employee_no = $employee_code;
+            $pay_register->last_name = $request->last_name[$key];
+            $pay_register->first_name = $request->first_name[$key];
+            $pay_register->middle_name = $request->middle_name[$key];
+            $pay_register->department = $request->department_name[$key];
+            $pay_register->cost_center = $request->cost_center[$key];
+            $pay_register->account_number = $request->bank_account_number[$key];
+            $pay_register->pay_rate = $request->pay_rate[$key];
+            $pay_register->tax_status = $request->tax_status[$key];
+            $pay_register->days_rendered = $request->days_rendered[$key];
+            $pay_register->basic_pay = $request->basic_pay[$key];
+            $pay_register->lh_nd = $request->name_total_lh_nd[$key];
+            $pay_register->lh_nd_amount = $request->total_lh_nd_amount[$key];
+            $pay_register->lh_nd_ge = $request->name_total_lh_nd_over_eight[$key];
+            $pay_register->lh_nd_ge_amount = $request->total_lh_nd_over_eight[$key];
+            $pay_register->lh_ot = $request->name_total_lh_ot[$key];
+            $pay_register->lh_ot_amount = $request->total_lh_ot[$key];
+            $pay_register->lh_ot_ge = $request->name_total_lh_ot_over_eight[$key];
+            $pay_register->lh_ot_ge_amount = $request->total_lh_ot_over_eight[$key];
+            $pay_register->reg_nd = $request->name_total_reg_nd[$key];
+            $pay_register->reg_nd_amount = $request->total_reg_nd[$key];
+            $pay_register->reg_ot = $request->name_total_reg_ot[$key];
+            $pay_register->reg_ot_amount = $request->total_reg_ot[$key];
+            $pay_register->reg_ot_nd = $request->name_total_reg_ot_nd[$key];
+            $pay_register->reg_ot_nd_amount = $request->total_reg_ot_nd[$key];
+            $pay_register->rst_nd = $request->name_total_rst_nd[$key];
+            $pay_register->rst_nd_amount = $request->total_rst_nd[$key];
+            $pay_register->rst_nd_ge = $request->name_total_rst_nd_over_eight[$key];
+            $pay_register->rst_nd_ge_amount = $request->total_rst_nd_over_eight[$key];
+            $pay_register->rst_ot = $request->name_total_rst_ot[$key];
+            $pay_register->rst_ot_amount = $request->total_rst_ot[$key];
+            $pay_register->rst_ot_ge = $request->name_total_rst_ot_over_eight[$key];
+            $pay_register->rst_ot_ge_amount = $request->total_rst_ot_over_eight[$key];
+            $pay_register->ot_total = $request->total_ot_pay[$key];
+            $pay_register->salary_adjustment = $request->salary_adjustment[$key];
+            $pay_register->taxable_benefits_total = $request->total_taxable_benefits[$key];
+            $pay_register->gross_taxable_income = $request->gross_taxable_income[$key];
+            $pay_register->days_absent = $request->total_abs_count[$key];
+            $pay_register->absent_amount = $request->total_abs[$key];
+            $pay_register->tardiness_total = $request->name_total_late_min[$key];
+            $pay_register->tardiness_amount = $request->total_late_min[$key];
+            $pay_register->undertime_total = $request->name_total_undertime_min[$key];
+            $pay_register->undertime_amount = $request->total_undertime_min[$key];
+            $pay_register->sss_ec = $request->sss_ecc[$key];
+            $pay_register->sss_employee_share = $request->sss_ee[$key];
+            $pay_register->sss_employer_share = $request->sss_er[$key];
+            $pay_register->hdmf_employee_share = $request->hdmf_ee[$key];
+            $pay_register->hdmf_employer_share = $request->hdmf_er[$key];
+            $pay_register->phic_employee_share = $request->philhealth_ee[$key];
+            $pay_register->phic_employer_share = $request->philhealth_er[$key];
+            $pay_register->mpf_employee_share = $request->wisp_ee[$key];
+            $pay_register->mpf_employer_share = $request->wisp_er[$key];
+            $pay_register->statutory_total = $request->statutory[$key];
+            $pay_register->taxable_deductible_total = $request->taxable_deductable_total[$key];
+            $pay_register->net_taxable_income = $request->net_taxable_income[$key];
+            $pay_register->withholding_tax = $request->tax[$key];
+            $pay_register->deminimis = $request->de_minimis[$key];
+            $pay_register->nontaxable_benefits_total = $request->nontaxable_benefits_total[$key];
+            $pay_register->nontaxable_deductible_benefits_total = $request->nontaxable_deductible_benefits_total[$key];
+            $pay_register->gross_pay = $request->gross_pay[$key];
+            $pay_register->deductions_total = $request->deductions_total[$key];
+            $pay_register->netpay = $request->netpay[$key];
+            $pay_register->pay_period_from = $request->from;
+            $pay_register->pay_period_to = $request->to;
+            $pay_register->posting_date = $request->posting_date;
+            $pay_register->posted_by = auth()->user()->id;
+            $pay_register->cut_off_date = $request->cut_off;
+            $pay_register->company_id = $request->company;
+            $pay_register->save();
+            
+          
+            if($request->get_every_cut_off)
+            {
+                if(array_key_exists($key,$request->get_every_cut_off))
+                {
+                    if(($request->get_every_cut_off[$key]) != "[]")
+                    {
+                     
+                        $get_every_cut_off = json_decode($request->get_every_cut_off[$key]);
+                        
+                        foreach($get_every_cut_off as $bbb)
+                        {
+                            $ins = new PayregAllowance;
+                            $ins->allowance_id = $bbb->allowance_id;
+                            $ins->payreg_id = $pay_register->id;
+                            $ins->amount = $bbb->allowance_amount;
+                            $ins->user_id = $bbb->user_id;
+                            $ins->remarks = $bbb->schedule;
+                            $ins->save();
+                        }
+                    }
+                }
+            }
+            if($request->get_bbb)
+            {
+                if(array_key_exists($key,$request->get_bbb))
+                {
+                    if(($request->get_bbb[$key]) != "[]")
+                    {
+                        $get_bbb = json_decode($request->get_bbb[$key]);
+                        foreach($get_bbb as $bbb)
+                        {
+                            $ins = new PayregAllowance;
+                            $ins->allowance_id = $bbb->allowance_id;
+                            $ins->payreg_id = $pay_register->id;
+                            $ins->amount = $bbb->allowance_amount;
+                            $ins->user_id = $bbb->user_id;
+                            $ins->remarks = $bbb->schedule;
+                            $ins->save();
+                        }
+                    }
+                }
+            }
+            if($request->get_every_cut_off_payroll_instructions)
+            {
+                if(array_key_exists($key,$request->get_every_cut_off_payroll_instructions))
+                {
+                    if(($request->get_every_cut_off_payroll_instructions[$key]) != "[]")
+                    {
+                        $get_every_cut_off_payroll_instructions = json_decode($request->get_every_cut_off_payroll_instructions[$key]);
+                        foreach($get_every_cut_off_payroll_instructions as $instruction)
+                        {
+                            $ins = new PayregInstruction;
+                            $ins->instruction_name = $instruction->benefit_name;
+                            $ins->payreg_id = $pay_register->id;
+                            $ins->amount = $instruction->amount;
+                            $ins->employee_code = $instruction->site_id;
+                            $ins->remarks = $instruction->frequency;
+                            $ins->save();
+                        }
+                    }
+                }
+            }
+            if($request->get_other)
+            {
+                if(array_key_exists($key,$request->get_other))
+                {
+                    if(($request->get_other[$key]) !="[]")
+                    {
+                        $get_other = json_decode($request->get_other[$key]);
+                        foreach($get_other as $get_ot)
+                        {
+                            $ins = new PayregInstruction;
+                            $ins->instruction_name = $get_ot->benefit_name;
+                            $ins->payreg_id = $pay_register->id;
+                            $ins->amount = $get_ot->amount;
+                            $loa->employee_code = $get_ot->site_id;
+                            $loa->remarks = $get_ot->frequency;
+                            $loa->save();
+                        }
+                    }
+                }
+            }
+            if($request->get_every_cut_off_loan)
+            {
+                if(array_key_exists($key,$request->get_every_cut_off_loan))
+                {
+                    if(($request->get_every_cut_off_loan[$key]) != "[]")
+                    {
+                        $get_every_cut_off_loan = json_decode($request->get_every_cut_off_loan[$key]);
+                        // dd($get_every_cut_off_loan,$pay_register->id);
+                        foreach($get_every_cut_off_loan as $loan)
+                        {
+                            $loa = new PayregLoan;
+                            $loa->loan_type_id = $loan->loan_type_id;
+                            $loa->payreg_id = $pay_register->id;
+                            $loa->amount = $loan->monthly_ammort_amt;
+                            $loa->employee_id = $loan->employee_id;
+                            $loa->remarks = $loan->schedule;
+                            $loa->save();
+                        }
+                    }
+                }
+            }
+            if($request->get_loans)
+            {
+                if(array_key_exists($key,$request->get_loans))
+                {
+                    if(($request->get_loans[$key]) != "[]")
+                    {
+                        $get_loans = json_decode($request->get_loans[$key]);
+                        foreach($get_loans as $loan)
+                        {
+                            $loa = new PayregLoan;
+                            $loa->loan_type_id = $loan->loan_type_id;
+                            $loa->payreg_id = $pay_register->id;
+                            $loa->amount = $loan->monthly_ammort_amt;
+                            $loa->employee_id = $loan->employee_id;
+                            $loa->remarks = $loan->schedule;
+                            $loa->save();
+                        }
+                    }
+                }
+            }
+
+        }
+        Alert::success('Successfully Generated')->persistent('Dismiss');
+        return redirect('/pay-reg');
+    }
     public function importPayRegExcel(Request $request)
     {
         Excel::import(new PayRegImport,request()->file('import_file'));
@@ -608,10 +867,14 @@ class PayslipController extends Controller
         ]);
     }  
 
-    public function generatePayslip()
+    public function generatePayslip(Request $request)
     {
+        $payroll = Payreg::with('pay_allowances.allowance_type')->findOrfail($request->id);
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('payslips.generate_payslip')->setPaper('a4', 'Portrait');
+        $pdf->loadView('payslips.generate_payslip',
+        array(
+            'payroll' => $payroll,
+        ))->setPaper('a4', 'Portrait');
 
         return $pdf->stream();
     }

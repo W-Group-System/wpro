@@ -4,8 +4,25 @@ namespace App;
  
 use Illuminate\Database\Eloquent\Model;
  
-class PayReg extends Model
+use OwenIt\Auditing\Contracts\Auditable;
+class Payreg extends Model  implements Auditable
 {
-    protected $table = 'pay_regs';
-    public $fillable = ['payroll_date','total_gross_pay','tax_total','total_deduction', 'net_pay_total'];
+    use \OwenIt\Auditing\Auditable;
+
+    public function pay_allowances()
+    {
+        return $this->hasMany(PayregAllowance::class);
+    }
+    public function pay_loan()
+    {
+        return $this->hasMany(PayregLoan::class);
+    }
+    public function pay_instructions()
+    {
+        return $this->hasMany(PayregInstruction::class);
+    }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class,'employee_no','employee_code');
+    }
 }

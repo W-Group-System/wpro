@@ -15,10 +15,10 @@
     {
         margin: 5mm;
     }
-    .page-break 
+    /* .page-break 
     {
         page-break-after: always;
-    }
+    } */
     .employee-info-container p,
     .payroll-info-container p,
     .payroll-details-container p,
@@ -86,20 +86,20 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Employee Number:</td>
-                        <td>Date Hired:</td>
+                        <td width='50%'>Employee Number: {{$payroll->employee_no}}</td>
+                        <td>Date Hired: {{date('M d, Y',strtotime($payroll->employee->original_date_hired))}}</td>
                     </tr>
                     <tr>
-                        <td>Employee Name:</td>
-                        <td>SSS ID:</td>
+                        <td>Employee Name: {{$payroll->last_name.", ".$payroll->first_name." ". $payroll->middle_name}}</td>
+                        <td>SSS ID: {{$payroll->employee->sss_number}}</td>
                     </tr>
                     <tr>
-                        <td>Department Name:</td>
-                        <td>Pagibig ID:</td>
+                        <td>Department Name: {{$payroll->department}}</td>
+                        <td>Pagibig ID: {{$payroll->employee->hdmf_number}}</td>
                     </tr>
                     <tr>
-                        <td>TIN:</td>
-                        <td>PhilHealth ID:</td>
+                        <td>TIN: {{$payroll->employee->tax_number}}</td>
+                        <td>PhilHealth ID: {{$payroll->employee->phil_number}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -114,16 +114,16 @@
             <table>
                 <tbody>
                     <tr>
-                        <td>Payroll Period:</td>
-                        <td>Rendered:</td>
+                        <td width='50%'>Payroll Period: {{date('F d, Y',strtotime($payroll->pay_period_from))}} - {{date('F d, Y',strtotime($payroll->pay_period_to))}}</td>
+                        <td>Rendered: {{$payroll->days_rendered}}</td>
                     </tr>
                     <tr>
-                        <td>Pay Type:</td>
-                        <td>Absent:</td>
+                        <td>Pay Type: @if($payroll->work_description == "Non-Monthly") Daily @else Monthly @endif</td>
+                        <td>Absent: {{$payroll->days_absent}}</td>
                     </tr>
                     <tr>
-                        <td>Rate:</td>
-                        <td>Leave:</td>
+                        <td>Rate: {{number_format($payroll->pay_rate,2)}}</td>
+                        <td>Leave: {{$payroll->leave_count}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -147,15 +147,78 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Basic Pay</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->basic_pay,2)}}</td>
                     </tr>
+                    @if($payroll->lh_nd_amount > 0)
                     <tr>
-                        <td style="font-weight: bold;">Overtime</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style=""> - LH ND</td>
+                        <td style="text-align: right;">{{number_format($payroll->lh_nd_amount ,2)}}</td>
                     </tr>
+                    @endif
+                    @if($payroll->lh_nd_ge_amount > 0)
                     <tr>
-                        <td style="font-weight: bold;">Undertime</td>
-                        <td style="text-align: right; font-weight: bold;">50 PHP</td>
+                        <td style=""> - LH ND GE</td>
+                        <td style="text-align: right; ">{{number_format($payroll->lh_nd_ge_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->lh_ot_amount > 0)
+                    <tr>
+                        <td style=""> - LH OT</td>
+                        <td style="text-align: right; ">{{number_format($payroll->lh_ot_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->lh_ot_ge_amount > 0)
+                    <tr>
+                        <td style=""> - LH OT GE</td>
+                        <td style="text-align: right; ">{{number_format($payroll->lh_ot_ge_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->reg_nd_amount > 0)
+                    <tr>
+                        <td style=""> - REG ND</td>
+                        <td style="text-align: right;">{{number_format($payroll->reg_nd_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->reg_ot_amount > 0)
+                    <tr>
+                        <td style=""> - REG OT</td>
+                        <td style="text-align: right;">{{number_format($payroll->reg_ot_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->reg_ot_nd_amount > 0)
+                    <tr>
+                        <td style=""> - REG OT ND</td>
+                        <td style="text-align: right;">{{number_format($payroll->reg_ot_nd_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->rst_nd_amount > 0)
+                    <tr>
+                        <td style=""> - RD ND</td>
+                        <td style="text-align: right;">{{number_format($payroll->rst_nd_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->rst_nd_ge_amount > 0)
+                    <tr>
+                        <td style=""> - RD ND GE</td>
+                        <td style="text-align: right;">{{number_format($payroll->rst_nd_ge_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->rst_ot_amount > 0)
+                    <tr>
+                        <td style=""> - RD OT</td>
+                        <td style="text-align: right;">{{number_format($payroll->rst_ot_amount ,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->rst_ot_ge_amount > 0)
+                    <tr>
+                        <td style=""> - RD OT GE</td>
+                        <td style="text-align: right;">{{number_format($payroll->rst_ot_ge_amount ,2)}}</td>
+                    </tr>
+                    @endif
+
+                    <tr>
+                        <td style="font-weight: bold;"></td>
+                        <td style="text-align: right; font-weight: bold;"></td>
                     </tr>
                 </tbody>
             </table>
@@ -164,7 +227,7 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Gross Income</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->gross_taxable_income,2)}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -172,14 +235,26 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Less: Other Deductions</td>
-                        <td style="font-weight: bold;">Hours</td>
-                        <td style="text-align: right; font-weight: bold;">Amount</td>
+                        <td style="text-align: right; font-weight: bold;"></td>
                     </tr>
+                    @if($payroll->absent_amount > 0)
                     <tr>
                         <td>Absences</td>
-                        <td>3 Hours</td>
-                        <td style="text-align: right;">1000 PHP</td>
+                        <td style="text-align: right;">{{number_format($payroll->absent_amount,2)}}</td>
                     </tr>
+                    @endif
+                    @if($payroll->tardiness_amount > 0)
+                    <tr>
+                        <td>Lates</td>
+                        <td style="text-align: right;">{{number_format($payroll->tardiness_amount,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->undertime_amount > 0)
+                    <tr>
+                        <td>Undertime</td>
+                        <td style="text-align: right;">{{number_format($payroll->undertime_amount,2)}}</td>
+                    </tr>
+                    @endif
                 </tbody>
             </table>
             <hr>
@@ -187,12 +262,26 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Gross Taxable Income</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->gross_taxable_income-$payroll->absent_amount-$payroll->tardiness_amount-$payroll->undertime_amount,2)}}</td>
                     </tr>
+                    @if($payroll->sss_employee_share >0)
                     <tr>
-                        <td style="font-weight: bold;">Sample</td>
-                        <td style="text-align: right; font-weight: bold;">0.00 PHP</td>
+                        <td style="font-weight: bold;">SSS</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->sss_employee_share,2)}}</td>
                     </tr>
+                    @endif
+                    @if($payroll->hdmf_employee_share >0)
+                    <tr>
+                        <td style="font-weight: bold;">HDMF</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->hdmf_employee_share,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->phic_employee_share >0)
+                    <tr>
+                        <td style="font-weight: bold;">PHIC</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->phic_employee_share,2)}}</td>
+                    </tr>
+                    @endif
                 </tbody>
             </table>
             <hr>
@@ -200,11 +289,11 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Net Taxable Income</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->net_taxable_income,2)}}</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Less: Witholding Tax</td>
-                        <td style="text-align: right; font-weight: bold;">0.00 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->withholding_tax,2)}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -213,16 +302,23 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Net Income After Tax</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->net_taxable_income-$payroll->withholding_tax,2)}}</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Add: Non-Taxable Income</td>
-                        <td style="text-align: right; font-weight: bold;">0.00 PHP</td>
+                        {{-- <td style="text-align: right; font-weight: bold;">{{number_format($payroll->nontaxable_benefits_total,2)}}</td> --}}
+                        <td style="text-align: right; font-weight: bold;"></td>
                     </tr>
                     <tr>
-                        <td>Other Allowance</td>
-                        <td style="text-align: right; font-weight: bold;">220.00 PHP</td>
+                        <td style="font-weight: bold;">De-minimis</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->deminimis,2)}}</td>
                     </tr>
+                    @foreach($payroll->pay_allowances as $allow)
+                    <tr>
+                        <td style="font-weight: bold;"> - {{$allow->allowance_type->name}}</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($allow->amount,2)}}</td>
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
             <hr>
@@ -230,16 +326,20 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Net Income</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->net_taxable_income-$payroll->withholding_tax+$payroll->nontaxable_benefits_total,2)}}</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Less: Non-Taxable Deductions</td>
-                        <td style="text-align: right; font-weight: bold;">0.00 PHP</td>
+                        <td style="text-align: right; font-weight: bold;"></td>
+                        {{-- <td style="text-align: right; font-weight: bold;">{{number_format($payroll->nontaxable_deductible_benefits_total,2)}}</td> --}}
                     </tr>
+                    @foreach($payroll->pay_loan as $loan)
                     <tr>
-                        <td>SSS LOAN</td>
-                        <td style="text-align: right; font-weight: bold;">220.00 PHP</td>
+                        <td style="font-weight: bold;"> - {{$loan->loan_type->loan_name}}</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($loan->amount,2)}}</td>
                     </tr>
+                    @endforeach
+                    
                 </tbody>
             </table>
             <hr>
@@ -247,12 +347,12 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Net Pay</td>
-                        <td style="text-align: right; font-weight: bold;">100 PHP</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->netpay,2)}}</td>
                     </tr>
                 </tbody>
             </table>
 
-            <div class="year-to-date-container">
+            {{-- <div class="year-to-date-container">
                 <p>YEAR TO DATE EARNINGS</p>
                 <hr>
             </div>
@@ -304,7 +404,7 @@
                         <td style="text-align: center;">0.00</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
         </div>
     </div>
 </body>
