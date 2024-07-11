@@ -207,7 +207,7 @@ class PayslipController extends Controller
         // dd($request->get_bbb);
         foreach($request->employee_no as $key => $employee_code)
         {
-            $pay_register = new Payreg;
+            $pay_register = new Payregs;
             $pay_register->employee_no = $employee_code;
             $pay_register->last_name = $request->last_name[$key];
             $pay_register->first_name = $request->first_name[$key];
