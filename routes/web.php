@@ -207,6 +207,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('pmi-local', 'EmployeeController@localbio');
     Route::get('biometrics-per-company', 'EmployeeController@perCompany');
     Route::get('sync-biometrics','EmployeeController@sync');
+    Route::post('sync-bio','EmployeeController@syncBio');
     Route::get('sync-biometric-per-employee','EmployeeController@sync_per_employee');
     // Route::get('sync-biometric-per-employee-hik','EmployeeController@sync_per_employee_hik');
     Route::get('sync-biometric-per-employee-hik','EmployeeController@sync_per_employee_hik_with_upload');
@@ -219,6 +220,11 @@ Route::group(['middleware' => 'auth'], function () {
     //Payroll
     Route::get('pay-reg', 'PayslipController@payroll_datas');
     Route::post('importPayRegExcel', 'PayslipController@importPayRegExcel');
+
+    Route::get('pay-instruction', 'PayslipController@payroll_instruction');
+    Route::post('importPayinstructionExcel', 'PayslipController@importPayInstructionExcel');
+    Route::post('add-payroll-instruction','PayslipController@add_payroll_instruction');
+    Route::get('export-intruction-template', 'PayslipController@export');
 
     
      
@@ -292,6 +298,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('loans', 'LoanController@index');
     Route::get('loan-reg', 'LoanController@loan_reg');
     Route::post('new-loan', 'LoanController@store_loanReg');
+    Route::post('update-loan/{id}','LoanController@updateloanReg');
+
 
     // Reports
     Route::get('employee-report', 'EmployeeController@employee_report');
@@ -396,6 +404,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/nte-reports', 'NteFileController@nteReports');
     Route::get('/employee-training-reports', 'EmployeeTrainingController@employeeTrainingReports');
 
+    Route::post('/update-employee-code/{id}', 'EmployeeController@updateEmpNo');
+    Route::post('/update-account-no/{id}', 'EmployeeController@updateAcctNo');
+    Route::post('/reset-password', 'EmployeeController@resetPassword');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

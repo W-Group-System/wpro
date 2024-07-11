@@ -506,7 +506,7 @@
                             <i class="ti-upload"></i>
                           </button>
 
-                          @if(date('Y-m-d',strtotime($employee_leave->date_from)) == date('Y-m-d') || $employee_leave->withpay == 0)
+                          {{-- @if(date('Y-m-d',strtotime($employee_leave->date_from)) == date('Y-m-d') || $employee_leave->withpay == 0) --}}
                             @if($employee_leave->request_to_cancel == '1' || $employee_leave->request_to_cancel == null)
                               <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
                                 data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel'>
@@ -523,7 +523,7 @@
                                 <i class="fa fa-ban"></i>
                               </button>  
                             @endif
-                          @endif
+                          {{-- @endif --}}
                           
                           @if(date('Y-m-d',strtotime($employee_leave->date_from)) > date('Y-m-d'))
                               <button title='Cancel' id="{{ $employee_leave->id }}" onclick="cancel(this.id)"

@@ -15,6 +15,8 @@ use App\EmployeeOvertime;
 use App\EmployeeWfh;
 use App\EmployeeOb;
 use App\EmployeeDtr;
+use App\EmployeeLeaveCredit;
+use App\Leave;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class HomeController extends Controller
@@ -90,10 +92,11 @@ class HomeController extends Controller
         $probationary_employee = Employee::with('department', 'company', 'user_info', 'classification_info')
             ->where('classification', "1")
             ->where('status', "Active")
+            ->orderBy('original_date_hired')
             ->get();
 
         $classifications = Classification::get();
-        
+        $leaveTypes = Leave::all();
         return view('dashboards.home',
         array(
             'header' => '',
@@ -109,7 +112,8 @@ class HomeController extends Controller
             'employees_new_hire' => $employees_new_hire ,
             'employee_anniversaries' => $employee_anniversaries,
             'probationary_employee' => $probationary_employee,
-            'classifications' =>$classifications
+            'classifications' =>$classifications,
+            'leaveTypes' => $leaveTypes
         ));
     }
 
@@ -163,6 +167,49 @@ class HomeController extends Controller
             if ($classification == 'for_regularization') {
                 $employee->classification = '2';
                 $employee->date_regularized = $request->input('date_regular');
+
+                // $leave_credit = EmployeeLeaveCredit::where('user_id',$id)
+                //                             ->where('leave_type',$request->leave_type)
+                //                             ->first();
+                // if($leave_credit){
+                //     $leave_credit->count = $request->count;
+                //     $leave_credit->save();
+                // }else{
+                //     $leave_credit = new EmployeeLeaveCredit;
+                //     $leave_credit->leave_type = $request->leave_type;
+                //     $leave_credit->user_id = $id;
+                //     $leave_credit->count = $request->count;
+                //     $leave_credit->save();
+                // }
+
+                $leave_credit_sick = EmployeeLeaveCredit::where('user_id', $id)
+                                                ->where('leave_type', '2')
+                                                ->first();
+                if ($leave_credit_sick) {
+                    $leave_credit_sick->count = $request->input('sl_count');
+                    $leave_credit_sick->save();
+                } else {
+                    $leave_credit_sick = new EmployeeLeaveCredit;
+                    $leave_credit_sick->leave_type = '2';
+                    $leave_credit_sick->user_id = $id;
+                    $leave_credit_sick->count = $request->input('sl_count');
+                    $leave_credit_sick->save();
+                }
+
+                $leave_credit_vacation = EmployeeLeaveCredit::where('user_id', $id)
+                                                    ->where('leave_type', '1')
+                                                    ->first();
+                if ($leave_credit_vacation) {
+                    $leave_credit_vacation->count = $request->input('vl_count');
+                    $leave_credit_vacation->save();
+                } else {
+                    $leave_credit_vacation = new EmployeeLeaveCredit;
+                    $leave_credit_vacation->leave_type = '1';
+                    $leave_credit_vacation->user_id = $id;
+                    $leave_credit_vacation->count = $request->input('vl_count');
+                    $leave_credit_vacation->save();
+                }
+
             } elseif ($classification == 'for_resignation') {
                 $employee->status = 'Inactive';
                 $employee->date_resigned = $request->input('date_resigned');
@@ -173,6 +220,8 @@ class HomeController extends Controller
             return back();
         } else {
             return back()->withErrors(['classification' => 'Classification is required.']);
+
+
         }
     }
     

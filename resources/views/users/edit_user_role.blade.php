@@ -325,7 +325,19 @@
                                         @else
                                             <input type="checkbox" name="allow_prob" id="allow_prob{{$user->id}}">
                                         @endif
-                                        Probationary Update
+                                      Probationary Update
+                                        <br>
+                                        <br>
+                                        @if($user->user_privilege)
+                                            @if($user->user_privilege->payroll_view == 'on')
+                                                <input type="checkbox" name="payroll_view" id="payroll_view{{$user->id}}" value="{{ $user->user_privilege->payroll_view }}" checked>
+                                            @else
+                                                <input type="checkbox" name="payroll_view" id="payroll_view{{$user->id}}">
+                                            @endif
+                                        @else
+                                            <input type="checkbox" name="payroll_view" id="payroll_view{{$user->id}}">
+                                        @endif
+                                        Payroll
                                         <br>
                                         <br>
                                     </div>

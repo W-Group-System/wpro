@@ -136,16 +136,16 @@ function dateRange( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
 
 
 function employeeSchedule($schedules = array(), $check_date, $schedule_id, $empNum=""){
-    $dailySchedule = DailySchedule::where('employee_number', $empNum)
-      ->where('log_date', $check_date)
-      ->orderBy('id', 'DESC')
-      ->first();
-    
+    $dailySchedule = DailySchedule::where('employee_code', $empNum)
+        ->where('log_date', $check_date)
+        ->orderBy('id', 'DESC')
+        ->first();
+
     if (!empty($dailySchedule)) {
-      if($dailySchedule['log_date'] == $check_date && $dailySchedule['employee_number'] == $empNum){
+        if($dailySchedule['log_date'] == $check_date && $dailySchedule['employee_code'] == $empNum){
         
         return $dailySchedule;
-      }
+        }
     }
     
     $schedule_name = date('l',strtotime($check_date));

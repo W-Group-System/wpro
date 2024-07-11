@@ -2022,96 +2022,81 @@ class EmployeeController extends Controller
 
     public function sync(Request $request)
     {
-        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
-        $allowed_locations = getUserAllowedLocations(auth()->user()->id);
-        $allowed_projects = getUserAllowedProjects(auth()->user()->id);
+        $companies = Company::get();
+        
+        $employees = Employee::where('status','Active')->get();
 
-        $terminals = iclockterminal_mysql::get();
-        // $terminals_hik = HikVisionAttendance::select('deviceName')->groupBy('deviceName')
-        //                             ->orderBy('deviceName' , 'ASC')
-        //                             ->get();
-        $terminals_hik = HikVisionAttendance::select('device')->groupBy('device')
-                                    ->orderBy('device' , 'ASC')
-                                    ->get();
+        return view('employees.sync', array(
+            'header' => 'biometrics',
+            'employees' => $employees,
+            'companies' => $companies
+        ));
+    }
 
-        if($request->terminal)
+    public function syncBio(Request $request) {
+        $from = $request->from;
+        $to = $request->to;
+        
+        $attendanceLogs = AttendanceLog::whereBetween('date', [$from, $to])
+            ->where('emp_code', $request->employees)
+            ->get();
+
+        if ($attendanceLogs != null) 
         {
-
-            $from = $request->from;
-            $to = $request->to;
-
-            $employee_numbers = Employee::whereIn('company_id', $allowed_companies)
-                                                ->when($allowed_locations,function($q) use($allowed_locations){
-                                                    $q->whereIn('location',$allowed_locations);
-                                                })
-                                                ->when($allowed_projects,function($q) use($allowed_projects){
-                                                    $q->whereIn('project',$allowed_projects);
-                                                })
-                                                ->where('status','Active')
-                                                ->pluck('employee_number')
-                                                ->toArray();
-
-            $attendances = iclocktransactions_mysql::whereIn('emp_code',$employee_numbers)
-                                                    ->where('terminal_id','=',$request->terminal)
-                                                    ->whereBetween('punch_time',[$from." 00:00:01", $to." 23:59:59"])
-                                                    ->orderBy('punch_time','asc')
-                                                    ->get();
-            foreach($attendances as $att)
+            foreach($attendanceLogs as $att)
             {
-                if($att->punch_state == 0) // Timein
+                if ($att->type == 0)
                 {
-                        $attend = Attendance::where('employee_code',$att->emp_code)->whereDate('time_in',date('Y-m-d', strtotime($att->punch_time)))->first();
-                        if($attend == null)
-                        {
-                            $attendance = new Attendance;
-                            $attendance->employee_code  = $att->emp_code;   
-                            $attendance->time_in = date('Y-m-d H:i:s',strtotime($att->punch_time));
-                            $attendance->device_in = $att->terminal_alias;
-                            $attendance->save(); 
-                        }
+                    $attend = Attendance::where('employee_code', $att->emp_code)->where('time_in', date('Y-m-d H:i:s', strtotime($att->datetime)))->first();
                     
-                }
-                else if($att->punch_state == 1 || $att->punch_state == 5) // Timeout
-                {
-                    
-                    $time_in_after = date('Y-m-d H:i:s',strtotime($att->punch_time));
-
-                    $time_in_before = date('Y-m-d H:i:s', strtotime ( '-23 hour' , strtotime ( $time_in_after ) ));
-                    
-                    $update = [
-                        'time_out' =>  date('Y-m-d H:i:s', strtotime($att->punch_time)),
-                        'device_out' => $att->terminal_alias,
-                        'last_id' =>$att->id,
-                    ];
-
-                    $attendance_in = Attendance::where('employee_code',$att->emp_code)
-                    ->whereBetween('time_in',[$time_in_before,$time_in_after])->first();
-                    Attendance::where('employee_code',$att->emp_code)
-                    ->whereBetween('time_in',[$time_in_before,$time_in_after])
-                    ->update($update);
-
-                    if($attendance_in ==  null)
+                    if($attend == null)
                     {
                         $attendance = new Attendance;
                         $attendance->employee_code  = $att->emp_code;   
-                        $attendance->time_out = date('Y-m-d H:i:s', strtotime($att->punch_time));
-                        $attendance->device_out = $att->terminal_alias;
+                        $attendance->time_in = date('Y-m-d H:i:s',strtotime($att->datetime));
+                        $attendance->device_in = $att->location ." - ".$att->ip_address;
+                        $attendance->last_id = $att->id;
+                        $attendance->save();
+                    }
+                }
+                else 
+                {
+                    $time_in_after = date('Y-m-d H:i:s',strtotime($att->datetime));
+                    $time_in_before = date('Y-m-d H:i:s', strtotime ( '-16 hour' , strtotime ( $time_in_after ) )) ;
+                    
+                    $update = [
+                        'time_out' =>  date('Y-m-d H:i:s', strtotime($att->datetime)),
+                        'device_out' => $att->location ." - ".$att->ip_address,
+                        'last_id' =>$att->id,
+                    ];
+                
+                    $attendance_in = Attendance::where('employee_code',$att->emp_code)
+                        ->whereBetween('time_in',[$time_in_before,$time_in_after])
+                        ->first();
+                    
+                    Attendance::where('employee_code',(string)$att->emp_code)
+                    ->whereBetween('time_in',[$time_in_before,$time_in_after])
+                    ->update($update);
+                    
+                    if($attendance_in == null)
+                    {
+                        $attendance = new Attendance;
+                        $attendance->employee_code  = $att->emp_code;   
+                        $attendance->time_out = date('Y-m-d H:i:s', strtotime($att->datetime));
+                        $attendance->device_out = $att->location ." - ".$att->ip_address;
+                        $attendance->last_id = $att->id;
                         $attendance->save(); 
                     }
                 }
             }
+            Alert::success("Successfully Sync");
+        }
+        else 
+        {
+            Alert::error("Cannot Sync. Because the employee is not existing in attendance logs");
         }
         
-        $employees = Employee::where('status','Active')
-                                ->whereIn('company_id', $allowed_companies)
-                                ->get();
-
-        return view('employees.sync', array(
-            'header' => 'biometrics',
-            'terminals' => $terminals,
-            'terminals_hik' => $terminals_hik,
-            'employees' => $employees,
-        ));
+        return back();
     }
 
     public function sync_per_employee(Request $request)
@@ -2460,4 +2445,47 @@ class EmployeeController extends Controller
         return $pdf->stream($employee->employee_code.'.pdf');
     }
 
+    public function updateEmpNo(Request $request, $id)
+    {
+        $employeeData = Employee::findOrFail($id);
+        $employeeData->employee_code = $request->employee_no;
+        $employeeData->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+
+        return back();
+    }
+
+    public function updateAcctNo(Request $request, $id)
+    {
+        $employeeData = Employee::findOrFail($id);        
+        $employeeData->bank_account_number = $request->account_no;
+        $employeeData->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+    
+    public function resetPassword(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        if ($user == null)
+        {
+            return response()->json([
+                'status' => 0,
+                'message' => 'User not found'
+            ]);
+        }
+        else
+        {
+            $user->password = bcrypt('Wgr0up@1234');
+            $user->save();
+    
+            return response()->json([
+                'status' => 1,
+                'message' => 'Successfully Reset'
+            ]);
+        }
+
+    }
 }

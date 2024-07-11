@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Guarantor;
 use App\Loan;
 use App\LoanType;
 use Illuminate\Http\Request;
@@ -26,10 +27,12 @@ class LoanController extends Controller
     }
     public function loan_reg()
     {
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+
         $loans = Loan::with('loan_type', 'employee')->get();
         $loanTypes = LoanType::all();
-        $employees = Employee::all();
-
+        $employees = Employee::where('status', 'Active')->whereIn('company_id', $allowed_companies)->get();
+        
         return view('loans.loan_register', array(
             'header' => 'Payroll',
             'loans' => $loans,
@@ -40,10 +43,12 @@ class LoanController extends Controller
 
     public function store_loanReg(Request $request)
     {
+        // dd($request->all());
         // Validation
         $this->validate($request, [
             'loan_type' => 'required',
             'employee' => 'required',
+            'frequency' => 'required',
             'amount' => 'required', 'min:1',
             'monthly_ammort_amt' => 'required', 'min:1',
             'start_date' => 'required',
@@ -59,9 +64,57 @@ class LoanController extends Controller
         $loans->initial_amount = $request->initial_amount;
         $loans->start_date = $request->start_date;
         $loans->expiry_date = $request->expiry_date;
+        $loans->schedule = $request->frequency;
+        $loans->status = "Active";
+        $loans->encoded_by = auth()->user()->id;
         $loans->save();
 
+        if (isset($request->loan_beneficiaries))
+        {
+            foreach($request->loan_beneficiaries as $loanBeneficiaries) {
+                $loan_beneficiaries = new Guarantor;
+                $loan_beneficiaries->loan_id = $loans->id;
+                $loan_beneficiaries->employee_id = $loanBeneficiaries;
+                $loan_beneficiaries->save();
+            }
+        }
+
         Alert::success('Successfully Stored')->persistent('Dismiss');
+        return back();
+    }
+
+    public function updateloanReg(Request $request, $id)
+    {
+        $loans = Loan::findOrFail($id);
+        $loans->loan_type_id = $request->loan_type;
+        // $loans->employee_id = $request->employee;
+        // $loans->amount = $request->amount;
+        $loans->monthly_ammort_amt = $request->monthly_ammort_amt;
+        $loans->initial_amount = $request->initial_amount;
+        $loans->start_date = $request->start_date;
+        $loans->expiry_date = $request->expiry_date;
+        $loans->schedule = $request->frequency;
+        $loans->status = $request->status;
+        $loans->save();
+
+        if (isset($request->loan_beneficiaries))
+        {
+            foreach($request->loan_beneficiaries as $guarantor) {
+                $target = array(
+                    'loan_id' => $loans->id,
+                    'employee_id' => $guarantor
+                );
+
+                $toSave = array(
+                    'loan_id' => $loans->id,
+                    'employee_id' => $guarantor
+                );
+
+                Guarantor::updateOrCreate($target, $toSave);
+            }
+        }
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
     public function loan_report()
