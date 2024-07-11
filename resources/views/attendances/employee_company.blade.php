@@ -353,7 +353,12 @@
                                                 @endphp
                                                 @if((($time_start)&&($time_end)) && $employee_schedule)    
                                                     @php
-                                                        $work =  round((((strtotime($time_end) - strtotime($time_start)))/3600),2);
+                                                         $time_start_ts = strtotime($time_start);
+                                                        $time_end_ts = strtotime($time_end);
+                                                        if ($time_end_ts < $time_start_ts) {
+                                                            $time_end_ts += 86400; // add 24 hours
+                                                        }
+                                                        $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $schedule_hours = 0;
                                                     
                                                         $sched = $employee_schedule->working_hours;
@@ -383,10 +388,10 @@
 
                                                                     $work = $schedule_hours/2;
                                                                 }
-                                                                else {
-                                                                    $work = $work;
+                                                                // else {
+                                                                //     $work = $work;
 
-                                                                }
+                                                                // }
                                                             }
                                                         }
 
