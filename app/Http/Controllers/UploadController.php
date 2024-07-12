@@ -31,6 +31,10 @@ class UploadController extends Controller
         $request->validate([
             'file' => 'mimes:xlsx,csv,xls'
         ]);
+        $path = $request->file('file')->getRealPath();
+
+        $data = Excel::load($path);
+        dd($data);
         Excel::import(new UploadImport($request->type), $request->file);
 
         $file = $request->file('file');
