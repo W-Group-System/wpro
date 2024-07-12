@@ -378,16 +378,14 @@
                                                         $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $schedule_hours = 0;
                                                     
-                                                        $sched = $employee_schedule->working_hours;
+                                                        
                                                         if($employee_schedule->time_in_from)
                                                         {
-                                                            if($employee_schedule->working_hours > 8)
+                                                            $schedule_hours = ((strtotime($date_r." ".$employee_schedule->time_out_to)-strtotime($date_r." ".$employee_schedule->time_in_to))/3600);
+                                                            // dd($schedule_hours);
+                                                            if($schedule_hours > 8)
                                                             {
-                                                                $schedule_hours =  $employee_schedule->working_hours-1;
-                                                                $sched = $employee_schedule->working_hours+1;
-                                                            }
-                                                            else {
-                                                                $schedule_hours = $employee_schedule->working_hours;
+                                                                $schedule_hours =  $schedule_hours-1;
                                                             }
 
                                                             if($work > $schedule_hours)
