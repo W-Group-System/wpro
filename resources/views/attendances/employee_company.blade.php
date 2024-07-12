@@ -405,13 +405,14 @@
                                                                 $schedule_hours =  $schedule_hours-1;
                                                             }
 
-                                                            if($work > $schedule_hours)
-                                                            {
-                                                                $work = $schedule_hours;
-                                                            }
+                                                          
                                                             if($original_sched > $work)
                                                             {
                                                                 $undertime = (double) number_format($original_sched - $work,2);
+                                                            }
+                                                            if($work > $schedule_hours)
+                                                            {
+                                                                $work = $schedule_hours;
                                                             }
                                                             if($leave_count == .5)
                                                             {
