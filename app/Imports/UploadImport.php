@@ -67,7 +67,7 @@ class UploadImport implements ToCollection, WithHeadingRow
                         $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',$end_date)." ".$end_time));
                         $employeeOb->approved_date = date('Y-m-d',$date_approved);
                         $employeeOb->status = $row['status'];
-                        $employeeOb->created_by = $uid;
+                        $employeeOb->created_by = auth()->user()->id;
                         $employeeOb->save();
                     } else {
                         $start_time = $this->compute_hours($row['start_time']);
@@ -80,7 +80,7 @@ class UploadImport implements ToCollection, WithHeadingRow
                         $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',$end_date)." ".$end_time));
                         $employeeOb->approved_date = date('Y-m-d',$date_approved);
                         $employeeOb->status = $row['status'];
-                        $employeeOb->created_by = $uid;
+                        $employeeOb->created_by = auth()->user()->id;
                         $employeeOb->save();
                     }
                 }
@@ -98,7 +98,7 @@ class UploadImport implements ToCollection, WithHeadingRow
                         $employeeOt->status = $row['status'];
                         $employeeOt->ot_approved_hrs = $row['ot_approved_hrs'];
                         $employeeOt->break_hrs = $row['break_hrs'];
-                        $employeeOt->created_by = $uid;
+                        $employeeOt->created_by = auth()->user()->id;
                         $employeeOt->save();
                     } else {
                         $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row['start_date_time']));
