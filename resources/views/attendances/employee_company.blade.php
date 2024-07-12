@@ -238,12 +238,12 @@
 
                                                 if($final_time_in)
                                                 {
-                                                    $time_start = date('Y-m-d h:i:s A',strtotime($final_time_in));
+                                                    $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
                                                 }
 
                                                 if($final_time_out)
                                                 {
-                                                    $time_end = date('Y-m-d  h:i:s A',strtotime($final_time_out));
+                                                    $time_end = date('Y-m-d  h:i A',strtotime($final_time_out));
                                                 }
                                                 if($if_has_ob)
                                                 {
@@ -252,15 +252,15 @@
                                                 {
                                                     if($if_has_ob->date_from < $final_time_in)
                                                     {
-                                                        $time_start = date('Y-m-d h:i:s A',strtotime($if_has_ob->date_from));
+                                                        $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
                                                     }
                                                     else {
-                                                        $time_start = date('Y-m-d h:i:s A',strtotime($final_time_in));
+                                                        $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
                                                     }
                                                 }
                                                 else {
                                                     
-                                                    $time_start = date('Y-m-d h:i:s A',strtotime($if_has_ob->date_from));
+                                                    $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
                                                 }
                                                 
                                                 if($final_time_out != null){
@@ -270,11 +270,11 @@
                                                         if(strtotime($if_has_ob->date_to) > strtotime($final_time_out))
                                                         {
                                                         
-                                                        $time_end = date('Y-m-d h:i:s A',strtotime($if_has_ob->date_to));
+                                                        $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
                                                         }
                                                         else {
                                                             
-                                                            $time_end = date('Y-m-d h:i:s A',strtotime($final_time_out));
+                                                            $time_end = date('Y-m-d h:i A',strtotime($final_time_out));
                                                         }
                                                         
                                                     }
@@ -520,7 +520,7 @@
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{$late}}">{{$late}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{$undertime_hrs*60}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="0.00">{{$approved_overtime_hrs ? (double) $approved_overtime_hrs : 0 }}</td> {{-- REG OT --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="0.00">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
