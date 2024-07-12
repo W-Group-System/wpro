@@ -378,7 +378,14 @@
                                                     $work =0;
                                                     $undertime_hrs = 0;
                                                     $undertime = 0;
+                                                    $original_sched = 0;
                                                 @endphp
+                                                @if($employee_schedule)
+                                                @php
+                                                     $original_sched = ((strtotime($date_r." ".$employee_schedule->time_out_to)-strtotime($date_r." ".$employee_schedule->time_in_to))/3600);
+                                                @endphp
+                                               
+                                                @endif
                                                 @if((($time_start)&&($time_end)) && $employee_schedule)    
                                                     @php
                                                         $time_start_ts = strtotime($time_start);
@@ -389,7 +396,6 @@
                                                         $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $schedule_hours = 0;
                                                     
-                                                        
                                                         if($employee_schedule->time_in_from)
                                                         {
                                                             $schedule_hours = ((strtotime($date_r." ".$employee_schedule->time_out_to)-strtotime($date_r." ".$employee_schedule->time_in_to))/3600);
@@ -403,9 +409,9 @@
                                                             {
                                                                 $work = $schedule_hours;
                                                             }
-                                                            if($schedule_hours > $work)
+                                                            if($original_sched > $work)
                                                             {
-                                                                $undertime = (double) number_format($schedule_hours - $work,2);
+                                                                $undertime = (double) number_format($original_sched - $work,2);
                                                             }
                                                             if($leave_count == .5)
                                                             {
