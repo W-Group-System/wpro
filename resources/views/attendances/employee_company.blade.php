@@ -197,7 +197,17 @@
                                                     $if_has_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
                                                 @endphp
                                                 @php
-                                                    $time_in = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00", $date_r." 23:59:59"])->first();
+                                                    $cenvertedTime = date('Y-m-d 00:00:00');
+                                                    if($employee_schedule != null)
+                                                    {
+                                                        if($employee_schedule->time_in_from != '00:00')
+                                                        {
+                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-2 hour',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                        }
+                                                    }
+                                                    // dd($cenvertedTime);
+                                                    $time_in = ($emp->attendances)->whereBetween('time_in',[$cenvertedTime,$date_r." 23:59:59"])->first();
+                                                    
                                                     $time_out = null;
                                                     $final_time_in = "";
                                                     $final_time_out = "";
@@ -221,12 +231,12 @@
 
                                                 if($final_time_in)
                                                 {
-                                                    $time_start = date('h:i A',strtotime($final_time_in));
+                                                    $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
                                                 }
 
                                                 if($final_time_out)
                                                 {
-                                                    $time_end = date('h:i A',strtotime($final_time_out));
+                                                    $time_end = date('Y-m-d  h:i A',strtotime($final_time_out));
                                                 }
                                                 if($if_has_ob)
                                                 {
@@ -247,11 +257,11 @@
                                                     {
                                                         if($if_has_ob->date_to > $final_time_out)
                                                         {
-                                                        $time_end = date('h:i A',strtotime($if_has_ob->date_to));
+                                                        $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
                                                         }
                                                         else {
                                                             
-                                                            $time_end = date('h:i A',strtotime($final_time_out));
+                                                            $time_end = date('Y-m-d h:i A',strtotime($final_time_out));
                                                         }
                                                         
                                                     }
@@ -408,12 +418,12 @@
                                                     }   
                                                     
                                                     if($undertime > 0){
-                                                                if($late_diff_hours > 0){
-                                                                    $undertime_hrs = $undertime - $late_diff_hours;
-                                                                }else{
-                                                                    $undertime_hrs = $undertime;
-                                                                }
-                                                            }  
+                                                        if($late_diff_hours > 0){
+                                                            $undertime_hrs = $undertime - $late_diff_hours;
+                                                        }else{
+                                                            $undertime_hrs = $undertime;
+                                                        }
+                                                    }  
                                                 }
                                                 @endphp
                                                 @if($work > 0)
