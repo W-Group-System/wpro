@@ -46,7 +46,7 @@ class UploadImport implements ToCollection, WithHeadingRow
                 $user_id = Employee::where('employee_code', $row['employee_no'])->pluck('user_id')->toArray();
                 $dateFiled = Date::excelToDateTimeObject($row['date_filed'])->format('Y-m-d');
             }
-
+            
             if ($this->type == "OB") {
                 $employeeOb = EmployeeOb::whereIn('user_id', $user_id)
                     ->where('applied_date', $dateFiled)
@@ -74,7 +74,7 @@ class UploadImport implements ToCollection, WithHeadingRow
                 }
             } else if ($this->type == "OT") {
                 $employeeOt = EmployeeOvertime::whereIn('user_id', $user_id)->where('ot_date', $dateFiled)->first();
-
+                
                 foreach ($user_id as $uid) {
                     if (empty($employeeOt)) {
                         $employeeOt = new EmployeeOvertime;
@@ -84,13 +84,17 @@ class UploadImport implements ToCollection, WithHeadingRow
                         $employeeOt->end_time = date('Y-m-d h:i:s', strtotime($row['end_date_time']));
                         $employeeOt->approved_date = Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
                         $employeeOt->status = $row['status'];
+                        $employeeOt->ot_approved_hrs = $row['ot_approved_hrs'];
+                        $employeeOt->break_hrs = $row['break_hrs'];
                         $employeeOt->created_by = $uid;
                         $employeeOt->save();
                     } else {
-                        $employeeOt->start_time = Date::excelToDateTimeObject($row['start_date_time'])->format('Y-m-d H:i:s');
-                        $employeeOt->end_time = Date::excelToDateTimeObject($row['end_date_time'])->format('Y-m-d H:i:s');
+                        $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row['start_date_time']));
+                        $employeeOt->end_time =date('Y-m-d h:i:s', strtotime($row['end_date_time']));
                         $employeeOt->approved_date = Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
                         $employeeOt->status = $row['status'];
+                        $employeeOt->ot_approved_hrs = $row['ot_approved_hrs'];
+                        $employeeOt->break_hrs = $row['break_hrs'];
                         $employeeOt->created_by = $uid;
                         $employeeOt->save();
                     }
