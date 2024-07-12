@@ -131,6 +131,12 @@
                                                 $approved_overtimes =0;
                                                 $night_diffs =0;
                                                 $night_diff_ot =0;
+
+                                                $subtotal_abs = 0;
+                                                $subtotal_leave_w_pay=0;
+                                                $subtotal_reg_hrs = 0;
+                                                $subtotal_late = 0;
+                                                $subtotal_undertime = 0;
                                             @endphp
 
                                             @foreach($date_range as $date_r)
@@ -353,7 +359,12 @@
                                                 @endphp
                                                 @if((($time_start)&&($time_end)) && $employee_schedule)    
                                                     @php
-                                                        $work =  round((((strtotime($time_end) - strtotime($time_start)))/3600),2);
+                                                        $time_start_ts = strtotime($time_start);
+                                                        $time_end_ts = strtotime($time_end);
+                                                        if ($time_end_ts < $time_start_ts) {
+                                                            $time_end_ts += 86400; 
+                                                        }
+                                                        $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $schedule_hours = 0;
                                                     
                                                         $sched = $employee_schedule->working_hours;
@@ -383,10 +394,10 @@
 
                                                                     $work = $schedule_hours/2;
                                                                 }
-                                                                else {
-                                                                    $work = $work;
+                                                                // else {
+                                                                //     $work = $work;
 
-                                                                }
+                                                                // }
                                                             }
                                                         }
 
@@ -465,6 +476,11 @@
                                                 {
                                                     $undertime_hrs = 0;
                                                 }
+                                                $subtotal_abs += $abs;
+                                                $subtotal_leave_w_pay += $leave_count;
+                                                $subtotal_reg_hrs += $work;
+                                                $subtotal_late += $late;
+                                                $subtotal_undertime += ($undertime_hrs*60);
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{$abs}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
@@ -530,6 +546,43 @@
                                                         
                                             </tr>
                                             @endforeach
+                                            <tr>
+                                                <td><strong>Subtotal</strong></td>
+                                                <td><strong>{{ $emp->employee_code }}</strong></td>
+                                                <td><strong>{{$emp->first_name . ' ' . $emp->last_name}}</strong></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><strong>{{ $subtotal_abs }}</strong></td>
+                                                <td><strong>{{ $subtotal_leave_w_pay }}</strong></td>
+                                                <td><strong>{{ $subtotal_reg_hrs }}</strong></td>
+                                                <td><strong>{{ $subtotal_late }}</strong></td>
+                                                <td><strong>{{ $subtotal_undertime }}</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                               
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
