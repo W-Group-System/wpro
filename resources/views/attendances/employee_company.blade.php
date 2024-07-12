@@ -202,7 +202,8 @@
                                                     {
                                                         if($employee_schedule->time_in_from != '00:00')
                                                         {
-                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-2 hour',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-4 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                            // dd($cenvertedTime);
                                                         }
                                                     }
                                                     // dd($cenvertedTime);
@@ -345,8 +346,8 @@
                                                         // $abs=0;
                                                     @endphp  
                                                 @endif
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][in]" value="{{$time_start}}">{{$time_start}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][out]" value="{{$time_end}}">{{$time_end}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][in]" value="@if($time_start){{date('h:i A',strtotime($time_start))}}@endif">@if($time_start){{date('h:i A',strtotime($time_start))}}@endif</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][out]" value="@if($time_end){{date('h:i A',strtotime($time_end))}}@endif">@if($time_end){{date('h:i A',strtotime($time_end))}}@endif</td>
                                                 @php
                                                     $leave_count = 0;
                                                     if($if_leave)
