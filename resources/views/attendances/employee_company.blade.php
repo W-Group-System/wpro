@@ -213,7 +213,7 @@
                                                         }
                                                     }
                                                     // dd($cenvertedTime);
-                                                    $time_in = ($emp->attendances)->whereBetween('time_in',[$cenvertedTime,$date_r." 23:59:59"])->first();
+                                                    $time_in = ($emp->attendances)->whereBetween('time_in',[$cenvertedTime,$date_r." 23:59:59"])->sortBy('time_in')->first();
                                                     
                                                     $time_out = null;
                                                     $final_time_in = "";
@@ -247,6 +247,7 @@
                                                 }
                                                 if($if_has_ob)
                                                 {
+                                                
                                                 if($final_time_in != null)
                                                 {
                                                     if($if_has_ob->date_from < $final_time_in)
@@ -257,13 +258,18 @@
                                                         $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
                                                     }
                                                 }
+                                                else {
+                                                    
+                                                    $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
+                                                }
                                                 
-                                                if($final_time_in != null){
+                                                if($final_time_out != null){
                                                         // dd($time_in);
                                                     if($time_in->time_out != null)
                                                     {
-                                                        if($if_has_ob->date_to > $final_time_out)
+                                                        if(strtotime($if_has_ob->date_to) > strtotime($final_time_out))
                                                         {
+                                                        
                                                         $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
                                                         }
                                                         else {
@@ -272,6 +278,10 @@
                                                         }
                                                         
                                                     }
+                                                }
+                                                else {
+                                                    
+                                                    $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
                                                 }
                                                 }
                                                 @endphp
@@ -359,7 +369,8 @@
                                                     if($if_leave)
                                                     {
                                                         $l = explode('-',$if_leave);
-                                                        $leave_count = $l[1];
+                                                        $leave_count = (double) $l[1];
+                                                        // dd($leave_count);
                                                     }
                                                 @endphp
                                             
