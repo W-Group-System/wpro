@@ -57,16 +57,28 @@ class UploadImport implements ToCollection, WithHeadingRow
                         $employeeOb = new EmployeeOb;
                         $employeeOb->user_id = $uid;
                         $employeeOb->applied_date = Date::excelToDateTimeObject($row['date_filed'])->format('Y-m-d');
-                        $employeeOb->date_from = Date::excelToDateTimeObject($row['start_date'])->format('Y-m-d') . ':' . date('H:i:s', strtotime($row['start_time']));
-                        $employeeOb->date_to = Date::excelToDateTimeObject($row['end_date'])->format('Y-m-d') . ':' . date('H:i:s', strtotime($row['end_time']));
-                        $employeeOb->approved_date = Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
+                        $start_time = $this->compute_hours($row['start_time']);
+                        $end_time = $this->compute_hours($row['end_time']);
+
+                        $start_date = ($row['start_date'] - 25569) * 86400;
+                        $end_date = ($row['end_date'] - 25569) * 86400;
+                        $date_approved = ($row['date_approved'] - 25569) * 86400;
+                        $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',$start_date)." ".$start_time));
+                        $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',$end_date)." ".$end_time));
+                        $employeeOb->approved_date = date('Y-m-d',$date_approved);
                         $employeeOb->status = $row['status'];
                         $employeeOb->created_by = $uid;
                         $employeeOb->save();
                     } else {
-                        $employeeOb->date_from = Date::excelToDateTimeObject($row['start_date'])->format('Y-m-d') . ':' . date('H:i:s', strtotime($row['start_time']));
-                        $employeeOb->date_to = Date::excelToDateTimeObject($row['end_date'])->format('Y-m-d') . ':' . date('H:i:s', strtotime($row['end_time']));
-                        $employeeOb->approved_date = Date::excelToDateTimeObject($row['date_approved'])->format('Y-m-d');
+                        $start_time = $this->compute_hours($row['start_time']);
+                        $end_time = $this->compute_hours($row['end_time']);
+
+                        $start_date = ($row['start_date'] - 25569) * 86400;
+                        $end_date = ($row['end_date'] - 25569) * 86400;
+                        $date_approved = ($row['date_approved'] - 25569) * 86400;
+                        $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',$start_date)." ".$start_time));
+                        $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',$end_date)." ".$end_time));
+                        $employeeOb->approved_date = date('Y-m-d',$date_approved);
                         $employeeOb->status = $row['status'];
                         $employeeOb->created_by = $uid;
                         $employeeOb->save();
@@ -158,5 +170,19 @@ class UploadImport implements ToCollection, WithHeadingRow
         }
 
         Alert::success('Successfully Uploaded')->persistent('Dismiss');
+    }
+    public function compute_hours($variable)
+    {
+        $total =$variable* 24; //multiply by the 24 hours
+        $hours = floor($total); //Gets the natural number part
+        $minute_fraction = $total - $hours; //Now has only the decimal part
+        $minutes = $minute_fraction * 60; //Get the number of minutes
+        $start_time = $hours . ":" . $minutes;
+        return $start_time;
+    }
+    public function compute_dys($variable)
+    {
+        $start_date = ($variable - 25569) * 86400;
+        return $start_date;
     }
 }
