@@ -495,7 +495,7 @@
                                                 @endphp
                                                 @php
                                                 $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
-        
+                                                
                                                 if($approved_overtime_hrs){
                                                     $approved_overtimes = (double) $approved_overtimes + $approved_overtime_hrs;
                                                 }
