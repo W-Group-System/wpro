@@ -238,12 +238,12 @@
 
                                                 if($final_time_in)
                                                 {
-                                                    $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
+                                                    $time_start = date('Y-m-d h:i:s A',strtotime($final_time_in));
                                                 }
 
                                                 if($final_time_out)
                                                 {
-                                                    $time_end = date('Y-m-d  h:i A',strtotime($final_time_out));
+                                                    $time_end = date('Y-m-d  h:i:s A',strtotime($final_time_out));
                                                 }
                                                 if($if_has_ob)
                                                 {
@@ -252,15 +252,15 @@
                                                 {
                                                     if($if_has_ob->date_from < $final_time_in)
                                                     {
-                                                        $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
+                                                        $time_start = date('Y-m-d h:i:s A',strtotime($if_has_ob->date_from));
                                                     }
                                                     else {
-                                                        $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
+                                                        $time_start = date('Y-m-d h:i:s A',strtotime($final_time_in));
                                                     }
                                                 }
                                                 else {
                                                     
-                                                    $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
+                                                    $time_start = date('Y-m-d h:i:s A',strtotime($if_has_ob->date_from));
                                                 }
                                                 
                                                 if($final_time_out != null){
@@ -270,11 +270,11 @@
                                                         if(strtotime($if_has_ob->date_to) > strtotime($final_time_out))
                                                         {
                                                         
-                                                        $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
+                                                        $time_end = date('Y-m-d h:i:s A',strtotime($if_has_ob->date_to));
                                                         }
                                                         else {
                                                             
-                                                            $time_end = date('Y-m-d h:i A',strtotime($final_time_out));
+                                                            $time_end = date('Y-m-d h:i:s A',strtotime($final_time_out));
                                                         }
                                                         
                                                     }
