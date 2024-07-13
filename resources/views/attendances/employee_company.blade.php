@@ -536,9 +536,10 @@
                                                         $start_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
                                                         $end_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_out_to);
 
-                                                        if(strtotime($employee_schedule->time_out_to) > strtotime($employee_schedule->time_in_to))
+                                                        if(strtotime($start_schedule) > strtotime($end_schedule))
                                                         {
-                                                            $end_schedule = (date('Y-m-d H:i:s', strtotime($time_start . ' +1 day'))." ".$employee_schedule->time_out_to);
+                                                            $s = date('Y-m-d', strtotime($time_start . ' +1 day'));
+                                                            $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
                                                         }
                                                    
                                                         if(strtotime($start_schedule) > strtotime($time_start))
@@ -550,10 +551,9 @@
                                                             $nightdiff_end = $end_schedule;
                                                         }
                                                     }
+                                                    
                                                      $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
                                                     
-                                                  
-
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
