@@ -528,13 +528,13 @@
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
-                                                    $overtime = (double) $overtime;
+                                                    $overtime = roundDownToNearestHalf($overtime);
                                                 }
                                                 else
                                                 {
-                                                    $overtime = (double) $approved_overtime_hrs;
+                                                    $overtime = roundDownToNearestHalf($overtime);
                                                 }
-                                                    $subtotal_overtimes = (double) $subtotal_overtimes + $overtime;
+                                                    $subtotal_overtimes =  $subtotal_overtimes + $overtime;
                                                 
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
@@ -675,6 +675,9 @@
             return 0;
         }
     }
+    function roundDownToNearestHalf($number) {
+            return floor($number * 2) / 2;
+        }
 @endphp
 
 <!-- Include SweetAlert CSS -->
