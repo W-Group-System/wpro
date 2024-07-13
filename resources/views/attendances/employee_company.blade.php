@@ -395,9 +395,9 @@
                                                         if ($time_end_ts < $time_start_ts) {
                                                             $time_end_ts += 86400; 
                                                         }
-                                                        if(strtotime($date_r." ".$employee_schedule->time_out_to) > $time_end_ts)
+                                                        if(strtotime($date_r." ".$employee_schedule->time_out_to) > $time_start_ts)
                                                         {
-                                                            $time_end_ts = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                            $time_start_ts = strtotime($date_r." ".$employee_schedule->time_out_to);
                                                         }
                                                         $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $schedule_hours = 0;
