@@ -530,8 +530,8 @@
                                                     
                                                     if($employee_schedule)
                                                     {
-                                                        $start_schedule = strtotime($date_r." ".$employee_schedule->time_in_from);
-                                                        $end_schedule = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                        $start_schedule = strtotime(date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
+                                                        $end_schedule = strtotime(date('Y-m-d',strtotime($time_end))." ".$employee_schedule->time_out_to);
                                                         $nightdiff_start = $time_start;
                                                         $nightdiff_end = $time_end;
                                                         if($start_schedule > strtotime($time_start))
