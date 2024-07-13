@@ -532,15 +532,15 @@
                                                     {
                                                         $start_schedule = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                         $end_schedule = strtotime($date_r." ".$employee_schedule->time_out_to);
-                                                        $nightdiff_start = date($time_start);
-                                                        $nightdiff_end = date($time_end);
+                                                        $nightdiff_start = $time_start;
+                                                        $nightdiff_end = $time_end;
                                                         if($start_schedule > strtotime($time_start))
                                                         {   
-                                                            $nightdiff_start = date($start_schedule);
+                                                            $nightdiff_start = date('Y-m-d',strtotime($start_schedule));
                                                         }
                                                         if($end_schedule > strtotime($time_end))
                                                         {   
-                                                            $nightdiff_end = date($end_schedule);
+                                                            $nightdiff_end = date('Y-m-d',strtotime($end_schedule));
                                                         }
                                                     }
                                                      $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
@@ -553,7 +553,7 @@
                                                 }
                                                 else
                                                 {
-                                                    $overtime = roundDownToNearestHalf($overtime);
+                                                    $overtime = roundDownToNearestHalf($approved_overtime_hrs);
                                                 }
                                                     $subtotal_overtimes =  $subtotal_overtimes + $overtime;
                                                 
