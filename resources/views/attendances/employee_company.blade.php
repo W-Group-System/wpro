@@ -527,8 +527,24 @@
                                                 $night_diff = 0;
                                                 if(($time_start!=null )&& ($time_end!=null))
                                                 {
-                                                    // $schedule_from = 
-                                                    $night_diff = night_difference_per_company($time_start,$time_end); 
+                                                    
+                                                    if($employee_schedule)
+                                                    {
+                                                        $start_schedule = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                                        $end_schedule = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                        $nightdiff_start = date($time_start);
+                                                        $nightdiff_end = date($time_end);
+                                                        if($start_schedule > strtotime($time_start))
+                                                        {   
+                                                            $nightdiff_start = date($start_schedule);
+                                                        }
+                                                        if($end_schedule > strtotime($time_end))
+                                                        {   
+                                                            $nightdiff_end = date($end_schedule);
+                                                        }
+                                                    }
+                                                     $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                  
 
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
