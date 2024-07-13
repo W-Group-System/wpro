@@ -527,23 +527,24 @@
                                                 $night_diff = 0;
                                                 if(($time_start!=null )&& ($time_end!=null))
                                                 {
+                                                        $nightdiff_start = $time_start;
+                                                        $nightdiff_end = $time_end;
                                                     
                                                     if($employee_schedule)
                                                     {
-                                                        $start_schedule = strtotime(date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
-                                                        $end_schedule = strtotime(date('Y-m-d',strtotime($time_end))." ".$employee_schedule->time_out_to);
-                                                        $nightdiff_start = $time_start;
-                                                        $nightdiff_end = $time_end;
-                                                        if($start_schedule > strtotime($time_start))
+                                                        $start_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
+                                                        $end_schedule = (date('Y-m-d',strtotime($time_end))." ".$employee_schedule->time_out_to);
+                                                        if(strtotime($start_schedule) > strtotime($time_start))
                                                         {   
-                                                            $nightdiff_start = date('Y-m-d',strtotime($start_schedule));
+                                                            $nightdiff_start = $start_schedule;
                                                         }
-                                                        if($end_schedule > strtotime($time_end))
+                                                        if(strtotime($end_schedule) > strtotime($time_end))
                                                         {   
-                                                            $nightdiff_end = date('Y-m-d',strtotime($end_schedule));
+                                                            $nightdiff_end = $end_schedule;
                                                         }
                                                     }
                                                      $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                    
                                                   
 
                                                 }
