@@ -137,6 +137,7 @@
                                                 $subtotal_reg_hrs = 0;
                                                 $subtotal_late = 0;
                                                 $subtotal_undertime = 0;
+                                                $subtotal_overtimes = 0;
                                             @endphp
 
                                             @foreach($date_range as $date_r)
@@ -527,7 +528,7 @@
                                                 {
                                                     $overtime = (double) $approved_overtime_hrs;
                                                 }
-                                                    $approved_overtimes = (double) $approved_overtimes + $overtime;
+                                                    $subtotal_overtimes = (double) $subtotal_overtimes + $overtime;
                                                 
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
@@ -607,7 +608,7 @@
                                                 <td><strong>{{ $subtotal_reg_hrs }}</strong></td>
                                                 <td><strong>{{ $subtotal_late }}</strong></td>
                                                 <td><strong>{{ $subtotal_undertime }}</strong></td>
-                                                <td><strong>0.00</strong></td>
+                                                <td><strong>{{$approved_overtimes}}</strong></td>
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>
