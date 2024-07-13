@@ -156,7 +156,7 @@
   });
 </script>
 
-@php
+{{-- @php
 function get_count_days($data,$date_from,$date_to,$halfday)
  {
 
@@ -183,5 +183,5 @@ function get_count_days($data,$date_from,$date_to,$halfday)
     }
     
  } 
-@endphp 
+@endphp  --}}
 @endsection
