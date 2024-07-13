@@ -157,31 +157,31 @@
 </script>
 
 @php
-function get_count_days($data,$date_from,$date_to,$halfday)
- {
+// function get_count_days($data,$date_from,$date_to,$halfday)
+//  {
 
-    if($date_from == $date_to){
-        $count = 1;
-    }else{
-      $data = ($data->pluck('name'))->toArray();
-      $count = 0;
-      $startTime = strtotime($date_from);
-      $endTime = strtotime($date_to);
+//     if($date_from == $date_to){
+//         $count = 1;
+//     }else{
+//       $data = ($data->pluck('name'))->toArray();
+//       $count = 0;
+//       $startTime = strtotime($date_from);
+//       $endTime = strtotime($date_to);
 
-      for ( $i = $startTime; $i <= $endTime; $i = $i + 86400 ) {
-        $thisDate = date( 'l', $i ); // 2010-05-01, 2010-05-02, etc
-        if(in_array($thisDate,$data)){
-            $count= $count+1;
-        }
-      }
-    }
+//       for ( $i = $startTime; $i <= $endTime; $i = $i + 86400 ) {
+//         $thisDate = date( 'l', $i ); // 2010-05-01, 2010-05-02, etc
+//         if(in_array($thisDate,$data)){
+//             $count= $count+1;
+//         }
+//       }
+//     }
 
-    if($count == 1 && $halfday == 1){
-      return '0.5';
-    }else{
-      return($count);
-    }
+//     if($count == 1 && $halfday == 1){
+//       return '0.5';
+//     }else{
+//       return($count);
+//     }
     
- } 
+//  } 
 @endphp 
 @endsection
