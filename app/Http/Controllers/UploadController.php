@@ -76,7 +76,7 @@ class UploadController extends Controller
                                 $employeeOb->save();
                             }
                         }
-                    } else if ($this->type == "OT") {
+                    } else if ($request->type == "OT") {
                         $employeeOt = EmployeeOvertime::whereIn('user_id', $user_id)->where('ot_date', $dateFiled)->first();
                         foreach ($user_id as $uid) {
                             if (empty($employeeOt)) {
@@ -102,12 +102,12 @@ class UploadController extends Controller
                                 $employeeOt->save();
                             }
                         }
-                    } else if ($this->type == "VL/SL") {
+                    } else if ($request->type == "VL/SL") {
                         $types = 0;
-                        if ($row['leave_name'] == "Vacation Leave" || $row['leave_name'] == "VL") {
+                        if ($row[6] == "Vacation Leave" || $row[6] == "VL") {
                             $types = 1;
                         }
-                        if ($row['leave_name'] == "Sick Leave" || $row['leave_name'] == 'SL') {
+                        if ($row[6] == "Sick Leave" || $row[6] == 'SL') {
                             $types = 2;
                         }
         
@@ -136,7 +136,7 @@ class UploadController extends Controller
                             $leaves->save();
                         }
                     }
-                    else if ($this->type == "DTR") {
+                    else if ($request->type == "DTR") {
                         $dateTime = Date::excelToDateTimeObject($row['date_time'])->format('Y-m-d H:i:s');
                         
                         $attendanceLogs = AttendanceLog::where('emp_code', $row['bio_number'])->where('datetime', $dateTime)->first();
