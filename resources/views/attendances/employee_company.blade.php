@@ -519,7 +519,8 @@
                                                 if(($time_start!=null )&& ($time_end!=null))
                                                 {
                                                     // $schedule_from = 
-                                                    $night_diff = night_difference_per_company($time_start,$time_end);
+                                                    $night_diff = night_difference_per_company($time_start,$time_end); 
+                                                    
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
