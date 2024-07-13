@@ -112,6 +112,10 @@
 												@if($form_approval->attachment)
 													<a href="{{url($form_approval->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
 												@endif
+												<br>
+												@if($form_approval->leave_file)
+													<a href="{{url($form_approval->leave_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+												@endif
 										  </td>
 										  </tr>
 										@endforeach                        

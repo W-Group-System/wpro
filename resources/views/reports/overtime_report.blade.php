@@ -107,6 +107,11 @@
                                             @if($item->attachment)
                                                 <a href="{{url($item->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                             @endif
+                                            <br>
+                                            @if($item->file_name)
+                                            <a href="{{url($item->file_name)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+                                        @endif
+
                                         </td>
                                         <td>{{$item->status}}</td>
                                     </tr>

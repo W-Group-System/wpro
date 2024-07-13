@@ -90,6 +90,10 @@
                                             @if($item->attachment)
                                                 <a href="{{url($item->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                             @endif
+                                            <br>
+                                            @if($item->ob_file)
+                                                <a href="{{url($item->ob_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+                                            @endif
                                         </td>
                                         <td>{{$item->status}}</td>
                                     </tr>
