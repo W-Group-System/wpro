@@ -382,6 +382,7 @@
                                             
                                                 @php
                                                     $work =0;
+                                                    $work_ot =0;
                                                     $undertime_hrs = 0;
                                                     $undertime = 0;
                                                     $original_sched = 0;
@@ -405,6 +406,11 @@
                                                             $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                         }
                                                         $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        $work_ot =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        if($time_end_ts > strtotime($date_r." ".$employee_schedule->time_out_to))
+                                                        {
+                                                            $work =  round(((strtotime($date_r." ".$employee_schedule->time_out_to) - $time_start_ts)/3600), 2);
+                                                        }
                                                         
                                                         $schedule_hours = 0;
                                                     
@@ -424,7 +430,7 @@
                                                                 $undertime = (double) number_format($schedule_hours - $work,2);
                                                             }
                                                             else {
-                                                                $overtime = (double) number_format($work - $original_sched,2);
+                                                                $overtime = (double) number_format($work_ot - $original_sched,2);
                                                             }
                                                           
                                                             if($work > $schedule_hours)
