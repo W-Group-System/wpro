@@ -538,7 +538,7 @@
                                                         {   
                                                             $nightdiff_start = $start_schedule;
                                                         }
-                                                        if(strtotime($end_schedule) > strtotime($time_end))
+                                                        if(strtotime($end_schedule) < strtotime($time_end))
                                                         {   
                                                             $nightdiff_end = $end_schedule;
                                                         }
