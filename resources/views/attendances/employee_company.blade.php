@@ -518,17 +518,18 @@
                                                 $night_diff = 0;
                                                 if(($time_start!=null )&& ($time_end!=null))
                                                 {
+                                                    // $schedule_from = 
                                                     $night_diff = night_difference_per_company($time_start,$time_end);
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
-                                                    $overtime = (double) $overtime;
+                                                    $overtime = $overtime;
                                                 }
                                                 else
                                                 {
-                                                    $overtime = (double) $approved_overtime_hrs;
+                                                    $overtime = $approved_overtime_hrs;
                                                 }
-                                                    $subtotal_overtimes = (double) $subtotal_overtimes + $overtime;
+                                                    $subtotal_overtimes = $subtotal_overtimes + $overtime;
                                                 
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
