@@ -102,7 +102,7 @@
 										  @else
 											<td></td>
 										  @endif 
-										  <td>{{get_count_days($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
+										  <td>{{get_count_days_report($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
 										  <td>
 											{{$form_approval->status}}
 										  </td>
@@ -156,8 +156,8 @@
   });
 </script>
 
-{{-- @php
-function get_count_days($data,$date_from,$date_to,$halfday)
+@php
+function get_count_days_report($data,$date_from,$date_to,$halfday)
  {
 
     if($date_from == $date_to){
@@ -183,5 +183,5 @@ function get_count_days($data,$date_from,$date_to,$halfday)
     }
     
  } 
-@endphp  --}}
+@endphp 
 @endsection
