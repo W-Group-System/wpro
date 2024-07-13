@@ -183,17 +183,8 @@ function employeeHasLeave($employee_leaves = array(), $check_date,$schedule = ar
                     }
                     if($item['halfday'] == '1'){
                         $halfday=.5;
-                        if($status = 'Without-Pay')
-                        {
-                            $halfday=0;
-                        }
                         return $item['leave']['code'] . '-' . $halfday . '-' . $status;
-                        
                     }else{
-                        if($status = 'Without-Pay')
-                        {
-                            $halfday=0;
-                        }
                         return $item['leave']['code'] . '-' . $halfday . '-' . $status;
                     }
                 }
@@ -208,16 +199,9 @@ function employeeHasLeave($employee_leaves = array(), $check_date,$schedule = ar
                             }
                             if($item['halfday'] == '1'){
                                 $halfday=.5;
-                                if($status = 'Without-Pay')
-                                {
-                                    $halfday=0;
-                                }
+                                
                                 return $item['leave']['code'] . '-' . $halfday . ' ' . $status;
                             }else{
-                                if($status = 'Without-Pay')
-                                {
-                                    $halfday=0;
-                                }
                                 return $item['leave']['code'] . '-' . $halfday . ' ' .$status;
                             }
                         }

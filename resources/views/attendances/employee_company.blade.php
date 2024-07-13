@@ -371,6 +371,11 @@
                                                     {
                                                         $l = explode('-',$if_leave);
                                                         $leave_count = (double) $l[1];
+                                                        if(str_contains($if_leave,"Without"))
+
+                                                        {
+                                                            $leave_count = 0;
+                                                        }
                                                         // dd($leave_count);
                                                     }
                                                 @endphp
