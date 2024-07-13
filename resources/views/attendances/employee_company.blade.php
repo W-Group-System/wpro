@@ -528,13 +528,13 @@
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
-                                                    $overtime = $overtime;
+                                                    $overtime = (double) $overtime;
                                                 }
                                                 else
                                                 {
-                                                    $overtime = $approved_overtime_hrs;
+                                                    $overtime = (double) $approved_overtime_hrs;
                                                 }
-                                                    $subtotal_overtimes = $subtotal_overtimes + $overtime;
+                                                    $subtotal_overtimes = (double) $subtotal_overtimes + $overtime;
                                                 
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
