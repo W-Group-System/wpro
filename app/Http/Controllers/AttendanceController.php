@@ -606,7 +606,8 @@ class AttendanceController extends Controller
         }
         
         // Redirect back with a success message
-        return redirect()->back()->with('success', 'Attendance details stored successfully!');
+        Alert::success('Successfully Posted')->persistent('Dismiss');
+        return redirect('/biometrics-per-company');
     }
 
     public function reports(Request $request)
