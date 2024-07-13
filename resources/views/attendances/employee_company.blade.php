@@ -152,7 +152,7 @@
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][employee_no]" value="{{$emp->employee_code}}">{{$emp->employee_code}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][name]" value="{{$emp->last_name .', '. $emp->first_name . ' ' . $emp->middle_name}}">{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][log_date]" value="{{date('Y-m-d',strtotime($date_r))}}">{{date('d/m/Y',strtotime($date_r))}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][shift]" value="{{$employee_schedule ? date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_from != '00:00' ? date('h:i A', strtotime($employee_schedule->time_in_from)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
                                                     @if($employee_schedule != null)
                                                         @if($employee_schedule->time_in_from != '00:00')
                                                         <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
@@ -405,6 +405,7 @@
                                                             $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                         }
                                                         $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        
                                                         $schedule_hours = 0;
                                                     
                                                         if($employee_schedule->time_in_from)
@@ -414,12 +415,13 @@
                                                             if($schedule_hours > 8)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
+                                                                $work = $work-1;
                                                             }
 
                                                           
-                                                            if($original_sched > $work)
+                                                            if($schedule_hours > $work)
                                                             {
-                                                                $undertime = (double) number_format($original_sched - $work,2);
+                                                                $undertime = (double) number_format($schedule_hours - $work,2);
                                                             }
                                                             else {
                                                                 $overtime = (double) number_format($work - $original_sched,2);
