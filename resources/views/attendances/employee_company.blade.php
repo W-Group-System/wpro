@@ -532,8 +532,15 @@
                                                     
                                                     if($employee_schedule)
                                                     {
+                                                        
                                                         $start_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
-                                                        $end_schedule = (date('Y-m-d',strtotime($time_end))." ".$employee_schedule->time_out_to);
+                                                        $end_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_out_to);
+
+                                                        if(strtotime($employee_schedule->time_out_to) > strtotime($employee_schedule->time_in_to))
+                                                        {
+                                                            $end_schedule = (date('Y-m-d H:i:s', strtotime($time_start . ' +1 day'))." ".$employee_schedule->time_out_to);
+                                                        }
+                                                   
                                                         if(strtotime($start_schedule) > strtotime($time_start))
                                                         {   
                                                             $nightdiff_start = $start_schedule;
