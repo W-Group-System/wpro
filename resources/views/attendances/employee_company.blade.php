@@ -379,6 +379,7 @@
                                                     $undertime_hrs = 0;
                                                     $undertime = 0;
                                                     $original_sched = 0;
+                                                    $overtime = 0;
                                                 @endphp
                                                 @if($employee_schedule)
                                                 @php
@@ -410,6 +411,10 @@
                                                             {
                                                                 $undertime = (double) number_format($original_sched - $work,2);
                                                             }
+                                                            else {
+                                                                $overtime = (double) number_format($work - $original_sched,2);
+                                                            }
+                                                          
                                                             if($work > $schedule_hours)
                                                             {
                                                                 $work = $schedule_hours;
@@ -508,21 +513,29 @@
                                                 @php
                                                 $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
                                                 
-                                                if($approved_overtime_hrs){
-                                                    $approved_overtimes = (double) $approved_overtimes + $approved_overtime_hrs;
-                                                }
+                                               
                                                 $night_diff = 0;
                                                 if(($time_start!=null )&& ($time_end!=null))
                                                 {
                                                     $night_diff = night_difference_per_company($time_start,$time_end);
                                                 }
+                                                if($overtime < $approved_overtime_hrs)
+                                                {
+                                                    $overtime = (double) $overtime;
+                                                }
+                                                else
+                                                {
+                                                    $overtime = (double) $approved_overtime_hrs;
+                                                }
+                                                    $approved_overtimes = (double) $approved_overtimes + $overtime;
+                                                
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{$undertime_hrs*60}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="0.00">{{$approved_overtime_hrs ? (double) $approved_overtime_hrs : 0 }}</td> {{-- REG OT --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="0.00">{{$overtime}}</td> {{-- REG OT --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="0.00">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="0.00">0.00</td> {{-- REG OT ND --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="0.00">0.00</td>  {{-- RST OT --}}
