@@ -291,7 +291,7 @@
                                                     $abs = 1;
                                                 @endphp
 
-                                                @if(($time_start) || ($time_end))
+                                                @if(($time_start) && ($time_end))
                                                     @php
                                                         $abs = 0;
                                                     @endphp
