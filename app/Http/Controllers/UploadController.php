@@ -85,8 +85,8 @@ class UploadController extends Controller
                                 $employeeOt->ot_date = $dateFiled;
                                 $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row[3]));
                                 $employeeOt->end_time = date('Y-m-d h:i:s', strtotime($row[4]));
-                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[7]));
-                                $employeeOt->status = $row[10];
+                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[5]));
+                                $employeeOt->status = $row[8];
                                 $employeeOt->ot_approved_hrs = $row[5];
                                 $employeeOt->break_hrs = $row[6];
                                 $employeeOt->created_by = auth()->user()->id;
@@ -94,8 +94,8 @@ class UploadController extends Controller
                             } else {
                                 $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row[3]));
                                 $employeeOt->end_time = date('Y-m-d h:i:s', strtotime($row[4]));
-                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[7]));
-                                $employeeOt->status = $row[10];
+                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[5]));
+                                $employeeOt->status = $row[8];
                                 $employeeOt->ot_approved_hrs = $row[5];
                                 $employeeOt->break_hrs = $row[6];
                                 $employeeOt->created_by = auth()->user()->id;
@@ -130,6 +130,7 @@ class UploadController extends Controller
                             $leaves->leave_type = $types;
                             $leaves->date_from =$startDate;
                             $leaves->date_to = $endDate;
+                            $leaves->withpay = 1;
                             $leaves->approved_date = $approved_date;
                             $leaves->status = $row[10];
                             $leaves->created_by = auth()->user()->id;
