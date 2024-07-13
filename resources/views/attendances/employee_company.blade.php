@@ -395,6 +395,10 @@
                                                         if ($time_end_ts < $time_start_ts) {
                                                             $time_end_ts += 86400; 
                                                         }
+                                                        if(strtotime($date_r." ".$employee_schedule->time_out_to) > $time_end_ts)
+                                                        {
+                                                            $time_end_ts = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                        }
                                                         $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $schedule_hours = 0;
                                                     
@@ -520,7 +524,7 @@
                                                 {
                                                     // $schedule_from = 
                                                     $night_diff = night_difference_per_company($time_start,$time_end); 
-                                                    
+
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
