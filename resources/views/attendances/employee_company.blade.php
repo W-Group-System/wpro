@@ -648,10 +648,13 @@
                                                             if($employee_schedule->time_in_from == '')
                                                             {
                                                                 $rest = "RESTDAY";
+                                                                
+                                                       
                                                             }
                                                             if($employee_schedule->time_in_from == null)
                                                             {
                                                                 $rest = "RESTDAY";
+                                                               
                                                             }
                                                         }
                                                     }
@@ -659,7 +662,8 @@
                                                         
                                                         $rest = "RESTDAY";
                                                     }
-                                                    if($rest == "RESTDAY");
+                                                   
+                                                    if($rest == "RESTDAY")
                                                     {
                                                         $overtime = 0;
                                                         $night_diff_ot = 0;
