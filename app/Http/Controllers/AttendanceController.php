@@ -565,7 +565,7 @@ class AttendanceController extends Controller
     public function storeAttendance(Request $request)
     {        
         $employees = $request->input('employees'); // Get all employee data
-
+        // dd($request->all());
         foreach ($employees as $employee_code => $dates) {
             foreach ($dates as $date => $employee) {
                 AttendanceDetailedReport::create([
@@ -596,11 +596,15 @@ class AttendanceController extends Controller
                     'sh_ot_over_eight' => $employee['sh_ot_over_eight'] ?? null,
                     'sh_nd' => $employee['sh_nd'] ?? null,
                     'sh_nd_over_eight' => $employee['sh_nd_over_eight'] ?? null,
-                    'rst_lh_ot' => $employee['rst_lh_ot'] ?? null,
-                    'rst_sh_ot_over_eight' => $employee['rst_sh_ot_over_eight'] ?? null,
-                    'rst_sh_nd' => $employee['rst_sh_nd'] ?? null,
-                    'rst_sh_nd_over_eight' => $employee['rst_sh_nd_over_eight'] ?? null,
-                    'cut_off_date' => $employee['to'] ?? null,
+                    'rst_lh_ot' => $employee['rst_lh_ot'] ?? 0.00,
+                    'rst_lh_ot_over_eight' => $employee['rst_lh_ot_over_eight'] ?? 0.00,
+                    'rst_lh_nd' => $employee['rst_lh_nd'] ?? 0.00,
+                    'rst_lh_nd_over_eight' => $employee['rst_lh_nd_gt_8'] ?? 0.00,
+                    'rst_sh_ot' => $employee['rst_sh_ot'] ?? 0.00,
+                    'rst_sh_ot_over_eight' => $employee['rst_sh_ot_gt_8'] ?? 0.00,
+                    'rst_sh_nd' => $employee['rst_sh_nd'] ?? 0.00,
+                    'rst_sh_nd_over_eight' => $employee['rst_sh_nd_over_eight'] ?? 0.00,
+                    'cut_off_date' => $employee['to'] ?? 0.00,
                 ]);
             }
         }
