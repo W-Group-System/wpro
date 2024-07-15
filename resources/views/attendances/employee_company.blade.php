@@ -591,6 +591,10 @@
                                                     
                                                     
                                                 }
+                                                if($late >0 )
+                                                {
+                                                    $overtime = 0;
+                                                }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
                                                     $overtime = roundDownToNearestHalf($overtime);
