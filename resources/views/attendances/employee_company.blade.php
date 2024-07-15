@@ -410,7 +410,7 @@
                                                         {
                                                             $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                         }
-                                                        $work_ot =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        $work_ot =  round((($schedule_in - $time_start_ts)/3600), 2);
                                                      
                                                         if($time_end_ts > $schedule_out)
                                                         {
