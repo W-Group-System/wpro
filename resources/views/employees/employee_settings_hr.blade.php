@@ -399,6 +399,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
                             <div class="template-demo">
                                 <div class='row m-2'>
                                     <div class='col-md-12 text-center mt-3 mb-3'>
@@ -441,6 +442,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         </div>
                     </div>
                     <div class="tab-pane fade" id="v-pills-schedule" role="tabpanel" aria-labelledby="v-pills-schedule-tab">
