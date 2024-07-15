@@ -264,10 +264,8 @@
                                                     $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
                                                 }
                                                 
-                                                if($final_time_out != null){
+                                                    if($final_time_out != null){
                                                         // dd($time_in);
-                                                    if($time_in->time_out != null)
-                                                    {
                                                         if(strtotime($if_has_ob->date_to) > strtotime($final_time_out))
                                                         {
                                                         
@@ -277,13 +275,11 @@
                                                             
                                                             $time_end = date('Y-m-d h:i A',strtotime($final_time_out));
                                                         }
-                                                        
                                                     }
-                                                }
-                                                else {
-                                                    
-                                                    $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
-                                                }
+                                                    else {
+                                                        
+                                                        $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
+                                                    }
                                                 }
                                                 @endphp
 
