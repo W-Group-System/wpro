@@ -154,6 +154,7 @@ class PayslipController extends Controller
             'allowances_total' => $allowances_total,
             'loans_all' => $loans_all,
             'instructions' => $instructions,
+            'last_cut_off' => $last_cut_off,
         )
         );
     }
