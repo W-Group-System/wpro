@@ -318,12 +318,22 @@
                               $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
                               if($payroll_b)
                               {
+                                $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
+                                if($last_c)
+                                {
+                                  $government_amount = $government_amount +$last_c->gross_pay;
+                                }
                                 $sss_amount = $sss->where('salary_from','>=',$government_amount)->first();
-                                $sss_ecc = $sss_amount->ecc;
-                                $sss_ee = $sss_amount->regular_ee;
-                                $sss_er = $sss_amount->regular_er;
-                                $wisp_ee = $sss_amount->wisp_ee;
-                                $wisp_er = $sss_amount->wisp_er;
+                                if($sss_amount)
+                                {
+                                  $sss_ecc = $sss_amount->ecc;
+                                  $sss_ee = $sss_amount->regular_ee;
+                                  $sss_er = $sss_amount->regular_er;
+                                  $wisp_ee = $sss_amount->wisp_ee;
+                                  $wisp_er = $sss_amount->wisp_er;
+                                }
+                               
+                                
                                 $hdmf = 200.00;
                                 $philhealth = ($pay_rate*.05)/2;
                               }
