@@ -427,7 +427,7 @@
                                                         //     dd($schedule_out." ".date('Y-m-d H:i',$time_start_ts));
                                                         // }
                                                         $schedule_hours = 0;
-                                                    
+                                                        
                                                         if($employee_schedule->time_in_from)
                                                         {
                                                             $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
@@ -435,10 +435,16 @@
                                                             if($schedule_hours > 8)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
-                                                                if($work >= $schedule_hours/2)
+                                                              
+                                                                if($work >= ($schedule_hours/1.5))
                                                                 {
+                                                                   
                                                                     $work = $work-1;
+                                                                   
+                                                                    
                                                                 }
+                                                               
+                                                                
                                                             }
 
                                                           
