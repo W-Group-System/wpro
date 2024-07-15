@@ -591,17 +591,18 @@
                                                     
                                                     
                                                 }
-                                                if($late >0 )
+                                                
+                                                if($overtime <2)
                                                 {
-                                                    $overtime = 0;
+                                                    $overtime =0;
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
                                                 {
-                                                    $overtime = roundDownToNearestHalf($overtime);
+                                                    $overtime = ($overtime);
                                                 }
                                                 else
                                                 {
-                                                    $overtime = roundDownToNearestHalf($approved_overtime_hrs);
+                                                    $overtime = ($approved_overtime_hrs);
                                                 }
                                                 if($overtime > 0)
                                                 {
