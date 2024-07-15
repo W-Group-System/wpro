@@ -388,40 +388,57 @@
                                                     $original_sched = 0;
                                                     $overtime = 0;
                                                 @endphp
-                                                @if($employee_schedule)
-                                                @php
-                                                     $original_sched = ((strtotime($date_r." ".$employee_schedule->time_out_to)-strtotime($date_r." ".$employee_schedule->time_in_to))/3600);
-                                                @endphp
-                                               
-                                                @endif
                                                 @if((($time_start)&&($time_end)) && $employee_schedule)    
                                                     @php
+                                                        $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                        $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                        
+                                                        if(($schedule_out) < ($schedule_in))
+                                                        {
+                                                            
+                                                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                            // dd(date('Y-m-d H:i',$schedule_out)." ".date('Y-m-d H:i',$schedule_in));
+                                                        }
+                                                        $original_sched = ((($schedule_out)-($schedule_in))/3600);
+                                                
                                                         $time_start_ts = strtotime($time_start);
                                                         $time_end_ts = strtotime($time_end);
-                                                        if ($time_end_ts < $time_start_ts) {
-                                                            $time_end_ts += 86400; 
-                                                        }
+                                                        // if ($time_end_ts < $time_start_ts) {
+                                                        //     $time_end_ts += 86400; `
+                                                        // }
                                                         if(strtotime($date_r." ".$employee_schedule->time_in_from) > $time_start_ts)
                                                         {
                                                             $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                         }
-                                                        $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $work_ot =  round((($time_end_ts - $time_start_ts)/3600), 2);
-                                                        if($time_end_ts > strtotime($date_r." ".$employee_schedule->time_out_to))
+                                                     
+                                                        if($time_end_ts > $schedule_out)
                                                         {
-                                                            $work =  round(((strtotime($date_r." ".$employee_schedule->time_out_to) - $time_start_ts)/3600), 2);
+                                                            // dd($time_end_ts." ".$schedule_out);
+                                                            $time_end_ts =  $schedule_out;
+                                                          
                                                         }
+                                                        $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         
+                                                        // if($work_ot>10)
+                                                        // {
+                                                        //     dd($work_ot);
+                                                        //     dd((date('Y-m-d H:i',strtotime($time_end_ts)))." ".(date('Y-m-d H:i',strtotime($time_start_ts))));
+                                                        //     dd($schedule_out." ".date('Y-m-d H:i',$time_start_ts));
+                                                        // }
                                                         $schedule_hours = 0;
                                                     
                                                         if($employee_schedule->time_in_from)
                                                         {
-                                                            $schedule_hours = ((strtotime($date_r." ".$employee_schedule->time_out_to)-strtotime($date_r." ".$employee_schedule->time_in_to))/3600);
+                                                            $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                             // dd($schedule_hours);
                                                             if($schedule_hours > 8)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
-                                                                $work = $work-1;
+                                                                if($work >= $schedule_hours/2)
+                                                                {
+                                                                    $work = $work-1;
+                                                                }
                                                             }
 
                                                           
@@ -429,9 +446,12 @@
                                                             {
                                                                 $undertime = (double) number_format($schedule_hours - $work,2);
                                                             }
-                                                            else {
-                                                                $overtime = (double) number_format($work_ot - $original_sched,2);
-                                                            }
+                                                           if($work_ot > $original_sched)
+                                                           {
+                                                            $overtime = (double) number_format($work_ot - $original_sched,2);
+                                                           }
+                                                                
+                                                            
                                                           
                                                             if($work > $schedule_hours)
                                                             {
