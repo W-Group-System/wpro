@@ -643,17 +643,21 @@
                                                     $rest = "";
                                                     if($employee_schedule != null)
                                                     {
-                                                        if($employee_schedule->time_in_from != '00:00')
+                                                        if($employee_schedule->time_in_from == '00:00')
                                                         {
-                                                            if($employee_schedule->time_in_from != '')
+                                                            if($employee_schedule->time_in_from == '')
                                                             {
                                                                 $rest = "RESTDAY";
                                                             }
-                                                            if($employee_schedule->time_in_from != null)
+                                                            if($employee_schedule->time_in_from == null)
                                                             {
                                                                 $rest = "RESTDAY";
                                                             }
                                                         }
+                                                    }
+                                                    else {
+                                                        
+                                                        $rest = "RESTDAY";
                                                     }
                                                     if($rest == "RESTDAY");
                                                     {
