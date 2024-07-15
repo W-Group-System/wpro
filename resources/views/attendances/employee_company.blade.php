@@ -645,7 +645,14 @@
                                                     {
                                                         if($employee_schedule->time_in_from != '00:00')
                                                         {
-                                                            $rest = "RESTDAY";
+                                                            if($employee_schedule->time_in_from != '')
+                                                            {
+                                                                $rest = "RESTDAY";
+                                                            }
+                                                            if($employee_schedule->time_in_from != null)
+                                                            {
+                                                                $rest = "RESTDAY";
+                                                            }
                                                         }
                                                     }
                                                     if($rest == "RESTDAY");
