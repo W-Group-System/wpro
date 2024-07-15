@@ -533,6 +533,7 @@
                                                 
                                                
                                                 $night_diff = 0;
+                                                $night_diff_ot = 0;
                                                 if(($time_start!=null )&& ($time_end!=null))
                                                 {
                                                         $nightdiff_start = $time_start;
@@ -561,10 +562,13 @@
                                                     }
                                                     
                                                      $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                   
                                                      if($night_diff >= 5)
                                                      {
                                                         $night_diff = $night_diff - 1;
                                                      }
+                                                     $night_diff_ot = night_difference_per_company($time_start,$time_end)-$night_diff;
+                                                    
                                                     
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
@@ -575,6 +579,18 @@
                                                 {
                                                     $overtime = roundDownToNearestHalf($approved_overtime_hrs);
                                                 }
+                                                if($overtime > 0)
+                                                {
+                                                    if($overtime < $night_diff_ot)
+                                                    {
+                                                        $night_diff_ot = $overtime;
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    $night_diff_ot = 0;
+                                                }
                                                     $subtotal_overtimes =  $subtotal_overtimes + $overtime;
                                                 
                                                 @endphp
@@ -582,10 +598,10 @@
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{$undertime_hrs*60}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="0.00">{{$overtime}}</td> {{-- REG OT --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="0.00">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="0.00">0.00</td> {{-- REG OT ND --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{number_format($undertime_hrs*60,2)}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="{{$overtime}}">{{number_format($overtime,2)}}</td> {{-- REG OT --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="{{$night_diff}}">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="{{$night_diff_ot}}">{{number_format($night_diff_ot,2)}}</td> {{-- REG OT ND --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="0.00">0.00</td>  {{-- RST OT --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="0.00">0.00</td> {{-- RST OT > 8 --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="0.00">0.00</td> {{-- RST ND --}}
