@@ -640,6 +640,14 @@
                                                     $restday_nd = 0;
                                                     $work_rest = 0;
                                                     $restnd = 0;
+                                                    $rest = "";
+                                                    if($employee_schedule != null)
+                                                    {
+                                                        if($employee_schedule->time_in_from != '00:00')
+                                                        {
+                                                            $rest = "RESTDAY";
+                                                        }
+                                                    }
                                                     if($rest == "RESTDAY");
                                                     {
                                                         $overtime = 0;
