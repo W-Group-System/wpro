@@ -141,7 +141,23 @@
                                             @endphp
 
                                             @foreach($date_range as $date_r)
+                                            
                                             @php
+                                                $final_time_in = "";
+                                                $time_in = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
+                                                if($time_in == null)
+                                                    {
+                                                    
+                                                        $time_out = ($emp->attendances)->whereBetween('time_out',[$date_r." 00:00:00", $date_r." 23:59:59"])->where('time_in',null)->first();
+                                                        if($time_out)
+                                                        {
+                                                            $final_time_out = $time_out->time_out;
+                                                        }
+                                                    }
+                                                    else {
+                                                        $final_time_in =   $time_in->time_in;
+                                                        $final_time_out =   $time_in->time_out;
+                                                    }
                                                 $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_code);
                                                 $rest = "";
                                                 $if_leave = "";
@@ -204,7 +220,7 @@
                                                     $if_has_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
                                                 @endphp
                                                 @php
-                                                    $cenvertedTime = date('Y-m-d 00:00:00');
+                                                    $cenvertedTime = date('Y-m-d 00:00:00',strtotime($date_r));
                                                     if($employee_schedule != null)
                                                     {
                                                         if($employee_schedule->time_in_from != '00:00')
@@ -213,9 +229,10 @@
                                                             // dd($cenvertedTime);
                                                         }
                                                     }
-                                                    // dd($cenvertedTime);
+                                                   
+                                                  
                                                     $time_in = ($emp->attendances)->whereBetween('time_in',[$cenvertedTime,$date_r." 23:59:59"])->sortBy('time_in')->first();
-                                                    
+                                                  
                                                     $time_out = null;
                                                     $final_time_in = "";
                                                     $final_time_out = "";
@@ -348,6 +365,7 @@
                                                             }
                                                                 
                                                         @endphp
+                                                    @else
                                                     @endif
                                                 @else
                                                     @php
@@ -552,7 +570,6 @@
                                                 @endphp
                                                 @php
                                                 $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
-                                                
                                                
                                                 $night_diff = 0;
                                                 $night_diff_ot = 0;
@@ -593,7 +610,6 @@
                                                     
                                                     
                                                 }
-                                                
                                                 if($overtime <2)
                                                 {
                                                     $overtime =0;
@@ -619,6 +635,42 @@
                                                     $night_diff_ot = 0;
                                                 }
                                                     $subtotal_overtimes =  $subtotal_overtimes + $overtime;
+                                                    $restday_ot = 0;
+                                                    $restday_ot_ge = 0;
+                                                    $restday_nd = 0;
+                                                    $work_rest = 0;
+                                                    $restnd = 0;
+                                                    if($rest);
+                                                    {
+                                                        $overtime = 0;
+                                                        $night_diff_ot = 0;
+                                                        if(($time_start) && ($time_end))
+                                                        {
+                                                            $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
+                                                            $restnd =  night_difference_per_company($time_start,$time_end);
+                                                        }
+                                                        $late = 0;
+                                                        $undertime = 0;
+                                                        if($work_rest > 0)
+                                                        {
+                                                            
+                                                            if($work_rest > $approved_overtime_hrs)
+                                                            {
+                                                                $work_rest = $approved_overtime_hrs;
+                                                            }
+                                                            
+                                                            if($work_rest >2)
+                                                            {
+                                                                $restday_ot = $work_rest;
+                                                                if($work_rest >= 8)
+                                                                {
+                                                                    $restday_ot = 8;
+                                                                    $restday_ot_ge = $work_rest-8;
+                                                                }
+                                                            }
+                                                        }
+                                                       
+                                                    }
                                                 
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
@@ -629,9 +681,9 @@
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="{{$overtime}}">{{number_format($overtime,2)}}</td> {{-- REG OT --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="{{$night_diff}}">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="{{$night_diff_ot}}">{{number_format($night_diff_ot,2)}}</td> {{-- REG OT ND --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="0.00">0.00</td>  {{-- RST OT --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="0.00">0.00</td> {{-- RST OT > 8 --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="0.00">0.00</td> {{-- RST ND --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="{{$restday_ot}}">{{number_format($restday_ot,2)}}</td>  {{-- RST OT --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="{{$restday_ot_ge}}">{{number_format($restday_ot_ge,2)}}</td> {{-- RST OT > 8 --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="{{$restnd}}">{{number_format($restnd,2)}}</td> {{-- RST ND --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="0.00">0.00</td> {{-- RST ND > 8 --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot]" value="0.00">0.00</td> {{-- LH OT --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot_over_eight]" value="0.00">0.00</td> {{-- LH OT > 8 --}}
