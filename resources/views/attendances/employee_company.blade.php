@@ -640,7 +640,7 @@
                                                     $restday_nd = 0;
                                                     $work_rest = 0;
                                                     $restnd = 0;
-                                                    if($rest);
+                                                    if($rest == "RESTDAY");
                                                     {
                                                         $overtime = 0;
                                                         $night_diff_ot = 0;
