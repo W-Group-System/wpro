@@ -561,6 +561,10 @@
                                                     }
                                                     
                                                      $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                     if($night_diff >= 5)
+                                                     {
+                                                        $night_diff = $night_diff - 1;
+                                                     }
                                                     
                                                 }
                                                 if($overtime < $approved_overtime_hrs)
