@@ -59,7 +59,7 @@ class UploadController extends Controller
                             if (empty($employeeOb)) {
                                 $employeeOb = new EmployeeOb;
                                 $employeeOb->user_id = $uid;
-                                $employeeOb->applied_date = $dateFiled ;
+                                $employeeOb->applied_date = date('Y-m-d',strtotime($row[3]));
                                 $date = 
                                 $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[3]))." ".date('H:i:s',strtotime($row[5]))));
                                 $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[4]))." ".date('H:i:s',strtotime($row[6]))));
@@ -77,12 +77,12 @@ class UploadController extends Controller
                             }
                         }
                     } else if ($request->type == "OT") {
-                        $employeeOt = EmployeeOvertime::whereIn('user_id', $user_id)->where('ot_date', $dateFiled)->first();
+                        $employeeOt = EmployeeOvertime::whereIn('user_id', $user_id)->where('ot_date',  date('Y-m-d', strtotime($row[3])))->first();
                         foreach ($user_id as $uid) {
                             if (empty($employeeOt)) {
                                 $employeeOt = new EmployeeOvertime;
                                 $employeeOt->user_id = $uid;
-                                $employeeOt->ot_date = $dateFiled;
+                                $employeeOt->ot_date =  date('Y-m-d', strtotime($row[3]));
                                 $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row[3]));
                                 $employeeOt->end_time = date('Y-m-d h:i:s', strtotime($row[4]));
                                 $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[7]));
