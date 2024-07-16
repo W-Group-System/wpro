@@ -636,7 +636,7 @@
                                                 {
                                                     $night_diff_ot = 0;
                                                 }
-                                                    $subtotal_overtimes =  $subtotal_overtimes + $overtime;
+                                                    // $subtotal_overtimes =  $subtotal_overtimes + $overtime;
                                                     $restday_ot = 0;
                                                     $restday_ot_ge = 0;
                                                     $restday_nd = 0;
