@@ -708,13 +708,13 @@
                                                 $subtotal_reg_hrs += $work;
                                                 $subtotal_late += $late;
                                                 $subtotal_undertime += ($undertime_hrs*60);
-                                                $subtotal_overtimes = $overtime;
-                                                $subtotal_nd = $night_diff;
-                                                $subtotal_ot_nd = $night_diff_ot;
-                                                $subtotal_rd_ot = $restday_ot;
-                                                $subtotal_rd_ot_ge = $restday_ot_ge;
-                                                $subtotal_rd_nd = $restnd;
-                                                $subtotal_rd_nd_ge = 0;
+                                                $subtotal_overtimes +=$overtime;
+                                                $subtotal_nd += $night_diff;
+                                                $subtotal_ot_nd += $night_diff_ot;
+                                                $subtotal_rd_ot += $restday_ot;
+                                                $subtotal_rd_ot_ge += $restday_ot_ge;
+                                                $subtotal_rd_nd += $restnd;
+                                                $subtotal_rd_nd_ge += 0;
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
