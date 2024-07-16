@@ -474,132 +474,128 @@
                     <tbody>
                       @foreach ($employee_leaves as $employee_leave)
                       <tr>
-                      <td id="tdActionId{{ $employee_leave->id }}" data-id="{{ $employee_leave->id }}">
-                        @if ($employee_leave->status == 'Pending' && $employee_leave->level == 0)
-                          <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
-                            data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
-                            <i class="ti-eye"></i>
-                          </button>            
-                          <button type="button" id="edit{{ $employee_leave->id }}" class="btn btn-info btn-rounded btn-icon"
-                            data-target="#edit_leave{{ $employee_leave->id }}" data-toggle="modal" title='Edit'>
-                            <i class="ti-pencil-alt"></i>
-                          </button>
-                          <button title='Cancel' id="{{ $employee_leave->id }}" onclick="cancel(this.id)"
-                            class="btn btn-rounded btn-danger btn-icon">
-                            <i class="fa fa-ban"></i>
-                          </button>
-                        @elseif ($employee_leave->status == 'Pending' and $employee_leave->level == 1)
-                          <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
-                            data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
-                            <i class="ti-eye"></i>
-                          </button>            
-                            <button title='Cancel' id="{{ $employee_leave->id }}" onclick="cancel(this.id)"
-                              class="btn btn-rounded btn-danger btn-icon">
-                              <i class="fa fa-ban"></i>
+                        <td id="tdActionId{{ $employee_leave->id }}" data-id="{{ $employee_leave->id }}">
+                          @if ($employee_leave->status == 'Pending' && $employee_leave->level == 0)
+                            <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
+                                    data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
+                                <i class="ti-eye"></i>
+                            </button>            
+                            <button type="button" id="edit{{ $employee_leave->id }}" class="btn btn-info btn-rounded btn-icon"
+                                    data-target="#edit_leave{{ $employee_leave->id }}" data-toggle="modal" title='Edit'>
+                                <i class="ti-pencil-alt"></i>
                             </button>
-                        @elseif ($employee_leave->status == 'Approved')   
-                          <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
-                            data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
-                            <i class="ti-eye"></i>
-                          </button>
-                          <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon" data-target="#upload_leave{{ $employee_leave->id }}" data-toggle="modal" title='Upload'>
-                            <i class="ti-upload"></i>
-                          </button>
+                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
+                                    class="btn btn-rounded btn-danger btn-icon">
+                                <i class="fa fa-ban"></i>
+                            </button>
+                          @elseif ($employee_leave->status == 'Pending' && $employee_leave->level == 1)
+                            <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
+                                    data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
+                                <i class="ti-eye"></i>
+                            </button>            
+                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
+                                    class="btn btn-rounded btn-danger btn-icon">
+                                <i class="fa fa-ban"></i>
+                            </button>
+                          @elseif ($employee_leave->status == 'Approved')
+                            <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
+                                    data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
+                                <i class="ti-eye"></i>
+                            </button>
+                            <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon uploadLeaveButton"
+                                    data-target="#upload_leave{{ $employee_leave->id }}" data-toggle="modal" title='Upload'>
+                                <i class="ti-upload"></i>
+                            </button>
 
-                          {{-- @if(date('Y-m-d',strtotime($employee_leave->date_from)) == date('Y-m-d') || $employee_leave->withpay == 0) --}}
-                            @if($employee_leave->request_to_cancel == '1' || $employee_leave->request_to_cancel == null)
-                              <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
-                                data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel'>
+                          @if($employee_leave->request_to_cancel == '1' || $employee_leave->request_to_cancel == null)
+                            <button type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
+                                    data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel'>
                                 <i class="fa fa-ban"></i>
-                              </button>  
-                            @elseif($employee_leave->request_to_cancel == '0')
-                              <button disabled type="button" id="view{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
-                                data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Declined'>
+                            </button>  
+                          @elseif($employee_leave->request_to_cancel == '0')
+                            <button disabled type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
+                                    data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Declined'>
                                 <i class="fa fa-ban"></i>
-                              </button>  
-                            @elseif($employee_leave->request_to_cancel == '2')
-                              <button disabled type="button" id="view{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
-                                data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Approved'>
+                            </button>  
+                          @elseif($employee_leave->request_to_cancel == '2')
+                            <button disabled type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
+                                    data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Approved'>
                                 <i class="fa fa-ban"></i>
-                              </button>  
-                            @endif
-                          {{-- @endif --}}
-                          
-                          @if(date('Y-m-d',strtotime($employee_leave->date_from)) > date('Y-m-d'))
-                              <button title='Cancel' id="{{ $employee_leave->id }}" onclick="cancel(this.id)"
-                                class="btn btn-rounded btn-danger btn-icon">
-                                <i class="fa fa-ban"></i>
-                              </button> 
+                            </button>  
                           @endif
-                        @else
-                          <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
-                            data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
-                            <i class="ti-eye"></i>
-                          </button>                                                                               
-                        @endif 
-                        </td> 
-                        <td>{{date('M. d, Y h:i A', strtotime($employee_leave->created_at))}}</td>
-                        <td>{{date('M. d, Y', strtotime($employee_leave->date_from))}} to {{date('M. d, Y', strtotime($employee_leave->date_to))}} </td>
-                        <td>{{ $employee_leave->leave->leave_type }}</td>
-                        @if($employee_leave->withpay == 1)   
-                          <td>Yes</td>
-                        @else
-                          <td>No</td>
-                        @endif  
-                        @if($employee_leave->halfday == 1)   
-                          <td>Yes</td>
-                        @else
-                          <td></td>
-                        @endif  
-                        <td>
-                          <p title="{{ $employee_leave->reason }}" style="width: 250px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">
-                            {{ $employee_leave->reason }}
-                          </p>
-                        </td>
-                        <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->schedule, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday) }}</td>
 
-                        <td id="tdStatus{{ $employee_leave->id }}">
-                          @if ($employee_leave->status == 'Pending')
-                            <label class="badge badge-warning  mt-1">{{ $employee_leave->status }}</label>
-                          @elseif($employee_leave->status == 'Approved')
-                            <label class="badge badge-success mt-1">{{ $employee_leave->status }}</label>
-                          @elseif($employee_leave->status == 'Rejected' || $employee_leave->status == 'Cancelled' || $employee_leave->status == 'Declined')
-                            <label class="badge badge-danger  mt-1">{{ $employee_leave->status }}</label>
-                          @endif                        
-                        </td>
-                        <td id="tdStatus{{ $employee_leave->id }}">
-                          @if(count($employee_leave->approver) > 0)
-                            @foreach($employee_leave->approver as $approver)
-                              @if($employee_leave->level >= $approver->level)
-                                @if ($employee_leave->level == 0 && $employee_leave->status == 'Declined')
-                                {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                @elseif ($employee_leave->level == 1 && $employee_leave->status == 'Declined')
-                                {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Approved</label>
-                                @else
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
-                                @endif
+                          @if(date('Y-m-d', strtotime($employee_leave->date_from)) > date('Y-m-d'))
+                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
+                                    class="btn btn-rounded btn-danger btn-icon">
+                                <i class="fa fa-ban"></i>
+                            </button> 
+                          @endif
+                          @else
+                          <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon" data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'><i class="ti-eye"></i></button>                                                                               
+                          @endif 
+                      </td>
+                      <td>{{date('M. d, Y h:i A', strtotime($employee_leave->created_at))}}</td>
+                      <td>{{date('M. d, Y', strtotime($employee_leave->date_from))}} to {{date('M. d, Y', strtotime($employee_leave->date_to))}} </td>
+                      <td>{{ $employee_leave->leave->leave_type }}</td>
+                      @if($employee_leave->withpay == 1)   
+                        <td>Yes</td>
+                      @else
+                        <td>No</td>
+                      @endif  
+                      @if($employee_leave->halfday == 1)   
+                        <td>Yes</td>
+                      @else
+                        <td></td>
+                      @endif  
+                      <td>
+                        <p title="{{ $employee_leave->reason }}" style="width: 250px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">
+                          {{ $employee_leave->reason }}
+                        </p>
+                      </td>
+                      <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->schedule, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday) }}</td>
+
+                      <td id="tdStatus{{ $employee_leave->id }}">
+                        @if ($employee_leave->status == 'Pending')
+                          <label class="badge badge-warning  mt-1">{{ $employee_leave->status }}</label>
+                        @elseif($employee_leave->status == 'Approved')
+                          <label class="badge badge-success mt-1">{{ $employee_leave->status }}</label>
+                        @elseif($employee_leave->status == 'Rejected' || $employee_leave->status == 'Cancelled' || $employee_leave->status == 'Declined')
+                          <label class="badge badge-danger  mt-1">{{ $employee_leave->status }}</label>
+                        @endif                        
+                      </td>
+                      <td id="tdStatus{{ $employee_leave->id }}">
+                        @if(count($employee_leave->approver) > 0)
+                          @foreach($employee_leave->approver as $approver)
+                            @if($employee_leave->level >= $approver->level)
+                              @if ($employee_leave->level == 0 && $employee_leave->status == 'Declined')
+                              {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                              @elseif ($employee_leave->level == 1 && $employee_leave->status == 'Declined')
+                              {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Approved</label>
                               @else
-                                @if ($employee_leave->status == 'Declined')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                @elseif ($employee_leave->status == 'Approved')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
-                                @else
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
-                                @endif
-                              @endif<br>
-                            @endforeach
-                          @else
-                            <label class="badge badge-danger mt-1">No Approver</label>
-                          @endif
-                        </td>
-                        <td>
-                          @if($employee_leave->leave_file)
-                            <a href="storage/{{ $employee_leave->leave_file }}" target="_blank">{{ $employee_leave->leave_file }}</a>
-                          @else
-                            No file uploaded
-                          @endif
-                        </td>
-                      </tr>
+                                {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                              @endif
+                            @else
+                              @if ($employee_leave->status == 'Declined')
+                                {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                              @elseif ($employee_leave->status == 'Approved')
+                                {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                              @else
+                                {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                              @endif
+                            @endif<br>
+                          @endforeach
+                        @else
+                          <label class="badge badge-danger mt-1">No Approver</label>
+                        @endif
+                      </td>
+                      <td>
+                        @if($employee_leave->leave_file)
+                          <a href="storage/{{ $employee_leave->leave_file }}" target="_blank">{{ $employee_leave->leave_file }}</a>
+                        @else
+                          No file uploaded
+                        @endif
+                      </td>
+                    </tr>
                     @endforeach                      
                     </tbody>
                   </table>
@@ -628,40 +624,40 @@
 
   $(document).ready(function() {
     @foreach($employee_leaves as $employee_leave)
-    $('#upload{{ $employee_leave->id }}').on('click', function() {
-        $('#upload_leave{{ $employee_leave->id }}').modal('show');
-    });
+      $('.uploadLeaveButton{{ $employee_leave->id }}').on('click', function() {
+          $('#upload_leave{{ $employee_leave->id }}').modal('show');
+      });
 
-    $('#uploadBtn{{ $employee_leave->id }}').on('click', function() {
-        var formData = new FormData($('#uploadForm{{ $employee_leave->id }}')[0]);
-        $.ajax({
-            url: '{{ url("upload-attachment/".$employee_leave->id) }}',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Uploaded!',
-                    text: 'File uploaded successfully!',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(function() {
-                    window.location.reload(true);
-                    $('#upload_leave{{ $employee_leave->id }}').modal('hide');
-                });
-            },
-            error: function(error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'File upload failed!',
-                    confirmButtonText: 'Try Again'
-                });
-            }
-        });
-    });
+      $('#uploadBtn{{ $employee_leave->id }}').on('click', function() {
+          var formData = new FormData($('#uploadForm{{ $employee_leave->id }}')[0]);
+          $.ajax({
+              url: '{{ url("upload-attachment/".$employee_leave->id) }}',
+              type: 'POST',
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function(response) {
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Uploaded!',
+                      text: 'File uploaded successfully!',
+                      timer: 2000,
+                      showConfirmButton: false
+                  }).then(function() {
+                      window.location.reload(true);
+                      $('#upload_leave{{ $employee_leave->id }}').modal('hide');
+                  });
+              },
+              error: function(error) {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error!',
+                      text: 'File upload failed!',
+                      confirmButtonText: 'Try Again'
+                  });
+              }
+          });
+      });
     @endforeach
   });
 
