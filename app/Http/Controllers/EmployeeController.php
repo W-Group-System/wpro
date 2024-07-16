@@ -1597,7 +1597,7 @@ class EmployeeController extends Controller
         $allowed_projects = getUserAllowedProjects(auth()->user()->id);
 
         $attendance_controller = new AttendanceController;
-        $employees = Employee::select('id','user_id','employee_number','first_name','last_name')->where('status','Active')
+        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code')->where('status','Active')
                                 ->whereIn('company_id', $allowed_companies)
                                 ->when($allowed_locations,function($q) use($allowed_locations){
                                     $q->whereIn('location',$allowed_locations);
