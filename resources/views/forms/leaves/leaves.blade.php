@@ -628,30 +628,40 @@
 
   $(document).ready(function() {
     @foreach($employee_leaves as $employee_leave)
-      $('#upload{{ $employee_leave->id }}').on('click', function() {
+    $('#upload{{ $employee_leave->id }}').on('click', function() {
         $('#upload_leave{{ $employee_leave->id }}').modal('show');
-      });
+    });
 
-      $('#uploadBtn{{ $employee_leave->id }}').on('click', function() {
+    $('#uploadBtn{{ $employee_leave->id }}').on('click', function() {
         var formData = new FormData($('#uploadForm{{ $employee_leave->id }}')[0]);
         $.ajax({
-          url: '{{ url("upload-attachment/".$employee_leave->id) }}',
-          type: 'POST',
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            // Handle the response from the server
-            // alert('File uploaded successfully!');
-            window.location.reload(true);
-            $('#upload_leave{{ $employee_leave->id }}').modal('hide');
-          },
-          error: function(error) {
-            // Handle errors
-            alert('File upload failed!');
-          }
+            url: '{{ url("upload-attachment/".$employee_leave->id) }}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Uploaded!',
+                    text: 'File uploaded successfully!',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(function() {
+                    window.location.reload(true);
+                    $('#upload_leave{{ $employee_leave->id }}').modal('hide');
+                });
+            },
+            error: function(error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'File upload failed!',
+                    confirmButtonText: 'Try Again'
+                });
+            }
         });
-      });
+    });
     @endforeach
   });
 
