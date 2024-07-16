@@ -716,11 +716,11 @@
                                                 $subtotal_rd_nd += $restnd;
                                                 $subtotal_rd_nd_ge += 0;
                                                 @endphp
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
+                                                <td @if($abs-$leave_count>0) class='bg-danger'@endif ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
+                                                <td ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{number_format($undertime_hrs*60,2)}}</td>
+                                                <td @if($late>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
+                                                <td  @if($undertime_hrs>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{number_format($undertime_hrs*60,2)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="{{$overtime}}">{{number_format($overtime,2)}}</td> {{-- REG OT --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="{{$night_diff}}">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="{{$night_diff_ot}}">{{number_format($night_diff_ot,2)}}</td> {{-- REG OT ND --}}
@@ -788,18 +788,18 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-                                                <td><strong>{{ $subtotal_abs }}</strong></td>
-                                                <td><strong>{{ $subtotal_leave_w_pay }}</strong></td>
-                                                <td><strong>{{ $subtotal_reg_hrs }}</strong></td>
-                                                <td><strong>{{ $subtotal_late }}</strong></td>
-                                                <td><strong>{{ $subtotal_undertime }}</strong></td>
-                                                <td><strong>{{ $subtotal_overtimes}}</strong></td>
-                                                <td><strong>{{ $subtotal_nd}}</strong></td>
-                                                <td><strong>{{ $subtotal_ot_nd}}</strong></td>
-                                                <td><strong>{{ $subtotal_rd_ot}}</strong></td>
-                                                <td><strong>{{ $subtotal_rd_ot_ge}}</strong></td>
-                                                <td><strong>{{ $subtotal_rd_nd}}</strong></td>
-                                                <td><strong>{{ $subtotal_rd_nd_ge}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_abs,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_leave_w_pay,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_reg_hrs,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_late,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_undertime,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_overtimes,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_nd,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_ot_nd,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_ot,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_ot_ge,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_nd,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_nd_ge,2)}}</strong></td>
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>

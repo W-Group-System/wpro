@@ -85,19 +85,21 @@ class UploadController extends Controller
                                 $employeeOt->ot_date = $dateFiled;
                                 $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row[3]));
                                 $employeeOt->end_time = date('Y-m-d h:i:s', strtotime($row[4]));
-                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[5]));
-                                $employeeOt->status = $row[8];
+                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[7]));
+                                $employeeOt->status = $row[10];
                                 $employeeOt->ot_approved_hrs = $row[5];
                                 $employeeOt->break_hrs = $row[6];
                                 $employeeOt->created_by = auth()->user()->id;
+                                $employeeOt->remarks = $row[9];
                                 $employeeOt->save();
                             } else {
                                 $employeeOt->start_time = date('Y-m-d h:i:s', strtotime($row[3]));
                                 $employeeOt->end_time = date('Y-m-d h:i:s', strtotime($row[4]));
-                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[5]));
-                                $employeeOt->status = $row[8];
+                                $employeeOt->approved_date = date('Y-m-d h:i:s', strtotime($row[7]));
+                                $employeeOt->status = $row[10];
                                 $employeeOt->ot_approved_hrs = $row[5];
                                 $employeeOt->break_hrs = $row[6];
+                                $employeeOt->remarks = $row[9];
                                 $employeeOt->created_by = auth()->user()->id;
                                 $employeeOt->save();
                             }
