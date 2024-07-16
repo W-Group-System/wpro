@@ -219,7 +219,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Payroll
     Route::get('pay-reg', 'PayslipController@payroll_datas');
+    Route::post('payreg', 'PayslipController@postPayRoll');
     Route::post('importPayRegExcel', 'PayslipController@importPayRegExcel');
+    Route::get('/generated-payroll','PayslipController@generatedPayroll');
+    Route::get('/payslip','PayslipController@generatePayslip');
 
     Route::get('pay-instruction', 'PayslipController@payroll_instruction');
     Route::post('importPayinstructionExcel', 'PayslipController@importPayInstructionExcel');
@@ -407,6 +410,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/update-employee-code/{id}', 'EmployeeController@updateEmpNo');
     Route::post('/update-account-no/{id}', 'EmployeeController@updateAcctNo');
     Route::post('/reset-password', 'EmployeeController@resetPassword');
+
+    // Payslip
+    Route::get('/generate-payslip', 'PayslipController@generatePayslip');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

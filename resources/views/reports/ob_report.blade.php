@@ -68,7 +68,7 @@
                                         <th>Date Filed</th>
                                         <th>Date</th>
                                         <th>Time In-Out</th>
-                                        <th>OB Count</th> 
+                                        {{-- <th>OB Count</th>  --}}
                                         <th>Approved Date </th>
                                         <th>Remarks </th>
                                         <th>Status </th>
@@ -83,12 +83,16 @@
                                         <td>{{date('d/m/Y h:i A', strtotime($item->created_at))}}</td>
                                         <td>{{ date('d/m/Y ', strtotime($item->applied_date)) }}</td>
                                         <td>{{ date('d/m/Y h:i A', strtotime($item->date_from)) }} - {{ date('d/m/Y h:i A', strtotime($item->date_to)) }}  </td>
-                                        <td>{{get_count_days($item->schedule,$item->date_from,$item->date_to)}}</td>
+                                        {{-- <td>{{get_count_days($item->schedule,$item->date_from,$item->date_to)}}</td> --}}
                                         <td>{{ $item->approved_date ? date('d/m/Y', strtotime($item->approved_date)) : ""}}</td>
                                         <td>{{$item->remarks}}
                                             <br>
                                             @if($item->attachment)
                                                 <a href="{{url($item->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+                                            @endif
+                                            <br>
+                                            @if($item->ob_file)
+                                                <a href="{{url($item->ob_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                             @endif
                                         </td>
                                         <td>{{$item->status}}</td>
@@ -130,24 +134,7 @@
     });
   });
 </script>
-@php
-function get_count_days($data,$date_from,$date_to)
- {
-    $data = ($data->pluck('name'))->toArray();
-    $count = 0;
-    $startTime = strtotime($date_from);
-    $endTime = strtotime($date_to);
 
-    for ( $i = $startTime; $i <= $endTime; $i = $i + 86400 ) {
-      $thisDate = date( 'l', $i ); // 2010-05-01, 2010-05-02, etc
-      if(in_array($thisDate,$data)){
-          $count= $count+1;
-      }
-    }
-
-    return($count);
- } 
-@endphp  
 
 
 @endsection

@@ -528,8 +528,8 @@
                         </a>
                         <div class="collapse" id="payroll">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-reg') }}">Payroll Register</a>
-                                </li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-reg') }}">Payroll Register</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-payroll') }}">Generated Payroll</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-instruction') }}">Payroll Instruction</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a></li>
@@ -647,9 +647,12 @@
                     @endif
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/dtr-report') }}">DTR Reports</a></li> --}}
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/totalExpense-report') }}">Total Expenses</a></li>
+                    
+                    @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-report') }}">Loans Report</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/incentive-report') }}">Incentive Reports</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/payroll-report') }}">Payroll Reports</a></li>
+                    @endif
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/attendance-report') }}">Attendance Reports</a></li>
                 </ul>
             </div>

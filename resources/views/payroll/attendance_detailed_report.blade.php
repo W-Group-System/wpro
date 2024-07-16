@@ -116,10 +116,40 @@
                       'rst_sh_nd' => 0,
                       'rst_sh_nd_over_eight' => 0
                   ];
+                  $totals = [
+                    'abs' => 0,
+                    'lv_w_pay' => 0,
+                    'reg_hrs' => 0,
+                    'late_min' => 0,
+                    'undertime_min' => 0,
+                    'reg_ot' => 0,
+                    'reg_nd' => 0,
+                    'reg_ot_nd' => 0,
+                    'rst_ot' => 0,
+                    'rst_ot_over_eight' => 0,
+                    'rst_nd' => 0,
+                    'rst_nd_over_eight' => 0,
+                    'lh_ot' => 0,
+                    'lh_ot_over_eight' => 0,
+                    'lh_nd' => 0,
+                    'lh_nd_over_eight' => 0,
+                    'sh_ot' => 0,
+                    'sh_ot_over_eight' => 0,
+                    'sh_nd' => 0,
+                    'sh_nd_over_eight' => 0,
+                    'rst_lh_ot' => 0,
+                    'rst_lh_ot_over_eight' => 0,
+                    'rst_lh_nd' => 0,
+                    'rst_lh_nd_over_eight' => 0,
+                    'rst_sh_ot' => 0,
+                    'rst_sh_ot_over_eight' => 0,
+                    'rst_sh_nd' => 0,
+                    'rst_sh_nd_over_eight' => 0
+                ];
                   $currentEmployeeNo = null;
                   $currentEmployeeName = null;
-                  $currentEmployeeLogdate =null;
-                  $currentEmployeeShift = null;
+                  // $currentEmployeeLogdate =null;
+                  // $currentEmployeeShift = null;
                   @endphp
           
                   @foreach($generated_timekeepings as $timekeeping)
@@ -129,8 +159,10 @@
                               <td><strong>Subtotal</strong></td>
                               <td><strong>{{ $currentEmployeeNo }}</strong></td>
                               <td><strong>{{ $currentEmployeeName }}</strong></td>
-                              <td><strong>{{ $currentEmployeeLogdate }}</strong></td>
-                              <td><strong>{{ $currentEmployeeShift }}</strong></td>
+                              <td></td>
+                              <td></td>
+                              {{-- <td><strong>{{ $currentEmployeeLogdate }}</strong></td>
+                              <td><strong>{{ $currentEmployeeShift }}</strong></td> --}}
                               <td></td>
                               <td></td>
                               <td class="dt-type-numeric"><strong>{{ $subtotals['abs'] }}</strong></td>
@@ -161,11 +193,10 @@
                               <td class="dt-type-numeric"><strong>{{ $subtotals['rst_sh_ot_over_eight'] }}</strong></td>
                               <td class="dt-type-numeric"><strong>{{ $subtotals['rst_sh_nd'] }}</strong></td>
                               <td class="dt-type-numeric"><strong>{{ $subtotals['rst_sh_nd_over_eight'] }}</strong></td>
-                              <td></td> <!-- Placeholder for Remarks column -->
+                              <td></td> 
                           </tr>
                           @endif
                           @php
-                          // Reset subtotals for the new employee
                           $subtotals = [
                               'abs' => 0,
                               'lv_w_pay' => 0,
@@ -198,8 +229,8 @@
                           ];
                           $currentEmployeeNo = $timekeeping->employee_no;
                           $currentEmployeeName = $timekeeping->name;
-                          $currentEmployeeLogdate =$timekeeping->log_date;
-                          $currentEmployeeShift = $timekeeping->shift;
+                          // $currentEmployeeLogdate =$timekeeping->log_date;
+                          // $currentEmployeeShift = $timekeeping->shift;
                           @endphp
                       @endif
                       <tr>
@@ -276,18 +307,47 @@
                       $subtotals['rst_sh_ot_over_eight'] += $timekeeping->rst_sh_ot_over_eight;
                       $subtotals['rst_sh_nd'] += $timekeeping->rst_sh_nd;
                       $subtotals['rst_sh_nd_over_eight'] += $timekeeping->rst_sh_nd_over_eight;
+
+                      $totals['abs'] += $timekeeping->abs;
+                      $totals['lv_w_pay'] += $timekeeping->lv_w_pay;
+                      $totals['reg_hrs'] += $timekeeping->reg_hrs;
+                      $totals['late_min'] += $timekeeping->late_min;
+                      $totals['undertime_min'] += $timekeeping->undertime_min;
+                      $totals['reg_ot'] += $timekeeping->reg_ot;
+                      $totals['reg_nd'] += $timekeeping->reg_nd;
+                      $totals['reg_ot_nd'] += $timekeeping->reg_ot_nd;
+                      $totals['rst_ot'] += $timekeeping->rst_ot;
+                      $totals['rst_ot_over_eight'] += $timekeeping->rst_ot_over_eight;
+                      $totals['rst_nd'] += $timekeeping->rst_nd;
+                      $totals['rst_nd_over_eight'] += $timekeeping->rst_nd_over_eight;
+                      $totals['lh_ot'] += $timekeeping->lh_ot;
+                      $totals['lh_ot_over_eight'] += $timekeeping->lh_ot_over_eight;
+                      $totals['lh_nd'] += $timekeeping->lh_nd;
+                      $totals['lh_nd_over_eight'] += $timekeeping->lh_nd_over_eight;
+                      $totals['sh_ot'] += $timekeeping->sh_ot;
+                      $totals['sh_ot_over_eight'] += $timekeeping->sh_ot_over_eight;
+                      $totals['sh_nd'] += $timekeeping->sh_nd;
+                      $totals['sh_nd_over_eight'] += $timekeeping->sh_nd_over_eight;
+                      $totals['rst_lh_ot'] += $timekeeping->rst_lh_ot;
+                      $totals['rst_lh_ot_over_eight'] += $timekeeping->rst_lh_ot_over_eight;
+                      $totals['rst_lh_nd'] += $timekeeping->rst_lh_nd;
+                      $totals['rst_lh_nd_over_eight'] += $timekeeping->rst_lh_nd_over_eight;
+                      $totals['rst_sh_ot'] += $timekeeping->rst_sh_ot;
+                      $totals['rst_sh_ot_over_eight'] += $timekeeping->rst_sh_ot_over_eight;
+                      $totals['rst_sh_nd'] += $timekeeping->rst_sh_nd;
+                      $totals['rst_sh_nd_over_eight'] += $timekeeping->rst_sh_nd_over_eight;
                       @endphp
                   @endforeach
           
                   @if(!is_null($currentEmployeeNo))
                   <tr class="subtotal-row">
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
                       <td><strong>Subtotal</strong></td>
+                      <td><strong>{{ $currentEmployeeNo }}</strong></td>
+                      <td><strong>{{ $currentEmployeeName }}</strong></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
                       <td class="dt-type-numeric"><strong>{{ $subtotals['abs'] }}</strong></td>
                       <td class="dt-type-numeric"><strong>{{ $subtotals['lv_w_pay'] }}</strong></td>
                       <td class="dt-type-numeric"><strong>{{ $subtotals['reg_hrs'] }}</strong></td>
@@ -319,6 +379,43 @@
                       <td></td> <!-- Placeholder for Remarks column -->
                   </tr>
                   @endif
+                  <tr class="total">
+                    <td>Grand Total</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong>{{ $totals['abs'] }}</strong></td>
+                    <td><strong>{{ $totals['lv_w_pay'] }}</strong></td>
+                    <td><strong>{{ $totals['reg_hrs'] }}</strong></td>
+                    <td><strong>{{ $totals['late_min'] }}</strong></td>
+                    <td><strong>{{ $totals['undertime_min'] }}</strong></td>
+                    <td><strong>{{ $totals['reg_ot'] }}</strong></td>
+                    <td><strong>{{ $totals['reg_nd'] }}</strong></td>
+                    <td><strong>{{ $totals['reg_ot_nd'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_ot'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_ot_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_nd'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_nd_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['lh_ot'] }}</strong></td>
+                    <td><strong>{{ $totals['lh_ot_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['lh_nd'] }}</strong></td>
+                    <td><strong>{{ $totals['lh_nd_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['sh_ot'] }}</strong></td>
+                    <td><strong>{{ $totals['sh_ot_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['sh_nd'] }}</strong></td>
+                    <td><strong>{{ $totals['sh_nd_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_lh_ot'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_lh_ot_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_lh_nd'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_lh_nd_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_sh_ot'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_sh_ot_over_eight'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_sh_nd'] }}</strong></td>
+                    <td><strong>{{ $totals['rst_sh_nd_over_eight'] }}</strong></td>
+                </tr>
               </tbody>
           </table>
           

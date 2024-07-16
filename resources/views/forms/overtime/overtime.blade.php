@@ -184,6 +184,8 @@
                                 {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
                                 @elseif ($overtime->level == 1 && $overtime->status == 'Declined')
                                 {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                @elseif($overtime->status == 'Cancelled')
+                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Cancelled</label>
                                 @else
                                   {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
                                 @endif
@@ -192,6 +194,8 @@
                                   {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
                                 @elseif ($overtime->status == 'Approved')
                                   {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                @elseif($overtime->status == 'Cancelled')
+                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Cancelled</label>
                                 @else
                                   {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
                                 @endif
@@ -230,7 +234,7 @@
 		function cancel(id) {
 			var element = document.getElementById('tdActionId'+id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "You want to cancel this overtime?",
 					icon: "warning",
@@ -251,22 +255,24 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Overtime has been cancelled!", {
+								Swal.fire("Overtime has been cancelled!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdStatus" + id).innerHTML =
 										"<label class='badge badge-danger'>Cancelled</label>";
-                  document.getElementById("edit" + dataID).remove();
-                  document.getElementById(dataID).remove();
+                                    document.getElementById("edit" + dataID).remove();
+                                    document.getElementById(dataID).remove();
+
+                                    location.reload();
 								});
 							}
 						})
 
 					} else {
-            swal({text:"You stop the cancelation of overtime.",icon:"success"});
+                        Swal.fire({text:"You stop the cancelation of overtime.",icon:"success"});
 					}
 				});
-		}
+            }
 
 	</script>
 @endsection

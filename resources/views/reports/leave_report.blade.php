@@ -102,7 +102,7 @@
 										  @else
 											<td></td>
 										  @endif 
-										  <td>{{get_count_days($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
+										  <td>{{get_count_days_report($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
 										  <td>
 											{{$form_approval->status}}
 										  </td>
@@ -111,6 +111,10 @@
 												{{$form_approval->reason}} <br>
 												@if($form_approval->attachment)
 													<a href="{{url($form_approval->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+												@endif
+												<br>
+												@if($form_approval->leave_file)
+													<a href="{{url($form_approval->leave_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
 												@endif
 										  </td>
 										  </tr>
@@ -157,7 +161,7 @@
 </script>
 
 @php
-function get_count_days($data,$date_from,$date_to,$halfday)
+function get_count_days_report($data,$date_from,$date_to,$halfday)
  {
 
     if($date_from == $date_to){

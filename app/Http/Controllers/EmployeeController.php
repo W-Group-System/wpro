@@ -1834,7 +1834,7 @@ class EmployeeController extends Controller
                                 })
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
-                                });
+                                })->where('classification','!=',8);
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
             }
@@ -2039,6 +2039,7 @@ class EmployeeController extends Controller
         
         $attendanceLogs = AttendanceLog::whereBetween('date', [$from, $to])
             ->where('emp_code', $request->employees)
+            ->orderBy('datetime','asc')
             ->get();
 
         if ($attendanceLogs != null) 

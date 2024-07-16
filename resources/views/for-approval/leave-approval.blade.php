@@ -176,7 +176,7 @@
                         </td>
                         <td>{{$form_approval->leave->leave_type}}</td>
                         <td>{{date('M d, Y', strtotime($form_approval->date_from))}} - {{date('M d, Y', strtotime($form_approval->date_to))}}</td>
-                        <td>{{get_count_days($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
+                        <td>{{get_count_days($form_approval->dailySchedules, $form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
                         @if($form_approval->withpay == 1)   
                           <td>Yes</td>
                         @else
@@ -287,7 +287,7 @@
 
       // Submit button click event to perform the POST request
       $('#approveAllBtn').on('click', function() {
-          swal({
+        Swal.fire({
             title: "Are you sure?",
             text: "You want to approve this Leave?",
             icon: "warning",
@@ -319,7 +319,7 @@
                   success: function(response) {
                     console.log(response)
                     document.getElementById("loader").style.display = "none";
-                    swal(" Leave has been Approved " + "("+response+")", {
+                    Swal.fire(" Leave has been Approved " + "("+response+")", {
                       icon: "success",
                     }).then(function() {
                       location.reload();
@@ -398,8 +398,8 @@
   @include('for-approval.request_to_cancel.leave_request_to_cancel')
 @endforeach
 
-@php
-function get_count_days($data,$date_from,$date_to,$halfday)
+{{-- @php
+function get_count_days_leaves($data,$date_from,$date_to,$halfday)
  {
 
     if($date_from == $date_to){
@@ -425,7 +425,7 @@ function get_count_days($data,$date_from,$date_to,$halfday)
     }
     
  } 
-@endphp  
+@endphp   --}}
 
 
 

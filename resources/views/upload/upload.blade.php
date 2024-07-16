@@ -1,4 +1,13 @@
 @extends('layouts.header')
+@section('css_header')
+    <style>
+        .pagination
+        {
+            float: right;
+            margin-top: 12px;
+        }
+    </style>
+@endsection
 
 @section('content')
 <div class="main-panel">
@@ -27,7 +36,7 @@
                             </button>
                         </p>
                         <div class="table-responsive">
-                            <table class="table table-hover table-bordered tablewithSearch">
+                            <table class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
                                         <th>File</th>
@@ -49,6 +58,8 @@
                                     @endforeach
                                 </tbody>
                             </table>
+
+                            {!! $uploadTypes->links() !!}
                         </div>
                     </div>
                 </div>

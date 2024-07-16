@@ -61,414 +61,491 @@
                       </div>
                     </div>
                   </form>
-                <div class="table-responsive">
-                  
-                  <button  class='btn btn-info btn-sm' type = "button" onclick = "CreateTextFile();">Download Txt</button>
-                  <table class="table table-db table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Row No</th>
-                            <th>Employee No</th>
-                            <th>Last Name</th>
-                            <th>First Name</th>
-                            <th>Middle Name</th>
-                            <th>Department</th>
-                            <th>Cost Center</th>
-                            <th>Account No</th>
-                            <th>Pay Rate</th>
-                            <th>Tax Status</th>
-                            <th>DAYS RENDERED</th>
-                            <th>BASIC PAY</th>
-                            <th>LH ND</th>
-                            <th>LH ND AMOUNT</th>
-                            <th>LH ND GE</th>
-                            <th>LH ND GE AMOUNT</th>
-                            <th>LH OT</th>
-                            <th>LH OT Amount</th>
-                            <th>LH OT OVER 8</th>
-                            <th>LH OT OVER 8 AMOUNT</th>
-                            <th>REG ND</th>
-                            <th>REG ND AMOUNT</th>
-                            <th>REG OT</th>
-                            <th>REG OT AMOUNT</th>
-                            <th>REG OT ND</th>
-                            <th>REG OT ND AMOUNT</th>
-                            <th>RST ND</th>
-                            <th>RST ND AMOUNT</th>
-                            <th>RST ND GE</th>
-                            <th>RST ND GE AMOUNT</th>
-                            <th>RST OT</th>
-                            <th>RST OT AMOUNT</th>
-                            <th>RST OT OVER 8</th>
-                            <th>RST OT OVER 8 AMOUNT</th>
-                            <th>OVERTIME TOTAL</th>
-                            <th>PL</th>
-                            <th>PL AMOUNT</th>
-                            <th>SL</th>
-                            <th>SL AMOUNT</th>
-                            <th>VL</th>
-                            <th>VL AMOUNT</th>
-                            <th>LEAVE AMOUNT TOTAL</th>
-                            <th>SALARY ADJUSTMENT</th>
-                            <th>TAXABLE BENEFITS TOTAL</th>
-                            <th>GROSS TAXABLE INCOME</th>
-                            <th>DAYS ABSENT</th>
-                            <th>ABSENT AMOUNT</th>
-                            <th>TARDINESS TOTAL</th>
-                            <th>TARDINESS AMOUNT</th>
-                            <th>UNDERTIME TOTAL</th>
-                            <th>UNDERTIME AMOUNT</th>
-                            <th>SSS EC</th>
-                            <th>SSS EMPLOYEE SHARE</th>
-                            <th>SSS EMPLOYER SHARE</th>
-                            <th>HDMF EMPLOYEE SHARE</th>
-                            <th>HDMF EMPLOYER SHARE</th>
-                            <th>PHIC EMPLOYEE SHARE</th>
-                            <th>PHIC EMPLOYER SHARE</th>
-                            <th>MPF EMPLOYEE SHARE</th>
-                            <th>MPF EMPLOYER SHARE</th>
-                            <th>STATUTORY TOTAL</th>
-                            <th>TAXABLE DEDUCTIBLE TOTAL</th>
-                            <th>NET TAXABLE INCOME</th>
-                            <th>WITHHOLDING TAX</th>
-                            <th>DEMINIMIS</th>
-                            {{-- <th>DEMINIMIS ADJUSTMENT</th>
-                            <th>LOAD ALLOWANCE</th>
-                            <th>OTHER ALLOWANCES</th>
-                            <th>OTHER NTA</th>
-                            <th>SSS LOAN REFUND</th>
-                            <th>SUBLIQ</th> --}}
-                            @foreach($allowances_total as $total_allow)
-                            <th>{{$total_allow->allowance->name}}</th>
-                            @endforeach
-                            {{-- <th>OTHER ALLOWANCES</th> --}}
-                            <th>NONTAXABLE BENEFITS TOTAL</th>
-                            
-                            {{-- <th>CANTEEN</th>
-                            <th>EMERGENCY</th>
-                            <th>HDMF CALAMITY LOAN</th>
-                            <th>HDMF CONTRIBUTION UPGRADE</th>
-                            <th>HDMF LOAN</th>
-                            <th>MOTORCYCLE LOAN</th>
-                            <th>RICE LOAN</th>
-                            <th>SSS CALAMITY LOAN</th>
-                            <th>SSS LOAN</th>
-                            <th>STAFF HOUSE</th>
-                            <th>WESLA LOAN</th> --}}
-                            @foreach($instructions as $ins)
-                            <th>{{$ins->benefit_name}}</th>
-                            @endforeach
-                            {{-- <th>Others</th> --}}
-                            @foreach($loans_all as $loans_al)
-                            <th>{{$loans_al->loan_type->loan_name}}</th>
-                            @endforeach
-                            <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
-                            <th>GROSS PAY</th>
-                            <th>DEDUCTIONS TOTAL</th>
-                            <th>NETPAY</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      @php
-                          $paytext = [];
-                          $total_net = 0;
-                      @endphp
-                        @foreach($names as $key => $name)
+                <form method="POST" action="{{ url('payreg?company='.$company.'&cut_off='.$cutoff.'&from='.$from.'&to='.$to) }}" id='PagRegForm' onsubmit="return showConfirmation()" enctype="multipart/form-data">
+                  @csrf
+                  <div class="table-responsive">
+                    @if($cutoff)
+                    <div class='row'>
+                      <div class='col-md-4'>
+                        Posting Date <input name='posting_date'  class="form-control form-control-sm" type='date' value='{{date('Y-m-d')}}' required>
+                      </div>
+                      <div class='col-md-4'>
+                        <button type="submit" class="btn btn-success mb-1">Post</button>
+                      </div>
+
+                    </div>
+                    
+                    <button  class='btn btn-info btn-sm' type = "button" onclick = "CreateTextFile();">Download Txt</button>
+                    @endif
+                    <table class="table table-db table-hover table-bordered">
+                      <thead>
+                          <tr>
+                              <th>Row No</th>
+                              <th>Employee No</th>
+                              <th>Last Name</th>
+                              <th>First Name</th>
+                              <th>Middle Name</th>
+                              <th>Department</th>
+                              <th>Cost Center</th>
+                              <th>Account No</th>
+                              <th>Pay Rate</th>
+                              <th>Tax Status</th>
+                              <th>DAYS RENDERED</th>
+                              <th>BASIC PAY</th>
+                              <th>LH ND</th>
+                              <th>LH ND AMOUNT</th>
+                              <th>LH ND GE</th>
+                              <th>LH ND GE AMOUNT</th>
+                              <th>LH OT</th>
+                              <th>LH OT Amount</th>
+                              <th>LH OT OVER 8</th>
+                              <th>LH OT OVER 8 AMOUNT</th>
+                              <th>REG ND</th>
+                              <th>REG ND AMOUNT</th>
+                              <th>REG OT</th>
+                              <th>REG OT AMOUNT</th>
+                              <th>REG OT ND</th>
+                              <th>REG OT ND AMOUNT</th>
+                              <th>RST ND</th>
+                              <th>RST ND AMOUNT</th>
+                              <th>RST ND GE</th>
+                              <th>RST ND GE AMOUNT</th>
+                              <th>RST OT</th>
+                              <th>RST OT AMOUNT</th>
+                              <th>RST OT OVER 8</th>
+                              <th>RST OT OVER 8 AMOUNT</th>
+                              <th>OVERTIME TOTAL</th>
+                              {{-- <th>PL</th>
+                              <th>PL AMOUNT</th>
+                              <th>SL</th>
+                              <th>SL AMOUNT</th>
+                              <th>VL</th>
+                              <th>VL AMOUNT</th>
+                              <th>LEAVE AMOUNT TOTAL</th> --}}
+                              <th>SALARY ADJUSTMENT</th>
+                              <th>TAXABLE BENEFITS TOTAL</th>
+                              <th>GROSS TAXABLE INCOME</th>
+                              <th>DAYS ABSENT</th>
+                              <th>ABSENT AMOUNT</th>
+                              <th>TARDINESS TOTAL</th>
+                              <th>TARDINESS AMOUNT</th>
+                              <th>UNDERTIME TOTAL</th>
+                              <th>UNDERTIME AMOUNT</th>
+                              <th>SSS EC</th>
+                              <th>SSS EMPLOYEE SHARE</th>
+                              <th>SSS EMPLOYER SHARE</th>
+                              <th>HDMF EMPLOYEE SHARE</th>
+                              <th>HDMF EMPLOYER SHARE</th>
+                              <th>PHIC EMPLOYEE SHARE</th>
+                              <th>PHIC EMPLOYER SHARE</th>
+                              <th>MPF EMPLOYEE SHARE</th>
+                              <th>MPF EMPLOYER SHARE</th>
+                              <th>STATUTORY TOTAL</th>
+                              <th>TAXABLE DEDUCTIBLE TOTAL</th>
+                              <th>NET TAXABLE INCOME</th>
+                              <th>WITHHOLDING TAX</th>
+                              <th>DEMINIMIS</th>
+                              {{-- <th>DEMINIMIS ADJUSTMENT</th>
+                              <th>LOAD ALLOWANCE</th>
+                              <th>OTHER ALLOWANCES</th>
+                              <th>OTHER NTA</th>
+                              <th>SSS LOAN REFUND</th>
+                              <th>SUBLIQ</th> --}}
+                              @foreach($allowances_total as $total_allow)
+                              <th>{{$total_allow->allowance->name}}</th>
+                              @endforeach
+                              {{-- <th>OTHER ALLOWANCES</th> --}}
+                              <th>NONTAXABLE BENEFITS TOTAL</th>
+                              
+                              {{-- <th>CANTEEN</th>
+                              <th>EMERGENCY</th>
+                              <th>HDMF CALAMITY LOAN</th>
+                              <th>HDMF CONTRIBUTION UPGRADE</th>
+                              <th>HDMF LOAN</th>
+                              <th>MOTORCYCLE LOAN</th>
+                              <th>RICE LOAN</th>
+                              <th>SSS CALAMITY LOAN</th>
+                              <th>SSS LOAN</th>
+                              <th>STAFF HOUSE</th>
+                              <th>WESLA LOAN</th> --}}
+                              @foreach($instructions as $ins)
+                              <th>{{$ins->benefit_name}}</th>
+                              @endforeach
+                              {{-- <th>Others</th> --}}
+                              @foreach($loans_all as $loans_al)
+                              <th>{{$loans_al->loan_type->loan_name}}</th>
+                              @endforeach
+                              <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
+                              <th>GROSS PAY</th>
+                              <th>DEDUCTIONS TOTAL</th>
+                              <th>NETPAY</th>
+                          </tr>
+                      </thead>
+                      <tbody>
                         @php
-                            $payroll_b = $dates->where('log_date',25)->first();
-                            $payroll_a = $dates->where('log_date',10)->first();
-                            $pay_rate = 0.00;
-                            $basic_pay = 0.00;
-                            $hourly_rate = 0.00;
-                            $daily_rate = 0.00;
-                            $de_minimis = 0.00;
-                            $pl = 0.00;
-                            $pl_amount = 0.00;
-                            $sl = 0.00;
-                            $sl_amount = 0.00;
-                            $vl = 0.00;
-                            $vl_amount = 0.00;
-                            $salary_adjustment = 0.00;
-                            $sss_ecc= 0.00;
-                            $sss_er= 0.00;
-                            $sss_ee= 0.00;
-                            $hdmf = 0.00;
-                            $philhealth = 0.00;
-                            $wisp_ee = 0.00;
-                            $wisp_er = 0.00;
-                            $de_minimis_adj = 0.00;
-                            $load_allowance = 0.00;
-                            $other_allowances = 0.00;
-                            $other_nta = 0.00;
-                            $sss_loan_refund = 0.00;
-                            $subliq = 0.00;
-
-                            $canteen = 0.00;
-                            $emergency = 0.00;
-                            $hdmf_calamity_loan = 0.00;
-                            $hdmf_contribution_upgrade = 0.00;
-                            $hdmf_loan = 0.00;
-                            $motorcycle_loan = 0.00;
-                            $rice_loan = 0.00;
-                            $sss_calamity_loan = 0.00;
-                            $sss_loan = 0.00;
-                            $staff_loan = 0.00;
-                            $wesla_loan = 0.00;
-                            
-                            $loans = 0.00;
-                            $allowances = 0.00;
-                            
-                            
-                            $leave_total_amount = $pl_amount+$sl_amount+$vl_amount;
-                            if(!empty($name->employee->salary))
-                            {
-                              $pay_rate = $name->employee->salary->basic_salary;
-                              $basic_pay = $name->employee->salary->basic_salary/2;
-                              $daily_rate = ($name->employee->salary->basic_salary)*12/313;
-                              $hourly_rate = $daily_rate/8;
-                              $de_minimis = $name->employee->salary->de_minimis/2;
-                            }
-                            $hours = 0;
-                            // $hours_count =0;
-                            foreach($absents_data->where('employee_no',$name->employee_no) as $absent_dat)
-                            {
-                              // dd($absent_dat->shift);
-                              $shift = $absent_dat->shift;
-                              $shift = str_replace("(Semi-Flexi)", '', $shift);
-                              $shift = str_replace("(Semi - flexi)", '', $shift);
-                              $shift = str_replace("(Flexi)", '', $shift);
-                              // $shift = str_replace(" ", '', $shift);
-                              $shift = explode("-",$shift);
-                              $start = strtotime($shift[0]);
-                              $end = strtotime($shift[1]);
-                              $hours_count = ($end - $start)/3600;
-                              if($start > $end)
-                              {
-                                
-                                $hours_count = ((($start - $end))/3600)-8;
-                                // dd($hours_count);
-                              }
-                              if($hours_count>8)
-                              {
-                                $hours_count = $hours_count-1;
-                              }
-
-                              $hours_data = $hours_count*($absent_dat->abs-$absent_dat->lv_w_pay);
-                              $hours = $hours+$hours_data;
-                            }
-                          
-                            $total_loans = 0;
-                            if(!empty($name->employee->loan))
-                            {
-                              $loa = ($name->employee->loan);
-                              $every_cut_off_loan = $loa->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('monthly_ammort_amt');
-                              $loans = $loa->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('monthly_ammort_amt');
-                              $total_loans = $loans+$every_cut_off_loan;
-                            }
-                            $total_allowances=0;
-                            if (!empty($name->employee->allowances)) {
-                                $allow = $name->employee->allowances;
-                                $every_cut_off = $allow->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('allowance_amount');
-                                $allowances = $allow->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('allowance_amount');
-                                $total_allowances = $allowances + $every_cut_off;
-                            }
-                            $total_payroll_instructions = 0;
-                            if(!empty($name->employee->pay_instructions))
-                            {
-                              $payroll_instructions = ($name->employee->pay_instructions);
-                              $every_cut_off_payroll_instructions = $payroll_instructions->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
-                              $other = $payroll_instructions->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
-                              $total_payroll_instructions = $other+$every_cut_off_payroll_instructions;
-                            }
-
-                            $total_lh_nd_amount = $name->total_lh_nd*$hourly_rate*.2;
-                            $total_lh_nd_over_eight = $name->total_lh_nd_over_eight*$hourly_rate*.26;
-                            $total_lh_ot = $name->total_lh_ot*$hourly_rate;
-                            $total_lh_ot_over_eight = $name->total_lh_ot_over_eight*$hourly_rate*2.6;
-                            $total_reg_nd = $name->total_reg_nd*$hourly_rate*.1;
-                            $total_reg_ot = $name->total_reg_ot*$hourly_rate*1.25;
-                            $total_reg_ot_nd = $name->total_reg_ot_nd*$hourly_rate*.125;
-                            $total_rst_nd = $name->total_rst_nd*$hourly_rate*.13;
-                            $total_rst_nd_over_eight = $name->total_rst_nd_over_eight*$hourly_rate*.169;
-                            $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
-                            $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
-                            $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd;
-                            $total_taxable_benefits = $salary_adjustment;
-                            $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
-                            
-                            $total_late_min = $name->total_late_min/60*$hourly_rate;
-                            $total_undertime_min = $name->total_undertime_min/60*$hourly_rate;
-                            
-                            $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
-                            $total_abs = $hours*$hourly_rate;
-                            
-                            $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
-                            if($payroll_b)
-                            {
-                              $sss_amount = $sss->where('salary_from','>=',$government_amount)->first();
-                              $sss_ecc = $sss_amount->ecc;
-                              $sss_ee = $sss_amount->regular_ee;
-                              $sss_er = $sss_amount->regular_er;
-                              $wisp_ee = $sss_amount->wisp_ee;
-                              $wisp_er = $sss_amount->wisp_er;
-                              $hdmf = 200.00;
-                              $philhealth = ($pay_rate*.05)/2;
-                            }
-                            
-                            $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
-                            $taxable_deductable_total = $statutory+$total_abs+$total_late_min+$total_undertime_min;
-                            $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
-                            $tax = compute_tax($net_taxable_income);
-                            $load_allowance = 0.00;
-                            $other_allowances = 0.00;
-                            $other_nta = 0.00;
-                            $sss_loan_refund = 0.00;
-                            $subliq = 0.00;
-                            $non_taxable_benefits = $load_allowance+$other_allowances+$other_nta+$sss_loan_refund+$subliq;
+                            $paytext = [];
+                            $total_net = 0;
                         @endphp
-                        <tr>
-                            <td>{{$key+1}}</td>
-                            <td>{{$name->employee_no}}</td>
-                            <td>{{$name->employee->last_name}}</td>
-                            <td>{{$name->employee->first_name}}</td>
-                            <td>{{$name->employee->middle_name}}</td>
-                            <td>{{$name->employee->department->name}}</td>
-                            <td></td>
-                            <td>{{$name->employee->bank_account_number}}</td>
-                            <td>{{number_format($pay_rate,2)}}</td>
-                            <td></td>
-                            <td></td>
-                            <td>{{number_format($basic_pay,2)}}</td>
-                            <td>{{number_format($name->total_lh_nd,2)}}</td>
-                            <td>{{number_format($total_lh_nd_amount,2)}}</td>
-                            <td>{{number_format($name->total_lh_nd_over_eight,2)}}</td>
-                            <td>{{number_format($total_lh_nd_over_eight,2)}}</td>
-                            <td>{{number_format($name->total_lh_ot,2)}}</td>
-                            <td>{{number_format($total_lh_ot,2)}}</td>
-                            <td>{{number_format($name->total_lh_ot_over_eight,2)}}</td>
-                            <td>{{number_format($total_lh_ot_over_eight,2)}}</td>
-                            <td>{{number_format($name->total_reg_nd,2)}}</td>
-                            <td>{{number_format($total_reg_nd,2)}}</td>
-                            <td>{{number_format($name->total_reg_ot,2)}}</td>
-                            <td>{{number_format($total_reg_ot,2)}}</td>
-                            <td>{{number_format($name->total_reg_ot_nd,2)}}</td>
-                            <td>{{number_format($total_reg_ot_nd,2)}}</td>
-                            <td>{{number_format($name->total_rst_nd,2)}}</td>
-                            <td>{{number_format($total_rst_nd,2)}}</td>
-                            <td>{{number_format($name->total_rst_nd_over_eight,2)}}</td>
-                            <td>{{number_format($total_rst_nd_over_eight,2)}}</td>
-                            <td>{{number_format($name->total_rst_ot,2)}}</td>
-                            <td>{{number_format($total_rst_ot,2)}}</td>
-                            <td>{{number_format($name->total_rst_ot_over_eight,2)}}</td>
-                            <td>{{number_format($total_rst_ot_over_eight,2)}}</td>
-                            <td>{{number_format($total_ot_pay,2)}}</td>
-                            <td>{{number_format($pl,2)}}</td>
-                            <td>{{number_format($pl_amount,2)}}</td>
-                            <td>{{number_format($sl,2)}}</td>
-                            <td>{{number_format($sl_amount,2)}}</td>
-                            <td>{{number_format($vl,2)}}</td>
-                            <td>{{number_format($vl_amount,2)}}</td>
-                            <td>{{number_format($leave_total_amount,2)}}</td>
-                            <td>{{number_format($salary_adjustment,2)}}</td>
-                            <td>{{number_format($total_taxable_benefits,2)}}</td>
-                            <td>{{number_format($gross_taxable_income,2)}}</td>
-                            <td>{{number_format($total_abs_count,2)}}</td>
-                            {{-- <td>{{number_format(-1*($total_abs),2)}} and {{$hours}}</td> --}}
-                            <td>{{number_format(-1*($total_abs),2)}}</td>
-                            <td>{{number_format($name->total_late_min,2)}}</td>
-                            <td>{{number_format(-1*($total_late_min),2)}}</td>
-                            <td>{{number_format($name->total_undertime_min,2)}}</td>
-                            <td>{{number_format(-1*($total_undertime_min),2)}}</td>
-                            <td>{{number_format(-1*($sss_ecc),2)}}</td>
-                            <td>{{number_format(-1*($sss_ee),2)}}</td>
-                            <td>{{number_format(-1*($sss_er),2)}}</td>
-                            <td>{{number_format(-1*($hdmf),2)}}</td>
-                            <td>{{number_format(-1*($hdmf),2)}}</td>
-                            <td>{{number_format(-1*($philhealth),2)}}</td>
-                            <td>{{number_format(-1*($philhealth),2)}}</td>
-                            <td>{{number_format(-1*($wisp_ee),2)}}</td>
-                            <td>{{number_format(-1*($wisp_er),2)}}</td>
-                            <td>{{number_format(-1*($statutory),2)}}</td>
-                            <td>{{number_format(-1*($taxable_deductable_total),2)}}</td>
-                            <td>{{number_format($net_taxable_income,2)}}</td>
-                            <td>{{number_format(-1*($tax),2)}}</td>
-                            <td>{{number_format($de_minimis,2)}}</td>
-                            {{-- <td>{{number_format($de_minimis_adj,2)}}</td> --}}
-                            {{-- <td>{{number_format($load_allowance,2)}}</td>
-                            <td>{{number_format($other_allowances,2)}}</td>
-                            <td>{{number_format($other_nta,2)}}</td>
-                            <td>{{number_format($sss_loan_refund,2)}}</td>
-                            <td>{{number_format($subliq,2)}}</td> --}}
-                            @foreach($allowances_total as $total_allow)
-                            @php
-                                $allllowance = 0;
-                                 if (!empty($name->employee->allowances)) {
-                                $allow = $name->employee->allowances;
-                                $every_cut_off = $allow->where('allowance_id',$total_allow->allowance_id)->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('allowance_amount');
-                                $bbb = $allow->where('allowance_id',$total_allow->allowance_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('allowance_amount');
-                                $allllowance = $bbb+$every_cut_off;
+                          @foreach($names as $key => $name)
+                          @php
+                              $payroll_b = $dates->where('log_date',25)->first();
+                              $payroll_a = $dates->where('log_date',10)->first();
+                              $pay_rate = 0.00;
+                              $basic_pay = 0.00;
+                              $hourly_rate = 0.00;
+                              $daily_rate = 0.00;
+                              $de_minimis = 0.00;
+                              $pl = 0.00;
+                              $pl_amount = 0.00;
+                              $sl = 0.00;
+                              $sl_amount = 0.00;
+                              $vl = 0.00;
+                              $vl_amount = 0.00;
+                              $salary_adjustment = 0.00;
+                              $sss_ecc= 0.00;
+                              $sss_er= 0.00;
+                              $sss_ee= 0.00;
+                              $hdmf = 0.00;
+                              $philhealth = 0.00;
+                              $wisp_ee = 0.00;
+                              $wisp_er = 0.00;
+                              $de_minimis_adj = 0.00;
+                              $load_allowance = 0.00;
+                              $other_allowances = 0.00;
+                              $other_nta = 0.00;
+                              $sss_loan_refund = 0.00;
+                              $subliq = 0.00;
+
+                              $canteen = 0.00;
+                              $emergency = 0.00;
+                              $hdmf_calamity_loan = 0.00;
+                              $hdmf_contribution_upgrade = 0.00;
+                              $hdmf_loan = 0.00;
+                              $motorcycle_loan = 0.00;
+                              $rice_loan = 0.00;
+                              $sss_calamity_loan = 0.00;
+                              $sss_loan = 0.00;
+                              $staff_loan = 0.00;
+                              $wesla_loan = 0.00;
+                              
+                              $loans = 0.00;
+                              $allowances = 0.00;
+                              
+                              
+                              $leave_total_amount = $pl_amount+$sl_amount+$vl_amount;
+                              if(!empty($name->employee->salary))
+                              {
+                                $pay_rate = $name->employee->salary->basic_salary;
+                                $basic_pay = $name->employee->salary->basic_salary/2;
+                                $daily_rate = ($name->employee->salary->basic_salary)*12/313;
+                                $hourly_rate = $daily_rate/8;
+                                $de_minimis = $name->employee->salary->de_minimis/2;
+                              }
+                              $hours = 0;
+                              // $hours_count =0;
+                              foreach($absents_data->where('employee_no',$name->employee_no) as $absent_dat)
+                              {
+                                // dd($absent_dat->shift);
+                                $shift = $absent_dat->shift;
+                                $shift = str_replace("(Semi-Flexi)", '', $shift);
+                                $shift = str_replace("(Semi - flexi)", '', $shift);
+                                $shift = str_replace("(Flexi)", '', $shift);
+                                // $shift = str_replace(" ", '', $shift);
+                                $shift = explode("-",$shift);
+                                $start = strtotime($shift[0]);
+                                $end = strtotime($shift[1]);
+                                $hours_count = ($end - $start)/3600;
+                                if($start > $end)
+                                {
+                                  
+                                  $hours_count = ((($start - $end))/3600)-8;
+                                  // dd($hours_count);
                                 }
-                            @endphp
-                            <td>{{number_format($allllowance,2)}}</td>
-                            @endforeach
-                            {{-- <td><a href='#' data-toggle="modal" data-target="#allowances{{$name->employee_no}}">{{number_format($total_allowances,2)}}</a></td> --}}
-                            {{-- <td>{{number_format($total_allowances,2)}}</td> --}}
-                            <td>{{number_format($total_allowances+$de_minimis,2)}}</td>
-                            {{-- <td>{{number_format($canteen,2)}}</td>
-                            <td>{{number_format($emergency,2)}}</td>
-                            <td>{{number_format($hdmf_calamity_loan,2)}}</td>
-                            <td>{{number_format($hdmf_contribution_upgrade,2)}}</td>
-                            <td>{{number_format($hdmf_loan,2)}}</td>
-                            <td>{{number_format($motorcycle_loan,2)}}</td>
-                            <td>{{number_format($rice_loan,2)}}</td>
-                            <td>{{number_format($sss_calamity_loan,2)}}</td>
-                            <td>{{number_format($sss_loan,2)}}</td>
-                            <td>{{number_format($staff_loan,2)}}</td>
-                            <td>{{number_format($wesla_loan,2)}}</td> --}}
-                            @foreach($instructions as $ins)
-                            @php
-                                $totasions = 0;
+                                if($hours_count>8)
+                                {
+                                  $hours_count = $hours_count-1;
+                                }
+
+                                $hours_data = $hours_count*($absent_dat->abs-$absent_dat->lv_w_pay);
+                                $hours = $hours+$hours_data;
+                              }
+                            
+                              $total_loans = 0;
+                              if(!empty($name->employee->loan))
+                              {
+                                $loa = ($name->employee->loan);
+                                $every_cut_off_loan = $loa->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('monthly_ammort_amt');
+                                $loans = $loa->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('monthly_ammort_amt');
+                                $total_loans = $loans+$every_cut_off_loan;
+                              }
+                              $total_allowances=0;
+                              if (!empty($name->employee->allowances)) {
+                                  $allow = $name->employee->allowances;
+                                  $every_cut_off = $allow->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('allowance_amount');
+                                  $allowances = $allow->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('allowance_amount');
+                                  $total_allowances = $allowances + $every_cut_off;
+                              }
+                              $total_payroll_instructions = 0;
+                              if(!empty($name->employee->pay_instructions))
+                              {
+                                $payroll_instructions = ($name->employee->pay_instructions);
+                                $every_cut_off_payroll_instructions = $payroll_instructions->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
+                                $other = $payroll_instructions->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
+                                $total_payroll_instructions = $other+$every_cut_off_payroll_instructions;
+                              }
+
+                              $total_lh_nd_amount = $name->total_lh_nd*$hourly_rate*.2;
+                              $total_lh_nd_over_eight = $name->total_lh_nd_over_eight*$hourly_rate*.26;
+                              $total_lh_ot = $name->total_lh_ot*$hourly_rate;
+                              $total_lh_ot_over_eight = $name->total_lh_ot_over_eight*$hourly_rate*2.6;
+                              $total_reg_nd = $name->total_reg_nd*$hourly_rate*.1;
+                              $total_reg_ot = $name->total_reg_ot*$hourly_rate*1.25;
+                              $total_reg_ot_nd = $name->total_reg_ot_nd*$hourly_rate*.125;
+                              $total_rst_nd = $name->total_rst_nd*$hourly_rate*.13;
+                              $total_rst_nd_over_eight = $name->total_rst_nd_over_eight*$hourly_rate*.169;
+                              $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
+                              $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
+                              $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd;
+                              $total_taxable_benefits = $salary_adjustment;
+                              $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
+                              
+                              $total_late_min = $name->total_late_min/60*$hourly_rate;
+                              $total_undertime_min = $name->total_undertime_min/60*$hourly_rate;
+                              
+                              $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
+                              $total_abs = $hours*$hourly_rate;
+                              
+                              $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
+                              if($payroll_b)
+                              {
+                                $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
+                                if($last_c)
+                                {
+                                  $government_amount = $government_amount +$last_c->gross_pay;
+                                }
+                                $sss_amount = $sss->where('salary_from','>=',$government_amount)->first();
+                                if($sss_amount)
+                                {
+                                  $sss_ecc = $sss_amount->ecc;
+                                  $sss_ee = $sss_amount->regular_ee;
+                                  $sss_er = $sss_amount->regular_er;
+                                  $wisp_ee = $sss_amount->wisp_ee;
+                                  $wisp_er = $sss_amount->wisp_er;
+                                }
+                               
+                                
+                                $hdmf = 200.00;
+                                $philhealth = ($pay_rate*.05)/2;
+                              }
+                              
+                              $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
+                              $taxable_deductable_total = $statutory+$total_abs+$total_late_min+$total_undertime_min;
+                              $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
+                              $tax = compute_tax($net_taxable_income);
+                              $load_allowance = 0.00;
+                              $other_allowances = 0.00;
+                              $other_nta = 0.00;
+                              $sss_loan_refund = 0.00;
+                              $subliq = 0.00;
+                              $non_taxable_benefits = $load_allowance+$other_allowances+$other_nta+$sss_loan_refund+$subliq;
+                          @endphp
+                          <tr>
+                              <td>{{$key+1}}</td>
+                              <td>{{$name->employee_no}} <input type='hidden' name='employee_no[{{$key+1}}]' value="{{$name->employee_no}}"></td>
+                              <td>{{$name->employee->last_name}} <input type='hidden' name='last_name[{{$key+1}}]' value="{{$name->employee->last_name}}"><input type='hidden' name='work_description[{{$key+1}}]' value="{{$name->employee->work_description}}"></td>
+                              <td>{{$name->employee->first_name}} <input type='hidden' name='first_name[{{$key+1}}]' value="{{$name->employee->first_name}}"></td>
+                              <td>{{$name->employee->middle_name}} <input type='hidden' name='middle_name[{{$key+1}}]' value="{{$name->employee->middle_name}}"></td>
+                              <td>{{$name->employee->department->name}} <input type='hidden' name='department_name[{{$key+1}}]' value="{{$name->employee->department->name}}"></td>
+                              <td><input type='hidden' name='cost_center[{{$key+1}}]' value=""></td>
+                              <td>{{$name->employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$name->employee->bank_account_number}}"></td>
+                              <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
+                              <td><input type='hidden' name='tax_status[{{$key+1}}]' value=""></td>
+                              <td><input type='hidden' name='days_rendered[{{$key+1}}]' value=""></td>
+                              <td>{{number_format($basic_pay,2)}}<input type='hidden' name='basic_pay[{{$key+1}}]' value="{{$basic_pay}}"></td>
+                              <td>{{number_format($name->total_lh_nd,2)}}<input type='hidden' name='name_total_lh_nd[{{$key+1}}]' value="{{$name->total_lh_nd}}"></td>
+                              <td>{{number_format($total_lh_nd_amount,2)}}<input type='hidden' name='total_lh_nd_amount[{{$key+1}}]' value="{{$total_lh_nd_amount}}"></td>
+                              <td>{{number_format($name->total_lh_nd_over_eight,2)}}<input type='hidden' name='name_total_lh_nd_over_eight[{{$key+1}}]' value="{{$name->total_lh_nd_over_eight}}"></td>
+                              <td>{{number_format($total_lh_nd_over_eight,2)}}<input type='hidden' name='total_lh_nd_over_eight[{{$key+1}}]' value="{{$total_lh_nd_over_eight}}"></td>
+                              <td>{{number_format($name->total_lh_ot,2)}}<input type='hidden' name='name_total_lh_ot[{{$key+1}}]' value="{{$name->total_lh_ot}}"></td>
+                              <td>{{number_format($total_lh_ot,2)}}<input type='hidden' name='total_lh_ot[{{$key+1}}]' value="{{$total_lh_ot}}"></td>
+                              <td>{{number_format($name->total_lh_ot_over_eight,2)}}<input type='hidden' name='name_total_lh_ot_over_eight[{{$key+1}}]' value="{{$name->total_lh_ot_over_eight}}"></td>
+                              <td>{{number_format($total_lh_ot_over_eight,2)}}<input type='hidden' name='total_lh_ot_over_eight[{{$key+1}}]' value="{{$total_lh_ot_over_eight}}"></td>
+                              <td>{{number_format($name->total_reg_nd,2)}}<input type='hidden' name='name_total_reg_nd[{{$key+1}}]' value="{{$name->total_reg_nd}}"></td>
+                              <td>{{number_format($total_reg_nd,2)}}<input type='hidden' name='total_reg_nd[{{$key+1}}]' value="{{$total_reg_nd}}"></td>
+                              <td>{{number_format($name->total_reg_ot,2)}}<input type='hidden' name='name_total_reg_ot[{{$key+1}}]' value="{{$name->total_reg_ot}}"></td>
+                              <td>{{number_format($total_reg_ot,2)}}<input type='hidden' name='total_reg_ot[{{$key+1}}]' value="{{$total_reg_ot}}"></td>
+                              <td>{{number_format($name->total_reg_ot_nd,2)}}<input type='hidden' name='name_total_reg_ot_nd[{{$key+1}}]' value="{{$name->total_reg_ot_nd}}"></td>
+                              <td>{{number_format($total_reg_ot_nd,2)}}<input type='hidden' name='total_reg_ot_nd[{{$key+1}}]' value="{{$total_reg_ot_nd}}"></td>
+                              <td>{{number_format($name->total_rst_nd,2)}}<input type='hidden' name='name_total_rst_nd[{{$key+1}}]' value="{{$name->total_rst_nd}}"></td>
+                              <td>{{number_format($total_rst_nd,2)}}<input type='hidden' name='total_rst_nd[{{$key+1}}]' value="{{$total_rst_nd}}"></td>
+                              <td>{{number_format($name->total_rst_nd_over_eight,2)}}<input type='hidden' name='name_total_rst_nd_over_eight[{{$key+1}}]' value="{{$name->total_rst_nd_over_eight}}"></td>
+                              <td>{{number_format($total_rst_nd_over_eight,2)}}<input type='hidden' name='total_rst_nd_over_eight[{{$key+1}}]' value="{{$total_rst_nd_over_eight}}"></td>
+                              <td>{{number_format($name->total_rst_ot,2)}}<input type='hidden' name='name_total_rst_ot[{{$key+1}}]' value="{{$name->total_rst_ot}}"></td>
+                              <td>{{number_format($total_rst_ot,2)}}<input type='hidden' name='total_rst_ot[{{$key+1}}]' value="{{$total_rst_ot}}"></td>
+                              <td>{{number_format($name->total_rst_ot_over_eight,2)}}<input type='hidden' name='name_total_rst_ot_over_eight[{{$key+1}}]' value="{{$name->total_rst_ot_over_eight}}"></td>
+                              <td>{{number_format($total_rst_ot_over_eight,2)}}<input type='hidden' name='total_rst_ot_over_eight[{{$key+1}}]' value="{{$total_rst_ot_over_eight}}"></td>
+                              <td>{{number_format($total_ot_pay,2)}}<input type='hidden' name='total_ot_pay[{{$key+1}}]' value="{{$total_ot_pay}}"></td>
+                              {{-- <td>{{number_format($pl,2)}}</td>
+                              <td>{{number_format($pl_amount,2)}}</td>
+                              <td>{{number_format($sl,2)}}</td>
+                              <td>{{number_format($sl_amount,2)}}</td>
+                              <td>{{number_format($vl,2)}}</td>
+                              <td>{{number_format($vl_amount,2)}}</td>
+                              <td>{{number_format($leave_total_amount,2)}}</td> --}}
+                              <td>{{number_format($salary_adjustment,2)}}<input type='hidden' name='salary_adjustment[{{$key+1}}]' value="{{$salary_adjustment}}"></td>
+                              <td>{{number_format($total_taxable_benefits,2)}}<input type='hidden' name='total_taxable_benefits[{{$key+1}}]' value="{{$total_taxable_benefits}}"></td>
+                              <td>{{number_format($gross_taxable_income,2)}}<input type='hidden' name='gross_taxable_income[{{$key+1}}]' value="{{$gross_taxable_income}}"></td>
+                              <td>{{number_format($total_abs_count,2)}}<input type='hidden' name='total_abs_count[{{$key+1}}]' value="{{$total_abs_count}}"></td>
+                              {{-- <td>{{number_format(-1*($total_abs),2)}} and {{$hours}}</td> --}}
+                              <td>{{number_format(-1*($total_abs),2)}}<input type='hidden' name='total_abs[{{$key+1}}]' value="{{$total_abs}}"></td>
+                              <td>{{number_format($name->total_late_min,2)}}<input type='hidden' name='name_total_late_min[{{$key+1}}]' value="{{$name->total_late_min}}"></td>
+                              <td>{{number_format(-1*($total_late_min),2)}}<input type='hidden' name='total_late_min[{{$key+1}}]' value="{{$total_late_min}}"></td>
+                              <td>{{number_format($name->total_undertime_min,2)}}<input type='hidden' name='name_total_undertime_min[{{$key+1}}]' value="{{$name->total_undertime_min}}"></td>
+                              <td>{{number_format(-1*($total_undertime_min),2)}}<input type='hidden' name='total_undertime_min[{{$key+1}}]' value="{{$total_undertime_min}}"></td>
+                              <td>{{number_format(-1*($sss_ecc),2)}}<input type='hidden' name='sss_ecc[{{$key+1}}]' value="{{$sss_ecc}}"></td>
+                              <td>{{number_format(-1*($sss_ee),2)}}<input type='hidden' name='sss_ee[{{$key+1}}]' value="{{$sss_ee}}"></td>
+                              <td>{{number_format(-1*($sss_er),2)}}<input type='hidden' name='sss_er[{{$key+1}}]' value="{{$sss_er}}"></td>
+                              <td>{{number_format(-1*($hdmf),2)}}<input type='hidden' name='hdmf_ee[{{$key+1}}]' value="{{$hdmf}}"></td>
+                              <td>{{number_format(-1*($hdmf),2)}}<input type='hidden' name='hdmf_er[{{$key+1}}]' value="{{$hdmf}}"></td>
+                              <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_ee[{{$key+1}}]' value="{{$hdmf}}"></td>
+                              <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_er[{{$key+1}}]' value="{{$hdmf}}"></td>
+                              <td>{{number_format(-1*($wisp_ee),2)}}<input type='hidden' name='wisp_ee[{{$key+1}}]' value="{{$wisp_ee}}"></td>
+                              <td>{{number_format(-1*($wisp_er),2)}}<input type='hidden' name='wisp_er[{{$key+1}}]' value="{{$wisp_er}}"></td>
+                              <td>{{number_format(-1*($statutory),2)}}<input type='hidden' name='statutory[{{$key+1}}]' value="{{$statutory}}"></td>
+                              <td>{{number_format(-1*($taxable_deductable_total),2)}}<input type='hidden' name='taxable_deductable_total[{{$key+1}}]' value="{{$taxable_deductable_total}}"></td>
+                              <td>{{number_format($net_taxable_income,2)}}<input type='hidden' name='net_taxable_income[{{$key+1}}]' value="{{$net_taxable_income}}"></td>
+                              <td>{{number_format(-1*($tax),2)}}<input type='hidden' name='tax[{{$key+1}}]' value="{{$tax}}"></td>
+                              <td>{{number_format($de_minimis,2)}}<input type='hidden' name='de_minimis[{{$key+1}}]' value="{{$de_minimis}}"></td>
+                              {{-- <td>{{number_format($de_minimis_adj,2)}}</td> --}}
+                              {{-- <td>{{number_format($load_allowance,2)}}</td>
+                              <td>{{number_format($other_allowances,2)}}</td>
+                              <td>{{number_format($other_nta,2)}}</td>
+                              <td>{{number_format($sss_loan_refund,2)}}</td>
+                              <td>{{number_format($subliq,2)}}</td> --}}
+                              @foreach($allowances_total as $as => $total_allow)
+                              
+                              @php
+                                  $get_bbb = [];
+                                  $get_every_cut_off = [];
+                                  $allllowance = 0;
+                                  if (!empty($name->employee->allowances)) {
+                                  $allow = $name->employee->allowances;
+                                  $every_cut_off = $allow->where('allowance_id',$total_allow->allowance_id)->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('allowance_amount');
+                                  $get_every_cut_off = $allow->where('allowance_id',$total_allow->allowance_id)->whereIn('schedule', ['Every cut off', 'This cut off']);
+                                    
+                                  $bbb = $allow->where('allowance_id',$total_allow->allowance_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('allowance_amount');
+                                  $get_bbb = $allow->where('allowance_id',$total_allow->allowance_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off');
+                                  $allllowance = $bbb+$every_cut_off;
+                                  }
+                              @endphp
+                              <td>{{number_format($allllowance,2)}}
+                                
+                              </td>
+                              @endforeach
+                              @php
+                              $every_cut_off_allowance = [];
+                              $allowances_allowance = [];
+                              $every_cut_off_loan_display_loans = [];
+                              $loans_loans = [];
+                              $every_cut_off_payroll_instructions_instructions = [];
+                              $other_instructions = [];
+                               if (!empty($name->employee->allowances)) {
+                                    $allow_a = $name->employee->allowances;
+                                    $every_cut_off_allowance = $allow_a->whereIn('schedule', ['Every cut off', 'This cut off']);
+                                    $allowances_allowance = $allow_a->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off');
+                                }
+                                  if(!empty($name->employee->loan))
+                                {
+                                  $loa_a = ($name->employee->loan);
+                                  $every_cut_off_loan_display_loans = $loa_a->whereIn('schedule', ['Every cut off', 'This cut off']);
+                                  $loans_loans = $loa_a->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off');
+                                }
                                 if(!empty($name->employee->pay_instructions))
                                 {
-                                  $payroll_instructions = ($name->employee->pay_instructions);
-                                  $every_cut_off_payroll_instructions = $payroll_instructions->where('benefit_name',$ins->benefit_name)->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
-                                  $other = $payroll_instructions->where('benefit_name',$ins->benefit_name)->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
-                                  $totasions = $other+$every_cut_off_payroll_instructions;
+                                  $payroll_instructions_a = ($name->employee->pay_instructions);
+                                  $every_cut_off_payroll_instructions_instructions = $payroll_instructions_a->whereIn('frequency', ['Every cut off', 'This cut off']);
+                                  $other_instructions = $payroll_instructions_a->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off');
                                 }
-                            @endphp
-                            <td>{{number_format($totasions,2)}}</td>
-                            @endforeach
-                            {{-- <td><a href='#' data-toggle="modal" data-target="#payroll_instruction{{$name->employee_no}}">{{number_format($total_payroll_instructions,2)}}</a></td> --}}
-                            {{-- <td><a href='#' data-toggle="modal" data-target="#loan{{$name->employee_no}}">{{number_format($total_loans,2)}}</a></td> --}}
-                            @foreach($loans_all as $loans_al)
+                              @endphp
+                              {{-- <td><a href='#' data-toggle="modal" data-target="#allowances{{$name->employee_no}}">{{number_format($total_allowances,2)}}</a></td> --}}
+                              {{-- <td>{{number_format($total_allowances,2)}}</td> --}}
+                              <td>
+                                <input type='hidden' name='get_every_cut_off[{{$key+1}}]' value="{{$every_cut_off_allowance}}">
+                                <input type='hidden' name='get_bbb[{{$key+1}}]' value="{{$allowances_allowance}}">
+
+                                <input type='hidden' name='get_every_cut_off_payroll_instructions[{{$key+1}}]' value="{{$every_cut_off_payroll_instructions_instructions}}">
+                                <input type='hidden' name='get_other[{{$key+1}}]' value="{{$other_instructions}}">
+                                
+                                <input type='hidden' name='get_every_cut_off_loan[{{$key+1}}]' value="{{$every_cut_off_loan_display_loans}}">
+                                <input type='hidden' name='get_loans[{{$key+1}}]' value="{{$loans_loans}}">
+                            
+
+                                {{number_format($total_allowances+$de_minimis,2)}}<input type='hidden' name='nontaxable_benefits_total[{{$key+1}}]' value="{{$total_allowances+$de_minimis}}"></td>
+                              {{-- <td>{{number_format($canteen,2)}}</td>
+                              <td>{{number_format($emergency,2)}}</td>
+                              <td>{{number_format($hdmf_calamity_loan,2)}}</td>
+                              <td>{{number_format($hdmf_contribution_upgrade,2)}}</td>
+                              <td>{{number_format($hdmf_loan,2)}}</td>
+                              <td>{{number_format($motorcycle_loan,2)}}</td>
+                              <td>{{number_format($rice_loan,2)}}</td>
+                              <td>{{number_format($sss_calamity_loan,2)}}</td>
+                              <td>{{number_format($sss_loan,2)}}</td>
+                              <td>{{number_format($staff_loan,2)}}</td>
+                              <td>{{number_format($wesla_loan,2)}}</td> --}}
+                              @foreach($instructions as $asd => $ins)
+                              @php
+                                  $totasions = 0;
+                                  $get_bget_otherbb = [];
+                                  $get_every_cut_off_payroll_instructions = [];
+                                  if(!empty($name->employee->pay_instructions))
+                                  {
+                                    $payroll_instructions = ($name->employee->pay_instructions);
+                                    $every_cut_off_payroll_instructions = $payroll_instructions->where('benefit_name',$ins->benefit_name)->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
+                                    $get_every_cut_off_payroll_instructions = $payroll_instructions->where('benefit_name',$ins->benefit_name)->whereIn('frequency', ['Every cut off', 'This cut off']);
+                                    $other = $payroll_instructions->where('benefit_name',$ins->benefit_name)->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
+                                    $get_other = $payroll_instructions->where('benefit_name',$ins->benefit_name)->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off');
+                                    $totasions = $other+$every_cut_off_payroll_instructions;
+                                  }
+                              @endphp
+                              <td>{{number_format($totasions,2)}}
+                              </td>
+                              @endforeach
+                              {{-- <td><a href='#' data-toggle="modal" data-target="#payroll_instruction{{$name->employee_no}}">{{number_format($total_payroll_instructions,2)}}</a></td> --}}
+                              {{-- <td><a href='#' data-toggle="modal" data-target="#loan{{$name->employee_no}}">{{number_format($total_loans,2)}}</a></td> --}}
+                              @foreach($loans_all as $asd =>  $loans_al)
+                              @php
+                              $lllloan = 0;
+                              $get_loans = [];
+                              $get_every_cut_off_loan = [];
+                              if(!empty($name->employee->loan))
+                              {
+                                $loa = ($name->employee->loan);
+                                $every_cut_off_loan = $loa->where('loan_type_id',$loans_al->loan_type_id)->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('monthly_ammort_amt');
+                                $get_every_cut_off_loan = $loa->where('loan_type_id',$loans_al->loan_type_id)->whereIn('schedule', ['Every cut off', 'This cut off']);
+                                $loans = $loa->where('loan_type_id',$loans_al->loan_type_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('monthly_ammort_amt');
+                                $get_loans = $loa->where('loan_type_id',$loans_al->loan_type_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off');
+                                $lllloan = $loans+$every_cut_off_loan;
+                              }
+                              @endphp
+                              <td>{{number_format(-1*($lllloan),2)}}  </td>
+                              @endforeach
+                              <td>{{number_format(-1*($total_loans),2)}}<input type='hidden' name='nontaxable_deductible_benefits_total[{{$key+1}}]' value="{{$total_loans}}"></td> 
+                              <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}<input type='hidden' name='gross_pay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis}}"></td>
+                              <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}<input type='hidden' name='deductions_total[{{$key+1}}]' value="{{$taxable_deductable_total+$total_loans+$tax}}"></td>
+                              <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}<input type='hidden' name='netpay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions}}"></td>
+                            </tr>
                             @php
-                            $lllloan = 0;
-                            if(!empty($name->employee->loan))
-                            {
-                              $loa = ($name->employee->loan);
-                              $every_cut_off_loan = $loa->where('loan_type_id',$loans_al->loan_type_id)->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('monthly_ammort_amt');
-                              $loans = $loa->where('loan_type_id',$loans_al->loan_type_id)->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('monthly_ammort_amt');
-                              $lllloan = $loans+$every_cut_off_loan;
-                            }
+                            $object = new stdClass();
+                            $object->bank = str_pad($name->employee->bank_account_number, 13, '0', STR_PAD_LEFT);;
+                            $object->amount = str_pad(number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2, "", ""), 13, '0', STR_PAD_LEFT);
+                            array_push($paytext,$object);
+                            $total_net = $total_net + number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2,".","");
                             @endphp
-                            <td>{{number_format(-1*($lllloan),2)}}</td>
-                            @endforeach
-                            <td>{{number_format(-1*($total_loans),2)}}</td> 
-                            <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}</td>
-                            <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}</td>
-                            <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}</td>
-                          </tr>
-                          @php
-                          $object = new stdClass();
-                          $object->bank = str_pad($name->employee->bank_account_number, 13, '0', STR_PAD_LEFT);;
-                          $object->amount = str_pad(number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2, "", ""), 13, '0', STR_PAD_LEFT);
-                          array_push($paytext,$object);
-                          $total_net = $total_net + number_format($gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2,".","");
-                          @endphp
-                        @endforeach
-                    </tbody>
-                  </table>
-                </div>
+                          @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+                </form>
               </div>
             </div>
            </div>
@@ -537,6 +614,26 @@
       order: [] 
     });
   });
+
+  
+  function showConfirmation() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to submit this Pay Reg?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("loader").style.display = "flex";
+                document.getElementById('PagRegForm').submit();
+            }
+        });
+
+        return false; // Prevent default form submission
+    }
 </script>
     {{-- @foreach($payrolls as $payroll)
         @include('payroll.view_payroll')   

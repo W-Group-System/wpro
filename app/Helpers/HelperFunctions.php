@@ -322,7 +322,39 @@ function checkUserAllowedOvertime($user_id){
         return 'no';
     }
 }
+function night_difference_per_company($start_work, $end_work)
+{
+    // Convert timestamps to Unix timestamps if they are not already
+    if (!is_numeric($start_work)) {
+        $start_work = strtotime($start_work);
+    }
+    if (!is_numeric($end_work)) {
+        $end_work = strtotime($end_work);
+    }
 
+    // Define night shift boundaries
+    $night_start = mktime(22, 0, 0, date('m', $start_work), date('d', $start_work), date('Y', $start_work));
+    $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work) + 1, date('Y', $start_work));
+
+    // Ensure $end_work is compared with the correct night boundaries
+    if ($start_work >= $night_start && $start_work < $night_end) {
+        if ($end_work >= $night_end) {
+            return ($night_end - $start_work) / 3600;
+        } else {
+            return ($end_work - $start_work) / 3600;
+        }
+    } elseif ($end_work >= $night_start && $end_work < $night_end) {
+        if ($start_work < $night_start) {
+            return ($end_work - $night_start) / 3600;
+        } else {
+            return ($end_work - $start_work) / 3600;
+        }
+    } elseif ($start_work < $night_start && $end_work >= $night_end) {
+        return ($night_end - $night_start) / 3600;
+    }
+
+    return 0; // Default case when no night shift overlap
+}
 function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday)
 {
     $date_from = Carbon::parse($date_from);

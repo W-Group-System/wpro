@@ -38,7 +38,11 @@ class AttendanceDetailedReport extends Model
       'rst_sh_ot_over_eight',
       'rst_sh_nd',
       'rst_sh_nd_over_eight',
-      'cut_off_date'
+      'cut_off_date',
+      'rst_lh_ot_over_eight',
+      'rst_lh_nd',
+      'rst_lh_nd_over_eight',
+      'rst_sh_ot',
   ];
    
    public function company()

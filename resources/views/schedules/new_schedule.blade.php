@@ -47,7 +47,7 @@
                   <div class="row">
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_to[Sunday" class="form-control form-control-sm">
+                      <input type="time" name="time_in_to[Sunday]" class="form-control form-control-sm">
                     </div>
                   </div>
                 </div>
