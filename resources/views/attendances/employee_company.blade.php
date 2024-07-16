@@ -612,7 +612,7 @@
                                                     
                                                     
                                                 }
-                                                if($overtime <2)
+                                                if($overtime <1)
                                                 {
                                                     $overtime =0;
                                                 }
