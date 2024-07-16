@@ -675,9 +675,9 @@
                                                     if($rest == "RESTDAY")
                                                     {
                                                         $overtime = 0;
-                                                        $reg_nd = 0;
+                                                        $night_diff = 0;
                                                         $night_diff_ot = 0;
-                                                        if(($time_start) && ($time_end))
+                                                        if(($time_start) && ($time_end) && ($approved_overtime_hrs >0))
                                                         {
                                                             $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
                                                             $restnd =  night_difference_per_company($time_start,$time_end);
@@ -725,12 +725,12 @@
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
                                                 <td @if($late>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
                                                 <td  @if($undertime_hrs>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{number_format($undertime_hrs*60,2)}}</td>
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="{{$overtime}}">{{number_format($overtime,2)}}</td> {{-- REG OT --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="{{$night_diff}}">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="{{$night_diff_ot}}">{{number_format($night_diff_ot,2)}}</td> {{-- REG OT ND --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="{{$restday_ot}}">{{number_format($restday_ot,2)}}</td>  {{-- RST OT --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="{{$restday_ot_ge}}">{{number_format($restday_ot_ge,2)}}</td> {{-- RST OT > 8 --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="{{$restnd}}">{{number_format($restnd,2)}}</td> {{-- RST ND --}}
+                                                <td @if($overtime>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="{{$overtime}}">{{number_format($overtime,2)}}</td> {{-- REG OT --}}
+                                                <td @if($night_diff>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="{{$night_diff}}">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
+                                                <td @if($night_diff_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="{{$night_diff_ot}}">{{number_format($night_diff_ot,2)}}</td> {{-- REG OT ND --}}
+                                                <td @if($restday_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="{{$restday_ot}}">{{number_format($restday_ot,2)}}</td>  {{-- RST OT --}}
+                                                <td @if($restday_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="{{$restday_ot_ge}}">{{number_format($restday_ot_ge,2)}}</td> {{-- RST OT > 8 --}}
+                                                <td @if($restnd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="{{$restnd}}">{{number_format($restnd,2)}}</td> {{-- RST ND --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="0.00">0.00</td> {{-- RST ND > 8 --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot]" value="0.00">0.00</td> {{-- LH OT --}}
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot_over_eight]" value="0.00">0.00</td> {{-- LH OT > 8 --}}
@@ -1025,6 +1025,9 @@
         new DataTable('.employee_attendance', 
         {
             // pagelenth:25,
+            fixedColumns: {
+                leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
+            },
             paginate:false,
             dom: 'Bfrtip',
             buttons: [
