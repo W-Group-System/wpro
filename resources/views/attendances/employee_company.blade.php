@@ -671,8 +671,9 @@
                                                     if($rest == "RESTDAY")
                                                     {
                                                         $overtime = 0;
+                                                        $reg_nd = 0;
                                                         $night_diff_ot = 0;
-                                                        if(($time_start) && ($time_end) && ($approved_overtime_hrs >0))
+                                                        if(($time_start) && ($time_end))
                                                         {
                                                             $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
                                                             $restnd =  night_difference_per_company($time_start,$time_end);
