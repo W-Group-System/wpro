@@ -792,7 +792,7 @@
                                                 <td><strong>{{ $subtotal_leave_w_pay }}</strong></td>
                                                 <td><strong>{{ $subtotal_reg_hrs }}</strong></td>
                                                 <td><strong>{{ $subtotal_late }}</strong></td>
-                                                <td><strong>{{ $subtotal_overtimes }}</strong></td>
+                                                <td><strong>{{ $subtotal_undertime }}</strong></td>
                                                 <td><strong>{{ $subtotal_overtimes}}</strong></td>
                                                 <td><strong>{{ $subtotal_nd}}</strong></td>
                                                 <td><strong>{{ $subtotal_ot_nd}}</strong></td>
