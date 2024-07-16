@@ -52,7 +52,7 @@ class UploadController extends Controller
                     
                     if ($request->type == "OB") {
                         $employeeOb = EmployeeOb::whereIn('user_id', $user_id)
-                            ->where('applied_date', $dateFiled)
+                            ->where('applied_date',date('Y-m-d',strtotime($row[3])))
                             ->first();
                         // dd($row[5]);
                         foreach ($user_id as $uid) {
