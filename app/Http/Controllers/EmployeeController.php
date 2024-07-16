@@ -2039,6 +2039,7 @@ class EmployeeController extends Controller
         
         $attendanceLogs = AttendanceLog::whereBetween('date', [$from, $to])
             ->where('emp_code', $request->employees)
+            ->orderBy('datetime','asc')
             ->get();
 
         if ($attendanceLogs != null) 
