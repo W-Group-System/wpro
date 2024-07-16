@@ -106,13 +106,24 @@ class UploadController extends Controller
                         }
                     } else if ($request->type == "VL/SL") {
                         $types = 0;
+                        $pay =1;
+                        $halfday =0;
                         if ($row[6] == "Vacation Leave" || $row[6] == "VL") {
                             $types = 1;
                         }
                         if ($row[6] == "Sick Leave" || $row[6] == 'SL') {
                             $types = 2;
                         }
-        
+                        if (str_contains($row[6],"without")){
+                            $types = 2;
+                            $pay =0;
+
+                        }
+                        if($row[5] == .5)
+                        {
+                            $halfday = 1;
+                        }
+                        
                         $startDate = date('Y-m-d',strtotime($row[3]));
                         $endDate = date('Y-m-d',strtotime($row[4]));;
                         $approved_date = date('Y-m-d',strtotime($row[7]));;
@@ -132,7 +143,8 @@ class UploadController extends Controller
                             $leaves->leave_type = $types;
                             $leaves->date_from =$startDate;
                             $leaves->date_to = $endDate;
-                            $leaves->withpay = 1;
+                            $leaves->withpay = $pay;
+                            $leaves->halfday = $halfday;
                             $leaves->approved_date = $approved_date;
                             $leaves->status = $row[10];
                             $leaves->created_by = auth()->user()->id;
