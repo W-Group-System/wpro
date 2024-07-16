@@ -138,6 +138,12 @@
                                                 $subtotal_late = 0;
                                                 $subtotal_undertime = 0;
                                                 $subtotal_overtimes = 0;
+                                                $subtotal_nd = 0;
+                                                $subtotal_ot_nd = 0;
+                                                $subtotal_rd_ot = 0;
+                                                $subtotal_rd_ot_ge = 0;
+                                                $subtotal_rd_nd = 0;
+                                                $subtotal_rd_nd_ge = 0;
                                             @endphp
 
                                             @foreach($date_range as $date_r)
@@ -702,6 +708,13 @@
                                                 $subtotal_reg_hrs += $work;
                                                 $subtotal_late += $late;
                                                 $subtotal_undertime += ($undertime_hrs*60);
+                                                $subtotal_overtimes = $overtime;
+                                                $subtotal_nd = $night_diff;
+                                                $subtotal_ot_nd = $night_diff_ot;
+                                                $subtotal_rd_ot = $restday_ot;
+                                                $subtotal_rd_ot_ge = $restday_ot_ge;
+                                                $subtotal_rd_nd = $restnd;
+                                                $subtotal_rd_nd_ge = 0;
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
@@ -779,8 +792,14 @@
                                                 <td><strong>{{ $subtotal_leave_w_pay }}</strong></td>
                                                 <td><strong>{{ $subtotal_reg_hrs }}</strong></td>
                                                 <td><strong>{{ $subtotal_late }}</strong></td>
-                                                <td><strong>{{ $subtotal_undertime }}</strong></td>
-                                                <td><strong>{{$approved_overtimes}}</strong></td>
+                                                <td><strong>{{ $subtotal_overtimes }}</strong></td>
+                                                <td><strong>{{ $subtotal_overtimes}}</strong></td>
+                                                <td><strong>{{ $subtotal_nd}}</strong></td>
+                                                <td><strong>{{ $subtotal_ot_nd}}</strong></td>
+                                                <td><strong>{{ $subtotal_rd_ot}}</strong></td>
+                                                <td><strong>{{ $subtotal_rd_ot_ge}}</strong></td>
+                                                <td><strong>{{ $subtotal_rd_nd}}</strong></td>
+                                                <td><strong>{{ $subtotal_rd_nd_ge}}</strong></td>
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>
