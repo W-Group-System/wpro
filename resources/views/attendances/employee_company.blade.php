@@ -816,11 +816,6 @@
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>
                                                 <td><strong>0.00</strong></td>
-                                                <td><strong>0.00</strong></td>
-                                                <td><strong>0.00</strong></td>
-                                                <td><strong>0.00</strong></td>
-                                                <td><strong>0.00</strong></td>
-                                                <td><strong>0.00</strong></td>
                                                
                                             </tr>
                                         @endforeach
