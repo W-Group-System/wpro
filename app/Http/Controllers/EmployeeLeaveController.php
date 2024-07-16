@@ -328,7 +328,6 @@ class EmployeeLeaveController extends Controller
         $attachment->leave_file = $filePath;
         $attachment->save();
 
-        Alert::success('File uploaded successfully')->persistent('Dismiss');
-        return back();
+        return response()->json(['success' => 'File uploaded successfully']);
     }
 }
