@@ -612,6 +612,10 @@
                                                     
                                                     
                                                 }
+                                                if($night_diff_ot < .5)
+                                                {
+                                                    $night_diff_ot = 0;
+                                                }
                                                 if($overtime <1)
                                                 {
                                                     $overtime =0;
