@@ -562,11 +562,7 @@
                                                 {
                                                     $undertime_hrs = 0;
                                                 }
-                                                $subtotal_abs += $abs;
-                                                $subtotal_leave_w_pay += $leave_count;
-                                                $subtotal_reg_hrs += $work;
-                                                $subtotal_late += $late;
-                                                $subtotal_undertime += ($undertime_hrs*60);
+                                          
                                                 @endphp
                                                 @php
                                                 $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
@@ -701,6 +697,11 @@
                                                 {
                                                     $overtime = 0;
                                                 }
+                                                $subtotal_abs += $abs;
+                                                $subtotal_leave_w_pay += $leave_count;
+                                                $subtotal_reg_hrs += $work;
+                                                $subtotal_late += $late;
+                                                $subtotal_undertime += ($undertime_hrs*60);
                                                 @endphp
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
