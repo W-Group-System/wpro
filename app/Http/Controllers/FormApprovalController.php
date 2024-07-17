@@ -265,7 +265,8 @@ class FormApprovalController extends Controller
             if($employee_overtime->level == 0){
 
                 $employee_approver = EmployeeApprover::where('user_id', $employee_overtime->user_id)->where('approver_id', auth()->user()->id)->first();
-                if($employee_approver->as_final == 'on'){
+                if($employee_approver == null)
+                {
                     $ot_approved_hrs = $request->ot_approved_hrs;
                     EmployeeOvertime::Where('id', $employee_overtime->id)->update([
                         'approved_date' => date('Y-m-d'),
@@ -275,14 +276,29 @@ class FormApprovalController extends Controller
                         'break_hrs' => $request->break_hrs,
                         'ot_approved_hrs' => $ot_approved_hrs
                     ]);
-                }else{
-                    EmployeeOvertime::Where('id', $employee_overtime->id)->update([
-                        'approval_remarks' => $request->approval_remarks,
-                        'level' => 1,
-                        'break_hrs' => $request->break_hrs,
-                        'ot_approved_hrs' => $request->ot_approved_hrs
-                    ]);
                 }
+                else
+                {
+                    if($employee_approver->as_final == 'on'){
+                        $ot_approved_hrs = $request->ot_approved_hrs;
+                        EmployeeOvertime::Where('id', $employee_overtime->id)->update([
+                            'approved_date' => date('Y-m-d'),
+                            'status' => 'Approved',
+                            'approval_remarks' => $request->approval_remarks,
+                            'level' => 1,
+                            'break_hrs' => $request->break_hrs,
+                            'ot_approved_hrs' => $ot_approved_hrs
+                        ]);
+                    }else{
+                        EmployeeOvertime::Where('id', $employee_overtime->id)->update([
+                            'approval_remarks' => $request->approval_remarks,
+                            'level' => 1,
+                            'break_hrs' => $request->break_hrs,
+                            'ot_approved_hrs' => $request->ot_approved_hrs
+                        ]);
+                    }
+                }
+               
             }
             else if($employee_overtime->level == 1){
                 $ot_approved_hrs = $request->ot_approved_hrs;
