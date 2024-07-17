@@ -94,6 +94,7 @@ class PayslipController extends Controller
                 $query->where('status', 'Active');
             })
             ->select('company_id', 'employee_no', 'name', 
+            DB::raw('COUNT(CASE WHEN shift NOT LIKE "%REST%" THEN 1 END) as shift_count'),
             DB::raw('SUM(abs) as total_abs'),
             DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
             DB::raw('SUM(lh_nd) as total_lh_nd'),

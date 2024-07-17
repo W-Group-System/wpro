@@ -190,6 +190,7 @@
                           @php
                               $payroll_b = $dates->where('log_date',25)->first();
                               $payroll_a = $dates->where('log_date',10)->first();
+                              $days_rendered = $name->shift_count;
                               $pay_rate = 0.00;
                               $basic_pay = 0.00;
                               $hourly_rate = 0.00;
@@ -231,15 +232,22 @@
                               $loans = 0.00;
                               $allowances = 0.00;
                               
-                              
                               $leave_total_amount = $pl_amount+$sl_amount+$vl_amount;
                               if(!empty($name->employee->salary))
                               {
                                 $pay_rate = $name->employee->salary->basic_salary;
                                 $basic_pay = $name->employee->salary->basic_salary/2;
+                              
                                 $daily_rate = ($name->employee->salary->basic_salary)*12/313;
+                              
                                 $hourly_rate = $daily_rate/8;
                                 $de_minimis = $name->employee->salary->de_minimis/2;
+                                if($name->employee->work_description == "Non-Monthly")
+                                {
+                                  $d = ($name->employee->salary->de_minimis*12)/313;
+                                  $basic_pay = $daily_rate*($days_rendered-$name->total_abs+$name->total_lv_w_pay);
+                                  $de_minimis = $daily_rate*($days_rendered-$name->total_abs+$name->total_lv_w_pay);
+                                }
                               }
                               $hours = 0;
                               // $hours_count =0;
@@ -318,7 +326,10 @@
                               $total_undertime_min = $name->total_undertime_min/60*$hourly_rate;
                               
                               $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
+                              if($name->employee->work_description != "Non-Monthly")
+                              {
                               $total_abs = $hours*$hourly_rate;
+                              }
                               
                               $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
                               if($payroll_b)
@@ -371,7 +382,7 @@
                               <td>{{$name->employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$name->employee->bank_account_number}}"></td>
                               <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
                               <td><input type='hidden' name='tax_status[{{$key+1}}]' value=""></td>
-                              <td><input type='hidden' name='days_rendered[{{$key+1}}]' value=""></td>
+                              <td><input type='hidden' name='days_rendered[{{$key+1}}]' value="{{$days_rendered}}">{{number_format($days_rendered,2)}}</td>
                               <td>{{number_format($basic_pay,2)}}<input type='hidden' name='basic_pay[{{$key+1}}]' value="{{$basic_pay}}"></td>
                               <td>{{number_format($name->total_lh_nd,2)}}<input type='hidden' name='name_total_lh_nd[{{$key+1}}]' value="{{$name->total_lh_nd}}"></td>
                               <td>{{number_format($total_lh_nd_amount,2)}}<input type='hidden' name='total_lh_nd_amount[{{$key+1}}]' value="{{$total_lh_nd_amount}}"></td>
