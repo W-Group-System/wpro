@@ -1834,7 +1834,7 @@ class EmployeeController extends Controller
                                 })
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
-                                })->where('classification','!=',8);
+                                })->where('classification','!=',8)->where('original_date_hired','<=',$to_date);
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
             }
