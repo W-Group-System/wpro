@@ -14,7 +14,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="company" id="companySelect" required>
+                                        <select data-placeholder="Select Company" onchange='clear();' class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="company" id="companySelect" required>
                                             <option value="">-- Select Company --</option>
                                             @foreach($companies as $comp)
                                             <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
@@ -431,8 +431,11 @@
                                                         {
                                                             $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                         }
-                                                        $work_ot =  round((($time_end_ts - $schedule_in)/3600), 2);
-                                                     
+                                                        $work_ot =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        // if($date_r == "2024-07-10")
+                                                        // {
+                                                        //     dd($work_ot);
+                                                        // }
                                                         if($time_end_ts > $schedule_out)
                                                         {
                                                             // dd($time_end_ts." ".$schedule_out);
@@ -477,7 +480,11 @@
                                                            {
                                                             $overtime = (double) number_format($work_ot - $original_sched,2);
                                                            }
-                                                                
+                                                        //    if($date_r == "2024-07-10")
+                                                        //    {
+                                                        //     dd($original_sched);
+                                                        //    }
+                                                            
                                                             
                                                           
                                                             if($work > $schedule_hours)
@@ -934,7 +941,7 @@
     //         $("#companySelect").trigger('change');
     //     }
     // });
-
+  
     $(document).ready(function() {
         var fromDateInput = document.getElementById('fromDate');
         var toDateInput = document.getElementById('toDate');
@@ -1024,7 +1031,12 @@
             $('#exportButton').prop('disabled', false);
             $('#postButton').prop('disabled', false);
         }
-
+        function clear()
+    {
+        alert('renz');
+        document.getElementById('fromDate').value = "";
+        document.getElementById('toDate').value = "";
+    }
         // Initialize with the selected company (if any)
         var selectedCompanyId = $("#companySelect").val();
         if (selectedCompanyId) {
