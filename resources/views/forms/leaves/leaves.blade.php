@@ -484,7 +484,7 @@
                                     data-target="#edit_leave{{ $employee_leave->id }}" data-toggle="modal" title='Edit'>
                                 <i class="ti-pencil-alt"></i>
                             </button>
-                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
+                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
                                     class="btn btn-rounded btn-danger btn-icon">
                                 <i class="fa fa-ban"></i>
                             </button>
@@ -493,7 +493,7 @@
                                     data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
                                 <i class="ti-eye"></i>
                             </button>            
-                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
+                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
                                     class="btn btn-rounded btn-danger btn-icon">
                                 <i class="fa fa-ban"></i>
                             </button>
@@ -662,9 +662,10 @@
   });
 
   function cancel(id) {
+    // console.log(id);
     var element = document.getElementById('tdActionId'+id);
     var dataID = element.getAttribute('data-id');
-    swal({
+    Swal.fire({
       title: "Are you sure?",
       text: "You want to cancel this leave?",
       icon: "warning",
@@ -685,7 +686,7 @@
           },
           success: function(data) {
             document.getElementById("loader").style.display = "none";
-            swal("Leave has been cancelled!", {
+            Swal.fire("Leave has been cancelled!", {
               icon: "success",
             }).then(function() {
               document.getElementById("tdStatus" + id).innerHTML =
