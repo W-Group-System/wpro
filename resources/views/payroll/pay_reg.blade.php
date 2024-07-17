@@ -67,7 +67,7 @@
                     @if($cutoff)
                     <div class='row'>
                       <div class='col-md-4'>
-                        Posting Date <input name='posting_date'  class="form-control form-control-sm" type='date' value='{{date('Y-m-d')}}' required>
+                        Posting Date <input name='posting_date' id='posting_date'  class="form-control form-control-sm" type='date' value='{{date('Y-m-d')}}' required>
                       </div>
                       <div class='col-md-4'>
                         <button type="submit" class="btn btn-success mb-1">Post</button>
@@ -574,21 +574,28 @@
 
 @endphp
 <script>
+   var get_date = document.getElementById("posting_date").value;
    var paytext = {!! json_encode($paytext) !!};
    var total_net = {!! json_encode($total_net) !!};
    var company = {!! json_encode($companyData) !!};
-    var text="PHP010000038248832"+"071024"+"2"+total_net+"\n";
+    
+   function CreateTextFile() {
+    
+    var get_date_original = document.getElementById("posting_date").value;
+    get_date = get_date_original.replace("-", "");
+    get_date = get_date.replace("-", "");
+    get_date=get_date.slice(2);
+    var text="PHP010000038248832"+get_date+"2"+total_net+"\n";
    for (var key in paytext) {
     if(paytext[key] != undefined){
       text += "PHP10"+paytext[key].bank+"0000007"+paytext[key].amount+"\n";
     }
      
   }
-   function CreateTextFile() {
       var blob = new Blob([text], {
          type: "text/plain;charset=utf-8",
       });
-      saveAs(blob, company+"-071024.txt");
+      saveAs(blob, company+"-"+get_date_original+".txt");
    }
 </script>
 {{-- @foreach($names as $name)
