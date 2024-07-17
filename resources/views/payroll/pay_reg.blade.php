@@ -279,11 +279,16 @@
                                 $total_loans = $loans+$every_cut_off_loan;
                               }
                               $total_allowances=0;
+                              $total_allowances_sss=0;
                               if (!empty($name->employee->allowances)) {
                                   $allow = $name->employee->allowances;
                                   $every_cut_off = $allow->whereIn('schedule', ['Every cut off', 'This cut off'])->sum('allowance_amount');
+                                  $total_allowances_sss_every_cut_off=$allow->whereIn('schedule', ['Every cut off', 'This cut off'])->where('allowance_id','!=',9)->sum('allowance_amount');
+                          
                                   $allowances = $allow->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('allowance_amount');
+                                  $total_allowances_sss_allowances = $allow->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->where('allowance_id','!=',9)->sum('allowance_amount');
                                   $total_allowances = $allowances + $every_cut_off;
+                                  $total_allowances_sss = $total_allowances_sss_allowances + $total_allowances_sss_every_cut_off;
                               }
                               $total_payroll_instructions = 0;
                               if(!empty($name->employee->pay_instructions))
@@ -321,11 +326,17 @@
                                 $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
                                 if($last_c)
                                 {
-                                  $government_amount = $government_amount +$last_c->gross_pay;
+                                 
+                                  $sss_allowance=($last_c->pay_allowances)->where('allowance_id','!=',9)->sum('amount');
+                                  
+                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$sss_allowance+$last_c->deminimis+$total_allowances_sss+$de_minimis;
+                                  $government_amount = $government_amount+$lastccc;
+                                
                                 }
-                                $sss_amount = $sss->where('salary_from','>=',$government_amount)->first();
+                                $sss_amount = $sss->where('salary_to','>',$government_amount)->first();
                                 if($sss_amount)
                                 {
+                                  // dd($sss_amount);
                                   $sss_ecc = $sss_amount->ecc;
                                   $sss_ee = $sss_amount->regular_ee;
                                   $sss_er = $sss_amount->regular_er;

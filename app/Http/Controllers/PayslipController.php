@@ -60,7 +60,7 @@ class PayslipController extends Controller
         $instructions = [];
         
         $last_cut_off = [];
-        $sss = ContributionSSS::orderBy('salary_from','asc')->get();
+        $sss = ContributionSSS::orderBy('salary_to','asc')->get();
         if($request->company)
         {
             $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date')->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get(); 
@@ -71,7 +71,7 @@ class PayslipController extends Controller
             if($request->cut_off)
             {
                 
-            $last_cut_off = Payregs::where('cut_off_date','<',$cutoff)->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
+            $last_cut_off = Payregs::with('pay_allowances')->where('cut_off_date','<',$cutoff)->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
             $absents_data = AttendanceDetailedReport ::whereColumn('abs', '>', 'lv_w_pay')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
             
             $names = AttendanceDetailedReport::with([
