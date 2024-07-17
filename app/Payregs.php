@@ -25,4 +25,8 @@ class Payregs extends Model  implements Auditable
     {
         return $this->belongsTo(Employee::class,'employee_no','employee_code');
     }
+    public function generated_by()
+    {
+        return $this->belongsTo(User::class,'posted_by','id');
+    }
 }

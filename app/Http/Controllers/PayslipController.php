@@ -36,10 +36,11 @@ class PayslipController extends Controller
     //
     public function view ()
     {
-      
+        $payslips = Payregs::where('employee_no',auth()->user()->employee->employee_code)->orderBy('id','desc')->get();
         return view('payslips.payslips',
         array(
             'header' => 'payslips',
+            'payslips' => $payslips
             
         ));
     }
@@ -875,6 +876,18 @@ class PayslipController extends Controller
     public function generatePayslip(Request $request)
     {
     $payroll = Payregs::with('pay_allowances.allowance_type','pay_loan.loan_type','pay_instructions')->findOrfail($request->id);
+    // $allowances = PayregAllowance::where('payreg_id',$request->id);
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('payslips.generate_payslip',
+        array(
+            'payroll' => $payroll,
+        ))->setPaper('a4', 'Portrait');
+
+        return $pdf->stream();
+    }
+    public function generatePayslipEmployee(Request $request)
+    {
+    $payroll = Payregs::with('pay_allowances.allowance_type','pay_loan.loan_type','pay_instructions')->where('pay_period_from',$request->id)->where('employee_no',auth()->user()->employee->employee_code)->first();
     // $allowances = PayregAllowance::where('payreg_id',$request->id);
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('payslips.generate_payslip',

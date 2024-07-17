@@ -223,6 +223,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('importPayRegExcel', 'PayslipController@importPayRegExcel');
     Route::get('/generated-payroll','PayslipController@generatedPayroll');
     Route::get('/payslip','PayslipController@generatePayslip');
+    Route::get('/payslip-employee','PayslipController@generatePayslipEmployee');
 
     Route::get('pay-instruction', 'PayslipController@payroll_instruction');
     Route::post('importPayinstructionExcel', 'PayslipController@importPayInstructionExcel');
