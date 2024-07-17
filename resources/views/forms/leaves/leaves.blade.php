@@ -697,7 +697,7 @@
           }
         })
       } else {
-        swal({text:"You stop the cancelation of leave.",icon:"success"});
+        Swal.fire({text:"You stop the cancelation of leave.",icon:"success"});
       }
     });
   }
