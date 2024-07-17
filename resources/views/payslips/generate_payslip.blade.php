@@ -333,6 +333,7 @@
                         <td style="text-align: right; font-weight: bold;"></td>
                         {{-- <td style="text-align: right; font-weight: bold;">{{number_format($payroll->nontaxable_deductible_benefits_total,2)}}</td> --}}
                     </tr>
+                    {{-- {{dd($payroll->id)}} --}}
                     @foreach($payroll->pay_loan as $loan)
                     <tr>
                         <td style="font-weight: bold;"> - {{$loan->loan_type->loan_name}}</td>

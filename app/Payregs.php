@@ -11,15 +11,15 @@ class Payregs extends Model  implements Auditable
     protected $table = 'payregs';
     public function pay_allowances()
     {
-        return $this->hasMany(PayregAllowance::class,'id','payreg_id');
+        return $this->hasMany(PayregAllowance::class,'payreg_id','id');
     }
     public function pay_loan()
     {
-        return $this->hasMany(PayregLoan::class,'id','payreg_id');
+        return $this->hasMany(PayregLoan::class,'payreg_id','id');
     }
     public function pay_instructions()
     {
-        return $this->hasMany(PayregInstruction::class,'id','payreg_id');
+        return $this->hasMany(PayregInstruction::class,'payreg_id','id');
     }
     public function employee()
     {

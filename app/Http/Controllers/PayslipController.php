@@ -874,7 +874,8 @@ class PayslipController extends Controller
 
     public function generatePayslip(Request $request)
     {
-        $payroll = Payregs::with('pay_allowances.allowance_type')->findOrfail($request->id);
+    $payroll = Payregs::with('pay_allowances.allowance_type','pay_loan.loan_type','pay_instructions')->findOrfail($request->id);
+    // $allowances = PayregAllowance::where('payreg_id',$request->id);
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('payslips.generate_payslip',
         array(
