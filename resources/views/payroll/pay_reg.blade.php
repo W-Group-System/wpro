@@ -191,8 +191,7 @@
                           @php
                               $payroll_b = $dates->where('log_date',25)->first();
                               $payroll_a = $dates->where('log_date',10)->first();
-                              $days_rendered = $name->shift_count-$name->total_abs-$name->total_lv_w_pay;
-                              // $days_rendered = 0;
+                              $days_rendered = $name->shift_count-$name->total_abs+$name->total_lv_w_pay;
                               $pay_rate = 0.00;
                               $basic_pay = 0.00;
                               $other_allowances_basic_pay = 0.00;
@@ -238,10 +237,7 @@
                               $allowances = 0.00;
                               
                               $leave_total_amount = $pl_amount+$sl_amount+$vl_amount;
-                              if($name->employee->work_description == "Non-Monthly")
-                              {
-                                // $days_rendered =0 ;
-                                if($name->employee->employee_code == "A278816")
+                              if($name->employee->employee_code == "A278816")
                                 {
                                   $days_rendered =0 ;
                                 foreach($shifts->where('employee_no',$name->employee_no) as $shift_data)
@@ -273,9 +269,6 @@
                                 }
                                 
                               }
-                              }
-                              
-                              
                               if(!empty($name->employee->salary))
                               {
                                 $pay_rate = $name->employee->salary->basic_salary;
