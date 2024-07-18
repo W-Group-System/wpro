@@ -114,7 +114,7 @@
                               data-target="#edit_ob{{ $ob->id }}" data-toggle="modal" title='Edit'>
                               <i class="ti-pencil-alt"></i>
                             </button>
-                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
+                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel({{ $ob->id }})"
                               class="btn btn-rounded btn-danger btn-icon">
                               <i class="fa fa-ban"></i>
                             </button>
@@ -123,7 +123,7 @@
                               data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
                               <i class="ti-eye"></i>
                             </button>            
-                              <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
+                              <button title='Cancel' id="{{ $ob->id }}" onclick="cancel({{ $ob->id }})"
                                 class="btn btn-rounded btn-danger btn-icon">
                                 <i class="fa fa-ban"></i>
                               </button>
@@ -136,7 +136,7 @@
                             data-target="#upload_obForm{{ $ob->id }}" data-toggle="modal" title='Upload'>
                             <i class="ti-upload"></i>
                           </button>                                    
-                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel(this.id)"
+                            <button title='Cancel' id="{{ $ob->id }}" onclick="cancel({{ $ob->id }})"
                               class="btn btn-rounded btn-danger btn-icon">
                               <i class="fa fa-ban"></i>
                             </button>  
@@ -222,7 +222,7 @@
 		function cancel(id) {
 			var element = document.getElementById('tdActionId'+id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "You want to cancel this official business?",
 					icon: "warning",
@@ -243,7 +243,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Official Business has been cancelled!", {
+								Swal.fire("Official Business has been cancelled!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdStatus" + id).innerHTML =
@@ -255,7 +255,7 @@
 						})
 
 					} else {
-            swal({text:"You stop the cancelation of official Business.",icon:"success"});
+            Swal.fire({text:"You stop the cancelation of official Business.",icon:"success"});
 					}
 				});
 		}

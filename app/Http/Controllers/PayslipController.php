@@ -276,6 +276,7 @@ class PayslipController extends Controller
             $pay_register->net_taxable_income = $request->net_taxable_income[$key];
             $pay_register->withholding_tax = $request->tax[$key];
             $pay_register->deminimis = $request->de_minimis[$key];
+            $pay_register->other_allowances_basic_pay = $request->other_allowances_basic_pay[$key];
             $pay_register->nontaxable_benefits_total = $request->nontaxable_benefits_total[$key];
             $pay_register->nontaxable_deductible_benefits_total = $request->nontaxable_deductible_benefits_total[$key];
             $pay_register->gross_pay = $request->gross_pay[$key];

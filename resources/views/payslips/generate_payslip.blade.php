@@ -313,6 +313,12 @@
                         <td style="font-weight: bold;">De-minimis</td>
                         <td style="text-align: right; font-weight: bold;">{{number_format($payroll->deminimis,2)}}</td>
                     </tr>
+                    @if($payroll->other_allowances_basic_pay>0)
+                    <tr>
+                        <td style="font-weight: bold;">Other Allowances</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->other_allowances_basic_pay,2)}}</td>
+                    </tr>
+                    @endif
                     @foreach($payroll->pay_allowances as $allow)
                     <tr>
                         <td style="font-weight: bold;"> - {{$allow->allowance_type->name}}</td>
