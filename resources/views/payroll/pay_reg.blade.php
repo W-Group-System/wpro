@@ -191,7 +191,7 @@
                           @php
                               $payroll_b = $dates->where('log_date',25)->first();
                               $payroll_a = $dates->where('log_date',10)->first();
-                              $days_rendered = $name->shift_count;
+                              $days_rendered = $name->shift_count-$name->total_abs-$name->total_lv_w_pay;
                               $pay_rate = 0.00;
                               $basic_pay = 0.00;
                               $other_allowances_basic_pay = 0.00;
@@ -254,11 +254,11 @@
                                 {
                                   $d = ($name->employee->salary->de_minimis*12)/313;
                                   
-                                  $basic_pay = $daily_rate*($days_rendered-$name->total_abs-$name->total_lv_w_pay);
+                                  $basic_pay = $daily_rate*($days_rendered);
                                   // dd($basic_pay);
                                   
                                   
-                                  $de_minimis = $d*($days_rendered-$name->total_abs-$name->total_lv_w_pay);
+                                  $de_minimis = $d*($days_rendered);
                                 }
                               }
                               $hours = 0;
@@ -339,9 +339,13 @@
                               
                               $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
                               $total_abs = $hours*$hourly_rate;
+                              if($name->employee->work_description == "Non-Monthly")
+                              {
+                                $total_abs = 0;
+                              }
                               if($name->employee->work_description != "Non-Monthly")
                               {
-                                $total_abs = $hours*$hourly_rate;
+                                
                                 if($other_allowances_basic_pay > 0)
                                 {
                                   $other_allowances_basic_pay = ($other_allowances_basic_pay)-($hours*$hourly_rate_other_allowance);
