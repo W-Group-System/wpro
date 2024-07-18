@@ -183,7 +183,8 @@ class EmployeeController extends Controller
                                 })
                                 ->whereIn('company_id',$allowed_companies)
                                 ->where('status',$status)
-                                ->get();
+                                ->orderBy('last_name')
+                                ->paginate(10);
 
         $employees_active = Employee::select('id','user_id')     
                                 ->when($allowed_locations,function($q) use($allowed_locations){
