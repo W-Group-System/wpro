@@ -248,11 +248,17 @@
                                 $hourly_rate = $daily_rate/8;
                                 $hourly_rate_other_allowance = ($name->employee->salary->other_allowance)*12/313;
                                 $de_minimis = $name->employee->salary->de_minimis/2;
+                                
+                                // dd($name->employee);
                                 if($name->employee->work_description == "Non-Monthly")
                                 {
                                   $d = ($name->employee->salary->de_minimis*12)/313;
-                                  $basic_pay = $daily_rate*($days_rendered-$name->total_abs+$name->total_lv_w_pay);
-                                  $de_minimis = $daily_rate*($days_rendered-$name->total_abs+$name->total_lv_w_pay);
+                                  
+                                  $basic_pay = $daily_rate*($days_rendered);
+                                  // dd($basic_pay);
+                                  
+                                  
+                                  $de_minimis = $d*($days_rendered);
                                 }
                               }
                               $hours = 0;
@@ -332,6 +338,7 @@
                               $total_undertime_min = $name->total_undertime_min/60*$hourly_rate;
                               
                               $total_abs_count = $name->total_abs-$name->total_lv_w_pay;
+                              $total_abs = $hours*$hourly_rate;
                               if($name->employee->work_description != "Non-Monthly")
                               {
                                 $total_abs = $hours*$hourly_rate;
