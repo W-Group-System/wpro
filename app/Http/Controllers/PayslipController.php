@@ -58,6 +58,7 @@ class PayslipController extends Controller
         $allowances_total = [];
         $loans_all = [];
         $instructions = [];
+        $shifts = [];
         
         $last_cut_off = [];
         $sss = ContributionSSS::orderBy('salary_to','asc')->get();
@@ -73,7 +74,7 @@ class PayslipController extends Controller
                 
             $last_cut_off = Payregs::with('pay_allowances')->where('cut_off_date','<',$cutoff)->orderBy('cut_off_date','desc')->where('company_id',$request->company)->get();
             $absents_data = AttendanceDetailedReport ::whereColumn('abs', '>', 'lv_w_pay')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
-            
+            $shifts = AttendanceDetailedReport ::where('shift', 'NOT LIKE', '%REST%')->where('company_id',$request->company)->where('cut_off_date', $cutoff)->get();
             $names = AttendanceDetailedReport::with([
                 'employee' => function ($query) {
                         $query->where('status','Active');
@@ -114,8 +115,10 @@ class PayslipController extends Controller
             )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
+            // ->where('employee_no','A3121818')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
+            // dd($names);
             if(!empty($names))
             {
                 if($cutoff != null)
@@ -160,6 +163,7 @@ class PayslipController extends Controller
             'allowances_total' => $allowances_total,
             'loans_all' => $loans_all,
             'instructions' => $instructions,
+            'shifts' => $shifts,
             'last_cut_off' => $last_cut_off,
         )
         );
