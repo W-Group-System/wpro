@@ -51,7 +51,7 @@
                     <div class="row">
                         <div class='col-lg-6 form-group'>
                             <label>Amount</label>
-                            <input type="number" class="form-control form-control-sm required js-example-basic-multiple" name="amount">
+                            <input type="number" class="form-control form-control-sm required js-example-basic-multiple" step='0.01' name="amount">
                         </div>
                         <div class='col-lg-6 form-group'>
                             <label>Frequency</label>
