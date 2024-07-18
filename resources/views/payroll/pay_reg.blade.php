@@ -254,11 +254,11 @@
                                 {
                                   $d = ($name->employee->salary->de_minimis*12)/313;
                                   
-                                  $basic_pay = $daily_rate*($days_rendered);
+                                  $basic_pay = $daily_rate*($days_rendered-$name->total_abs-$name->total_lv_w_pay);
                                   // dd($basic_pay);
                                   
                                   
-                                  $de_minimis = $d*($days_rendered);
+                                  $de_minimis = $d*($days_rendered-$name->total_abs-$name->total_lv_w_pay);
                                 }
                               }
                               $hours = 0;
