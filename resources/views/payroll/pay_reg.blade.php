@@ -146,6 +146,7 @@
                               <th>WITHHOLDING TAX</th>
                               <th>DEMINIMIS</th>
                               <th>Other Allowances</th>
+                              <th>SUBLIQ</th>
                               {{-- <th>DEMINIMIS ADJUSTMENT</th>
                               <th>LOAD ALLOWANCE</th>
                               <th>OTHER ALLOWANCES</th>
@@ -195,6 +196,7 @@
                               $pay_rate = 0.00;
                               $basic_pay = 0.00;
                               $other_allowances_basic_pay = 0.00;
+                              $subliq = 0.00;
                               $hourly_rate = 0.00;
                               $daily_rate = 0.00;
                               $de_minimis = 0.00;
@@ -274,11 +276,13 @@
                                 $pay_rate = $name->employee->salary->basic_salary;
                                 $basic_pay = $name->employee->salary->basic_salary/2;
                                 $other_allowances_basic_pay = $name->employee->salary->other_allowance/2;
-
+                                $subliq = $name->employee->salary->subliq/2;
+                               
                                 $daily_rate = ($name->employee->salary->basic_salary)*12/313;
                               
                                 $hourly_rate = $daily_rate/8;
                                 $hourly_rate_other_allowance = ($name->employee->salary->other_allowance)*12/313;
+                                $hourly_rate_subliq = ($name->employee->salary->subliq)*12/313;
                                 $de_minimis = $name->employee->salary->de_minimis/2;
                                 
                                 // dd($name->employee);
@@ -363,6 +367,10 @@
                               $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
                               $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
                               $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd;
+                              if($name->employee->employee_code == "A3177924")
+                              {
+                                $salary_adjustment = 2,070.28;
+                              }
                               $total_taxable_benefits = $salary_adjustment;
                               $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
                               
@@ -381,6 +389,10 @@
                                 if($other_allowances_basic_pay > 0)
                                 {
                                   $other_allowances_basic_pay = ($other_allowances_basic_pay)-($hours*$hourly_rate_other_allowance);
+                                }
+                                if($subliq > 0)
+                                {
+                                  $subliq = ($subliq)-($hours*$hourly_rate_subliq);
                                 }
                                
                               }
@@ -417,11 +429,15 @@
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
                               $taxable_deductable_total = $statutory+$total_abs+$total_late_min+$total_undertime_min;
                               $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
+                             
                               $tax = compute_tax($net_taxable_income);
+                              if($name->employee->classification == 7)
+                              {
+                                $tax = 0;
+                              }
                               $load_allowance = 0.00;
                               $other_nta = 0.00;
                               $sss_loan_refund = 0.00;
-                              $subliq = 0.00;
                               $non_taxable_benefits = $load_allowance+$other_allowances+$other_nta+$sss_loan_refund+$subliq+$other_allowances_basic_pay;
                           @endphp
                           <tr>
@@ -492,6 +508,7 @@
                               <td>{{number_format(-1*($tax),2)}}<input type='hidden' name='tax[{{$key+1}}]' value="{{$tax}}"></td>
                               <td>{{number_format($de_minimis,2)}}<input type='hidden' name='de_minimis[{{$key+1}}]' value="{{$de_minimis}}"></td>
                               <td>{{number_format($other_allowances_basic_pay,2)}}<input type='hidden' name='other_allowances_basic_pay[{{$key+1}}]' value="{{$other_allowances_basic_pay}}"></td>
+                              <td>{{number_format($subliq,2)}}<input type='hidden' name='subliq[{{$key+1}}]' value="{{$subliq}}"></td>
                               {{-- <td>{{number_format($de_minimis_adj,2)}}</td> --}}
                               {{-- <td>{{number_format($load_allowance,2)}}</td>
                               <td>{{number_format($other_allowances,2)}}</td>
@@ -556,7 +573,7 @@
                                 <input type='hidden' name='get_loans[{{$key+1}}]' value="{{$loans_loans}}">
                             
 
-                                {{number_format($total_allowances+$de_minimis+$other_allowances_basic_pay,2)}}<input type='hidden' name='nontaxable_benefits_total[{{$key+1}}]' value="{{$total_allowances+$de_minimis+$other_allowances_basic_pay}}"></td>
+                                {{number_format($total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq,2)}}<input type='hidden' name='nontaxable_benefits_total[{{$key+1}}]' value="{{$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq}}"></td>
                               {{-- <td>{{number_format($canteen,2)}}</td>
                               <td>{{number_format($emergency,2)}}</td>
                               <td>{{number_format($hdmf_calamity_loan,2)}}</td>
@@ -606,16 +623,16 @@
                               <td>{{number_format(-1*($lllloan),2)}}  </td>
                               @endforeach
                               <td>{{number_format(-1*($total_loans),2)}}<input type='hidden' name='nontaxable_deductible_benefits_total[{{$key+1}}]' value="{{$total_loans}}"></td> 
-                              <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis,2)}}<input type='hidden' name='gross_pay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay}}"></td>
+                              <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq,2)}}<input type='hidden' name='gross_pay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq}}"></td>
                               <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}<input type='hidden' name='deductions_total[{{$key+1}}]' value="{{$taxable_deductable_total+$total_loans+$tax}}"></td>
-                              <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}<input type='hidden' name='netpay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions}}"></td>
+                              <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}<input type='hidden' name='netpay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions}}"></td>
                             </tr>
                             @php
                             $object = new stdClass();
                             $object->bank = str_pad($name->employee->bank_account_number, 13, '0', STR_PAD_LEFT);;
-                            $object->amount = str_pad(number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2, "", ""), 13, '0', STR_PAD_LEFT);
+                            $object->amount = str_pad(number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2, "", ""), 13, '0', STR_PAD_LEFT);
                             array_push($paytext,$object);
-                            $total_net = $total_net + number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2,".","");
+                            $total_net = $total_net + number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2,".","");
                             @endphp
                           @endforeach
                       </tbody>

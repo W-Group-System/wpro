@@ -215,6 +215,12 @@
                         <td style="text-align: right;">{{number_format($payroll->rst_ot_ge_amount ,2)}}</td>
                     </tr>
                     @endif
+                    @if($payroll->salary_adjustment > 0)
+                    <tr>
+                        <td style="">Salary Adjustment</td>
+                        <td style="text-align: right;">{{number_format($payroll->salary_adjustment ,2)}}</td>
+                    </tr>
+                    @endif
 
                     <tr>
                         <td style="font-weight: bold;"></td>
@@ -317,6 +323,12 @@
                     <tr>
                         <td style="font-weight: bold;">Other Allowances</td>
                         <td style="text-align: right; font-weight: bold;">{{number_format($payroll->other_allowances_basic_pay,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->subliq>0)
+                    <tr>
+                        <td style="font-weight: bold;">Subliq</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->subliq,2)}}</td>
                     </tr>
                     @endif
                     @foreach($payroll->pay_allowances as $allow)

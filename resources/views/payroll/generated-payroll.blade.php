@@ -130,6 +130,8 @@
                               <th>NET TAXABLE INCOME</th>
                               <th>WITHHOLDING TAX</th>
                               <th>DEMINIMIS</th>
+                              <th>Other Allowances</th>
+                              <th>SUBLIQ</th>
                               {{-- <th>DEMINIMIS ADJUSTMENT</th>
                               <th>LOAD ALLOWANCE</th>
                               <th>OTHER ALLOWANCES</th>
@@ -229,6 +231,8 @@
                             <td>{{$pay_reg->net_taxable_income}}</td>
                             <td>{{$pay_reg->withholding_tax}}</td>
                             <td>{{$pay_reg->deminimis}}</td>
+                            <td>{{$pay_reg->other_allowances_basic_pay}}</td>
+                            <td>{{$pay_reg->subliq}}</td>
                             <td>{{$pay_reg->nontaxable_benefits_total}}</td>
                             <td>{{$pay_reg->nontaxable_deductible_benefits_total}}</td>
                             <td>{{$pay_reg->gross_pay}}</td>
