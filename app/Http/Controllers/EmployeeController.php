@@ -1434,7 +1434,7 @@ class EmployeeController extends Controller
     }
 
     public function updateEmpSalary(Request $request, $id){
-        $employee = Employee::where('user_id',$id)->first();
+        $employee = Employee::where('id',$id)->first();
 
         if($employee){
             $employee_salary = EmployeeSalary::where('user_id',$employee->user_id)->first();
