@@ -16,7 +16,7 @@
                                             <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company[]' multiple required>
                                                 <option value="">-- Select Employee --</option>
                                                 @foreach($companies as $comp)
-                                                <option value="{{$comp->id}}" @if (in_array($comp->id,$company)) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
+                                                <option value="{{$comp->id}}" @if (in_array($comp->id,$company)) selected @endif>{{$comp->company_code}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -83,7 +83,7 @@
                                         <td>{{$item->user->name}}</td>
                                         <td>{{date('d/m/Y h:i A', strtotime($item->created_at))}}</td>
                                         <td>{{date('d/m/Y', strtotime($item->ot_date))}}</td>
-                                        <td>{{date('d/m/Y h:i A', strtotime($item->start_time))}} - {{date('d/m/Y h:i A', strtotime($item->end_time))}}</td>
+                                        <td>{{date('h:i A', strtotime($item->start_time))}} - {{date('h:i A', strtotime($item->end_time))}}</td>
                                         {{-- <td>{{intval((strtotime($item->end_time)-strtotime($item->start_time))/60/60)}}</td> --}}
                                         <td>
                                             @php
@@ -108,8 +108,8 @@
                                                 <a href="{{url($item->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                             @endif
                                             <br>
-                                            @if($item->file_name)
-                                            <a href="{{url($item->file_name)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+                                            @if($item->file_path)
+                                            <a href="{{url($item->file_path)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                         @endif
 
                                         </td>

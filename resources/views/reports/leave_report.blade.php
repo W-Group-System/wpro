@@ -16,7 +16,7 @@
 										<select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company[]' multiple required>
 											<option value="">-- Select Employee --</option>
 											@foreach($companies as $comp)
-											<option value="{{$comp->id}}" @if (in_array($comp->id,$company)) selected @endif>{{$comp->company_name}} - {{$comp->company_code}}</option>
+											<option value="{{$comp->id}}" @if (in_array($comp->id,$company)) selected @endif>{{$comp->company_code}}</option>
 											@endforeach
 										</select>
 									</div>
@@ -114,7 +114,7 @@
 												@endif
 												<br>
 												@if($form_approval->leave_file)
-													<a href="{{url($form_approval->leave_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+													<a href="{{url('storage/'.$form_approval->leave_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
 												@endif
 										  </td>
 										  </tr>

@@ -24,7 +24,7 @@
 							<select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company_id'>
                                 <option value="">-- Select Company --</option>
                                 @foreach($companies as $comp)
-                                <option value="{{$comp->id}}">{{$comp->company_name}} - {{$comp->company_code}}</option>
+                                <option value="{{$comp->id}}">{{$comp->company_code}}</option>
                                 @endforeach
                             </select>
 						</div>
