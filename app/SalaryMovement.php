@@ -18,5 +18,9 @@ class SalaryMovement extends Model
     {
         return $this->belongsTo(User::class,'user_id','id');
     }
+    public function change_by()
+    {
+        return $this->belongsTo(User::class,'changed_by','id');
+    }
     
 }

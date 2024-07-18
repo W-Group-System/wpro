@@ -604,7 +604,7 @@
                                 @endforeach
                             </div>
                         </div>
-
+                        @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
                         <div class="card">
                             <div class="template-demo">
                                 <div class='row m-2'>
@@ -632,7 +632,7 @@
                                 @foreach ($user->employee->salaryMovement as $movement)
                                 <div class='row m-2 border-bottom'>
                                     <div class='col-md-3'>
-                                        {{ $movement->user_info->name }}
+                                        {{ $movement->change_by->name }}
                                     </div>
                                     <div class='col-md-3'>
                                         {{date('M d, Y',strtotime($movement->changed_at ))}}
@@ -649,6 +649,7 @@
                                 @endforeach
                             </div>
                         </div>
+                        @endif
                     </div>
 
                     <div class="tab-pane fade" id="v-pills-bank" role="tabpanel" aria-labelledby="v-pills-bank-tab">
