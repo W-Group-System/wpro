@@ -371,6 +371,10 @@
                               {
                                 $salary_adjustment = 2070.28;
                               }
+                              if($name->employee->employee_code == "A3178124")
+                              {
+                                $salary_adjustment = 2472.84 ;
+                              }
                               $total_taxable_benefits = $salary_adjustment;
                               $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
                               
@@ -431,9 +435,21 @@
                               $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
                              
                               $tax = compute_tax($net_taxable_income);
-                              if($name->employee->classification == 7)
+                              if($name->employee->employee_code == "A162313")
                               {
                                 $tax = 0;
+                              }
+                              if($name->employee->employee_code == "A287819")
+                              {
+                                $tax = $net_taxable_income*.05;
+                              }
+                              if($name->employee->employee_code == "A188323")
+                              {
+                                $tax = $net_taxable_income*.05;
+                              }
+                              if($name->employee->employee_code == "A180518")
+                              {
+                                $tax = $net_taxable_income*.05;
                               }
                               $load_allowance = 0.00;
                               $other_nta = 0.00;
