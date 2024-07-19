@@ -451,6 +451,10 @@
                               {
                                 $tax = $net_taxable_income*.05;
                               }
+                              if($name->employee->employee_code == "A178517")
+                              {
+                                $tax = $net_taxable_income*.05;
+                              }
                               $load_allowance = 0.00;
                               $other_nta = 0.00;
                               $sss_loan_refund = 0.00;
