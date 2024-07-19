@@ -46,7 +46,7 @@
                     <div class="col-lg-6 form-group">
                         <label for="ammortAmt">Ammortization Amount</label>
                         <input type="number" class="form-control form-control-sm" name="monthly_ammort_amt" id="monthly_ammort_amt"
-                            required min="1" placeholder="0.00" step=".01" value="{{ $loan->monthly_ammort_amt}}" readonly>
+                            required min="1" placeholder="0.00" step=".01" value="{{ $loan->monthly_ammort_amt}}" required>
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="startDate">Start Date</label>
