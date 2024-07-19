@@ -377,11 +377,16 @@
                               }
                               if($name->employee->employee_code == "A3178124")
                               {
-                                $salary_adjustment = 2472.84 ;
+                                $salary_adjustment = 2472.84;
                               }
                               if($name->employee->employee_code == "A189423")
                               {
-                                $salary_adjustment = 11530.49 ;
+                                $salary_adjustment = 11530.49;
+                              }
+                               
+                              if($name->employee->employee_code == "A366523")
+                              {
+                                $salary_adjustment = 3463.29;
                               }
                               $total_taxable_benefits = $salary_adjustment;
                               $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
@@ -447,7 +452,7 @@
                               $tax = compute_tax($net_taxable_income);
                               if($name->employee->employee_code == "A162313")
                               {
-                                $tax = 0;
+                                $tax = $net_taxable_income*.05;
                               }
                               if($name->employee->employee_code == "A287819")
                               {
