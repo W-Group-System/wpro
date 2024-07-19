@@ -379,6 +379,10 @@
                               {
                                 $salary_adjustment = 2472.84 ;
                               }
+                              if($name->employee->employee_code == "A189423")
+                              {
+                                $salary_adjustment = 11530.49 ;
+                              }
                               $total_taxable_benefits = $salary_adjustment;
                               $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
                               
