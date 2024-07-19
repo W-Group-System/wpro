@@ -281,8 +281,8 @@
                                 $daily_rate = ($name->employee->salary->basic_salary)*12/313;
                               
                                 $hourly_rate = $daily_rate/8;
-                                $hourly_rate_other_allowance = ($name->employee->salary->other_allowance)*12/313;
-                                $hourly_rate_subliq = ($name->employee->salary->subliq)*12/313;
+                                $hourly_rate_other_allowance = (($name->employee->salary->other_allowance)*12/313)/8;
+                                $hourly_rate_subliq = (($name->employee->salary->subliq)*12/313)/8;
                                 $de_minimis = $name->employee->salary->de_minimis/2;
                                 
                                 // dd($name->employee);
@@ -308,17 +308,21 @@
                                 $shift = str_replace("(Flexi)", '', $shift);
                                 // $shift = str_replace(" ", '', $shift);
                                 $shift = explode("-",$shift);
-                                $start = strtotime($shift[0]);
-                                $end = strtotime($shift[1]);
+                                $start = strtotime($absent_dat->log_date." ".$shift[0]);
+                                $end = strtotime($absent_dat->log_date." ".$shift[1]);
                                 $hours_count = ($end - $start)/3600;
-                                if($start > $end)
+                                
+                                // dd($hours_count);
+                                if($hours_count < 0)
                                 {
                                   
-                                  $hours_count = ((($start - $end))/3600)-8;
-                                  // dd($hours_count);
+                                  $hours_count = ((($end+86400 - $start))/3600);
+                                
                                 }
+                                // dd($hours_count);
                                 if($hours_count>8)
                                 {
+                                  // dd($hours_count);
                                   $hours_count = $hours_count-1;
                                 }
 
@@ -392,11 +396,13 @@
                                 
                                 if($other_allowances_basic_pay > 0)
                                 {
-                                  $other_allowances_basic_pay = ($other_allowances_basic_pay)-($hours*$hourly_rate_other_allowance);
+                                  
+                                  // dd($other_allowances_basic_pay);
+                                  $other_allowances_basic_pay = ($other_allowances_basic_pay)-(($hours+$name->total_late_min/60+$name->total_undertime_min/60)*$hourly_rate_other_allowance);
                                 }
                                 if($subliq > 0)
                                 {
-                                  $subliq = ($subliq)-($hours*$hourly_rate_subliq);
+                                  $subliq = ($subliq)-(($hours+$name->total_late_min/60+$name->total_undertime_min/60)*$hourly_rate_subliq);
                                 }
                                
                               }
