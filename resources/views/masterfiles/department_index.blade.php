@@ -75,7 +75,7 @@
 		function disableDept(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "Once disable, you will not be able to recover this imaginary file!",
 					icon: "warning",
@@ -96,7 +96,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Department has been disable!", {
+								Swal.fire("Department has been disable!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -111,7 +111,7 @@
 						})
 
 					} else {
-						swal("Department is safe!");
+						Swal.fire("Department is safe!");
 					}
 				});
 		}
@@ -119,7 +119,7 @@
 		function activateDept(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "Once activated, you can disable the department!",
 					icon: "info",
@@ -140,7 +140,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Department has been activated!", {
+								Swal.fire("Department has been activated!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -155,7 +155,7 @@
 						})
 
 					} else {
-						swal("Department is safe!");
+						Swal.fire("Department is safe!");
 					}
 				});
 		}

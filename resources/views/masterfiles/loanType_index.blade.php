@@ -71,7 +71,7 @@
 		function disable(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "Once disabled, you will not be able to use this in other modules!",
 					icon: "warning",
@@ -92,7 +92,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Loan type has been disable!", {
+								Swal.fire("Loan type has been disable!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -107,7 +107,7 @@
 						})
 
 					} else {
-						swal("Loan type is safe!");
+						Swal.fire("Loan type is safe!");
 					}
 				});
 		}
@@ -115,7 +115,7 @@
 		function activate(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "Once activated, you can disable the loan type!",
 					icon: "info",
@@ -136,7 +136,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Loan type has been activated!", {
+								Swal.fire("Loan type has been activated!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -151,7 +151,7 @@
 						})
 
 					} else {
-						swal("Loan type is safe!");
+						Swal.fire("Loan type is safe!");
 					}
 				});
 		}

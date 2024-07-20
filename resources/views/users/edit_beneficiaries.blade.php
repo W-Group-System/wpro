@@ -143,7 +143,7 @@
                         deleted_beneficiaries: JSON.stringify(this.deletedBeneficiaries),
                     })
                     .then(res => {
-                        swal("Successfully Updated",{icon:"success"})
+                        Swal.fire("Successfully Updated",{icon:"success"})
                         .then(function() {
                             location.reload();
                         });
@@ -162,7 +162,7 @@
                 },
                 removeBeneficiary: function(index,beneficiary) {
                     if(beneficiary){
-                        swal({
+                        Swal.fire({
                             title: 'Are you sure you want to remove this Beneficiary?',
                             icon: 'warning',
                             buttons: true,

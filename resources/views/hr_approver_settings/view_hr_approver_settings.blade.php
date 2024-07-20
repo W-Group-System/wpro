@@ -53,7 +53,7 @@
     function remove(id) {
         var element = document.getElementById('tdActionId'+id);
         var dataID = element.getAttribute('data-id');
-        swal({
+        Swal.fire({
                 title: "Are you sure?",
                 text: "You want to remove this HR Approver?",
                 icon: "warning",
@@ -74,7 +74,7 @@
                         },
                         success: function(data) {
                             document.getElementById("loader").style.display = "none";
-                            swal("HR Approver has been removed!", {
+                            Swal.fire("HR Approver has been removed!", {
                                 icon: "success",
                             }).then(function() {
                                 location.reload();

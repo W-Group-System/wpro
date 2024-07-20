@@ -289,7 +289,7 @@
 
       // Submit button click event to perform the POST request
       $('#disApproveAllBtn').on('click', function() {
-          swal({
+        Swal.fire({
             title: "Are you sure?",
             text: "You want to disapprove this OB?",
             icon: "warning",
@@ -321,7 +321,7 @@
                   success: function(response) {
                     console.log(response)
                     document.getElementById("loader").style.display = "none";
-                    swal("OB has been Disapproved " + "("+response+")", {
+                    Swal.fire("OB has been Disapproved " + "("+response+")", {
                       icon: "success",
                     }).then(function() {
                       location.reload();

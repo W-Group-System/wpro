@@ -25,11 +25,17 @@ class LoanController extends Controller
             'loans' => $loans,
         ));
     }
-    public function loan_reg()
+    public function loan_reg(Request $request)
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
-
-        $loans = Loan::with('loan_type', 'employee')->get();
+        $search = $request->search;
+        $loans = Loan::with('loan_type', 'employee')
+            ->whereHas('employee', function($query) use ($search) {
+                $query->where('first_name', 'like', '%' . $search . '%')
+                ->orWhere('last_name', 'like', '%' . $search . '%')
+                ;
+            })
+            ->paginate(10);
         $loanTypes = LoanType::all();
         $employees = Employee::where('status', 'Active')->whereIn('company_id', $allowed_companies)->get();
         
@@ -38,6 +44,7 @@ class LoanController extends Controller
             'loans' => $loans,
             'loanTypes' => $loanTypes,
             'employees' => $employees,
+            'search' => $search,
         ));
     }
 

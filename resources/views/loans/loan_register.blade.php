@@ -21,6 +21,17 @@
 								</div>
 							@endforeach
 						@endif
+						<form >
+							<div class="row">
+								<div class="col-lg-4 form-group">
+									<input type="text" class="form-control form-control-sm" placeholder="Search Name" name="search" id="search" required value="{{$search}}">
+								</div>
+								<div class="col-lg-2 form-group">
+									<label for="name">&nbsp;<br></label>
+									<button type="submit" class="btn btn-primary">Search</button>
+								</div>
+							</div>
+						</form>
 						<div class="table-responsive">
 							<table class="table table-hover table-bordered" id="loanTbl">
 								<thead>
@@ -71,6 +82,7 @@
 									@endforeach
 								</tbody>
 							</table>
+							{{ $loans->appends(['search' => $search])->links() }}
 						</div>
 					</div>
 				</div>
@@ -87,7 +99,7 @@
 @section('loanRegScripts')
 	<script>
 		$(document).ready(function() {
-            $('#loanTbl').DataTable();
+            // $('#loanTbl').DataTable();
 
 			$('#loanDetails').on('show.bs.modal', function(e) {
 				var _button = $(e.relatedTarget);

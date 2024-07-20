@@ -80,7 +80,7 @@
 		function disable(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "Once disabled, you will not be able to recover this imaginary file!",
 					icon: "warning",
@@ -101,7 +101,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("incentive has been disable!", {
+								Swal.fire("incentive has been disable!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -116,7 +116,7 @@
 						})
 
 					} else {
-						swal("incentive is safe!");
+						Swal.fire("incentive is safe!");
 					}
 				});
 		}
@@ -124,7 +124,7 @@
 		function activate(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "Once activated, you can edit and disable the incentive!",
 					icon: "info",
@@ -145,7 +145,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("incentive has been activated!", {
+								Swal.fire("incentive has been activated!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -163,7 +163,7 @@
 						})
 
 					} else {
-						swal("incentive is safe!");
+						Swal.fire("incentive is safe!");
 					}
 				});
 		}

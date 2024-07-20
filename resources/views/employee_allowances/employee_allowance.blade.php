@@ -83,7 +83,7 @@
 		function disable(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "You want to disable this Employee Allowance?",
 					icon: "warning",
@@ -104,7 +104,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Employee Allowance has been disabled!", {
+								Swal.fire("Employee Allowance has been disabled!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -115,14 +115,14 @@
 						})
 
 					} else {
-						swal("Employee allowance is safe!");
+						Swal.fire("Employee allowance is safe!");
 					}
 				});
 		}
 		function deleteAllowance(id) {
 			var element = document.getElementById('tdActionId' + id);
 			var dataID = element.getAttribute('data-id');
-			swal({
+			Swal.fire({
 					title: "Are you sure?",
 					text: "You want to delete this Employee Allowance",
 					icon: "warning",
@@ -140,7 +140,7 @@
 							},
 							success: function(data) {
 								document.getElementById("loader").style.display = "none";
-								swal("Employee Allowance has been deleted!", {
+								Swal.fire("Employee Allowance has been deleted!", {
 									icon: "success",
 								}).then(function() {
 									document.getElementById("tdId" + id).innerHTML =
@@ -151,7 +151,7 @@
 						})
 
 					} else {
-						swal("Employee allowance is safe!");
+						Swal.fire("Employee allowance is safe!");
 					}
 				});
 		}
