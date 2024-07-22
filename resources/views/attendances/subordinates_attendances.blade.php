@@ -94,7 +94,6 @@
                             </tr>
                         </thead>
 
-                        
                         <tbody>
                             @foreach($emp_data as $emp)
                                 @php
@@ -121,8 +120,8 @@
                                 @endphp
 
                                 @foreach($date_range as $date_r)
-                                
                                 @php
+                                 $generated_attendance =  ($emp->attendance_generated)->where('log_date',$date_r)->first();
                                     $final_time_in = "";
                                     $time_in = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
                                     if($time_in == null)
@@ -144,9 +143,10 @@
                                 @endphp
                                 <tr>
                                     <td>{{$emp->employee_code}}</td>
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][name]" value="{{$emp->last_name .', '. $emp->first_name . ' ' . $emp->middle_name}}">{{$emp->first_name . ' ' . $emp->last_name}}</td>
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][log_date]" value="{{date('Y-m-d',strtotime($date_r))}}">{{date('d/m/Y',strtotime($date_r))}}</td>
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_from != '00:00' ? date('h:i A', strtotime($employee_schedule->time_in_from)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
+                                    <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
+                                    <td>{{date('d/m/Y',strtotime($date_r))}}</td>
+                                    @if($generated_attendance == null)
+                                    <td>
                                         @if($employee_schedule != null)
                                             @if($employee_schedule->time_in_from != '00:00')
                                             <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
@@ -170,6 +170,12 @@
                                             <small>{{$emp->schedule_info->schedule_name}}</small>
                                         @endif --}}
                                     </td>
+                                    @else
+                                    <td>
+
+                                        {{$generated_attendance->shift}}
+                                    </td>
+                                    @endif
                                     <!-- <td> 
                                     @if($employee_schedule != null)
                                         @if($employee_schedule->time_in_from != '00:00')
@@ -355,8 +361,16 @@
                                             // $abs=0;
                                         @endphp  
                                     @endif
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][in]" value="@if($time_start){{date('h:i A',strtotime($time_start))}}@endif">@if($time_start){{date('h:i A',strtotime($time_start))}}@endif</td>
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][out]" value="@if($time_end){{date('h:i A',strtotime($time_end))}}@endif">@if($time_end){{date('h:i A',strtotime($time_end))}}@endif</td>
+                               
+                                    @if($generated_attendance != null)
+                                    {{-- {{dd($generated_attendance)}} --}}
+                                    <td>@if($generated_attendance->in){{date('h:i A',strtotime($generated_attendance->in))}}@endif</td>
+                                    <td>@if($generated_attendance->out){{date('h:i A',strtotime($generated_attendance->out))}}@endif</td>
+                                    @else
+                                    <td>@if($time_start){{date('h:i A',strtotime($time_start))}}@endif</td>
+                                    <td>@if($time_end){{date('h:i A',strtotime($time_end))}}@endif</td>
+                                    @endif
+                                  
                                     @php
                                         $leave_count = 0;
                                         if($if_leave)
@@ -692,6 +706,7 @@
                                     $subtotal_rd_nd += $restnd;
                                     $subtotal_rd_nd_ge += 0;
                                     @endphp
+                                    @if($generated_attendance == null)
                                     <td @if($abs-$leave_count>0) class='bg-danger'@endif ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
                                     <td ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
@@ -703,96 +718,59 @@
                                     <td @if($restday_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="{{$restday_ot}}">{{number_format($restday_ot,2)}}</td>  {{-- RST OT --}}
                                     <td @if($restday_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="{{$restday_ot_ge}}">{{number_format($restday_ot_ge,2)}}</td> {{-- RST OT > 8 --}}
                                     <td @if($restnd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="{{$restnd}}">{{number_format($restnd,2)}}</td> {{-- RST ND --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="0.00">0.00</td> {{-- RST ND > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot]" value="0.00">0.00</td> {{-- LH OT --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot_over_eight]" value="0.00">0.00</td> {{-- LH OT > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_nd]" value="0.00">0.00</td> {{-- LH ND --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_nd_over_eight]" value="0.00">0.00</td> {{-- LH ND > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_ot]" value="0.00">0.00</td> {{-- SH OT --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_ot_over_eight]" value="0.00">0.00</td> {{-- SH OT > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_nd]" value="0.00">0.00</td> {{-- SH ND --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_nd_over_eight]" value="0.00">0.00</td> {{-- SH ND > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_ot]" value="0.00">0.00</td> {{-- RST LH OT --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_ot_over_eight]" value="0.00">0.00</td> {{-- RST LH OT > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_nd]" value="0.00">0.00</td> {{-- RST LH ND --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_nd_gt_8]" value="0.00">0.00</td> {{-- RST LH ND > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot]" value="0.00">0.00</td> {{-- RST SH OT --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot_gt_8]" value="0.00">0.00</td> {{-- RST SH OT > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_nd]" value="0.00">0.00</td> {{--RST SH ND--}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_nd_over_eight]" value="0.00">0.00</td> {{-- RST SH ND > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][remarks]" value="{{$if_leave}} {{$if_has_ob ? 'OB' : ''}}">
+                                    <td>0.00</td> {{-- RST ND > 8 --}}
+                                    <td>0.00</td> {{-- LH OT --}}
+                                    <td>0.00</td> {{-- LH OT > 8 --}}
+                                    <td>0.00</td> {{-- LH ND --}}
+                                    <td>0.00</td> {{-- LH ND > 8 --}}
+                                    <td>0.00</td> {{-- SH OT --}}
+                                    <td>0.00</td> {{-- SH OT > 8 --}}
+                                    <td>0.00</td> {{-- SH ND --}}
+                                    <td>0.00</td> {{-- SH ND > 8 --}}
+                                    <td>0.00</td> {{-- RST LH OT --}}
+                                    <td>0.00</td> {{-- RST LH OT > 8 --}}
+                                    <td>0.00</td> {{-- RST LH ND --}}
+                                    <td>0.00</td> {{-- RST LH ND > 8 --}}
+                                    <td>0.00</td> {{-- RST SH OT --}}
+                                    <td>0.00</td> {{-- RST SH OT > 8 --}}
+                                    <td>0.00</td> {{--RST SH ND--}}
+                                    <td>0.00</td> {{-- RST SH ND > 8 --}}
+                                    @else
+                                    <td @if($generated_attendance->abs>0) class='bg-danger'@endif>{{$generated_attendance->abs}}</td>
+                                    <td >{{$generated_attendance->lv_w_pay}}</td>
+                                    <td >{{$generated_attendance->reg_hrs}}</td>
+                                    <td @if($generated_attendance->late_min>0) class='bg-danger'@endif>{{$generated_attendance->late_min}}</td>
+                                    <td @if($generated_attendance->undertime_min>0) class='bg-danger'@endif>{{$generated_attendance->undertime_min}}</td>
+                                    <td >{{$generated_attendance->reg_ot}}</td>
+                                    <td >{{$generated_attendance->reg_nd}}</td>
+                                    <td >{{$generated_attendance->reg_ot_nd}}</td>
+                                    <td >{{$generated_attendance->rst_ot}}</td>
+                                    <td >{{$generated_attendance->rst_ot_over_eight}}</td>
+                                    <td >{{$generated_attendance->rst_nd}}</td>
+                                    <td >{{$generated_attendance->rst_nd_over_eight}}</td>
+                                    <td >{{$generated_attendance->lh_ot}}</td>
+                                    <td >{{$generated_attendance->lh_ot_over_eight}}</td>
+                                    <td >{{$generated_attendance->lh_nd}}</td>
+                                    <td >{{$generated_attendance->lh_nd_over_eight}}</td>
+                                    <td >{{$generated_attendance->sh_ot}}</td>
+                                    <td >{{$generated_attendance->sh_ot_over_eight}}</td>
+                                    <td >{{$generated_attendance->sh_nd}}</td>
+                                    <td >{{$generated_attendance->sh_nd_over_eight}}</td>
+                                    <td >{{$generated_attendance->rst_lh_ot}}</td>
+                                    <td >{{$generated_attendance->rst_lh_ot_over_eight}}</td>
+                                    <td >{{$generated_attendance->rst_lh_nd}}</td>
+                                    <td >{{$generated_attendance->rst_lh_nd_over_eight}}</td>
+                                    <td >{{$generated_attendance->rst_sh_ot}}</td>
+                                    <td >{{$generated_attendance->rst_sh_ot_over_eight}}</td>
+                                    <td >{{$generated_attendance->rst_sh_nd}}</td>
+                                    <td >{{$generated_attendance->rst_sh_nd_over_eight}}</td>
+                                    @endif
+                                    <td>
                                         {{$if_leave}} {{$if_has_ob ? 'OB' : ''}}
                                     </td>
-                                    <!-- <td>0.00</td> {{--reg ot--}}
-                                    <td>0.00</td> {{--reg nd--}}
-                                    <td>0.00</td> {{--rst ot--}}
-                                    <td>0.00</td> {{--RST OT > 8--}}
-                                    <td>0.00</td> {{--RST ND--}}
-                                    <td>0.00</td> {{--RST ND > 8--}}
-                                    <td>0.00</td> {{--RST ND > 8--}}
-                                    <td>0.00</td> {{--LH OT--}}
-                                    <td>0.00</td> {{--LH OT > 8--}}
-                                    <td>0.00</td> {{--LH ND	--}}
-                                    <td>0.00</td> {{--LH ND > 8--}}
-                                    <td>0.00</td> {{--SH OT	--}}
-                                    <td>0.00</td> {{--	SH OT > 8	--}}
-                                    <td>0.00</td> {{--SH ND	--}}
-                                    <td>0.00</td> {{--SH ND > 8	--}}
-                                    <td>0.00</td> {{--RST LH OT	--}}
-                                    <td>0.00</td> {{--RST LH OT > 8--}}
-                                    <td>0.00</td> {{--RST LH ND--}}
-                                    <td>0.00</td> {{--RST LH ND > 8--}}
-                                    <td>0.00</td> {{--RST SH OT--}}
-                                    <td>0.00</td> {{--RST SH OT > 8--}}
-                                    <td>0.00</td> {{--RST SH ND--}}
-                                    <td>0.00</td> {{--RST SH ND > 8	--}} -->
-                                    <!-- {{-- <td>{{$if_leave}} --}}
-                                    <td>
-                                        {{$if_leave}}
-                                    @if($if_has_ob)
-                                    OB
-                                    @endif
-                                </td> {{--Remarks--}} -->
-                                            
+                                    
                                 </tr>
                                 @endforeach
-                                <tr>
-                                    <td><strong>Subtotal</strong></td>
-                                    <td><strong>{{ $emp->employee_code }}</strong></td>
-                                    <td><strong>{{$emp->first_name . ' ' . $emp->last_name}}</strong></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><strong>{{ number_format($subtotal_abs,2) }}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_leave_w_pay,2) }}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_reg_hrs,2) }}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_late,2) }}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_undertime,2) }}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_overtimes,2)}}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_nd,2)}}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_ot_nd,2)}}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_rd_ot,2)}}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_rd_ot_ge,2)}}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_rd_nd,2)}}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_rd_nd_ge,2)}}</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                    <td><strong>0.00</strong></td>
-                                   
-                                </tr>
                             @endforeach
                         </tbody>
                     </table>
