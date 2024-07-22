@@ -358,6 +358,12 @@
                         <td style="text-align: right; font-weight: bold;">{{number_format($loan->amount,2)}}</td>
                     </tr>
                     @endforeach
+                    @foreach($payroll->pay_instructions as $pay_instructions)
+                    <tr>
+                        <td style="font-weight: bold;"> - {{$pay_instructions->instruction_name}}</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($pay_instructions->amount,2)}}</td>
+                    </tr>
+                    @endforeach
                     
                 </tbody>
             </table>
