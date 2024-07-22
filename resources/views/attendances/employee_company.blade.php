@@ -328,15 +328,17 @@
                                                             if($check_if_holiday){
                                                                 $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 if($if_attendance_holiday){
-
                                                                     $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($if_attendance_holiday)),$employee_schedule);
                                                                 
                                                                     if($check_leave){
                                                                         $if_attendance_holiday_status = 'With-Pay';
                                                                         $abs =0;
                                                                         if($check_leave){
-                                                                            if($check_leave == 'SL Without-Pay' || $check_leave == 'VL Without-Pay'){
+                                                                            // dd($check_leave);
+                                                                            if(str_contains($check_leave,"Without")){
+                                                                                // dd($check_leave);
                                                                                 $if_attendance_holiday_status = 'Without-Pay';
+                                                                                $abs = 1;
                                                                             }else{
                                                                                 $if_attendance_holiday_status = 'With-Pay';
                                                                             }
