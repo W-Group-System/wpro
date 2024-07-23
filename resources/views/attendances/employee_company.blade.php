@@ -366,7 +366,6 @@
                                                                    
                                                                 }
                                                                 else {
-                                                                    $abs = 1;
                                                                     if($employee_schedule_before->time_in_from == '00:00')
                                                                     {
                                                                         $abs = 0;
