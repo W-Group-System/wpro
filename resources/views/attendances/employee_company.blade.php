@@ -359,26 +359,25 @@
                                                                
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
-                                                              
+                                                                
                                                                 if($employee_schedule_before == null)
                                                                 {
                                                                     $abs = 0;
                                                                    
                                                                 }
                                                                 else {
-                                                                   
-                                                                    if($employee_schedule_before->time_in_from != '00:00')
+                                                                    $abs = 1;
+                                                                    if($employee_schedule_before->time_in_from == '00:00')
                                                                     {
                                                                         $abs = 0;
                                                                     }
-                                                                    if($employee_schedule_before->time_in_from != null)
+                                                                    if($employee_schedule_before->time_in_from == null)
                                                                     {
                                                                         $abs = 0;
                                                                     }
 
                                                                     
                                                                 }
-                                                              
                                                             }else{
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 
