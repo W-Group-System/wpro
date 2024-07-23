@@ -358,20 +358,20 @@
                                                                 }
                                                                
                                                      
-                                                                $employee_schedule = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
+                                                                $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
                                                               
-                                                                if($employee_schedule == null)
+                                                                if($employee_schedule_before == null)
                                                                 {
                                                                     $abs = 0;
                                                                    
                                                                 }
                                                                 else {
                                                                    
-                                                                    if($employee_schedule->time_in_from != '00:00')
+                                                                    if($employee_schedule_before->time_in_from != '00:00')
                                                                     {
                                                                         $abs = 0;
                                                                     }
-                                                                    if($employee_schedule->time_in_from != null)
+                                                                    if($employee_schedule_before->time_in_from != null)
                                                                     {
                                                                         $abs = 0;
                                                                     }
@@ -435,6 +435,31 @@
                                                     $original_sched = 0;
                                                     $overtime = 0;
                                                     $schedule_hours = 0;
+                                                    if($employee_schedule)
+                                                    {
+                                                    if($date_r == "2024-06-17")
+                                                    {
+                                                     
+                                                        $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                        $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                        if(($schedule_out) < ($schedule_in))
+                                                        {
+                                                            
+                                                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                            // dd(date('Y-m-d H:i',$schedule_out)." ".date('Y-m-d H:i',$schedule_in));
+                                                        }
+                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                        // dd(date('Y-m-d',strtotime($date_r)));
+                                                        if($date_r > 8)
+                                                        {
+                                                            $schedule_hours =  $schedule_hours-1;
+                                                            
+                                                            
+                                                        }
+                                                       
+                                                    }
+                                                    
+                                                }
                                                 @endphp
                                                 @if((($time_start)&&($time_end)) && $employee_schedule)    
                                                     @php
