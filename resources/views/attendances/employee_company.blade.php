@@ -356,7 +356,6 @@
                                                                         }
                                                                     }
                                                                 }
-                                                               
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
                                                                 
@@ -435,8 +434,6 @@
                                                     $schedule_hours = 0;
                                                     if($employee_schedule)
                                                     {
-                                                    if($date_r == "2024-06-17")
-                                                    {
                                                      
                                                         $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
                                                         $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
@@ -455,7 +452,7 @@
                                                             
                                                         }
                                                        
-                                                    }
+                                                    
                                                     
                                                 }
                                                 @endphp
