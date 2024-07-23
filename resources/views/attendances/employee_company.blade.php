@@ -790,8 +790,9 @@
                                                   $restnd = 0;
                                                   
                                                     $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
-
-                                                    if($approved_overtime_hrs > 2)
+                                                    if(strtotime($time_end) - strtotime($time_start) > 2)
+                                                    {
+                                                        if($approved_overtime_hrs > 2)
                                                     {
                                                         if($check_if_holiday == "Special Holiday")
                                                         {
@@ -917,6 +918,8 @@
                                                             }
                                                         }
                                                     }
+                                                    }
+                                                  
                                                 }
 
                                                 $subtotal_abs += $abs;
