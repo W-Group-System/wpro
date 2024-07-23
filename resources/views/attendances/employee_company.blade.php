@@ -779,6 +779,11 @@
                                                   {
                                                     $work = 0;
                                                   }
+                                                  if($abs == 1)
+                                                  {
+                                                    $work = 0;
+                                                  }
+
                                                   $late = 0;
                                                   $undertime_hrs = 0;
                                                   $overtime = 0;
