@@ -780,6 +780,10 @@
                                                 {
                                                     // dd($check_if_holiday);
                                                   $work = $schedule_hours;
+                                                  if($rest == "RESTDAY")
+                                                  {
+                                                    $work = 0;
+                                                  }
                                                   $late = 0;
                                                   $undertime_hrs = 0;
                                                   $overtime = 0;
