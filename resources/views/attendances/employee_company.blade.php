@@ -347,6 +347,10 @@
                                                                     }
                                                                     else{
                                                                         $check_attendance = checkHasAttendanceHolidayStatus($emp->attendances,$if_attendance_holiday);
+                                                                        // dd($emp->attendances);
+                                                                        // dd(date('Y-m-d H:i',strtotime($date_r." 00:00:00")-86400));
+                                                                        $time_in = ($emp->attendances)->whereBetween('time_in',[date('Y-m-d H:i',strtotime($date_r." 00:00:00")-86400),date('Y-m-d H:i',strtotime($date_r." 23:59:59")-86400)])->sortBy('time_in')->first();
+                                                                   
                                                                         if(empty($check_attendance)){
                                                                             $is_absent = 'Absent';
                                                                             $abs =1;
@@ -354,11 +358,22 @@
                                                                             $if_attendance_holiday_status = 'With-Pay';
                                                                             $abs =0;
                                                                         }
+                                                                        if($time_in != null)
+                                                                        {
+                                                                            if(($time_in->time_out) && ($time_in->time_in))
+                                                                            {
+                                                                                if((strtotime($time_in->time_out) - strtotime($time_in->time_in)/3600) >= 4)
+                                                                                {
+                                                                                    $abs =0;
+                                                                                }
+                                                                            }
+                                                                           
+                                                                        }
                                                                     }
                                                                 }
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
-                                                                
+                                                              
                                                                 if($employee_schedule_before == null)
                                                                 {
                                                                     $abs = 0;
@@ -445,7 +460,7 @@
                                                         }
                                                         $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                         // dd(date('Y-m-d',strtotime($date_r)));
-                                                        if($date_r > 8)
+                                                        if($schedule_hours > 8)
                                                         {
                                                             $schedule_hours =  $schedule_hours-1;
                                                             
@@ -479,30 +494,22 @@
                                                             $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                         }
                                                         $work_ot =  round((($time_end_ts - $time_start_ts)/3600), 2);
-                                                        // if($date_r == "2024-07-10")
-                                                        // {
-                                                        //     dd($work_ot);
-                                                        // }
+                                                    
                                                         if($time_end_ts > $schedule_out)
                                                         {
-                                                            // dd($time_end_ts." ".$schedule_out);
                                                             $time_end_ts =  $schedule_out;
                                                           
                                                         }
                                                         $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         
-                                                        // if($work_ot>10)
-                                                        // {
-                                                        //     dd($work_ot);
-                                                        //     dd((date('Y-m-d H:i',strtotime($time_end_ts)))." ".(date('Y-m-d H:i',strtotime($time_start_ts))));
-                                                        //     dd($schedule_out." ".date('Y-m-d H:i',$time_start_ts));
-                                                        // }
+                                                     
                                                         $schedule_hours = 0;
                                                         
                                                         if($employee_schedule->time_in_from)
                                                         {
                                                             $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
-                                                            // dd($schedule_hours);
+                                                          
+                                                          
                                                             if($schedule_hours > 8)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
@@ -775,6 +782,7 @@
                                                 {
                                                     // dd($check_if_holiday);
                                                   $work = $schedule_hours;
+                                                //   dd($schedule_hours);
                                                   if($rest == "RESTDAY")
                                                   {
                                                     $work = 0;
