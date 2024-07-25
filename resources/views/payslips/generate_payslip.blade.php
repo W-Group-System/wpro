@@ -296,7 +296,7 @@
                     @endif
                     @if($payroll->mpf_employee_share >0)
                     <tr>
-                        <td style="font-weight: bold;">SSS MPF</td>
+                        <td style="font-weight: bold;">MPF</td>
                         <td style="text-align: right; font-weight: bold;">-{{number_format($payroll->mpf_employee_share,2)}}</td>
                     </tr>
                     @endif
