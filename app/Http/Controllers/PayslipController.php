@@ -26,6 +26,7 @@ use App\PayregAllowance;
 use App\PayregInstruction;
 use App\ContributionSSS;
 use App\EmployeeAllowance;
+use App\SalaryAdjustment;
 use App\Loan;
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Options;
@@ -56,6 +57,7 @@ class PayslipController extends Controller
         $dates = [];
         $absents_data = [];
         $allowances_total = [];
+        $salary_adjustments = [];
         $loans_all = [];
         $instructions = [];
         $shifts = [];
@@ -82,6 +84,9 @@ class PayslipController extends Controller
                 'employee.salary',
                 'employee.loan' => function ($query) {
                     $query->where('status','Active');
+                },
+                'employee.salary_adjustments' => function ($query) {
+                    $query->where('cut_off_date',null);
                 },
                 'employee.allowances'=> function ($query) {
                     $query->where('status','Active');
@@ -115,7 +120,7 @@ class PayslipController extends Controller
             )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
-            // ->where('employee_no','A3121818')
+            // ->where('employee_no','A3138920')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
             // dd($names);
@@ -130,6 +135,7 @@ class PayslipController extends Controller
                 $employee_ids = $names->pluck('employee.id')->toArray();
                 $employee_codes = $names->pluck('employee.employee_code')->toArray();
                 $allowances_total = EmployeeAllowance::with('allowance')->whereIn('user_id',$names_all)->select('allowance_id')->groupBy('allowance_id')->get();
+                $salary_adjustments = SalaryAdjustment::whereIn('employee_id',$employee_ids)->where('cut_off_date',null)->select('name')->groupBy('name')->get();
                 $loans_all = Loan::with('loan_type')->whereIn('employee_id',$employee_ids)->select('loan_type_id')->groupBy('loan_type_id')->get();
                 $instructions = PayInstruction::whereIn('site_id',$employee_codes)
                 ->where('start_date', '>=', $cutoff)
@@ -165,6 +171,7 @@ class PayslipController extends Controller
             'instructions' => $instructions,
             'shifts' => $shifts,
             'last_cut_off' => $last_cut_off,
+            'salary_adjustments' => $salary_adjustments,
         )
         );
     }
@@ -222,6 +229,9 @@ class PayslipController extends Controller
         // dd($request->get_bbb);
         foreach($request->employee_no as $key => $employee_code)
         {
+            $employee_data = Employee::where('employee_code',$employee_code)->first();
+
+           
             $pay_register = new Payregs;
             $pay_register->employee_no = $employee_code;
             $pay_register->last_name = $request->last_name[$key];
@@ -294,6 +304,14 @@ class PayslipController extends Controller
             $pay_register->cut_off_date = $request->cut_off;
             $pay_register->company_id = $request->company;
             $pay_register->save();
+
+            $salary_adjustements = SalaryAdjustment::where('employee_id',$employee_data->id)->get();
+            foreach($salary_adjustements as $sad)
+            {
+                $sad->cut_off_date = $request->to;
+                $sad->pay_reg_id = $pay_register->id;
+                $sad->save();
+            }
             
           
             if($request->get_every_cut_off)

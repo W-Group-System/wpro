@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Adjustment;
+use App\SalaryAdjustment;
 use App\Allowance;
 use App\Employee;
 use Illuminate\Http\Request;
 
+use RealRashid\SweetAlert\Facades\Alert;
 class AdjustmentController extends Controller
 {
     /**
@@ -14,16 +15,22 @@ class AdjustmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::get();
-        $adjustments = Adjustment::get();
-        $allowances = Allowance::get();
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $employees = Employee::select('id','user_id','first_name','last_name','middle_name')
+                                    ->whereIn('company_id',$allowed_companies)
+                                    ->where('status','Active')
+                                    ->get();
+        $adjustments = SalaryAdjustment::where('pay_reg_id',null)->get();
+        if($request->status)
+        {
+            $adjustments = SalaryAdjustment::where('pay_reg_id','!=',null)->get();
+        }
         return view('salary_managements.index', array(
             'header' => 'salaryAdjustments',
             'employees' => $employees,
             'adjustments' => $adjustments,
-            'allowances' => $allowances,
         ));
     }
 
@@ -46,6 +53,17 @@ class AdjustmentController extends Controller
     public function store(Request $request)
     {
         //
+        // dd($request->all());
+  
+        $new_adjustment = new SalaryAdjustment;
+        $new_adjustment->name = $request->name;
+        $new_adjustment->employee_id = $request->employee;
+        $new_adjustment->amount = $request->amount;
+        $new_adjustment->remarks = $request->remarks;
+        $new_adjustment->created_by = auth()->user()->id;
+        $new_adjustment->save();
+        Alert::success('Successfully Stored')->persistent('Dismiss');
+        return back();
     }
 
     /**

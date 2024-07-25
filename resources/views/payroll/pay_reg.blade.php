@@ -122,7 +122,10 @@
                               <th>VL</th>
                               <th>VL AMOUNT</th>
                               <th>LEAVE AMOUNT TOTAL</th> --}}
-                              <th>SALARY ADJUSTMENT</th>
+                              @foreach($salary_adjustments as $salary_adjustment)
+                              <th>{{$salary_adjustment->name}}</th>
+                              @endforeach
+                              <th>TOTAL SALARY ADJUSTMENT</th>
                               <th>TAXABLE BENEFITS TOTAL</th>
                               <th>GROSS TAXABLE INCOME</th>
                               <th>DAYS ABSENT</th>
@@ -338,6 +341,13 @@
                                 $loans = $loa->where('schedule', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('monthly_ammort_amt');
                                 $total_loans = $loans+$every_cut_off_loan;
                               }
+                              $salary_adjustment = 0;
+                              if(!empty($name->employee->salary_adjustments))
+                              {
+                                $adjustments = ($name->employee->salary_adjustments)->sum('amount');
+
+                                $salary_adjustment = $salary_adjustment+$adjustments;
+                              }
                               $total_allowances=0;
                               $total_allowances_sss=0;
                               if (!empty($name->employee->allowances)) {
@@ -371,23 +381,23 @@
                               $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
                               $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
                               $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd;
-                              if($name->employee->employee_code == "A3177924")
-                              {
-                                $salary_adjustment = 2070.28;
-                              }
-                              if($name->employee->employee_code == "A3178124")
-                              {
-                                $salary_adjustment = 2472.84;
-                              }
-                              if($name->employee->employee_code == "A189423")
-                              {
-                                $salary_adjustment = 11530.49;
-                              }
+                              // if($name->employee->employee_code == "A3177924")
+                              // {
+                              //   $salary_adjustment = 2070.28;
+                              // }
+                              // if($name->employee->employee_code == "A3178124")
+                              // {
+                              //   $salary_adjustment = 2472.84;
+                              // }
+                              // if($name->employee->employee_code == "A189423")
+                              // {
+                              //   $salary_adjustment = 11530.49;
+                              // }
                                
-                              if($name->employee->employee_code == "A366523")
-                              {
-                                $salary_adjustment = 3463.29;
-                              }
+                              // if($name->employee->employee_code == "A366523")
+                              // {
+                              //   $salary_adjustment = 3463.29;
+                              // }
                               $total_taxable_benefits = $salary_adjustment;
                               $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
                               
@@ -518,6 +528,12 @@
                               <td>{{number_format($vl,2)}}</td>
                               <td>{{number_format($vl_amount,2)}}</td>
                               <td>{{number_format($leave_total_amount,2)}}</td> --}}
+                              @foreach($salary_adjustments as $sadjustment)
+                              @php
+                                   $adjustments = ($name->employee->salary_adjustments)->where('name',$sadjustment->name)->sum('amount');
+                              @endphp
+                              <td>{{number_format($adjustments,2)}}</td>
+                              @endforeach
                               <td>{{number_format($salary_adjustment,2)}}<input type='hidden' name='salary_adjustment[{{$key+1}}]' value="{{$salary_adjustment}}"></td>
                               <td>{{number_format($total_taxable_benefits,2)}}<input type='hidden' name='total_taxable_benefits[{{$key+1}}]' value="{{$total_taxable_benefits}}"></td>
                               <td>{{number_format($gross_taxable_income,2)}}<input type='hidden' name='gross_taxable_income[{{$key+1}}]' value="{{$gross_taxable_income}}"></td>
