@@ -384,7 +384,7 @@
                               $total_sh_nd_amount = $name->total_sh_nd*$hourly_rate*.13;
                               $total_sh_nd_over_eight = $name->total_sh_nd_over_eight*$hourly_rate*.169;
                               $total_sh_ot = $name->total_sh_ot*$hourly_rate*.3;
-                              $total_sh_ot_over_eight = $name->total_sh_ot_over_eight*$hourly_rate*.69;
+                              $total_sh_ot_over_eight = $name->total_sh_ot_over_eight*$hourly_rate*1.69;
                               $total_reg_nd = $name->total_reg_nd*$hourly_rate*.1;
                               $total_reg_ot = $name->total_reg_ot*$hourly_rate*1.25;
                               $total_reg_ot_nd = $name->total_reg_ot_nd*$hourly_rate*.125;
