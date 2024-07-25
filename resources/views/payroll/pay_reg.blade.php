@@ -464,7 +464,12 @@
                                
                                 
                                 $hdmf = 200.00;
-                                $philhealth = ($pay_rate*.05)/2;
+                                $previous_pay_rate = 0;
+                                if($last_c)
+                                {
+                                  $previous_pay_rate = $last_c->pay_rate/2;
+                                }
+                                $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
                                 if($philhealth >= 2500)
                                 {
                                   $philhealth = 2500;
