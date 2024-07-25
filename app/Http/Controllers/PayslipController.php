@@ -305,7 +305,7 @@ class PayslipController extends Controller
             $pay_register->company_id = $request->company;
             $pay_register->save();
 
-            $salary_adjustements = SalaryAdjustment::where('employee_id',$employee_data->id)->get();
+            $salary_adjustements = SalaryAdjustment::where('employee_id',$employee_data->id)->where('pay_reg_id',null)->get();
             foreach($salary_adjustements as $sad)
             {
                 $sad->cut_off_date = $request->to;
@@ -904,7 +904,7 @@ class PayslipController extends Controller
 
     public function generatePayslip(Request $request)
     {
-    $payroll = Payregs::with('pay_allowances.allowance_type','pay_loan.loan_type','pay_instructions')->findOrfail($request->id);
+    $payroll = Payregs::with('salary_adjustments_data','pay_allowances.allowance_type','pay_loan.loan_type','pay_instructions')->findOrfail($request->id);
     // $allowances = PayregAllowance::where('payreg_id',$request->id);
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadView('payslips.generate_payslip',

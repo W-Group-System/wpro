@@ -215,9 +215,15 @@
                         <td style="text-align: right;">{{number_format($payroll->rst_ot_ge_amount ,2)}}</td>
                     </tr>
                     @endif
+                    @foreach($payroll->salary_adjustments_data as $adjustments)
+                    <tr>
+                        <td style="">{{$adjustments->name}}</td>
+                        <td style="text-align: right;">{{number_format($adjustments->amount,2)}}</td>
+                    </tr>
+                    @endforeach
                     @if($payroll->salary_adjustment > 0)
                     <tr>
-                        <td style="">Salary Adjustment</td>
+                        <td style=""><b>Total Salary Adjustment</b></td>
                         <td style="text-align: right;">{{number_format($payroll->salary_adjustment ,2)}}</td>
                     </tr>
                     @endif
