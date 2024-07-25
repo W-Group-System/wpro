@@ -279,19 +279,25 @@
                     @if($payroll->sss_employee_share >0)
                     <tr>
                         <td style="font-weight: bold;">SSS</td>
-                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->sss_employee_share,2)}}</td>
+                        <td style="text-align: right; font-weight: bold;">-{{number_format($payroll->sss_employee_share,2)}}</td>
                     </tr>
                     @endif
                     @if($payroll->hdmf_employee_share >0)
                     <tr>
                         <td style="font-weight: bold;">HDMF</td>
-                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->hdmf_employee_share,2)}}</td>
+                        <td style="text-align: right; font-weight: bold;">-{{number_format($payroll->hdmf_employee_share,2)}}</td>
                     </tr>
                     @endif
                     @if($payroll->phic_employee_share >0)
                     <tr>
                         <td style="font-weight: bold;">PHIC</td>
-                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->phic_employee_share,2)}}</td>
+                        <td style="text-align: right; font-weight: bold;">-{{number_format($payroll->phic_employee_share,2)}}</td>
+                    </tr>
+                    @endif
+                    @if($payroll->mpf_employee_share >0)
+                    <tr>
+                        <td style="font-weight: bold;">SSS MPF</td>
+                        <td style="text-align: right; font-weight: bold;">-{{number_format($payroll->mpf_employee_share,2)}}</td>
                     </tr>
                     @endif
                 </tbody>
@@ -305,7 +311,7 @@
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Less: Witholding Tax</td>
-                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->withholding_tax,2)}}</td>
+                        <td style="text-align: right; font-weight: bold;">-{{number_format($payroll->withholding_tax,2)}}</td>
                     </tr>
                 </tbody>
             </table>
