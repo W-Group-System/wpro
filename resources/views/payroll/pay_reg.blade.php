@@ -465,6 +465,10 @@
                                 
                                 $hdmf = 200.00;
                                 $philhealth = ($pay_rate*.05)/2;
+                                if($philhealth >= 2500)
+                                {
+                                  $philhealth = 2500;
+                                }
                               }
                               
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
