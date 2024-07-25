@@ -411,6 +411,7 @@
                               //   $salary_adjustment = 3463.29;
                               // }
                               $total_taxable_benefits = $salary_adjustment;
+                              
                               $gross_taxable_income = $basic_pay+$total_ot_pay+$leave_total_amount+$total_taxable_benefits;
                               
                               $total_late_min = $name->total_late_min/60*$hourly_rate;
@@ -454,6 +455,7 @@
                                   // dd($government_amount);
                                 
                                 }
+                                // dd($government_amount);
                                 $sss_amount = $sss->where('salary_to','>',$government_amount)->first();
                                 if($sss_amount)
                                 {
@@ -472,6 +474,7 @@
                                 {
                                   $previous_pay_rate = $last_c->pay_rate/2;
                                 }
+                                // dd($last_c->pay_rate);
                                 $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
                                 if($philhealth >= 2500)
                                 {
@@ -581,8 +584,8 @@
                               <td>{{number_format(-1*($sss_er),2)}}<input type='hidden' name='sss_er[{{$key+1}}]' value="{{$sss_er}}"></td>
                               <td>{{number_format(-1*($hdmf),2)}}<input type='hidden' name='hdmf_ee[{{$key+1}}]' value="{{$hdmf}}"></td>
                               <td>{{number_format(-1*($hdmf),2)}}<input type='hidden' name='hdmf_er[{{$key+1}}]' value="{{$hdmf}}"></td>
-                              <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_ee[{{$key+1}}]' value="{{$hdmf}}"></td>
-                              <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_er[{{$key+1}}]' value="{{$hdmf}}"></td>
+                              <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_ee[{{$key+1}}]' value="{{$philhealth}}"></td>
+                              <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_er[{{$key+1}}]' value="{{$philhealth}}"></td>
                               <td>{{number_format(-1*($wisp_ee),2)}}<input type='hidden' name='wisp_ee[{{$key+1}}]' value="{{$wisp_ee}}"></td>
                               <td>{{number_format(-1*($wisp_er),2)}}<input type='hidden' name='wisp_er[{{$key+1}}]' value="{{$wisp_er}}"></td>
                               <td>{{number_format(-1*($statutory),2)}}<input type='hidden' name='statutory[{{$key+1}}]' value="{{$statutory}}"></td>
