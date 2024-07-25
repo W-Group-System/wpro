@@ -29,4 +29,8 @@ class Payregs extends Model  implements Auditable
     {
         return $this->belongsTo(User::class,'posted_by','id');
     }
+    public function salary_adjustments_data()
+    {
+        return $this->hasMany(SalaryAdjustment::class,'pay_reg_id','id');
+    }
 }

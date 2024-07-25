@@ -100,6 +100,14 @@
                               <th>LH OT Amount</th>
                               <th>LH OT OVER 8</th>
                               <th>LH OT OVER 8 AMOUNT</th>
+                              <th>SH ND</th>
+                              <th>SH ND AMOUNT</th>
+                              <th>SH ND GE</th>
+                              <th>SH ND GE AMOUNT</th>
+                              <th>SH OT</th>
+                              <th>SH OT Amount</th>
+                              <th>SH OT OVER 8</th>
+                              <th>SH OT OVER 8 AMOUNT</th>
                               <th>REG ND</th>
                               <th>REG ND AMOUNT</th>
                               <th>REG OT</th>
@@ -373,6 +381,10 @@
                               $total_lh_nd_over_eight = $name->total_lh_nd_over_eight*$hourly_rate*.26;
                               $total_lh_ot = $name->total_lh_ot*$hourly_rate;
                               $total_lh_ot_over_eight = $name->total_lh_ot_over_eight*$hourly_rate*2.6;
+                              $total_sh_nd_amount = $name->total_sh_nd*$hourly_rate*.13;
+                              $total_sh_nd_over_eight = $name->total_sh_nd_over_eight*$hourly_rate*.169;
+                              $total_sh_ot = $name->total_sh_ot*$hourly_rate*.3;
+                              $total_sh_ot_over_eight = $name->total_sh_ot_over_eight*$hourly_rate*.69;
                               $total_reg_nd = $name->total_reg_nd*$hourly_rate*.1;
                               $total_reg_ot = $name->total_reg_ot*$hourly_rate*1.25;
                               $total_reg_ot_nd = $name->total_reg_ot_nd*$hourly_rate*.125;
@@ -380,7 +392,7 @@
                               $total_rst_nd_over_eight = $name->total_rst_nd_over_eight*$hourly_rate*.169;
                               $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
                               $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
-                              $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd;
+                              $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd+$total_sh_nd_amount+$total_sh_nd_over_eight+$total_sh_ot+$total_sh_ot_over_eight;
                               // if($name->employee->employee_code == "A3177924")
                               // {
                               //   $salary_adjustment = 2070.28;
@@ -506,6 +518,14 @@
                               <td>{{number_format($total_lh_ot,2)}}<input type='hidden' name='total_lh_ot[{{$key+1}}]' value="{{$total_lh_ot}}"></td>
                               <td>{{number_format($name->total_lh_ot_over_eight,2)}}<input type='hidden' name='name_total_lh_ot_over_eight[{{$key+1}}]' value="{{$name->total_lh_ot_over_eight}}"></td>
                               <td>{{number_format($total_lh_ot_over_eight,2)}}<input type='hidden' name='total_lh_ot_over_eight[{{$key+1}}]' value="{{$total_lh_ot_over_eight}}"></td>
+                              <td>{{number_format($name->total_sh_nd,2)}}<input type='hidden' name='name_total_sh_nd[{{$key+1}}]' value="{{$name->total_sh_nd}}"></td>
+                              <td>{{number_format($total_sh_nd_amount,2)}}<input type='hidden' name='total_sh_nd_amount[{{$key+1}}]' value="{{$total_sh_nd_amount}}"></td>
+                              <td>{{number_format($name->total_sh_nd_over_eight,2)}}<input type='hidden' name='name_total_sh_nd_over_eight[{{$key+1}}]' value="{{$name->total_sh_nd_over_eight}}"></td>
+                              <td>{{number_format($total_sh_nd_over_eight,2)}}<input type='hidden' name='total_sh_nd_over_eight[{{$key+1}}]' value="{{$total_sh_nd_over_eight}}"></td>
+                              <td>{{number_format($name->total_sh_ot,2)}}<input type='hidden' name='name_total_sh_ot[{{$key+1}}]' value="{{$name->total_sh_ot}}"></td>
+                              <td>{{number_format($total_sh_ot,2)}}<input type='hidden' name='total_sh_ot[{{$key+1}}]' value="{{$total_sh_ot}}"></td>
+                              <td>{{number_format($name->total_sh_ot_over_eight,2)}}<input type='hidden' name='name_total_sh_ot_over_eight[{{$key+1}}]' value="{{$name->total_sh_ot_over_eight}}"></td>
+                              <td>{{number_format($total_sh_ot_over_eight,2)}}<input type='hidden' name='total_sh_ot_over_eight[{{$key+1}}]' value="{{$total_sh_ot_over_eight}}"></td>
                               <td>{{number_format($name->total_reg_nd,2)}}<input type='hidden' name='name_total_reg_nd[{{$key+1}}]' value="{{$name->total_reg_nd}}"></td>
                               <td>{{number_format($total_reg_nd,2)}}<input type='hidden' name='total_reg_nd[{{$key+1}}]' value="{{$total_reg_nd}}"></td>
                               <td>{{number_format($name->total_reg_ot,2)}}<input type='hidden' name='name_total_reg_ot[{{$key+1}}]' value="{{$name->total_reg_ot}}"></td>

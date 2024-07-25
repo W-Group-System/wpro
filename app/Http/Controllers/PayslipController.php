@@ -107,6 +107,10 @@ class PayslipController extends Controller
             DB::raw('SUM(lh_nd_over_eight) as total_lh_nd_over_eight'),
             DB::raw('SUM(lh_ot) as total_lh_ot'),
             DB::raw('SUM(lh_ot_over_eight) as total_lh_ot_over_eight'),
+            DB::raw('SUM(sh_nd) as total_sh_nd'),
+            DB::raw('SUM(sh_nd_over_eight) as total_sh_nd_over_eight'),
+            DB::raw('SUM(sh_ot) as total_sh_ot'),
+            DB::raw('SUM(sh_ot_over_eight) as total_sh_ot_over_eight'),
             DB::raw('SUM(reg_nd) as total_reg_nd'),
             DB::raw('SUM(reg_ot) as total_reg_ot'),
             DB::raw('SUM(reg_ot_nd) as total_reg_ot_nd'),
@@ -252,6 +256,14 @@ class PayslipController extends Controller
             $pay_register->lh_ot_amount = $request->total_lh_ot[$key];
             $pay_register->lh_ot_ge = $request->name_total_lh_ot_over_eight[$key];
             $pay_register->lh_ot_ge_amount = $request->total_lh_ot_over_eight[$key];
+            $pay_register->sh_nd = $request->name_total_sh_nd[$key];
+            $pay_register->sh_nd_amount = $request->total_sh_nd_amount[$key];
+            $pay_register->sh_nd_ge = $request->name_total_sh_nd_over_eight[$key];
+            $pay_register->sh_nd_ge_amount = $request->total_sh_nd_over_eight[$key];
+            $pay_register->sh_ot = $request->name_total_sh_ot[$key];
+            $pay_register->sh_ot_amount = $request->total_sh_ot[$key];
+            $pay_register->sh_ot_ge = $request->name_total_sh_ot_over_eight[$key];
+            $pay_register->sh_ot_ge_amount = $request->total_sh_ot_over_eight[$key];
             $pay_register->reg_nd = $request->name_total_reg_nd[$key];
             $pay_register->reg_nd_amount = $request->total_reg_nd[$key];
             $pay_register->reg_ot = $request->name_total_reg_ot[$key];
