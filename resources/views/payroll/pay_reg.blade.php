@@ -447,8 +447,11 @@
                                  
                                   $sss_allowance=($last_c->pay_allowances)->where('allowance_id','!=',9)->sum('amount');
                                   
-                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$sss_allowance+$last_c->deminimis+$total_allowances_sss+$de_minimis;
+                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$de_minimis;
+                                  // dd($lastccc);
+                                  // dd($government_amount);
                                   $government_amount = $government_amount+$lastccc;
+                                  // dd($government_amount);
                                 
                                 }
                                 $sss_amount = $sss->where('salary_to','>',$government_amount)->first();
