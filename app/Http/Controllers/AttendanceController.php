@@ -510,7 +510,7 @@ class AttendanceController extends Controller
     public function devices()
     {
         ini_set('memory_limit', '-1');
-        $devices = AttendanceLog::with('attendance')->whereIn('location',['CCC', 'Head Office', 'PBI', 'SPAI', 'WCC', 'WFA', 'WGC', 'WHI-Carmona', 'WOI', 'WTCC'])->select('ip_address')->get();
+        $devices = AttendanceLog::with('attendance')->whereIn('location',['CCC', 'Head Office', 'PBI', 'SPAI', 'WCC', 'WFA', 'WGC', 'WHI-Carmona', 'WOI', 'WTCC'])->select('location')->get();
 
         return view('attendances.devices',
         array(

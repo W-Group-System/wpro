@@ -32,7 +32,7 @@ tr:nth-child(even) {
   @foreach($devices as $device)
     @if($device->attendance)
         <tr>
-            <td>{{$device->ip_address}}</td>
+            <td>{{$device->location}}</td>
             <td>{{$device->attendance->datetime}}</td>
             <td>@if(date('Y-m-d',strtotime($device->attendance->datetime)) != date('Y-m-d')) <span style='background-color:red;color:white;'>Need to re-sync</span>@else <span style='background-color:green;color:white;'>No Error</span> @endif</td>
         </tr>
