@@ -4,7 +4,7 @@
       <div class="modal-header">
         <h5 class="card-title">Add Training</h5>
       </div>
-      <form action="{{url('add-employee-training')}}" method="post" onsubmit="show()">
+      <form action="{{url('add-employee-training')}}" method="post" onsubmit="show()"  enctype="multipart/form-data">
         {{csrf_field()}}
         
         <input type="hidden" name="user_id" value="{{$user->id}}">

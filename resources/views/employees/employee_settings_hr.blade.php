@@ -807,6 +807,7 @@
                                 <th>Attachment</th>
                                 <th>Certificate</th>
                                 <th>Amount</th>
+                                <th>Action</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -824,12 +825,13 @@
                                         <a href="{{ url($et->training_attachment) }}" target="_blank">Certificate</a>
                                         @endif
                                     </td>
-                                    <td><span>&#8369;</span>{{$et->amount}}</td>
+                                    <td><span>&#8369;</span>{{ number_format($et->amount,2)}}</td>
+                                    <td></td>
                                   </tr>
                                 @endforeach
                               @else
                                 <tr>
-                                  <td colspan="4" class="text-center">No data available.</td>
+                                  <td colspan="6" class="text-center">No data available.</td>
                                 </tr>
                               @endif
                             </tbody>
