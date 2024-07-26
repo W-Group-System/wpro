@@ -60,7 +60,7 @@ class AttendanceController extends Controller
                                         ->orderBy('id','asc');
                                 }])
                                 ->where('employee_number', auth()->user()->employee->employee_number)
-                                ->where('status','Active')
+                                ->whereIn('status',['Active','HBU'])
                                 ->get();
         return view('attendances.view_attendance',
         array(
