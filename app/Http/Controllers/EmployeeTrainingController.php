@@ -37,6 +37,26 @@ class EmployeeTrainingController extends Controller
         $employeeTraining->amount = $request->amount;
         $employeeTraining->training = $request->training;
         $employeeTraining->encoded_by = auth()->user()->id;
+
+        if ($request->file('file')) {
+            $attachment = $request->file('file');
+            $original_name = $attachment->getClientOriginalName();
+            $name = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->move(public_path() . '/training/', $name);
+            $file_name = '/training/' . $name;
+            
+        $employeeTraining->attachment = $file_name;
+        }
+        if ($request->file('training_attachment')) {
+            $attachment = $request->file('training_attachment');
+            $original_name = $attachment->getClientOriginalName();
+            $name = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->move(public_path() . '/training/', $name);
+            $file_name = '/training/' . $name;
+            
+            $employeeTraining->training_attachment = $file_name;
+        }
+   
         $employeeTraining->save();
 
         Alert::success('Successfully Added')->persistent('Dismiss');

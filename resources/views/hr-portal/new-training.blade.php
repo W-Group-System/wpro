@@ -34,6 +34,14 @@
               Amount:
               <input type="number" name="amount" class="form-control" placeholder="0.00" step=".01" required>
             </div>
+            <div class="col-md-12 mb-2">
+              Training Supporting Documents:
+              <input type="file" name="file" class="form-control" required>
+            </div>
+            <div class="col-md-12 mb-2">
+               Training Certificate:
+              <input type="file" name="training_attachment" class="form-control" >
+            </div>
           </div>
         </div>
         <div class="modal-footer">
