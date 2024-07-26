@@ -307,7 +307,7 @@
                     @if($payroll->undertime_amount > 0)
                     <tr>
                         <td>Undertime</td>
-                        <td>{{number_format($payroll->uundertime_total,2)}}  Hr/s</td>
+                        <td>{{number_format($payroll->undertime_total,2)}}  Hr/s</td>
                         <td style="text-align: right;">-{{number_format($payroll->undertime_amount,2)}}</td>
                     </tr>
                     @endif
