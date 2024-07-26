@@ -300,14 +300,14 @@
                     @if($payroll->tardiness_amount > 0)
                     <tr>
                         <td>Lates</td>
-                        <td>{{number_format($payroll->tardiness_total,2)}}  Hr/s</td>
+                        <td>{{number_format($payroll->tardiness_total/60,2)}}  Hr/s</td>
                         <td style="text-align: right;">-{{number_format($payroll->tardiness_amount,2)}}</td>
                     </tr>
                     @endif
                     @if($payroll->undertime_amount > 0)
                     <tr>
                         <td>Undertime</td>
-                        <td>{{number_format($payroll->undertime_total,2)}}  Hr/s</td>
+                        <td>{{number_format($payroll->undertime_total/60,2)}}  Hr/s</td>
                         <td style="text-align: right;">-{{number_format($payroll->undertime_amount,2)}}</td>
                     </tr>
                     @endif
