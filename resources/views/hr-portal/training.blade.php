@@ -18,7 +18,8 @@
                       <th>Company</th>
                       <th>Department</th>
                       <th>Position</th>
-                      <th>Year/Months of Training</th>
+                      <th>Training Period</th>
+                      <th>Bond Period</th>
                       <th>Amount</th>
                       <th>Action</th>
                     </tr>
@@ -32,7 +33,8 @@
                         <td>{{$et->employee->department->name}}</td>
                         <td>{{$et->employee->position}}</td>
                         <td>
-                          @php
+                          {{date('M. d, Y',strtotime($et->start_date))}} - {{date('M. d, Y',strtotime($et->end_date))}}
+                          {{-- @php
                             $start_date = new DateTime($et->start_date);
                             $end_date = new DateTime($et->end_date);
 
@@ -41,7 +43,10 @@
                             $s_m = $date_diff->format('%m') > 1 ? 's' : '';
                           @endphp
 
-                          {{$date_diff->format('%y Year'.$s_y.', '.'%m Month'.$s_m)}}
+                          {{$date_diff->format('%y Year'.$s_y.', '.'%m Month'.$s_m)}} --}}
+                        </td>
+                        <td>
+                          {{date('M. d, Y',strtotime($et->bond_start_date))}} - {{date('M. d, Y',strtotime($et->bond_end_date))}}
                         </td>
                         <td><span>&#8369;</span>{{number_format($et->amount, 2)}}</td>
                         <td>

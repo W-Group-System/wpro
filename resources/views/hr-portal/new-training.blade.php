@@ -14,13 +14,21 @@
               Training:
               <input type="text" name="training" id="training" class="form-control">
             </div>
-            <div class="col-md-12 mb-2">
-              Start Date:
-              <input type="date" name="start_date" class="form-control" max="{{date('Y-m-d')}}" required>
+            <div class="col-md-6 mb-2">
+              Training Start Date:
+              <input type="date" name="start_date" class="form-control"  required>
             </div>
-            <div class="col-md-12 mb-2">
-              End Date:
-              <input type="date" name="end_date" class="form-control" min="{{date('Y-m-d')}}" required>
+            <div class="col-md-6 mb-2">
+              Training End Date:
+              <input type="date" name="end_date" class="form-control"  required>
+            </div>
+            <div class="col-md-6 mb-2">
+              Bond Start Date:
+              <input type="date" name="bond_start_date" class="form-control"required>
+            </div>
+            <div class="col-md-6 mb-2">
+              Bond End Date:
+              <input type="date" name="bond_end_date" class="form-control" required>
             </div>
             <div class="col-md-12 mb-2">
               Amount:

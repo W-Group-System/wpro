@@ -32,8 +32,11 @@ class EmployeeTrainingController extends Controller
         $employeeTraining->employee_id = $request->user_id;
         $employeeTraining->start_date = $request->start_date;
         $employeeTraining->end_date = $request->end_date;
+        $employeeTraining->bond_start_date = $request->bond_start_date;
+        $employeeTraining->bond_end_date = $request->bond_end_date;
         $employeeTraining->amount = $request->amount;
         $employeeTraining->training = $request->training;
+        $employeeTraining->encoded_by = auth()->user()->id;
         $employeeTraining->save();
 
         Alert::success('Successfully Added')->persistent('Dismiss');
