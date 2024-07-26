@@ -802,8 +802,10 @@
                             <thead>
                               <tr>
                                 <th>Training</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
+                                <th>Training Period</th>
+                                <th>Bond Period</th>
+                                <th>Attachment</th>
+                                <th>Certificate</th>
                                 <th>Amount</th>
                               </tr>
                             </thead>
@@ -812,8 +814,16 @@
                                 @foreach ($employeeTraining as $et)
                                   <tr>
                                     <td>{{$et->training}}</td>
-                                    <td>{{date('M. d, Y', strtotime($et->start_date))}}</td>
-                                    <td>{{date('M. d, Y', strtotime($et->end_date))}}</td>
+                                    <td>{{date('M. d, Y', strtotime($et->start_date))}} - {{date('M. d, Y', strtotime($et->end_date))}}</td>
+                                    <td>{{date('M. d, Y', strtotime($et->bond_start_date))}} - {{date('M. d, Y', strtotime($et->bond_end_date))}}</td>
+                                    <td> @if ($et->attachment)
+                                        <a href="{{ url($et->attachment) }}" target="_blank">Attachment</a>
+                                        @endif
+                                    </td>
+                                    <td> @if ($et->training_attachment)
+                                        <a href="{{ url($et->training_attachment) }}" target="_blank">Certificate</a>
+                                        @endif
+                                    </td>
                                     <td><span>&#8369;</span>{{$et->amount}}</td>
                                   </tr>
                                 @endforeach
