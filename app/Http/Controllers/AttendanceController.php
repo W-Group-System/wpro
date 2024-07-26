@@ -15,7 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\AttendanceLog;
 use Barryvdh\DomPDF\Facade as PDF;
-
+use Illuminate\Support\Facades\DB;
 use App\Exports\AttedancePerCompanyExport;;
 
 use App\Exports\AttendanceSeabasedExport;
@@ -510,11 +510,19 @@ class AttendanceController extends Controller
     public function devices()
     {
         ini_set('memory_limit', '-1');
-        $devices = AttendanceLog::with('attendance')->groupBy('location')->select('location');
-        // dd($devices);
+        $locations = ['CCC', 'Head Office', 'PBI', 'SPAI', 'WCC', 'WFA', 'WGC', 'WHI-Carmona', 'WOI', 'WTCC'];
+        $devices = AttendanceLog::select('*')
+    ->whereIn('id', function ($query) {
+        $query->select(DB::raw('MAX(id)'))
+              ->from('attendance_logs')
+              ->groupBy('location');
+    })
+    ->whereIn('location',$locations)
+    ->get();
         return view('attendances.devices',
         array(
             'devices' => $devices,
+            'locations' => $locations,
         )
         );
     }
