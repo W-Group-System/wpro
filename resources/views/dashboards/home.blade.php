@@ -81,12 +81,13 @@
                                           
                                         @endphp
                                     @if($attendance_now->time_out == null )
-                                        
-                                        Halfday Out : {{$halfday_out}} <br>
+                                        <hr>
+                                        Estimated Halfday Out : {{$halfday_out}} <br>
                                         Estimated Out : {{$estimated_out}} 
                                     @else
                                     Time Out : {{date('h:i A',strtotime($attendance_now->time_out))}} <br>
-                                    Halfday Out : {{$halfday_out}} <br>
+                                    <hr>
+                                    Estimated Halfday Out : {{$halfday_out}} <br>
                                     Estimated Out : {{$estimated_out}} 
                                     @endif
                                   @else NO TIME IN 
