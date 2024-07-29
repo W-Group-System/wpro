@@ -92,7 +92,7 @@
                                             @endif
                                             <br>
                                             @if($item->ob_file)
-                                                <a href="{{$item->ob_file}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+                                                <a href="{{ url($item->ob_file) }}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                             @endif
                                         </td>
                                         <td>{{$item->status}}</td>
