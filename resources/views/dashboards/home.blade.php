@@ -29,35 +29,64 @@
                                     @php
                                           $employee_schedule = employeeSchedule($schedules,$attendance_now->time_in,$schedules[0]->schedule_id);
                                           $estimated_out = "";
+                                          $halfday_out = "";
+                                          $schedule_hours = 0;
                                           if($employee_schedule != null)
                                           {
-                                            if(date('h:i A',strtotime($attendance_now->time_in)) < date('h:i A',strtotime($employee_schedule['time_in_from'])))
+                                            $schedule_out = strtotime(date('Y-m-d')." ".$employee_schedule->time_out_to);
+                                            $schedule_in = strtotime(date('Y-m-d')." ".$employee_schedule->time_in_to);
+                                            if(($schedule_out) < ($schedule_in))
                                             {
+                                                
+                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                // dd(date('Y-m-d H:i',$schedule_out)." ".date('Y-m-d H:i',$schedule_in));
+                                            }
+                                            $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                            // dd(date('Y-m-d',strtotime($date_r)));
+                                            if($schedule_hours > 8)
+                                            {
+                                                $schedule_hours =  $schedule_hours-1;
+                                                
+                                                
+                                            }
+                                            if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) < strtotime(date('h:i A',strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from']))))
+                                            {
+                                                $halfday_out = date("h:i: A", strtotime('+'.intval(($schedule_hours/2)*60).' hours', strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from'])));
                                                 $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_from']));
+                                                // $halfday_estimated_out = 
+                                                // dd($employee_schedule['time_in_from']);
                                             }
                                             else
                                             {
+                                              // dd($schedule_hours/2);
+                                           
+                                              $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($attendance_now->time_in)));
+                                              // dd($halfday_out);
                                                 $hours = intval($employee_schedule['working_hours']);
                                                 $minutes = ($employee_schedule['working_hours']-$hours)*60;
                                                 $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($attendance_now->time_in)));
                                                 $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
                                             }
-                                            if(date('h:i A',strtotime($attendance_now->time_in)) > date('h:i A',strtotime($employee_schedule['time_in_to'])))
+                                            if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) > strtotime(date('h:i A',strtotime($employee_schedule['time_in_to']))))
                                             {
                                                 $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_to']));
+                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($attendance_now->time_in)));
                                             }
 
                                           }
                                           else {
                                             $estimated_out = "No Schedule";
+                                            $halfday_out = "No Schedule";
                                           }
                                           
                                         @endphp
                                     @if($attendance_now->time_out == null )
                                         
+                                        Halfday Out : {{$halfday_out}} <br>
                                         Estimated Out : {{$estimated_out}} 
                                     @else
                                     Time Out : {{date('h:i A',strtotime($attendance_now->time_out))}} <br>
+                                    Halfday Out : {{$halfday_out}} <br>
                                     Estimated Out : {{$estimated_out}} 
                                     @endif
                                   @else NO TIME IN 
