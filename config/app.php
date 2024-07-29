@@ -52,9 +52,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://wpro.wsystem.online/'),
+    'url' => env('APP_URL', 'https://hris.wsystem.online/'),
 
-    'asset_url' => env('ASSET_URL', "https://wpro.wsystem.online/"),
+    'asset_url' => env('ASSET_URL', "https://hris.wsystem.online/"),
 
     /*
     |--------------------------------------------------------------------------

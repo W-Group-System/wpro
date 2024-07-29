@@ -136,7 +136,7 @@
     <div class="container">
    
         <img style='border:1px;' src="{{asset('/images/CCCback.jpg')}}" width="100%" height="100%"/>  </div>
-        <div class="qr-code" ><img src="data:image/png;base64, {!! base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate('https://wpro.wsystem.online/calling-card/'.$employee->employee_code)) !!}"></div>
+        <div class="qr-code" ><img src="data:image/png;base64, {!! base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate('https://hris.wsystem.online/calling-card/'.$employee->employee_code)) !!}"></div>
     </div>
     </body>
 </html>
