@@ -135,7 +135,7 @@
         <div class="contact_person" style='font-size: 30px;'>{{$employee->contact_person->name ?? null}}</div>
         <div class="contact_number" style='font-size: 30px;'>{{$employee->contact_person->contact_number ?? null}}</div>
         <div class="website" style='font-size: 30px;'>www.wgroup.com.ph</div>
-        <div class="qr-code" ><img src="data:image/png;base64, {!! base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate('https://hris.wsystem.online/calling-card/'.$employee->employee_code)) !!}"></div>
+        <div class="qr-code" ><img src="data:image/png;base64, {!! base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate('https://wpro.wsystem.online/calling-card/'.$employee->employee_code)) !!}"></div>
     </div>
     
     
