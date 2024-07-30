@@ -1011,7 +1011,12 @@
                                                     }
                                                   
                                                 }
-                                                
+                                                if($abs ==1)
+                                                {
+                                                    $work = 0;
+                                                    $late = 0;
+                                                    $undertime_hrs = 0;
+                                                }
                                                 $subtotal_abs += $abs;
                                                 $subtotal_leave_w_pay += $leave_count;
                                                 $subtotal_reg_hrs += $work;
