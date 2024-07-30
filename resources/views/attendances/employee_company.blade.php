@@ -468,7 +468,7 @@
                                                             
                                                             
                                                         }
-                                                        if($emp->employee_code == "A340612")
+                                                        if($emp->employee_code == "A340612") //frosie
                                                         {
                                                             $schedule_hours =  $schedule_hours-1;
                                                             
@@ -532,7 +532,7 @@
                                                                
                                                                 
                                                             }
-                                                            if($emp->employee_code == "A340612")
+                                                            if($emp->employee_code == "A340612")//frosie
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
                                                                 if($work >= ($schedule_hours/1.5))
@@ -800,6 +800,14 @@
                                                                 $restnd_ge = night_difference_per_company($time_start,$time_end);
                                                                 $restnd_ge = $restnd_ge - $restnd;
                                                                 $restnd = $restnd-1;
+                                                                if($restnd <0)
+                                                                {
+                                                                    $restnd = 0;
+                                                                }
+                                                                if($restnd_ge <0)
+                                                                {
+                                                                    $restnd_ge = 0;
+                                                                }
                                                             }
                                                           
                                                             
