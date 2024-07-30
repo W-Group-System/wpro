@@ -627,6 +627,16 @@
                                                 @endif
                                                 @php
                                                     $late = $late_diff_hours*60;
+                                                    if($late/60 > ($schedule_hours/2))
+
+                                                    {
+                                                        $late = $late -60;
+                                                    }
+                                                    if($undertime_hrs/60 > ($schedule_hours/2))
+
+                                                    {
+                                                        $undertime_hrs = $undertime_hrs -60;
+                                                    }
                                                     if($leave_count == .5)
                                                     {
                                                         if($work < ($schedule_hours/2))
