@@ -510,7 +510,7 @@ class AttendanceController extends Controller
     public function devices()
     {
         ini_set('memory_limit', '-1');
-        $locations = ['CCC', 'Head Office', 'PBI', 'SPAI', 'WCC', 'WFA', 'WGC', 'WHI-Carmona', 'WOI', 'WTCC'];
+        $locations = ['CCC', 'Head Office', 'PBI', 'SPAI', 'WCC', 'WFA', 'WGC', 'WHI-Carmona', 'WOI', 'WTCC','PRI'];
         $devices = AttendanceLog::select('*')
     ->whereIn('id', function ($query) {
         $query->select(DB::raw('MAX(id)'))
