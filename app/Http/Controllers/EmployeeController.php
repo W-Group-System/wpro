@@ -1557,7 +1557,7 @@ class EmployeeController extends Controller
             if(count($code_data) > 1){
                 $code_final = intval($code_data[2]) + 1;
             }else{
-                $code_final = "-00001";
+                $code_final = "00001";
             }
             
             $emp_code = $code . "-" . $year . "-" . str_pad($code_final, 5, '0', STR_PAD_LEFT);
@@ -1836,7 +1836,7 @@ class EmployeeController extends Controller
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
                                 })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
-                                ->where('employee_code','A3157222')
+                                // ->where('employee_code','A3157222')
                                 ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
