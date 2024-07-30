@@ -434,7 +434,7 @@
 
                                                         {
                                                             $leave_count = 0;
-                                                            $abs = $leave_count;
+                                                            // $abs = $leave_count;
                                                         }
                                                         // dd($leave_count);
                                                     }
