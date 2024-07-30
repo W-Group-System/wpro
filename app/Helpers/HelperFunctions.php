@@ -223,13 +223,24 @@ function employeeHasOB($employee_obs = array(), $check_date){
 }
 
 function employeeHasOBDetails($employee_obs = array(), $check_date){
+    $final_data = "";
     if(count($employee_obs) > 0){
-        foreach($employee_obs as $item){
-            if(date('Y-m-d',strtotime($item['applied_date'])) == date('Y-m-d',strtotime($check_date))){
-                return $item;
+        $collect = collect($employee_obs);
+        foreach($collect->sortBy('date_from') as $item){
+            // dd($item);
+            if(date('Y-m-d',strtotime($item->applied_date)) == date('Y-m-d',strtotime($check_date))){
+                $final_data = $item;
+                break;
+            }
+        }
+        foreach($collect->sortByDesc('date_to') as $item){
+            if(date('Y-m-d',strtotime($item->applied_date)) == date('Y-m-d',strtotime($check_date))){
+                $final_data->date_to = $item->date_to;
+                break;
             }
         }
     }
+    return $final_data;
 }
 
 function employeeHasWFH($employee_wfhs = array(), $check_date){
