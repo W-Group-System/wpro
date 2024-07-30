@@ -1557,7 +1557,7 @@ class EmployeeController extends Controller
             if(count($code_data) > 1){
                 $code_final = intval($code_data[2]) + 1;
             }else{
-                $code_final = "00001";
+                $code_final = "-00001";
             }
             
             $emp_code = $code . "-" . $year . "-" . str_pad($code_final, 5, '0', STR_PAD_LEFT);
@@ -1800,7 +1800,7 @@ class EmployeeController extends Controller
         $employees = [];
         
         if ($from_date != null) {
-            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id')
+            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description')
                                 ->with('company')
                                 ->with(['attendances' => function ($query) use ($from_date, $to_date) {
                                     $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
@@ -1835,7 +1835,9 @@ class EmployeeController extends Controller
                                 })
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
-                                })->where('classification','!=',8)->where('original_date_hired','<=',$to_date);
+                                })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
+                                ->where('employee_code','A3157222')
+                                ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
             }
@@ -1846,6 +1848,8 @@ class EmployeeController extends Controller
             $emp_data =  $emp_data->where('status','Active')->get();
             
             $date_range =  $attendance_controller->dateRange($from_date, $to_date);
+
+            
         }
         $schedules = ScheduleData::all();
 
@@ -2023,9 +2027,12 @@ class EmployeeController extends Controller
 
     public function sync(Request $request)
     {
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $companies = Company::get();
         
-        $employees = Employee::where('status','Active')->get();
+        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code')->where('status','Active')
+        ->whereIn('company_id', $allowed_companies)
+        ->get();
 
         return view('employees.sync', array(
             'header' => 'biometrics',
