@@ -426,6 +426,7 @@
                                                 <td @if($if_has_ob) class='bg-info'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][out]" value="@if($time_end){{date('h:i A',strtotime($time_end))}}@endif">@if($time_end){{date('h:i A',strtotime($time_end))}}@endif</td>
                                                 @php
                                                     $leave_count = 0;
+                                                    $abs_half = 0;
                                                     if($if_leave)
                                                     {
                                                         $l = explode('-',$if_leave);
@@ -434,7 +435,7 @@
 
                                                         {
                                                             $leave_count = 0;
-                                                            // $abs = $leave_count;
+                                                            // $abs_half = $leave_count;
                                                         }
                                                         // dd($leave_count);
                                                     }
@@ -555,6 +556,14 @@
                                                                     $work = $schedule_hours/2;
                                                                 }
                                                             }
+                                                            // if($abs_half == .5)
+                                                            // {
+                                                            //     if($work > $schedule_hours)
+                                                            //     {
+
+                                                            //         $work = $schedule_hours/2;
+                                                            //     }
+                                                            // }
                                                         }
 
                                                     @endphp                                            
@@ -712,6 +721,7 @@
                                                     $restday_nd = 0;
                                                     $work_rest = 0;
                                                     $restnd = 0;
+                                                    $restnd_ge = 0;
                                                     $rest = "";
                                                 
                                                     if($employee_schedule != null)
@@ -745,8 +755,18 @@
                                                         $night_diff_ot = 0;
                                                         if(($time_start) && ($time_end) && ($approved_overtime_hrs >0))
                                                         {
+                                                            
                                                             $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
                                                             $restnd =  night_difference_per_company($time_start,$time_end);
+                                                            if($work_rest >9 )
+                                                            { 
+                                                                $restnd =  round(night_difference_per_company($time_start,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($time_start)))));
+                                                                $restnd_ge = night_difference_per_company($time_start,$time_end);
+                                                                $restnd_ge = $restnd_ge - $restnd;
+                                                                $restnd = $restnd-1;
+                                                            }
+                                                          
+                                                            
                                                         }
                                                         $late = 0;
                                                         $undertime = 0;
@@ -962,7 +982,7 @@
                                                 <td @if($restday_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="{{$restday_ot}}">{{number_format($restday_ot,2)}}</td>  {{-- RST OT --}}
                                                 <td @if($restday_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="{{$restday_ot_ge}}">{{number_format($restday_ot_ge,2)}}</td> {{-- RST OT > 8 --}}
                                                 <td @if($restnd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="{{$restnd}}">{{number_format($restnd,2)}}</td> {{-- RST ND --}}
-                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="0.00">0.00</td> {{-- RST ND > 8 --}}
+                                                <td  @if($restnd_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="{{$restnd_ge}}">{{number_format($restnd_ge,2)}}</td> {{-- RST ND > 8 --}}
                                                 <td @if($lh_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot]" value="{{$lh_ot}}">{{number_format($lh_ot,2)}}</td> {{-- LH OT --}}
                                                 <td @if($lh_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot_over_eight]" value="{{$lh_ot_ge}}">{{number_format($lh_ot_ge,2)}}</td> {{-- LH OT > 8 --}}
                                                 <td @if($lh_ot_nd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_nd]" value="{{$lh_ot_nd}}">{{number_format($lh_ot_nd,2)}}</td> {{-- LH ND --}}
