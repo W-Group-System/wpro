@@ -435,7 +435,7 @@
 
                                                         {
                                                             $leave_count = 0;
-                                                            // $abs_half = $leave_count;
+                                                            $abs_half = $l[1];
                                                         }
                                                         // dd($leave_count);
                                                     }
@@ -556,14 +556,13 @@
                                                                     $work = $schedule_hours/2;
                                                                 }
                                                             }
-                                                            // if($abs_half == .5)
-                                                            // {
-                                                            //     if($work > $schedule_hours)
-                                                            //     {
-
-                                                            //         $work = $schedule_hours/2;
-                                                            //     }
-                                                            // }
+                                                            if($abs_half == .5)
+                                                            {
+                                                                if($work > $schedule_hours)
+                                                                {
+                                                                    $work = $schedule_hours/2;
+                                                                }
+                                                            }
                                                         }
 
                                                     @endphp                                            
@@ -626,6 +625,25 @@
                                                             $late = 0;
                                                             $undertime_hrs = 0;
                                                         }
+                                                    }
+
+                                                    if($abs_half == .5)
+                                                    {
+                                                        $abs = .5;
+                                                        if($work < ($schedule_hours/2))
+                                                            {
+                                                                $late = ($schedule_hours/2)-$work;
+                                                                if($work < $schedule_hours/2)
+                                                                {
+                                                                    $late = 0;
+                                                                    $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
+                                                                } 
+                                                            }
+                                                            else{
+                                                                $work = ($schedule_hours/2);
+                                                                $late = 0;
+                                                                $undertime_hrs = 0;
+                                                            }
                                                     }
                                                     
                                                     $overtime = $overtime+$late_diff_hours;
