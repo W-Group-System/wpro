@@ -434,6 +434,7 @@
 
                                                         {
                                                             $leave_count = 0;
+                                                            $abs = $leave_count;
                                                         }
                                                         // dd($leave_count);
                                                     }
@@ -533,6 +534,7 @@
                                                            if($work_ot > $original_sched)
                                                            {
                                                             $overtime = (double) number_format($work_ot - $original_sched,2);
+                                                            
                                                            }
                                                         //    if($date_r == "2024-07-10")
                                                         //    {
@@ -616,6 +618,8 @@
                                                             $undertime_hrs = 0;
                                                         }
                                                     }
+                                                    
+                                                    $overtime = $overtime+$late_diff_hours;
                                                 @endphp
                                                 @php
                                                 if($work <0)
@@ -933,7 +937,7 @@
                                                     }
                                                   
                                                 }
-
+                                                
                                                 $subtotal_abs += $abs;
                                                 $subtotal_leave_w_pay += $leave_count;
                                                 $subtotal_reg_hrs += $work;
