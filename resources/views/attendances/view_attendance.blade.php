@@ -398,8 +398,15 @@
                                                         // $abs=0;
                                                     @endphp  
                                                 @endif
+                                                @if($generated_attendance == null)
                                                 <td @if($if_has_ob) class='bg-info'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][in]" value="@if($time_start){{date('h:i A',strtotime($time_start))}}@endif">@if($time_start){{date('h:i A',strtotime($time_start))}}@endif</td>
                                                 <td @if($if_has_ob) class='bg-info'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][out]" value="@if($time_end){{date('h:i A',strtotime($time_end))}}@endif">@if($time_end){{date('h:i A',strtotime($time_end))}}@endif</td>
+                                                @else
+                                                <td @if($if_has_ob) class='bg-info'@endif>{{$generated_attendance->in}}</td>
+                                                <td @if($if_has_ob) class='bg-info'@endif>{{$generated_attendance->out}}</td>
+                                                
+                                                @endif
+                                                
                                                 @php
                                                     $leave_count = 0;
                                                     if($if_leave)
