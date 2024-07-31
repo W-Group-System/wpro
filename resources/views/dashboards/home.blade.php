@@ -52,7 +52,7 @@
                                             if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) < strtotime(date('h:i A',strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from']))))
                                             {
                                           
-                                                $halfday_out = date("Y-m-d h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from'])));
+                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from'])));
                                                 $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_from']));
                                             }
                                             else
@@ -81,13 +81,17 @@
                                         @endphp
                                     @if($attendance_now->time_out == null )
                                         <hr>
+                                        <small>
                                         Estimated Halfday Out : {{$halfday_out}} <br>
                                         Estimated Out : {{$estimated_out}} 
+                                      </small>
                                     @else
                                     Time Out : {{date('h:i A',strtotime($attendance_now->time_out))}} <br>
                                     <hr>
+                                    <small>
                                     Estimated Halfday Out : {{$halfday_out}} <br>
                                     Estimated Out : {{$estimated_out}} 
+                                  </small>
                                     @endif
                                   @else NO TIME IN 
                                   @endif</p>
