@@ -51,10 +51,9 @@
                                             }
                                             if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) < strtotime(date('h:i A',strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from']))))
                                             {
-                                                $halfday_out = date("h:i: A", strtotime('+'.intval(($schedule_hours/2)*60).' hours', strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from'])));
+                                          
+                                                $halfday_out = date("Y-m-d h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from'])));
                                                 $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_from']));
-                                                // $halfday_estimated_out = 
-                                                // dd($employee_schedule['time_in_from']);
                                             }
                                             else
                                             {
@@ -70,7 +69,7 @@
                                             if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) > strtotime(date('h:i A',strtotime($employee_schedule['time_in_to']))))
                                             {
                                                 $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_to']));
-                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($attendance_now->time_in)));
+                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($employee_schedule->time_in)));
                                             }
 
                                           }
