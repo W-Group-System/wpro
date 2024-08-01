@@ -94,18 +94,32 @@ class FormApprovalController extends Controller
             $level = '';
             if($employee_leave->level == 0){
                 $employee_approver = EmployeeApprover::where('user_id', $employee_leave->user_id)->where('approver_id', auth()->user()->id)->first();
-                if($employee_approver->as_final == 'on'){
+                if($employee_approver)
+                {
+                    if($employee_approver->as_final == 'on'){
+                        EmployeeLeave::Where('id', $id)->update([
+                            'approved_date' => date('Y-m-d'),
+                            'status' => 'Approved',
+                            'approval_remarks' => $request->approval_remarks,
+                            'level' => 1,
+                        ]);
+                    }else{
+                        EmployeeLeave::Where('id', $id)->update([
+                            'level' => 1,
+                        ]);
+                    }
+                }
+                else
+                {
                     EmployeeLeave::Where('id', $id)->update([
                         'approved_date' => date('Y-m-d'),
                         'status' => 'Approved',
                         'approval_remarks' => $request->approval_remarks,
                         'level' => 1,
                     ]);
-                }else{
-                    EmployeeLeave::Where('id', $id)->update([
-                        'level' => 1,
-                    ]);
                 }
+               
+                
             }
             else if($employee_leave->level == 1){
                 EmployeeLeave::Where('id', $id)->update([
@@ -563,20 +577,34 @@ class FormApprovalController extends Controller
             $level = '';
             if($employee_ob->level == 0){
                 $employee_approver = EmployeeApprover::where('user_id', $employee_ob->user_id)->where('approver_id', auth()->user()->id)->first();
-                if($employee_approver->as_final == 'on'){
+                if($employee_approver)
+                {
+                    if($employee_approver->as_final == 'on'){
+                        EmployeeOb::Where('id', $id)->update([
+                            'approved_date' => date('Y-m-d'),
+                            'status' => 'Approved',
+                            'approval_remarks' => $request->approval_remarks,
+                            'level' => 1,
+                        ]);
+    
+                    }else{
+                        EmployeeOb::Where('id', $id)->update([
+                            'level' => 1,
+                            'approval_remarks' => $request->approval_remarks,
+                        ]);
+                    }
+                }
+                else
+
+                {
                     EmployeeOb::Where('id', $id)->update([
                         'approved_date' => date('Y-m-d'),
                         'status' => 'Approved',
                         'approval_remarks' => $request->approval_remarks,
                         'level' => 1,
                     ]);
-
-                }else{
-                    EmployeeOb::Where('id', $id)->update([
-                        'level' => 1,
-                        'approval_remarks' => $request->approval_remarks,
-                    ]);
                 }
+              
             }
             else if($employee_ob->level == 1){
                 EmployeeOb::Where('id', $id)->update([
