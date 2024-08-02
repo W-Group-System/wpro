@@ -173,20 +173,27 @@ function isRestDay( $date ) {
 function employeeHasLeave($employee_leaves = array(), $check_date,$schedule = array()){
     
     $halfday=1;
+    if($check_date == "2024-07-21")
+
+    {
+    }
     if(count($employee_leaves) > 0 && $schedule){
         foreach($employee_leaves as $item){
-            if($item['date_from'] == $item['date_to']){
-                if(date('Y-m-d',strtotime($check_date)) == date('Y-m-d',strtotime($item['date_from']))){
-                    $status = 'Without-Pay';
-                    if($item['withpay'] == 1){
-                        $status = 'With-Pay';
-                    }
-                    if($item['halfday'] == '1'){
-                        $halfday=.5;
-                        return $item['leave']['code'] . '-' . $halfday . '-' . $status;
-                    }else{
-                        return $item['leave']['code'] . '-' . $halfday . '-' . $status;
-                    }
+            if($check_date <= $item['date_to']){
+                if($check_date >= $item['date_from'])
+                {
+                    // if(date('Y-m-d',strtotime($check_date)) == date('Y-m-d',strtotime($item['date_from']))){
+                        $status = 'Without-Pay';
+                        if($item['withpay'] == 1){
+                            $status = 'With-Pay';
+                        }
+                        if($item['halfday'] == '1'){
+                            $halfday=.5;
+                            return $item['leave']['code'] . '-' . $halfday . '-' . $status;
+                        }else{
+                            return $item['leave']['code'] . '-' . $halfday . '-' . $status;
+                        }
+                    // }
                 }
             }else{
                 $date_range = dateRangeHelperLeave($item['date_from'],$item['date_to']);
