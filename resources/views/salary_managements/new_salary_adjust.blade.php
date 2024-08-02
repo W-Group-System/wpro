@@ -30,7 +30,7 @@
 						<div class="col-lg-4 form-group">
 							<label for="amount">Amount:*</label>
 							<input type="number" class="form-control form-control-sm" name="amount" id="amount" required 
-								value="{{ old('amount') }}" placeholder="0.00" required>
+								value="{{ old('amount') }}" placeholder="0.00" step=".01" required>
 						</div>
 
 					</div>

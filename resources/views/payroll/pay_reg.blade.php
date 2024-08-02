@@ -474,7 +474,7 @@
                                 if($last_c)
                                 {
                                   $previous_pay_rate = $last_c->pay_rate/2;
-                                  $previous_basic_pay_rate = $last_c->basic_pay/2;
+                                  $previous_basic_pay_rate = $last_c->basic_pay;
                                 
                                 }
                                 // dd($last_c->pay_rate);
