@@ -479,7 +479,7 @@
                                 }
                                 // dd($last_c->pay_rate);
                                 $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
-                                if($name->employee->work_description != 'Monthly')
+                                if($name->employee->work_description == "Non-Monthly")
                                 {
                                   $philhealth = (($basic_pay + $previous_basic_pay_rate)*.05)/2;
                                 }
