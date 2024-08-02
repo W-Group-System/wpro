@@ -478,7 +478,7 @@
                                 $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
                                 if($emp->work_description != 'Monthly')
                                 {
-                                  $philhealth = $basic_pay + $last_c->basic_pay
+                                  $philhealth = $basic_pay + $last_c->basic_pay;
                                 }
                                 if($philhealth >= 2500)
                                 {
