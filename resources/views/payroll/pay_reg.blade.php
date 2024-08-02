@@ -470,15 +470,18 @@
                                 
                                 $hdmf = 200.00;
                                 $previous_pay_rate = 0;
+                                $previous_basic_pay_rate = 0;
                                 if($last_c)
                                 {
                                   $previous_pay_rate = $last_c->pay_rate/2;
+                                  $previous_basic_pay_rate = $last_c->basic_pay/2;
+                                
                                 }
                                 // dd($last_c->pay_rate);
                                 $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
                                 if($name->employee->work_description != 'Monthly')
                                 {
-                                  $philhealth = (($basic_pay + $last_c->basic_pay)*.05)/2;
+                                  $philhealth = (($basic_pay + $previous_basic_pay_rate)*.05)/2;
                                 }
                                 if($philhealth >= 2500)
                                 {
