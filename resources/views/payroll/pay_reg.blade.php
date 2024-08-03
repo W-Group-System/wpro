@@ -492,6 +492,14 @@
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
                                 }
+                                if($name->employee->employee_code == "A162313")
+                                {
+                                  $sss_ecc = 0;
+                                  $sss_ee = 4200;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
                                
                                 
                                 $hdmf = 200.00;
@@ -537,6 +545,10 @@
                                 {
                                   $philhealth = 400;
                                 }
+                                if($name->employee->employee_code == "A162313")
+                              {
+                                $philhealth = 5000;
+                              }
                               }
                               
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
