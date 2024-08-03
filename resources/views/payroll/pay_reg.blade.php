@@ -439,7 +439,7 @@
                                 }
                                
                               }
-                              
+                              // dd($de_minimis);
                               $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min+$de_minimis+$other_allowances_basic_pay;
                               if($payroll_b)
                               {
@@ -467,6 +467,31 @@
                                   $wisp_ee = $sss_amount->wisp_ee;
                                   $wisp_er = $sss_amount->wisp_er;
                                 }
+                                if($name->employee->employee_code == "A287819")
+                                {
+                                  $sss_ecc = 0;
+                                  $sss_ee = 1190;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
+                                if($name->employee->employee_code == "A180518")
+                                {
+                                  $sss_ecc = 0;
+                                  $sss_ee = 2590;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
+                               
+                                if($name->employee->employee_code == "A178517")
+                                {
+                                  $sss_ecc = 0;
+                                  $sss_ee = 2730;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
                                
                                 
                                 $hdmf = 200.00;
@@ -491,6 +516,18 @@
                                 if($philhealth <= 250)
                                 {
                                   $philhealth = 250;
+                                }
+                                if($name->employee->employee_code == "A287819")
+                                {
+                                  $philhealth = 400;
+                                }
+                                if($name->employee->employee_code == "A178517")
+                                {
+                                  $philhealth = 400;
+                                }
+                                if($name->employee->employee_code == "A180518")
+                                {
+                                  $philhealth = 400;
                                 }
                               }
                               
