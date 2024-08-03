@@ -289,7 +289,7 @@
                                 $other_allowances_basic_pay = $name->employee->salary->other_allowance/2;
                                 $subliq = $name->employee->salary->subliq/2;
                                
-                                $daily_rate = ($name->employee->salary->basic_salary)*12/313;
+                                $daily_rate = (($name->employee->salary->basic_salary)*12)/313;
                               
                                 $hourly_rate = $daily_rate/8;
                                 $hourly_rate_other_allowance = (($name->employee->salary->other_allowance)*12/313)/8;
@@ -301,8 +301,8 @@
                                 {
                                   $d = ($name->employee->salary->de_minimis*12)/313;
                                   
-                                  $basic_pay = $daily_rate*($days_rendered);
-                                  // dd($basic_pay);
+                                  $basic_pay = $daily_rate*(number_format($days_rendered,2));
+                                  // dd($days_rendered);
                                   
                                   
                                   $de_minimis = $d*($days_rendered);
