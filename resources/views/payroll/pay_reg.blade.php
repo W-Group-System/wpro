@@ -450,7 +450,7 @@
                                   $sss_allowance=($last_c->pay_allowances)->where('allowance_id','!=',9)->sum('amount');
                                   
                                   $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay;
-                                  // dd($lastccc);
+                                  // dd($government_amount);
                                   // dd($lastccc);
                                   $government_amount = $government_amount+$lastccc;
                                   // dd($government_amount);
@@ -503,8 +503,16 @@
                                   $previous_basic_pay_rate = $last_c->basic_pay;
                                 
                                 }
-                                // dd($last_c->pay_rate);
-                                $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
+                                // dd($previous_basic_pay_rate);
+                                if($previous_pay_rate > 0)
+                                {
+                                  $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
+                                }
+                                else {
+                                  
+                                  $philhealth = (($previous_pay_rate+($pay_rate/2))*.05);
+                                }
+                              
                                 if($name->employee->work_description == "Non-Monthly")
                                 {
                                   $philhealth = (($basic_pay + $previous_basic_pay_rate)*.05)/2;
