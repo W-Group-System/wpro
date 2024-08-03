@@ -487,6 +487,10 @@
                                 {
                                   $philhealth = 2500;
                                 }
+                                if($philhealth <= 250)
+                                {
+                                  $philhealth = 250;
+                                }
                               }
                               
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
