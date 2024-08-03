@@ -287,6 +287,7 @@
                                 $pay_rate = $name->employee->salary->basic_salary;
                                 $basic_pay = $name->employee->salary->basic_salary/2;
                                 $other_allowances_basic_pay = $name->employee->salary->other_allowance/2;
+                                // dd($name->employee->salary);
                                 $subliq = $name->employee->salary->subliq/2;
                                
                                 $daily_rate = (($name->employee->salary->basic_salary)*12)/313;
@@ -439,7 +440,7 @@
                                
                               }
                               
-                              $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min;
+                              $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min+$de_minimis+$other_allowances_basic_pay;
                               if($payroll_b)
                               {
                                 $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
@@ -448,9 +449,9 @@
                                  
                                   $sss_allowance=($last_c->pay_allowances)->where('allowance_id','!=',9)->sum('amount');
                                   
-                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$de_minimis;
+                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay;
                                   // dd($lastccc);
-                                  // dd($government_amount);
+                                  // dd($lastccc);
                                   $government_amount = $government_amount+$lastccc;
                                   // dd($government_amount);
                                 
