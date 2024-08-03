@@ -29,7 +29,7 @@ class PayInstructionImport implements ToModel, WithHeadingRow
 
         return new PayInstruction([
             'location'     => $row['location'] ,      
-            'site_id'      => $row['site_id'],       
+            'site_id'      => $row['employee_code'],       
             'name'         => $row['name'],          
             'start_date'   => $start_date,    
             'end_date'     => $end_date,      
