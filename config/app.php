@@ -52,10 +52,10 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://hris.wsystem.online/'),
+ 
+    'url' => env('APP_URL', 'http://localhost'),
 
-    'asset_url' => env('ASSET_URL', "https://hris.wsystem.online/"),
-
+    'asset_url' => env('ASSET_URL', null),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
