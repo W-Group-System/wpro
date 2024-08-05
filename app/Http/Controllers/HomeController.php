@@ -44,7 +44,10 @@ class HomeController extends Controller
         $attendance_controller = new AttendanceController;
         $current_day = date('d');
         $employee_birthday_celebrants = Employee::whereMonth('birth_date', date('m'))
-        ->where('status', 'Active')
+        ->where(function($query) {
+            $query->where('status', 'Active')
+                  ->orWhere('status', 'HBU');
+        })
         ->orderByRaw("DAY(birth_date) >= ? DESC, DAY(birth_date)", [$current_day])
         ->get();
         
@@ -84,14 +87,20 @@ class HomeController extends Controller
         })
         ->orderBy('holiday_date','asc')->get();
 
-        $employee_anniversaries = Employee::with('department', 'company')->where('status', "Active")
+        $employee_anniversaries = Employee::with('department', 'company') ->where(function($query) {
+            $query->where('status', 'Active')
+                  ->orWhere('status', 'HBU');
+        })
           ->whereYear('original_date_hired','!=',date('Y'))
           ->whereMonth('original_date_hired', date('m'))
           ->get();
 
         $probationary_employee = Employee::with('department', 'company', 'user_info', 'classification_info')
             ->where('classification', "1")
-            ->where('status', "Active")
+            ->where(function($query) {
+                $query->where('status', 'Active')
+                      ->orWhere('status', 'HBU');
+            })
             ->orderBy('original_date_hired')
             ->get();
 
