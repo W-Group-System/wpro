@@ -559,7 +559,7 @@
                                 }
                                 if($name->employee->employee_code == "A162313")
                               {
-                                $philhealth = 5000;
+                                $philhealth = 3200;
                               }
                                 if($name->employee->employee_code == "A190524")
                               {
@@ -570,11 +570,12 @@
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
                               $taxable_deductable_total = $statutory+$total_abs+$total_late_min+$total_undertime_min;
                               $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
-                              if($name->employee->employee == "A162313")
+                         
+                              if($name->employee->employee_code == "A162313")
                               {
+                                
                                 $net_taxable_income = $gross_taxable_income;
                               }
-                             
                               $tax = compute_tax($net_taxable_income);
                               if($name->employee->employee_code == "A162313")
                               {
