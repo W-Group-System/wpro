@@ -450,7 +450,7 @@
                                   $sss_allowance=($last_c->pay_allowances)->where('allowance_id','!=',9)->sum('amount');
                                   
                                   $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay;
-                                  // dd($government_amount);
+                                  // dd($de_minimis);
                                   // dd($lastccc);
                                   $government_amount = $government_amount+$lastccc;
                                   // dd($government_amount);
@@ -523,7 +523,7 @@
                                   $previous_basic_pay_rate = $last_c->basic_pay;
                                 
                                 }
-                                // dd($previous_basic_pay_rate);
+                                // dd($basic_pay);
                                 if($previous_pay_rate > 0)
                                 {
                                   $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
@@ -570,6 +570,10 @@
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
                               $taxable_deductable_total = $statutory+$total_abs+$total_late_min+$total_undertime_min;
                               $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
+                              if($name->employee->employee == "A162313")
+                              {
+                                $net_taxable_income = $gross_taxable_income;
+                              }
                              
                               $tax = compute_tax($net_taxable_income);
                               if($name->employee->employee_code == "A162313")
