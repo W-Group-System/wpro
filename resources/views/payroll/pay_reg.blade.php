@@ -838,6 +838,8 @@
     get_date = get_date_original.replace("-", "");
     get_date = get_date.replace("-", "");
     get_date=get_date.slice(2);
+    get_date=get_date.slice(2)+""+get_date.substring(0,2);
+    console.log(get_date);
     var text="PHP010000038248832"+get_date+"2"+total_net+"\n";
    for (var key in paytext) {
     if(paytext[key] != undefined){
