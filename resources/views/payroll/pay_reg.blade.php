@@ -500,9 +500,21 @@
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
                                 }
+                                if($name->employee->employee_code == "A190524")
+                                {
+                                  $sss_ecc = 0;
+                                  $sss_ee = 0;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
                                
                                 
                                 $hdmf = 200.00;
+                                if($name->employee->employee_code == "A190524")
+                                {
+                                  $hdmf = 0;
+                                }
                                 $previous_pay_rate = 0;
                                 $previous_basic_pay_rate = 0;
                                 if($last_c)
@@ -548,6 +560,10 @@
                                 if($name->employee->employee_code == "A162313")
                               {
                                 $philhealth = 5000;
+                              }
+                                if($name->employee->employee_code == "A190524")
+                              {
+                                $philhealth = 0;
                               }
                               }
                               
