@@ -631,13 +631,14 @@ class AttendanceController extends Controller
         // Validate that both month and year are provided
         if ($selectedMonth && $selectedYear) {
             // Filter the data based on the selected month and year
-            $data = AttendanceDetailedReport::whereYear('log_date', $selectedYear)
+            $data = AttendanceDetailedReport::with('employee')->whereYear('log_date', $selectedYear)
                                             ->whereMonth('log_date', $selectedMonth)
                                             ->get();
         } else {
             // If no month or year is selected, set data to empty collection
             $data = collect();
         }
+        // dd($data[0]);
 
         // Tardiness
         $tardinessData = $data->filter(function ($item) {
@@ -655,7 +656,8 @@ class AttendanceController extends Controller
 
         // Leave without pay
         $leaveWithoutData = $data->filter(function ($item) {
-            return $item->abs == 1 && $item->lv_w_pay == 0;
+            // Ensure the log_date is after or equal to the hired_date
+            return $item->abs == 1 && $item->lv_w_pay == 0 && $item->log_date >= $item->employee->original_date_hired;
         })->groupBy('name')->map(function ($group) {
             return [
                 'company_code' => $group->first()->company->company_code,
