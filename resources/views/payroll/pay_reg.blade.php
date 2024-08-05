@@ -559,7 +559,7 @@
                                 }
                                 if($name->employee->employee_code == "A162313")
                               {
-                                $philhealth = 3200;
+                                $philhealth = 5000;
                               }
                                 if($name->employee->employee_code == "A190524")
                               {
