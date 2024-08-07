@@ -857,8 +857,17 @@ function checkEmployeeLeaveCredits($user_id, $leave_type){
         return 0;
     }
 }
-function compute_tax($employee_salary) {
-    $taxes = Tax::all();
+function compute_tax($employee_salary,$level) {
+    if($level == 4)
+    {
+        $taxes = Tax::where('level',4)->get();
+    }
+    else
+
+    {
+        $taxes = Tax::where('level','!=',4)->get();
+    }
+   
 
     foreach ($taxes as $tax) 
     {

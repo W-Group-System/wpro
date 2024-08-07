@@ -595,7 +595,7 @@
                                 
                                 $net_taxable_income = $gross_taxable_income;
                               }
-                              $tax = compute_tax($net_taxable_income);
+                              $tax = compute_tax($net_taxable_income,$name->employee->level);
                               if($name->employee->employee_code == "A162313")
                               {
                                 $tax = $net_taxable_income*.05;
