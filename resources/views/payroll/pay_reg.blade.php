@@ -616,6 +616,10 @@
                               {
                                 $tax = $net_taxable_income*.05;
                               }
+                              if($name->employee->employee_code == "M1010")
+                              {
+                                $tax = 0;
+                              }
                               $load_allowance = 0.00;
                               $other_nta = 0.00;
                               $sss_loan_refund = 0.00;
