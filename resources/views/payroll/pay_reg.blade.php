@@ -285,6 +285,7 @@
                               if(!empty($name->employee->salary))
                               {
                                 $pay_rate = $name->employee->salary->basic_salary;
+                               
                                 $basic_pay = $name->employee->salary->basic_salary/2;
                                 $other_allowances_basic_pay = $name->employee->salary->other_allowance/2;
                                 // dd($name->employee->salary);
@@ -307,6 +308,13 @@
                                   
                                   
                                   $de_minimis = $d*($days_rendered);
+                                }
+                                
+                                if($name->employee->level == 4)
+                                {
+                                  $basic_pay = $name->employee->salary->basic_salary;
+                                  $de_minimis = $name->employee->salary->de_minimis;
+                                  $subliq = $name->employee->salary->subliq;
                                 }
                               }
                               $hours = 0;
@@ -439,6 +447,7 @@
                                 }
                                
                               }
+
                               // dd($de_minimis);
                               $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min+$de_minimis+$other_allowances_basic_pay;
                               if($payroll_b)
@@ -562,9 +571,19 @@
                                 $philhealth = 5000;
                               }
                                 if($name->employee->employee_code == "A190524")
-                              {
-                                $philhealth = 0;
-                              }
+                                {
+                                  $philhealth = 0;
+                                }
+                                if($name->employee->employee_code == "M1010")
+                                {
+                                  $philhealth = 0;
+                                  $hdmf = 0;
+                                  $sss_ecc = 0;
+                                  $sss_ee = 0;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
                               }
                               
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
