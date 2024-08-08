@@ -1643,7 +1643,7 @@ class EmployeeController extends Controller
                                     ->when($allowed_projects,function($q) use($allowed_projects){
                                         $q->whereIn('project',$allowed_projects);
                                     })
-                                    ->where('status','Active')
+                                    // ->where('status','Active')
                                     ->get();
 
             $date_range =  $attendance_controller->dateRange($from_date, $to_date);
