@@ -519,6 +519,7 @@ class AttendanceController extends Controller
     })
     ->whereIn('location',$locations)
     ->get();
+    return $devices;
         return view('attendances.devices',
         array(
             'devices' => $devices,
