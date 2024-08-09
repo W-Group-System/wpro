@@ -865,7 +865,7 @@ function compute_tax($employee_salary,$level) {
     else
 
     {
-        $taxes = Tax::where('level','!=',4)->get();
+        $taxes = Tax::where('level',null)->get();
     }
    
 
