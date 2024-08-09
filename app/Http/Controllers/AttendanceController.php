@@ -643,16 +643,21 @@ class AttendanceController extends Controller
 
         // Tardiness
         $tardinessData = $data->filter(function ($item) {
-            return $item->late_min > 0;
+            return $item->late_min > 0 || $item->undertime_min > 0;
         })->groupBy('name')->map(function ($group) {
             return [
                 'company_code' => $group->first()->company->company_code,
                 'name' => $group->first()->name,
-                'tardiness_days' => $group->count(),
+                'tardiness_days' => $group->filter(function ($item) {
+                    return $item->late_min > 0;
+                })->count(),
+                'undertime_days' => $group->filter(function ($item) {
+                    return $item->undertime_min > 0;
+                })->count(),
                 'remarks' => $group->first()->remarks
             ];
         })->filter(function ($item) {
-            return $item['tardiness_days'] >= 7;
+            return $item['tardiness_days']+$item['undertime_days'] >= 7;
         });
 
         // Leave without pay
