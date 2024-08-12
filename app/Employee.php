@@ -152,6 +152,35 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(SalaryAdjustment::class);
     }
+    public function immediateSupervisor()
+    {
+        return $this->belongsTo(Employee::class, 'immediate_sup', 'user_id');
+    }
+
+    // Recursive relationship to get all supervisors up to a certain level
+    public function allSupervisors($level = 5)
+    {
+        $query = $this->immediateSupervisor();
+        for ($i = 1; $i < $level; $i++) {
+            $query = $query->with('immediateSupervisor');
+        }
+        return $query;
+    }
+
+    public function subordinates()
+    {
+        return $this->hasMany(Employee::class, 'immediate_sup', 'user_id');
+    }
+
+    // Recursive relationship to get all subordinates up to a certain level
+    public function allSubordinates($level = 2)
+    {
+        $query = $this->subordinates();
+        for ($i = 1; $i < $level; $i++) {
+            $query = $query->with('subordinates');
+        }
+        return $query;
+    }
     protected $fillable = [
         'department_id', 
         'project',
@@ -159,5 +188,6 @@ class Employee extends Model implements Auditable
         'level',
         'classification',
         'immediate_sup',
+        'avatar',
     ];
 }
