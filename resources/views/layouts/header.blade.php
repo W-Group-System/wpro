@@ -41,8 +41,9 @@
 
     <script src="{{asset('assets/vue2.7.14.js')}}"></script>
     <script src="{{asset('assets/axios.min.js')}}"></script>
-
     <script src="{{asset('assets/jquery-3.6.0.min.js')}}"></script>
+    
+    <script src="{{asset('js/orgchart.js') }}"></script>
     
     <style>
         .loader {
@@ -650,7 +651,7 @@
                     
                     @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-report') }}">Loans Report</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ url('/incentive-report') }}">Incentive Reports</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/government-report') }}">Government Reports</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/payroll-report') }}">Payroll Reports</a></li>
                     @endif
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/attendance-report') }}">Attendance Reports</a></li>
