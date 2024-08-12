@@ -200,6 +200,10 @@
                       <i class="fa fa-file" aria-hidden="true"></i>
                       &nbsp;201 Files
                     </a>
+                    <a class="nav-link" id="v-employee-org-chart-tab" data-toggle="pill" href="#v-employee-org-chart" role="tab" aria-controls="v-employee-org-chart" aria-selected="false">
+                      <i class="fa fa-file" aria-hidden="true"></i>
+                      &nbsp;Org Chart
+                    </a>
                 </div>
             </div>
             <div class="col-9">
@@ -922,6 +926,24 @@
                         </div>
                       </div>
                     </div>
+                    <div class="tab-pane fade" id="v-employee-org-chart" role="tabpanel" aria-labelledby="v-employee-org-chart">
+                      <div class="card p-4">
+                        <div class="template-demo">
+                          <div class='row m-2'>
+                            <div class='col-md-12 text-center mt-3 mb-3 h-100'>
+                              <h3>Org Chart
+                                
+                            </h3>
+                           
+                        
+                            
+                         
+                            <div id="orgChart"/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -968,4 +990,51 @@
 @include('hr-portal.edit-employee-document')
 @include('employees.edit_employee_no_modal')
 @include('employees.edit_bank_details')
+@endsection
+@section('js')
+<script>
+
+var jsonData = {!! json_encode($hierarchy) !!};
+    console.log(jsonData);
+    outputData = [];
+    $.each(jsonData , function(index, item){
+        outputData.push({
+            id: item.id,
+            pid: item.pid,
+            name: item.name,
+            position: item.position,
+            img: item.img,
+        });
+    });
+
+    var chart;
+    window.onload = function () {
+    var chart = new OrgChart(document.getElementById("orgChart"), {
+            // template: "luba",
+            menu: {
+                pdf: { text: "Export PDF" },
+                png: { text: "Export PNG" },
+                svg: { text: "Export SVG" },
+                csv: { text: "Export CSV" }
+            },
+            nodeMenu: {
+                pdf: { text: "Export PDF" },
+                png: { text: "Export PNG" },
+                svg: { text: "Export SVG" }
+            },
+            nodeBinding: {
+                field_0: "name",
+                field_1: "position",
+                img_0 : 'img'
+            },       
+            nodes: outputData
+        });
+        document.getElementById("selectTemplate").addEventListener("change", function () {
+        chart.config.template = this.value;
+        chart.draw();
+});
+};
+
+
+</script>
 @endsection

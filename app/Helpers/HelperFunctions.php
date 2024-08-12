@@ -886,6 +886,106 @@ function compute_tax($employee_salary,$level) {
     return 0; 
 }
 
+function getEmployeeHierarchy($userId)
+{
+    // Get the employee
+    $employee = Employee::where('user_id', $userId)->firstOrFail();
+    $to_top = Employee::with(['allSupervisors' => function($query) {
+        $query->with('immediateSupervisor');
+    }])->where('user_id', $userId)->first();
+
+    $to_bottom = Employee::where('status', 'Active')
+    ->where('immediate_sup', $userId)
+    ->with(['subordinates' => function($query) {
+        $query->where('status', 'Active')->with('subordinates');
+    }])
+    ->get();
+    // Get the immediate supervisor
+    
+    $datas = [];
+    if ($to_bottom) {
+        processSubordinates($to_bottom, $datas);
+    }
+    if ($to_top) {
+        addEmployeeToDatas($to_top, $to_top->immediate_sup, $datas);
+    
+        if ($to_top->immediateSupervisor) {
+            processApprovers($to_top->immediateSupervisor, $to_top->immediateSupervisor->immediate_sup, $datas);
+        } elseif ($to_top->immediateSupervisor && $to_top->status === "Active") {
+            $datas[] = (object)[
+                'id' => $to_top->immediate_sup,
+                'pid' => null,
+                'name' => $to_top->first_name . ' ' . $to_top->last_name,
+                'position' => $to_top->position,
+                'img' => $to_top->avatar ? asset($to_top->avatar) : null,
+            ];
+        }
+    } else {
+        // Fallback case for self
+        $datas[] = (object)[
+            'id' => $employee->id,
+            'pid' => null,
+            'name' => $employee->first_name . ' ' . $employee->last_name,
+            'position' => $employee->position,
+            'img' => $employee->avatar ? asset($employee->avatar) : null,
+        ];
+    }
+    return $datas;
+}
+
+function processSubordinates($subordinates, &$datas)
+{
+    foreach ($subordinates as $under) {
+        if ($under->status === "Active") {
+            $datas[] = (object)[
+                "id" => $under->user_id,
+                'pid' => $under->immediate_sup,
+                'name' => $under->first_name . " " . $under->last_name,
+                'position' => $under->position,
+                'img' => $under->avatar ? asset($under->avatar) : null,
+            ];
+        }
+
+        // Recursively process subordinates
+        if ($under->subordinates) {
+            processSubordinates($under->subordinates, $datas);
+        }
+       
+    }
+}
+
+function addEmployeeToDatas($employee, $pid, &$datas)
+{
+    if ($employee->status === "Active") {
+        $datas[] = (object)[
+            'id' => $employee->user_id,
+            'pid' => $pid,
+            'name' => $employee->first_name . ' ' . $employee->last_name,
+            'position' => $employee->position,
+            'img' => $employee->avatar ? asset($employee->avatar) : null,
+        ];
+    }
+}
+$approvers_ids = [];
+function processApprovers($approvers, $pid, &$datas)
+{
+    if ($approvers) {
+        addEmployeeToDatas($approvers, $pid, $datas);
+
+        if ($approvers->immediate_sup) {  
+            processApprovers($approvers->immediateSupervisor, $approvers->immediateSupervisor->immediate_sup, $datas);
+        } elseif ($approvers->immediateSupervisor && $approvers->status === "Active") {
+            $datas[] = (object)[
+                'id' => $approvers->user_id,
+                'pid' => null,
+                'name' => $approvers->first_name . ' ' . $approvers->last_name,
+                'position' => $approvers->position,
+                'img' => $approvers->avatar ? asset($approvers->avatar) : null,
+            ];
+        }
+    }
+}
+
 function documentTypes() {
   $documentTypes = array(
     '1' => 'ID',

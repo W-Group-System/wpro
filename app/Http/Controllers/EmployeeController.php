@@ -1052,6 +1052,9 @@ class EmployeeController extends Controller
         $employee_approvers = Employee::where('status','Active')
                                         ->pluck('user_id')
                                         ->toArray();
+
+        $hierarchy = getEmployeeHierarchy($user->id);
+        // dd($hierarchy);
         // $employee_approvers = Employee::whereHas('company',function($q) use($user){
         //                                         if($user->employee->company_id){
         //                                             $q->where('company_id',$user->employee->company_id);
@@ -1106,7 +1109,8 @@ class EmployeeController extends Controller
             'employeeBenefits' => $employeeBenefits,
             'employeeTraining' => $employeeTraining,
             'employeeNte' => $employeeNte,
-            'employeeDocuments' => $employeeDocument
+            'employeeDocuments' => $employeeDocument,
+            'hierarchy' => $hierarchy,
         ));
     
     }
@@ -1588,7 +1592,7 @@ class EmployeeController extends Controller
             )
         );
     }
-
+    
     public function employee_attendance(Request $request)
     {
         ini_set('memory_limit', '-1');
