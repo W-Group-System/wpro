@@ -16,15 +16,43 @@ class PayrollController extends Controller
     }
     public function government_reports(Request $request)
     {
+        $from = $request->from;
+        $to = $request->to;
+        $benefits = $request->benefits;
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
         ->get();
         $company = $request->company;
+        $pay_registers = Payregs::with('employee')->selectRaw('
+        employee_no,
+        last_name,
+        first_name,
+        middle_name,
+        SUM(sss_ec) as sss_ec,
+        SUM(sss_employee_share) as sss_employee_share,
+        SUM(sss_employer_share) as sss_employer_share,
+        SUM(hdmf_employee_share) as hdmf_employee_share,
+        SUM(hdmf_employer_share) as hdmf_employer_share,
+        SUM(phic_employee_share) as phic_employee_share,
+        SUM(phic_employer_share) as phic_employer_share,
+        SUM(mpf_employee_share) as mpf_employee_share,
+        SUM(mpf_employer_share) as mpf_employer_share,
+        SUM(statutory_total) as statutory_total
+    ')
+    ->whereBetween('pay_period_from', [$request->from, $request->to])
+    ->where('company_id', $request->company)
+    ->groupBy('employee_no', 'last_name', 'first_name', 'middle_name')
+    ->orderBy('last_name')
+    ->get();
         return view('reports.government_reports', array(
             'header' => 'reports',
             'companies' => $companies,
             'company' => $company,
+            'from' => $from,
+            'to' => $to,
+            'benefits' => $benefits,
+            'pay_registers' => $pay_registers,
         ));
     }
     public function payroll_report(Request $request)

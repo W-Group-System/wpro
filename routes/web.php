@@ -311,7 +311,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('leave-report-export', 'LeaveController@export');
     Route::get('totalExpense-report', 'PayrollController@totalExpense_report');
     Route::get('loan-report', 'LoanController@loan_report');
-    Route::get('incentive-report', 'IncentiveController@incentive_report');
+    Route::get('government-report', 'PayrollController@government_reports');
     Route::get('payroll-report', 'PayrollController@payroll_report');
     Route::get('overtime-report', 'OvertimeController@overtime_report');
     Route::get('overtime-report-export', 'OvertimeController@export');

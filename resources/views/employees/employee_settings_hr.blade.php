@@ -1001,6 +1001,7 @@ var jsonData = {!! json_encode($hierarchy) !!};
         outputData.push({
             id: item.id,
             pid: item.pid,
+            company: item.company,
             name: item.name,
             position: item.position,
             img: item.img,
@@ -1025,6 +1026,7 @@ var jsonData = {!! json_encode($hierarchy) !!};
             nodeBinding: {
                 field_0: "name",
                 field_1: "position",
+                field_3: "company",
                 img_0 : 'img'
             },       
             nodes: outputData
