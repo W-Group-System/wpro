@@ -1,4 +1,7 @@
-<div class="modal fade" id="view_attendance{{$att->period_from}}" tabindex="-1" role="dialog" aria-labelledby="view_attendancedata" aria-hidden="true">
+<div class="modal fade" id="
+
+
+{{$att->period_from}}" tabindex="-1" role="dialog" aria-labelledby="view_attendancedata" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
