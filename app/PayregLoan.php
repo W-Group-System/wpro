@@ -13,5 +13,13 @@ class PayregLoan extends Model implements Auditable
     {
         return $this->belongsTo(LoanType::class);
     }
+    public function pay_reg()
+    {
+        return $this->belongsTo(Payregs::class,'payreg_id','id');
+    }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 
 }

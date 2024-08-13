@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Employee;
 use App\Guarantor;
 use App\Loan;
+use App\Company;
+use App\Payregs;
+use App\PayregLoan;
 use App\LoanType;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -124,10 +127,30 @@ class LoanController extends Controller
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
     }
-    public function loan_report()
+    public function loan_report(Request $request)
     {
+        $loans = LoanType::get();
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+        $company = $request->company;
+        $from = $request->from;
+        $to = $request->to;
+        $pay_register_ids = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
+        ->where('company_id', $request->company)
+        ->pluck('id')
+        ->toArray();
+
+        $loan_all = PayregLoan::whereIn('payreg_id',$pay_register_ids)->where('loan_type_id',$request->loan)->get();
         return view('reports.loan_report', array(
             'header' => 'reports',
+            'companies' => $companies,
+            'company' => $company,
+            'from' => $from,
+            'to' => $to,
+            'loans' => $loans,
+            'loan_all' => $loan_all,
         ));
     }
     /**
