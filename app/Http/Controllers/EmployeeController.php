@@ -2075,7 +2075,7 @@ class EmployeeController extends Controller
                 else 
                 {
                     $time_in_after = date('Y-m-d H:i:s',strtotime($att->datetime));
-                    $time_in_before = date('Y-m-d H:i:s', strtotime ( '-20 hour' , strtotime ( $time_in_after ) )) ;
+                    $time_in_before = date('Y-m-d H:i:s', strtotime ( '-22 hour' , strtotime ( $time_in_after ) )) ;
                     
                     $update = [
                         'time_out' =>  date('Y-m-d H:i:s', strtotime($att->datetime)),
