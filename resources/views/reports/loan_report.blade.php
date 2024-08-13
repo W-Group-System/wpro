@@ -73,6 +73,7 @@
 									<th>Employee No</th>
 									<th>Birth Date</th>
 									<th>Government Number</th>
+									<th>Cutoff</th>
 									<th>Loan</th>
 									<th>Amount</th>
 								</tr>
@@ -91,6 +92,7 @@
 									@else
 									<td></td>
 									@endif
+									<td>{{date('M d, Y',strtotime($loan_al->pay_reg->cut_off_date))}}</td>
 									<td>{{$loan_al->loan_type->loan_name}}</td>
 									<td>{{$loan_al->amount}}</td>
 								</tr>
