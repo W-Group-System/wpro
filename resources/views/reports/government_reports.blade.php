@@ -71,6 +71,7 @@
 									<th>Name</th>
 									
 									<th>Employee No</th>
+									<th>Birth Date</th>
 									<th>Government Number</th>
 									<th>Employee</th>
 									<th>Employer</th>
@@ -83,6 +84,7 @@
 									<td>{{$pay->last_name.", ".$pay->first_name}}</td>
 									
 									<td>{{$pay->employee_no}}</td>
+									<td>{{date('M d, Y',strtotime($pay->employee->birth_date))}}</td>
 									@if($benefits == "SSS")
 									
 									<td>{{$pay->employee->sss_number}}</td>
