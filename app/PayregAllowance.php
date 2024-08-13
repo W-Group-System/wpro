@@ -14,4 +14,8 @@ class PayregAllowance extends Model implements Auditable
     {
         return $this->belongsTo(Allowance::class,'allowance_id','id');
     }
+    public function pay_reg_emp()
+    {
+        return $this->belongsTo(Payregs::class);
+    }
 }

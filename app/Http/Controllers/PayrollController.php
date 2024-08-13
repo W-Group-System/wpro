@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 use App\PayRegs;
 use App\Company;
+use App\PayregAllowance;
+use App\PayregLoan;
+use App\PayregInstruction;
+use App\SalaryAdjustment;
 use Illuminate\Http\Request;
 
 class PayrollController extends Controller
@@ -62,7 +66,7 @@ class PayrollController extends Controller
         ->whereIn('id', $allowed_companies)
         ->get();
         $company = $request->company;
-        $pay_registers = Payregs::selectRaw('
+        $pay_registers = Payregs::with('pay_allowances','pay_loan','pay_instructions','salary_adjustments_data')->selectRaw('
         employee_no,
         last_name,
         first_name,
@@ -146,11 +150,30 @@ class PayrollController extends Controller
     ->where('company_id', $request->company)
     ->groupBy('employee_no', 'last_name', 'first_name', 'middle_name', 'account_number','department')
     ->get();
+    $pay_register_ids = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
+    ->where('company_id', $request->company)
+    ->pluck('id')
+    ->toArray();
+    $pay_register_ids_data = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
+    ->where('company_id', $request->company)
+    ->get();
+    $allowances = PayregAllowance::with('allowance_type')->select('allowance_id')->whereIn('payreg_id',$pay_register_ids)->groupBy('allowance_id')->get();
+    // $allowances_data = PayregAllowance::with('pay_reg_emp')->whereIn('payreg_id',$pay_register_ids)->get();
+    $loans = PayregLoan::with('loan_type')->select('loan_type_id')->whereIn('payreg_id',$pay_register_ids)->groupBy('loan_type_id')->get();
+    $instructions = PayregInstruction::select('instruction_name')->whereIn('payreg_id',$pay_register_ids)->groupBy('instruction_name')->get();
+    $salary_adjustments = SalaryAdjustment::select('name')->whereIn('pay_reg_id',$pay_register_ids)->groupBy('name')->get();
+    // dd($instructions);
         return view('reports.payroll_report', array(
             'header' => 'reports',
             'companies' => $companies,
             'company' => $company,
             'pay_registers' => $pay_registers,
+            'allowances' => $allowances,
+            'loans' => $loans,
+            'instructions' => $instructions,
+            // 'allowances_data' => $allowances_data,
+            'pay_register_ids_data' => $pay_register_ids_data,
+            'salary_adjustments' => $salary_adjustments,
         ));
     }
 }

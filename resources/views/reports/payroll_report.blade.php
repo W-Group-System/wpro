@@ -91,7 +91,10 @@
 						  <th>VL</th>
 						  <th>VL AMOUNT</th>
 						  <th>LEAVE AMOUNT TOTAL</th> --}}
-						  <th>SALARY ADJUSTMENT</th>
+						  @foreach($salary_adjustments as $salary_adjustment)
+						  <th>{{$salary_adjustment->name}}</th>
+						  @endforeach
+						  <th>Total SALARY ADJUSTMENT</th>
 						  <th>TAXABLE BENEFITS TOTAL</th>
 						  <th>GROSS TAXABLE INCOME</th>
 						  <th>DAYS ABSENT</th>
@@ -122,9 +125,9 @@
 						  <th>OTHER NTA</th>
 						  <th>SSS LOAN REFUND</th>
 						  <th>SUBLIQ</th> --}}
-						  {{-- @foreach($allowances_total as $total_allow)
-						  <th>{{$total_allow->allowance->name}}</th>
-						  @endforeach --}}
+						  @foreach($allowances as $total_allow)
+						  <th>{{$total_allow->allowance_type->name}}</th>
+						  @endforeach
 						  {{-- <th>OTHER ALLOWANCES</th> --}}
 						  <th>NONTAXABLE BENEFITS TOTAL</th>
 						  
@@ -139,13 +142,13 @@
 						  <th>SSS LOAN</th>
 						  <th>STAFF HOUSE</th>
 						  <th>WESLA LOAN</th> --}}
-						  {{-- @foreach($instructions as $ins)
-						  <th>{{$ins->benefit_name}}</th>
-						  @endforeach --}}
+						  @foreach($instructions as $ins)
+						  <th>{{$ins->instruction_name}}</th>
+						  @endforeach
 						  {{-- <th>Others</th> --}}
-						  {{-- @foreach($loans_all as $loans_al)
+						  @foreach($loans as $loans_al)
 						  <th>{{$loans_al->loan_type->loan_name}}</th>
-						  @endforeach --}}
+						  @endforeach
 						  <th>NONTAXABLE DEDUCTIBLE BENEFITS TOTAL</th>
 						  <th>GROSS PAY</th>
 						  <th>DEDUCTIONS TOTAL</th>
@@ -188,6 +191,19 @@
 						<td>{{$pay_reg->rst_ot_ge}}</td>
 						<td>{{$pay_reg->rst_ot_ge_amount}}</td>
 						<td>{{$pay_reg->ot_total}}</td>
+						@foreach($salary_adjustments as $as => $salary_adjustment)
+							@php
+								$ids = $pay_register_ids_data->where('employee_no',$pay_reg->employee_no);
+								$salaryaddjustment_all = 0;
+								foreach($ids as $idffff)
+								{
+									$alll = ($idffff->salary_adjustments_data)->where('name',$salary_adjustment->name)->sum('amount');
+									$salaryaddjustment_all = $salaryaddjustment_all + $alll;
+								}
+								
+							@endphp
+						<td>{{number_format($salaryaddjustment_all,2)}}</td>
+						@endforeach
 						<td>{{$pay_reg->salary_adjustment}}</td>
 						<td>{{$pay_reg->taxable_benefits_total}}</td>
 						<td>{{$pay_reg->gross_taxable_income}}</td>
@@ -213,7 +229,42 @@
 						<td>{{$pay_reg->deminimis}}</td>
 						<td>{{$pay_reg->other_allowances_basic_pay}}</td>
 						<td>{{$pay_reg->subliq}}</td>
+						@foreach($allowances as $as => $total_allow)
+							@php
+								$ids = $pay_register_ids_data->where('employee_no',$pay_reg->employee_no);
+								$allllowance = 0;
+								foreach($ids as $idffff)
+								{
+									$alll = ($idffff->pay_allowances)->where('allowance_id',$total_allow->allowance_id)->sum('amount');
+									$allllowance = $allllowance + $alll;
+								}
+								
+							@endphp
+						<td>{{number_format($allllowance,2)}}</td>
+						@endforeach
 						<td>{{$pay_reg->nontaxable_benefits_total}}</td>
+						@foreach($instructions as $instruction)
+							@php
+								$instruction_total = 0;
+								foreach($ids as $idffff)
+								{
+									$instruction_tot = ($idffff->pay_instructions)->where('instruction_name',$instruction->instruction_name)->sum('amount');
+									$instruction_total = $instruction_total + $instruction_tot;
+								}
+							@endphp
+						<td>{{number_format($instruction_total,2)}}</td>
+						  @endforeach
+						@foreach($loans as $loans_al)
+							@php
+								$total_loans = 0;
+								foreach($ids as $idffff)
+								{
+									$toloans = ($idffff->pay_loan)->where('loan_type_id',$loans_al->loan_type_id)->sum('amount');
+									$total_loans = $total_loans + $toloans;
+								}
+							@endphp
+						<td>{{number_format($total_loans,2)}}</td>
+						  @endforeach
 						<td>{{$pay_reg->nontaxable_deductible_benefits_total}}</td>
 						<td>{{$pay_reg->gross_pay}}</td>
 						<td>{{$pay_reg->deductions_total}}</td>
