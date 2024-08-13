@@ -14,6 +14,19 @@ class PayrollController extends Controller
             'header' => 'reports',
         ));
     }
+    public function government_reports(Request $request)
+    {
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+        $company = $request->company;
+        return view('reports.government_reports', array(
+            'header' => 'reports',
+            'companies' => $companies,
+            'company' => $company,
+        ));
+    }
     public function payroll_report(Request $request)
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
@@ -26,8 +39,8 @@ class PayrollController extends Controller
         last_name,
         first_name,
         middle_name,
-        department,
         account_number,
+        department,
         SUM(days_rendered) as days_rendered,
         SUM(basic_pay) as basic_pay,
         SUM(other_allowances_basic_pay) as other_allowances_basic_pay,
@@ -103,7 +116,7 @@ class PayrollController extends Controller
     ')
     ->whereBetween('pay_period_from', [$request->from, $request->to])
     ->where('company_id', $request->company)
-    ->groupBy('employee_no', 'last_name', 'first_name', 'middle_name', 'department', 'account_number')
+    ->groupBy('employee_no', 'last_name', 'first_name', 'middle_name', 'account_number','department')
     ->get();
         return view('reports.payroll_report', array(
             'header' => 'reports',

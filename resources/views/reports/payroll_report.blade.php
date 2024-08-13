@@ -56,6 +56,7 @@
 						  <th>First Name</th>
 						  <th>Middle Name</th>
 						  <th>Cost Center</th>
+						  <th>Department</th>
 						  <th>Account No</th>
 						  <th>Tax Status</th>
 						  <th>DAYS RENDERED</th>
@@ -159,6 +160,7 @@
 						<td>{{$pay_reg->first_name}}</td>
 						<td>{{$pay_reg->middle_name}}</td>
 						<td>{{$pay_reg->cost_center}}</td>
+						<td>{{$pay_reg->department}}</td>
 						<td>{{$pay_reg->account_number}}</td>
 						<td>{{$pay_reg->tax_status}}</td>
 						<td>{{$pay_reg->days_rendered}}</td>
