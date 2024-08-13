@@ -74,6 +74,7 @@
 									<th>Birth Date</th>
 									<th>Government Number</th>
 									<th>Employee</th>
+									<th>EC</th>
 									<th>Employer</th>
 									<th>Total</th>
 								</tr>
@@ -88,19 +89,22 @@
 									@if($benefits == "SSS")
 									
 									<td>{{$pay->employee->sss_number}}</td>
-									<td>{{number_format($pay->sss_employee_share+$pay->sss_ec+$pay->mpf_employee_share,2)}}</td>
+									<td>{{number_format($pay->mpf_employee_share,2)}}</td>
+									<td>{{number_format($pay->sss_employee_share+$pay->sss_ec,2)}}</td>
 									<td>{{number_format($pay->sss_employer_share+$pay->mpf_employer_share,2)}}</td>
 									<td>{{number_format($pay->sss_employer_share+$pay->sss_employee_share+$pay->sss_ec+$pay->mpf_employer_share+$pay->mpf_employee_share,2)}}</td>
 									@elseif($benefits == "HDMF")
 									
 									<td>{{$pay->employee->hdmf_number}}</td>
 									<td>{{number_format($pay->hdmf_employee_share,2)}}</td>
+									<td></td>
 									<td>{{number_format($pay->hdmf_employer_share,2)}}</td>
 									<td>{{number_format($pay->hdmf_employee_share+$pay->hdmf_employer_share,2)}}</td>
 									@elseif($benefits == "PHIC")
 									
 									<td>{{$pay->employee->phil_number}}</td>
 									<td>{{number_format($pay->phic_employee_share,2)}}</td>
+									<td></td>
 									<td>{{number_format($pay->phic_employer_share,2)}}</td>
 									<td>{{number_format($pay->phic_employee_share+$pay->phic_employer_share,2)}}</td>
 									@endif
