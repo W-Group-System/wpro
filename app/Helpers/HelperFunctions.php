@@ -276,7 +276,7 @@ function employeeHasOTDetails($employee_ots = array(), $check_date){
         foreach($employee_ots as $item){
             if(date('Y-m-d',strtotime($item['ot_date'])) == date('Y-m-d',strtotime($check_date))){
 
-                $total = $item['ot_approved_hrs'] - $item['break_hrs'];
+                $total =(float) $item['ot_approved_hrs'] - (float)$item['break_hrs'];
 
                 $total_approved_overtime += $total;
             }
