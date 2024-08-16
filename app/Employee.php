@@ -122,7 +122,7 @@ class Employee extends Model implements Auditable
     }
 
     public function employeeMovement(){
-        return $this->hasMany(EmployeeMovement::class,'user_id','user_id');
+        return $this->hasMany(EmployeeMovement::class,'id','user_id');
     }
 
     public function salaryMovement(){
