@@ -13,6 +13,14 @@
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
+                                @php
+                                    $oldValues = json_decode($movement->old_values, true);
+                                    $newValues = json_decode($movement->new_values, true);
+                                
+                                @endphp
+                                <th colspan='3'>Effective Date:  @foreach(array_keys($newValues) as $key) @if($key == 'date_to') {{date('M d, Y',strtotime($newValues[$key]))}} @break @endif @endforeach</th>
+                            </tr>
+                            <tr>
                                 <th>Field</th>
                                 <th>Old Value</th>
                                 <th>New Value</th>
@@ -20,11 +28,7 @@
                         </thead>
                         <tbody>
 
-                            @php
-                                $oldValues = json_decode($movement->old_values, true);
-                                $newValues = json_decode($movement->new_values, true);
-                            
-                            @endphp
+                           
 
                             @foreach(array_keys($oldValues) as $key)
                                 <tr>

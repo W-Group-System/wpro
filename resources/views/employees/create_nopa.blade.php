@@ -171,7 +171,7 @@
                                                 </td>
                                                 <td>
                                                     <div class='col-md-12'>
-                                                        <input type="date" name="date_to" class="form-control form-control-sm required js-example-basic-single ">  
+                                                        <input type="date" name="date_to" class="form-control form-control-sm required js-example-basic-single " required>  
                                                       </div>
                                                 </td>
                                             </tr>
