@@ -69,7 +69,7 @@
                                             if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) > strtotime(date('h:i A',strtotime($employee_schedule['time_in_to']))))
                                             {
                                                 $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_to']));
-                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($employee_schedule->time_in)));
+                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($attendance_now->time_in)));
                                             }
 
                                           }
