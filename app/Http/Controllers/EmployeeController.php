@@ -2513,7 +2513,8 @@ class EmployeeController extends Controller
                 'email' => $request->work_email == null ? $request->personal_email : $request->work_email,
                 'password' => bcrypt('wgroup123'),
                 'department_id' => $request->department,
-                'company_id' => $request->company
+                'company_id' => $request->company,
+                'role' => 'User'
             ]
         );
 
