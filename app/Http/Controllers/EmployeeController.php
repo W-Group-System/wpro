@@ -2509,8 +2509,8 @@ class EmployeeController extends Controller
     public function addNewUserInEdms($request)
     {
         $client = new Client();
-        // $url = 'https://edms.wsystem.online/api/add_users_from_wpro';
-        $url = 'localhost/edms/public/api/add_users_from_wpro';
+        $url = 'https://edms.wsystem.online/api/add_users_from_wpro';
+        // $url = 'localhost/edms/public/api/add_users_from_wpro';
         
         $data = array(
             'form_params' => [
