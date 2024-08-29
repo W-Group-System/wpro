@@ -50,6 +50,9 @@ use App\NteFile;
 use App\EmployeeDocument;
 use App\EmployeeSalary;
 use App\SalaryMovement;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class EmployeeController extends Controller
 {
@@ -327,7 +330,7 @@ class EmployeeController extends Controller
 
     public function new(Request $request)
     {
-
+        // dd($request->all());
         $validate_employee = Employee::where('first_name',$request->first_name)
                                         ->where('last_name',$request->last_name)
                                         ->where('company_id',$request->company)
@@ -336,6 +339,7 @@ class EmployeeController extends Controller
         $validate_user = User::where('email',$request->work_email)->first();
 
         if(empty($validate_employee) && empty($validate_user)){
+            $this->addNewUserInEdms($request);
 
             $company = Company::findOrfail($request->company);
             // dd($company);
@@ -2500,5 +2504,36 @@ class EmployeeController extends Controller
             ]);
         }
 
+    }
+
+    public function addNewUserInEdms($request)
+    {
+        $client = new Client();
+        $url = 'https://edms.wsystem.online/api/add_users_from_wpro';
+        // $url = 'localhost/edms/public/api/add_users_from_wpro';
+        
+        $data = array(
+            'form_params' => [
+                'name' => $request->first_name .' '. $request->last_name,
+                'email' => $request->work_email == null ? $request->personal_email : $request->work_email,
+                'password' => bcrypt('wgroup123'),
+                'department_id' => $request->department,
+                'company_id' => $request->company,
+                'role' => 'User'
+            ]
+        );
+
+        $response = $client->post($url, $data);
+
+        if ($response->getStatusCode() == 200)
+        {
+            $response_data = json_decode($response->getBody(), true);
+
+            return $response_data;
+        }
+        else
+        {
+            dd($response->getBody()->getContents());
+        }
     }
 }
