@@ -101,7 +101,7 @@ class EmployeeHRExport implements FromQuery, WithHeadings, WithMapping
         $company_email = $employee->user_info ? $employee->user_info->email : "";
     
         return [
-            $employee->code,
+            $employee->employee_code,
             $employee->employee_number,
             $employee->user_id,
             $employee->first_name,
