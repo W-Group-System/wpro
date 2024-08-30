@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12" align="center" style="margin-top: -30px">
         <img src='{{ asset('images/wgroup.png')}}' width='150px'>
-        <h2 style="margin-top: 0px"><b>Attendance Report of {{ \Carbon\Carbon::create()->month($selectedMonth)->format('F') }} {{ $selectedYear }}</b></h2>
+        <h2 style="margin-top: 0px"><b>Attendance Report of {{$from}} to {{$to}}</b></h2>
     </div>
 </div>
 

@@ -10,9 +10,17 @@
                     <form method='GET' onsubmit="show()" action="{{ route('reports') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class='col-md-4'>
+                        <div class='col-md-2'>
+                            From
+                            <input type="date" class="form-control form-control-sm" value='{{$from}}' id='from' name="from" required />
+                        </div>
+                        <div class='col-md-2'>
+                            To
+                            <input type="date" class="form-control form-control-sm" value='{{$to}}' id='to' name="to" required />
+                        </div>
+                            {{-- <div class='col-md-4'>
                                 <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label text-right" for="monthSelect">Month</label>
+                                    <label class="col-sm-4 col-form-label text-right" for="monthSelect">Date From</label>
                                     <div class="col-sm-8">
                                         <select id="monthSelect" name="month" class="selectpicker form-control" data-live-search="true" title="Choose a month">
                                             <option value="01">January</option>
@@ -40,7 +48,7 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class='col-md-4'>
                                 <button type="submit" id="submitBtn" class="form-control btn btn-primary mb-2 btn-sm">Generate</button>
                             </div>
@@ -49,14 +57,14 @@
                     </p>
                     <div class="row col-md-12 mb-3">
                         <div class="col-md-3" style="margin-top: 5px;">
-                            <h3 id="reportTitle"></h3> 
+                            <h3 id="reportTitle">{{date('M d, Y',strtotime($from))}} - {{date('M d, Y',strtotime($to))}}</h3> 
                         </div>
                         <div class="col-md-9">
-                            <a href="{{ url('/attendance-report?month=' . $selectedMonth . '&year=' . $selectedYear . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a>
+                            <a href="{{ url('/attendance-report?from=' . $from . '&to=' . $to . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a>
                         </div>
                     </div>
                     <div class="col-12">
-                        <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?month='.$selectedMonth.'&year='.$selectedYear.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br>
+                        {{-- <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?form='.$from.'&year='.$to.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br> --}}
 
                         <label><b>I. Tardiness</b></label>
                         <table class="table table-hover table-bordered">
@@ -175,7 +183,7 @@
                                     </tr>
                                 @endforeach --}}
                             </tbody>
-                        </table> --}}
+                        </table>
                         <label><b>III. Overtime</b></label>
                         <table class="table table-hover table-bordered">
                             <thead>
@@ -208,46 +216,5 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function() {
-        // Populate year options dynamically
-        var startYear = 2000;
-        var endYear = new Date().getFullYear();
-        for (var i = endYear; i >= startYear; i--) {
-            $('#yearSelect').append('<option value="' + i + '">' + i + '</option>');
-        }
 
-        // Set the current month and year in the report title
-        var currentDate = new Date();
-        var currentMonth = currentDate.getMonth(); // 0-based index
-        var currentYear = currentDate.getFullYear();
-        var monthNames = ["January", "February", "March", "April", "May", "June", 
-                          "July", "August", "September", "October", "November", "December"];
-        
-        var selectedMonth = "{{ $selectedMonth }}";
-        var selectedYear = "{{ $selectedYear }}";
-
-        if(selectedMonth && selectedYear) {
-            var monthName = monthNames[parseInt(selectedMonth) - 1];
-            var reportTitle = monthName + ' ' + selectedYear;
-            $('#reportTitle').text(reportTitle);
-        } else {
-            $('#reportTitle').text(monthNames[currentMonth] + ' ' + currentYear);
-        }
-
-        $('#submitBtn').on('click', function(event) {
-            var selectedMonth = $('#monthSelect').val();
-            var selectedYear = $('#yearSelect').val();
-            
-            if(selectedMonth && selectedYear) {
-                var monthName = monthNames[parseInt(selectedMonth) - 1];
-                var reportTitle = monthName + ' ' + selectedYear;
-                $('#reportTitle').text(reportTitle);
-            } else {
-                alert('Please select both month and year.');
-                event.preventDefault();
-            }
-        });
-    });
-</script>
 @endsection
