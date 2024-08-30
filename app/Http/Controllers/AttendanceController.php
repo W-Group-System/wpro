@@ -626,14 +626,14 @@ class AttendanceController extends Controller
     public function reports(Request $request)
     {
         // Get the selected month and year from the request
-        $selectedMonth = $request->input('month');
-        $selectedYear = $request->input('year');
+        $from = $request->input('from');
+        $to = $request->input('to');
 
         // Validate that both month and year are provided
-        if ($selectedMonth && $selectedYear) {
+        if ($from && $to) {
             // Filter the data based on the selected month and year
-            $data = AttendanceDetailedReport::with('employee')->whereYear('log_date', $selectedYear)
-                                            ->whereMonth('log_date', $selectedMonth)
+            $data = AttendanceDetailedReport::with('employee')
+                                            ->whereBetween('log_date', [$from,$to])
                                             ->get();
         } else {
             // If no month or year is selected, set data to empty collection
@@ -755,11 +755,11 @@ class AttendanceController extends Controller
                 'leaveWithoutData' => $leaveWithoutData,
                 'leaveDeviationsData' => $leaveDeviationsData,
                 'overtimeData' => $overtimeData,
-                'selectedMonth' => $selectedMonth,
-                'selectedYear' => $selectedYear
+                'from' => $from,
+                'to' => $to
             ])->setPaper('a4', 'portrait');
     
-            return $pdf->stream('attendance_report' . $selectedMonth . '-' . $selectedYear . '.pdf');
+            return $pdf->stream('attendance_report' . $from . '-' . $to . '.pdf');
         }
 
         // Pass the filtered data to the view
@@ -770,8 +770,8 @@ class AttendanceController extends Controller
             'leaveDeviationsData' => $leaveDeviationsData,
             // 'consecLeaveData' => $consecLeaveData,
             'overtimeData' => $overtimeData,
-            'selectedMonth' => $selectedMonth,
-            'selectedYear' => $selectedYear
+            'from' => $from,
+            'to' => $to
         ]);
     }
 }
