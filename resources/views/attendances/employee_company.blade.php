@@ -340,6 +340,10 @@
                                                                                 // dd($check_leave);
                                                                                 $if_attendance_holiday_status = 'Without-Pay';
                                                                                 $abs = 1;
+                                                                                if(str_contains($check_leave,".5"))
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
                                                                             }else{
                                                                                 $if_attendance_holiday_status = 'With-Pay';
                                                                             }
