@@ -328,6 +328,7 @@
                                                             $if_attendance_holiday_status = '';
                                                             if($check_if_holiday){
                                                                 $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
+                                                                $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 if($if_attendance_holiday){
                                                                     $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($if_attendance_holiday)),$employee_schedule);
                                                                 
@@ -354,6 +355,7 @@
                                                                         // dd($emp->attendances);
                                                                         // dd(date('Y-m-d H:i',strtotime($date_r." 00:00:00")-86400));
                                                                         $time_in = ($emp->attendances)->whereBetween('time_in',[date('Y-m-d H:i',strtotime($date_r." 00:00:00")-86400),date('Y-m-d H:i',strtotime($date_r." 23:59:59")-86400)])->sortBy('time_in')->first();
+                                                                        $time_in_ob = ($emp->approved_obs)->where('applied_date',date('Y-m-d',strtotime($date_r." 00:00:00")-86400))->sortBy('applied_date')->first();
                                                                    
                                                                         if(empty($check_attendance)){
                                                                             $is_absent = 'Absent';
@@ -372,6 +374,10 @@
                                                                                 }
                                                                             }
                                                                            
+                                                                        }
+                                                                        if($time_in_ob != null)
+                                                                        {
+                                                                            $abs =0;
                                                                         }
                                                                     }
                                                                 }
