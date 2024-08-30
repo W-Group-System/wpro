@@ -13,24 +13,20 @@
                 <th>No.</th>
                 <th>Company</th>
                 <th>Name</th>
-                <th>No. of Days with Late</th>
-                <th>No. of Days with Undertime</th>
-                <th>Total</th>
+                <th>No. of Days with Tardiness</th>
                 <th>Remarks/ Recommendation</th>
             </tr>
         </thead>
         <tbody>
             @foreach($tardinessData as $index => $tardiness)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $tardiness['company_code'] }}</td>
-                <td>{{ $tardiness['name'] }}</td>
-                <td>{{ $tardiness['tardiness_days'] }}</td>
-                <td>{{ $tardiness['undertime_days'] }}</td>
-                <td>{{$tardiness['tardiness_days']+$tardiness['undertime_days']}}</td>
-                <td>Excessive; for NOD issuance</td>
-            </tr>
-        @endforeach
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $tardiness['company_code'] }}</td>
+                    <td>{{ $tardiness['name'] }}</td>
+                    <td>{{ $tardiness['tardiness_days'] }}</td>
+                    <td>for NOD issuance</td>
+                </tr>
+            @endforeach
         </tbody>
     </table>
     <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
