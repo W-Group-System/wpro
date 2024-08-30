@@ -927,7 +927,7 @@
                                                                 if($time_end_string>$schedule_out)
                                                                 {
                                                                     $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
-                                                                    if($sh_ot_nd >=5 )
+                                                                    if($sh_ot_nd >=4.5 )
                                                                     {   
                                                                         if($schedule_hours > 8)
                                                                         {
@@ -944,7 +944,7 @@
                                                                 }
                                                                 else {
                                                                     $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
-                                                                    if($sh_ot_nd >=5 )
+                                                                    if($sh_ot_nd >=4.5 )
                                                                     {   
                                                                         if($schedule_hours > 8)
                                                                         {
@@ -984,7 +984,7 @@
                                                                 if($time_end_string>$schedule_out)
                                                                 {
                                                                     $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
-                                                                    if($lh_ot_nd >=5 )
+                                                                    if($lh_ot_nd >=4.5 )
                                                                     {   
                                                                         if($schedule_hours > 8)
                                                                         {
@@ -1000,7 +1000,7 @@
                                                                 }
                                                                 else {
                                                                     $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
-                                                                    if($lh_ot_nd >=5 )
+                                                                    if($lh_ot_nd >=4.5 )
                                                                     {   
                                                                         if($schedule_hours > 8)
                                                                         {
