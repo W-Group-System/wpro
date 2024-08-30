@@ -13,8 +13,8 @@
             <th>No.</th>
             <th>Company</th>
             <th>Name</th>
-            <th>No. of Days with Late</th>
-            <th>No. of Days with Undertime</th>
+            <th>Lates</th>
+            <th>Undertime</th>
             <th>Total</th>
             <th>Remarks/ Recommendation</th>
         </tr>
