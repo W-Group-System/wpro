@@ -893,7 +893,7 @@
                                                             $sh_ot = 8;
                                                            
                                                             $sh_ot_nd =  night_difference_per_company($time_start,$time_end);
-                                                            if($sh_ot_nd >=5 )
+                                                            if($sh_ot_nd >=4.5 )
                                                             {
                                                                 $sh_ot_nd = $sh_ot_nd-1;
                                                             }
