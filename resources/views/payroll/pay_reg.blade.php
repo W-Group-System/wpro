@@ -460,7 +460,7 @@
                                   
                                   $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay;
                                   // dd($de_minimis);
-                                  // dd($lastccc);
+                                  // dd($government_amount);
                                   $government_amount = $government_amount+$lastccc;
                                   // dd($government_amount);
                                 
@@ -539,8 +539,9 @@
                                 }
                                 else {
                                   
-                                  $philhealth = (($previous_pay_rate+($pay_rate/2))*.05);
+                                  $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
                                 }
+                                // dd($philhealth);
                               
                                 if($name->employee->work_description == "Non-Monthly")
                                 {
@@ -575,6 +576,16 @@
                                   $philhealth = 0;
                                 }
                                 if($name->employee->employee_code == "M1010")
+                                {
+                                  $philhealth = 0;
+                                  $hdmf = 0;
+                                  $sss_ecc = 0;
+                                  $sss_ee = 0;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
+                                if($name->employee->employee_code == "A185221")
                                 {
                                   $philhealth = 0;
                                   $hdmf = 0;
