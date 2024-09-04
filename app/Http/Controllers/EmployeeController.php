@@ -339,7 +339,7 @@ class EmployeeController extends Controller
         $validate_user = User::where('email',$request->work_email)->first();
 
         if(empty($validate_employee) && empty($validate_user)){
-            $this->addNewUserInEdms($request);
+            // $this->addNewUserInEdms($request);
 
             $company = Company::findOrfail($request->company);
             // dd($company);
