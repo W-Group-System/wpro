@@ -1818,7 +1818,10 @@ class EmployeeController extends Controller
                                     ->orderBy('id','asc');
                                 }])
                                 ->with(['approved_leaves' => function ($query) use ($from_date, $to_date) {
-                                    $query->whereBetween('date_from', [$from_date, $to_date])
+                                    $query->where(function ($q) use ($from_date, $to_date) {
+                                        $q->whereBetween('date_from', [$from_date, $to_date])
+                                          ->orWhereBetween('date_to', [$from_date, $to_date]);
+                                    })
                                     ->where('status','Approved')
                                     ->orderBy('id','asc');
                                 },'approved_leaves.leave'])
@@ -1844,7 +1847,7 @@ class EmployeeController extends Controller
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
                                 })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
-                                // ->where('employee_code','A3157222')
+                                // ->where('employee_code','A354913')
                                 ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
