@@ -473,6 +473,10 @@
                                 {
                                   $government_amount = $government_amount +1020;
                                 }
+                                  if($name->employee->employee_code == "A2104324")
+                                {
+                                  $government_amount = $government_amount +1020;
+                                }
                                   $government_amount = $government_amount+$lastccc;
                                   // dd($government_amount);
                                 
