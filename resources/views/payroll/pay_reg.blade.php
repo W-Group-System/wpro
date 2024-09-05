@@ -465,6 +465,14 @@
                                 {
                                   $government_amount = $government_amount +1000;
                                 }
+                                  if($name->employee->employee_code == "A2104224")
+                                {
+                                  $government_amount = $government_amount +1000;
+                                }
+                                  if($name->employee->employee_code == "A2104424")
+                                {
+                                  $government_amount = $government_amount +1020;
+                                }
                                   $government_amount = $government_amount+$lastccc;
                                   // dd($government_amount);
                                 
