@@ -118,11 +118,11 @@
                         <td>Rendered: {{$payroll->days_rendered}}</td>
                     </tr>
                     <tr>
-                        <td>Pay Type: @if($payroll->work_description == "Non-Monthly") Daily @else Monthly @endif</td>
+                        <td>Pay Type: @if($payroll->employee->work_description == "Non-Monthly") Daily @else Monthly @endif</td>
                         <td>Absent: {{$payroll->days_absent}}</td>
                     </tr>
                     <tr>
-                        <td>Rate: {{number_format($payroll->pay_rate,2)}}</td>
+                        <td>Rate: {{number_format(($payroll->pay_rate*12)/313,2)}}</td>
                         <td>Leave: {{$payroll->leave_count}}</td>
                     </tr>
                 </tbody>
@@ -393,6 +393,18 @@
                         <td style="text-align: right; font-weight: bold;">{{number_format($allow->amount,2)}}</td>
                     </tr>
                     @endforeach
+                    @php
+                        $total_add_instructions = 0;
+                    @endphp
+                    @foreach($payroll->pay_instructions->where('amount','>',0) as $pay_instructions)
+                    <tr>
+                        <td style="font-weight: bold;"> - {{$pay_instructions->instruction_name}}</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($pay_instructions->amount,2)}}</td>
+                        @php
+                            $total_add_instructions = $total_add_instructions+$pay_instructions->amount;
+                        @endphp
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
             <hr>
@@ -400,7 +412,7 @@
                 <tbody>
                     <tr>
                         <td style="font-weight: bold;">Net Income</td>
-                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->net_taxable_income-$payroll->withholding_tax+$payroll->nontaxable_benefits_total,2)}}</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->net_taxable_income-$payroll->withholding_tax+$payroll->nontaxable_benefits_total+$total_add_instructions,2)}}</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold;">Less: Non-Taxable Deductions</td>
@@ -414,7 +426,7 @@
                         <td style="text-align: right; font-weight: bold;">-{{number_format($loan->amount,2)}}</td>
                     </tr>
                     @endforeach
-                    @foreach($payroll->pay_instructions as $pay_instructions)
+                    @foreach($payroll->pay_instructions->where('amount','<',0) as $pay_instructions)
                     <tr>
                         <td style="font-weight: bold;"> - {{$pay_instructions->instruction_name}}</td>
                         <td style="text-align: right; font-weight: bold;">{{number_format($pay_instructions->amount,2)}}</td>
