@@ -15,6 +15,10 @@ class EmployeeLeave extends Model implements Auditable
     {
         return $this->belongsTo(User::class,'user_id','id');
     }
+    public function created_by_info()
+    {
+        return $this->belongsTo(User::class,'created_by','id');
+    }
 
     public function leave()
     {
