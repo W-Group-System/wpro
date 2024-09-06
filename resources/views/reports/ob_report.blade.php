@@ -65,13 +65,14 @@
                                         {{-- <th>User ID</th> --}}
                                         <th>Employee Code</th>
                                         <th>Employee Name</th>
+                                        
+                                        <th>Filed By </th>
                                         <th>Date Filed</th>
                                         <th>Date</th>
                                         <th>Time In-Out</th>
                                         {{-- <th>OB Count</th>  --}}
                                         <th>Approved Date </th>
                                         <th>Remarks </th>
-                                        <th>Filed By </th>
                                         <th>Status </th>
                                     </tr>
                                 </thead>
@@ -81,6 +82,8 @@
                                         {{-- <td>{{$item->employee->user_id}}</td> --}}
                                         <td>{{$item->employee->employee_code}}</td>
                                         <td>{{$item->user->name}}</td>
+                                        
+                                        <td>{{$item->created_by_info->name}}</td>
                                         <td>{{date('d/m/Y h:i A', strtotime($item->created_at))}}</td>
                                         <td>{{ date('d/m/Y ', strtotime($item->applied_date)) }}</td>
                                         <td>{{ date('d/m/Y h:i A', strtotime($item->date_from)) }} - {{ date('d/m/Y h:i A', strtotime($item->date_to)) }}  </td>
@@ -96,7 +99,6 @@
                                                 <a href="{{ url($item->ob_file) }}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                             @endif
                                         </td>
-                                        <td>{{$item->created_by_info->name}}</td>
                                         <td>{{$item->status}}</td>
                                     </tr>
                                     @endforeach

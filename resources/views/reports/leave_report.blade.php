@@ -70,6 +70,8 @@
 										  {{-- <th>User ID</th> --}}
 										  <th>Employee Code</th>
 										  <th>Employee Name</th>
+										  
+										  <th>Filed By</th> 
 										  <th>Date Filed</th>
 										  <th>Leave Type</th>
 										  <th>From</th>
@@ -79,7 +81,6 @@
 										  <th>Leave Count</th>
 										  <th>Status</th> 
 										  <th>Approved Date</th> 
-										  <th>Filed By</th> 
 										  <th>Reason/Remarks</th> 
 										</tr>
 									  </thead>
@@ -89,6 +90,8 @@
 										  {{-- <td>{{$form_approval->user->id}}</td> --}}
 										  <td>{{$form_approval->employee->employee_code}}</td>
 										  <td>{{$form_approval->user->name}}</td>
+										  
+										  <td>{{$form_approval->created_by_info->name}}</td>
 										  <td>{{date('d/m/Y h:i A', strtotime($form_approval->created_at))}}</td>
 										  <td>{{$form_approval->leave->leave_type}}</td>
 										  <td>{{date('d/m/Y', strtotime($form_approval->date_from))}}</td>
@@ -108,7 +111,6 @@
 											{{$form_approval->status}}
 										  </td>
 										  <td>{{ $form_approval->approved_date ? date('d/m/Y', strtotime($form_approval->approved_date)) : ""}}</td>
-										  <td>{{$form_approval->created_by_info->name}}</td>
 										  <td>
 												{{$form_approval->reason}} <br>
 												@if($form_approval->attachment)
