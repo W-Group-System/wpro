@@ -79,6 +79,7 @@
 										  <th>Leave Count</th>
 										  <th>Status</th> 
 										  <th>Approved Date</th> 
+										  <th>Filed By</th> 
 										  <th>Reason/Remarks</th> 
 										</tr>
 									  </thead>
@@ -107,6 +108,7 @@
 											{{$form_approval->status}}
 										  </td>
 										  <td>{{ $form_approval->approved_date ? date('d/m/Y', strtotime($form_approval->approved_date)) : ""}}</td>
+										  <td>{{$form_approval->created_by_info->name}}</td>
 										  <td>
 												{{$form_approval->reason}} <br>
 												@if($form_approval->attachment)

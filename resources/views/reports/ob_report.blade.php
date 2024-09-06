@@ -71,6 +71,7 @@
                                         {{-- <th>OB Count</th>  --}}
                                         <th>Approved Date </th>
                                         <th>Remarks </th>
+                                        <th>Filed By </th>
                                         <th>Status </th>
                                     </tr>
                                 </thead>
@@ -95,6 +96,7 @@
                                                 <a href="{{ url($item->ob_file) }}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                                             @endif
                                         </td>
+                                        <td>{{$item->created_by_info->name}}</td>
                                         <td>{{$item->status}}</td>
                                     </tr>
                                     @endforeach
