@@ -229,9 +229,9 @@
 						<td>{{$pay_reg->deminimis}}</td>
 						<td>{{$pay_reg->other_allowances_basic_pay}}</td>
 						<td>{{$pay_reg->subliq}}</td>
-						@php
+						{{-- @php
 							$ids = [];
-						@endphp
+						@endphp --}}
 						@foreach($allowances as $as => $total_allow)
 							@php
 								$ids = $pay_register_ids_data->where('employee_no',$pay_reg->employee_no);
@@ -248,6 +248,7 @@
 						<td>{{$pay_reg->nontaxable_benefits_total}}</td>
 						@foreach($instructions as $instruction)
 							@php
+								$ids = $pay_register_ids_data->where('employee_no',$pay_reg->employee_no);
 								$instruction_total = 0;
 								foreach($ids as $idffff)
 								{
@@ -260,6 +261,7 @@
 						@foreach($loans as $loans_al)
 							@php
 								$total_loans = 0;
+								$ids = $pay_register_ids_data->where('employee_no',$pay_reg->employee_no);
 								foreach($ids as $idffff)
 								{
 									$toloans = ($idffff->pay_loan)->where('loan_type_id',$loans_al->loan_type_id)->sum('amount');
