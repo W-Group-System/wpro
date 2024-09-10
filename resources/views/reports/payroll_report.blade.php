@@ -229,6 +229,9 @@
 						<td>{{$pay_reg->deminimis}}</td>
 						<td>{{$pay_reg->other_allowances_basic_pay}}</td>
 						<td>{{$pay_reg->subliq}}</td>
+						@php
+							$ids = [];
+						@endphp
 						@foreach($allowances as $as => $total_allow)
 							@php
 								$ids = $pay_register_ids_data->where('employee_no',$pay_reg->employee_no);
