@@ -1053,8 +1053,7 @@ class EmployeeController extends Controller
         
         $employee_movement = EmployeeMovement::with('department','immediate_sup_data', 'user_info', 'classification_info','level_info')->get();
         
-        $employee_approvers = Employee::where('status','Active')
-                                        ->pluck('user_id')
+        $employee_approvers = Employee::pluck('user_id')
                                         ->toArray();
 
         $hierarchy = getEmployeeHierarchy($user->id);
@@ -1092,7 +1091,7 @@ class EmployeeController extends Controller
         $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->id)->get();
         $employeeNte = NteFile::where('employee_id', $user->employee->id)->get();
         $employeeDocument = EmployeeDocument::with('employee')->where('employee_id', $user->employee->id)->get();
-
+        // dd($users);
         return view('employees.employee_settings_hr',
         array(
             'header' => 'employees',
