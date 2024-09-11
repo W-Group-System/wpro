@@ -68,9 +68,10 @@
 							<table class="table table-db table-hover table-bordered">
 							<thead>
 								<tr>
-									<th>Name</th>
 									
 									<th>Employee No</th>
+									<th>Name</th>
+									
 									<th>Birth Date</th>
 									<th>Government Number</th>
 									<th>Employee</th>
@@ -83,9 +84,10 @@
 							<tbody>
 								@foreach($pay_registers as $pay)
 								<tr>
-									<td>{{$pay->last_name.", ".$pay->first_name}}</td>
 									
 									<td>{{$pay->employee_no}}</td>
+									<td>{{$pay->last_name.", ".$pay->first_name}}</td>
+									
 									<td>{{date('M d, Y',strtotime($pay->employee->birth_date))}}</td>
 									@if($benefits == "SSS")
 									
