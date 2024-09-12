@@ -995,6 +995,7 @@
                                                                 if($time_end_string>$schedule_out)
                                                                 {
                                                                     $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                    $lh_ot_use = $lh_ot_nd;
                                                                     if($lh_ot_nd >=4.5 )
                                                                     {   
                                                                         $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
@@ -1003,7 +1004,7 @@
                                                                         $lh_ot_nd = $lh_ot_nd-1;
                                                                         }
                                                                     }
-                                                                    $lh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_nd;
+                                                                    $lh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_use;
                                                                     if($lh_ot_nd_ge <0)
                                                                     {
                                                                         $lh_ot_nd_ge=0;
