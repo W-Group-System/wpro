@@ -1799,6 +1799,7 @@ class EmployeeController extends Controller
         $location = isset($request->location) ? $request->location : "";
 
         $from_date = $request->from;
+        $date_from = date('Y-m-d', strtotime('-1 day', strtotime($from_date)));
         $to_date = $request->to;
         $date_range =  [];
         $schedules = [];
@@ -1809,33 +1810,33 @@ class EmployeeController extends Controller
         if ($from_date != null) {
             $emp_data = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description')
                                 ->with('company')
-                                ->with(['attendances' => function ($query) use ($from_date, $to_date) {
-                                    $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
-                                    ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
+                                ->with(['attendances' => function ($query) use ($date_from, $to_date) {
+                                    $query->whereBetween('time_in', [$date_from." 00:00:01", $to_date." 23:59:59"])
+                                    ->orWhereBetween('time_out', [$date_from." 00:00:01", $to_date." 23:59:59"])
                                     ->orderBy('time_in','asc')
                                     ->orderby('time_out','desc')
                                     ->orderBy('id','asc');
                                 }])
-                                ->with(['approved_leaves' => function ($query) use ($from_date, $to_date) {
-                                    $query->where(function ($q) use ($from_date, $to_date) {
-                                        $q->whereBetween('date_from', [$from_date, $to_date])
-                                          ->orWhereBetween('date_to', [$from_date, $to_date]);
+                                ->with(['approved_leaves' => function ($query) use ($date_from, $to_date) {
+                                    $query->where(function ($q) use ($date_from, $to_date) {
+                                        $q->whereBetween('date_from', [$date_from, $to_date])
+                                          ->orWhereBetween('date_to', [$date_from, $to_date]);
                                     })
                                     ->where('status','Approved')
                                     ->orderBy('id','asc');
                                 },'approved_leaves.leave'])
-                                ->with(['approved_wfhs' => function ($query) use ($from_date, $to_date) {
-                                    $query->whereBetween('applied_date', [$from_date, $to_date])
+                                ->with(['approved_wfhs' => function ($query) use ($date_from, $to_date) {
+                                    $query->whereBetween('applied_date', [$date_from, $to_date])
                                     ->where('status','Approved')
                                     ->orderBy('id','asc');
                                 }])
-                                ->with(['approved_obs' => function ($query) use ($from_date, $to_date) {
-                                    $query->whereBetween('applied_date', [$from_date, $to_date])
+                                ->with(['approved_obs' => function ($query) use ($date_from, $to_date) {
+                                    $query->whereBetween('applied_date', [$date_from, $to_date])
                                     ->where('status','Approved')
                                     ->orderBy('id','asc');
                                 }])
-                                ->with(['approved_dtrs' => function ($query) use ($from_date, $to_date) {
-                                    $query->whereBetween('dtr_date', [$from_date, $to_date])
+                                ->with(['approved_dtrs' => function ($query) use ($date_from, $to_date) {
+                                    $query->whereBetween('dtr_date', [$date_from, $to_date])
                                     ->where('status','Approved')
                                     ->orderBy('id','asc');
                                 }])
