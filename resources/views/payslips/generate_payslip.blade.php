@@ -122,7 +122,7 @@
                         <td>Absent: {{$payroll->days_absent}}</td>
                     </tr>
                     <tr>
-                        <td>Rate: @if($payroll->employee->work_description == "Non-Monthly"){{number_format(($payroll->pay_rate*12)/313,2)}}@else{{number_format(($payroll->pay_rate),2)}}</td>
+                        <td>Rate: @if($payroll->employee->work_description == "Non-Monthly"){{number_format(($payroll->pay_rate*12)/313,2)}}@else{{number_format(($payroll->pay_rate),2)}}@endif</td>
                         <td>Leave: {{$payroll->leave_count}}</td>
                     </tr>
                 </tbody>
