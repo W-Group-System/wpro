@@ -975,6 +975,7 @@
                                                                 $lh_ot = $approved_overtime_hrs;
                                                                
                                                             }
+                                                            else
                                                             {
                                                                 $lh_ot_ge = $approved_overtime_hrs-8;
                                                             }
