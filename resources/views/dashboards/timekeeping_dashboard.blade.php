@@ -304,6 +304,9 @@
                                             <i class="ti-close btn-icon-prepend"></i>                                                    
                                           </button>
                                       @elseif ($item->status == 'Approved')
+                                      <button type="button" class="btn btn-info btn-sm" id="{{ $item->id }}" data-target="#edit_time-{{ $item->id }}" data-toggle="modal" title="Edit">
+                                        <i class="ti-pencil btn-icon-prepend"></i>                                                    
+                                      </button>
                                         <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#overtime-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
                                           <i class="ti-close btn-icon-prepend"></i>                                                    
                                         </button>
@@ -551,4 +554,5 @@
 @foreach ($overtimes as $overtime)
   @include('for-approval.remarks.overtime_approved_remarks')
   @include('for-approval.remarks.overtime_declined_remarks')
+  @include('for-approval.remarks.overtime_edit_time')
 @endforeach 
