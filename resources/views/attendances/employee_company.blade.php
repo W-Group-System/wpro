@@ -383,10 +383,7 @@
                                                                         }
                                                                     }
                                                                     
-                                                                    if($emp->work_description == "Non-Monthly")
-                                                                    {
-                                                                        $abs=1;
-                                                                    }
+                                                               
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
                                                               
