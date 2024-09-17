@@ -731,18 +731,19 @@
                                                         {   
                                                             $nightdiff_end = $end_schedule;
                                                         }
-                                                    }
-                                                     $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                                     if((strtotime($end_schedule)-strtotime($start_schedule))/3600 > 8)
-                                                     {
+                                                        $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                        if((strtotime($end_schedule)-strtotime($start_schedule))/3600 > 8)
+                                                        {
 
-                                                    
-                                                     if($night_diff >= 5)
-                                                     {
-                                                        $night_diff = $night_diff - 1;
-                                                     }
+                                                        
+                                                        if($night_diff >= 5)
+                                                        {
+                                                            $night_diff = $night_diff - 1;
+                                                        }
+                                                        }
+                                                        $night_diff_ot = night_difference_per_company($time_start,$time_end)-$night_diff;
                                                     }
-                                                     $night_diff_ot = night_difference_per_company($time_start,$time_end)-$night_diff;
+                                                     
                                                     
                                                     
                                                 }
