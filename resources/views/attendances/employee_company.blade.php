@@ -329,11 +329,6 @@
                                                             
                                                           
                                                             if($check_if_holiday){
-                                                                if($emp->work_description == "Non-Monthly")
-                                                                {
-                                                                    $abs=1;
-                                                                }
-                                                                else {
                                                                     $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 if($if_attendance_holiday){
@@ -387,7 +382,11 @@
                                                                             $abs =0;
                                                                         }
                                                                     }
-                                                                }
+                                                                    
+                                                                    if($emp->work_description == "Non-Monthly")
+                                                                    {
+                                                                        $abs=1;
+                                                                    }
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
                                                               
