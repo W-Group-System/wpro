@@ -326,8 +326,15 @@
                                                             $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                                                             
                                                             $if_attendance_holiday_status = '';
+                                                            
+                                                          
                                                             if($check_if_holiday){
-                                                                $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
+                                                                if($emp->work_description == "Non-Monthly")
+                                                                {
+                                                                    $abs=1;
+                                                                }
+                                                                else {
+                                                                    $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 if($if_attendance_holiday){
                                                                     $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($if_attendance_holiday)),$employee_schedule);
@@ -401,6 +408,8 @@
 
                                                                     
                                                                 }
+                                                                }
+                                                                
                                                             }else{
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 
