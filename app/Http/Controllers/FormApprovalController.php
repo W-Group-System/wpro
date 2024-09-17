@@ -330,6 +330,22 @@ class FormApprovalController extends Controller
         }
     }
 
+    public function timekeeperApproveOvertime(Request $request, EmployeeOvertime $employee_overtime){
+
+    
+        if($employee_overtime){
+            
+                $ot_approved_hrs = $request->ot_approved_hrs;
+                EmployeeOvertime::Where('id', $employee_overtime->id)->update([
+                    'approval_remarks' => $request->approval_remarks,
+                    'break_hrs' => $request->break_hrs,
+                    'ot_approved_hrs' => $ot_approved_hrs
+                ]);
+            Alert::success('Overtime has been approved.')->persistent('Dismiss');
+            return back();
+        }
+    }
+
     public function declineOvertime(Request $request,$id){
         EmployeeOvertime::Where('id', $id)->update([
                             'status' => 'Declined',

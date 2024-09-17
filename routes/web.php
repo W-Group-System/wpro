@@ -110,6 +110,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('for-overtime','FormApprovalController@form_overtime_approval');
     Route::post('approve-ot-hrs/{employee_overtime}','FormApprovalController@approveOvertime');
+    Route::post('timekeeper-approve-ot-hrs/{employee_overtime}','FormApprovalController@timekeeperApproveOvertime');
     Route::post('decline-overtime/{id}','FormApprovalController@declineOvertime');
 
     Route::get('for-work-from-home','FormApprovalController@form_wfh_approval');
