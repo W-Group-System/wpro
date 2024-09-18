@@ -102,6 +102,18 @@ class EmployeeObController extends Controller
         return back();
     }    
 
+    public function hr_edit_ob(Request $request, $id)
+    {
+        $new_ob = EmployeeOb::findOrFail($id);
+        $new_ob->applied_date = $request->applied_date;
+        $new_ob->date_from = $request->date_from;
+        $new_ob->date_to = $request->date_to;
+        $new_ob->save();
+
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
+    }
+
     public function upload_obFile(Request $request, $id)
     {
         $new_ob = EmployeeOb::findOrFail($id);

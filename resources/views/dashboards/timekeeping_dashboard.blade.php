@@ -12,6 +12,17 @@
                         <h3 class="card-title">Timekeeping Dashboard</h3>  
                         <form method='get' onsubmit='show();' enctype="multipart/form-data">
                             <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="text-right">Company</label>
+                                        <select data-placeholder="Select Company" onchange='clear();' class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="company" id="companySelect" required>
+                                            <option value="">-- Select Company --</option>
+                                            @foreach($companies as $comp)
+                                            <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_code}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class='col-md-2'>
                                     <div class="form-group">
                                         <label class="text-right">From</label>
@@ -35,9 +46,12 @@
                                         {{-- <input type="text" value='{{$status}}' class="form-control form-control-sm" id='status' name="status" required /> --}}
                                     </div>
                                 </div>
-                                <div class='col-md-2'>
-                                    <button type="submit" class="form-control form-control-sm btn btn-primary mb-2 btn-sm">Filter</button>
-                                </div>
+                                <div class="col-md-2 d-flex  align-items-center">
+                                    <div class="form-group ">
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                        <a href="{{ url('/timekeeping-dashboard') }}" class="btn btn-warning">Reset Filter</a>
+                                    </div>
+                                </div>                                
                             </div>
                         </form>
                     </div>
@@ -64,22 +78,24 @@
                                             {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                             <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                             <small>{{$item->user->employee->company->company_name}}</small>
-                                        @if ($item->status == 'Pending')
-                                          <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#leave-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
-                                            <i class="ti-check btn-icon-prepend"></i>                                                    
-                                          </button>
-                                          <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#leave-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-close btn-icon-prepend"></i>                                                    
-                                          </button>
-                                        @elseif ($item->status == 'Approved')
-                                          <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#leave-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-close btn-icon-prepend"></i>                                                    
-                                          </button>
-                                          <button type="button" id="edit{{ $item->id }}" class="btn btn-info btn-sm"
-                                            data-target="#edit_leave-{{ $item->id }}" data-toggle="modal" title='Edit'>
-                                            <i class="ti-pencil-alt"></i>
-                                          </button>
-                                        @endif
+                                            <div class="buttons">
+                                                @if ($item->status == 'Pending')
+                                                <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#leave-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
+                                                    <i class="ti-check btn-icon-prepend"></i>                                                    
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#leave-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
+                                                    <i class="ti-close btn-icon-prepend"></i>                                                    
+                                                </button>
+                                                @elseif ($item->status == 'Approved')
+                                                <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#leave-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
+                                                    <i class="ti-close btn-icon-prepend"></i>                                                    
+                                                </button>
+                                                <button type="button" id="edit{{ $item->id }}" class="btn btn-info btn-sm"
+                                                    data-target="#edit_leave-{{ $item->id }}" data-toggle="modal" title='Edit'>
+                                                    <i class="ti-pencil-alt"></i>
+                                                </button>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td>
                                             Date From: {{date('M d, Y', strtotime($item->date_from))}} <br>
@@ -149,18 +165,23 @@
                                         {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
-                                        @if ($item->status == 'Pending')
-                                        <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#ob-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
-                                          <i class="ti-check btn-icon-prepend"></i>                                                    
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#ob-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-close btn-icon-prepend"></i>                                                    
-                                          </button>
-                                      @elseif ($item->status == 'Approved')
-                                        <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#ob-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                          <i class="ti-close btn-icon-prepend"></i>                                                    
-                                        </button>
-                                      @endif
+                                        <div class="buttons">
+                                            @if ($item->status == 'Pending')
+                                                <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#ob-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
+                                                <i class="ti-check btn-icon-prepend"></i>                                                    
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#ob-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
+                                                    <i class="ti-close btn-icon-prepend"></i>                                                    
+                                                </button>
+                                            @elseif ($item->status == 'Approved')
+                                                <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#ob-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
+                                                <i class="ti-close btn-icon-prepend"></i>                                                    
+                                                </button>
+                                                <button type="button" id="edit{{ $item->id }}" class="btn btn-info btn-sm" data-target="#edit_ob-{{ $item->id }}" data-toggle="modal" title='Edit'>
+                                                    <i class="ti-pencil-alt"></i>
+                                                </button>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
                                         Date: {{date('M d, Y', strtotime($item->applied_date))}} <br>
@@ -296,21 +317,23 @@
                                         {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
-                                        @if ($item->status == 'Pending')
-                                        <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#approve-ot-hrs-{{ $item->id }}" data-toggle="modal" title="Approve">
-                                          <i class="ti-check btn-icon-prepend"></i>                                                    
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#overtime-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                            <i class="ti-close btn-icon-prepend"></i>                                                    
-                                          </button>
-                                      @elseif ($item->status == 'Approved')
-                                      <button type="button" class="btn btn-info btn-sm" id="{{ $item->id }}" data-target="#edit_time-{{ $item->id }}" data-toggle="modal" title="Edit">
-                                        <i class="ti-pencil btn-icon-prepend"></i>                                                    
-                                      </button>
-                                        <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#overtime-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
-                                          <i class="ti-close btn-icon-prepend"></i>                                                    
-                                        </button>
-                                      @endif
+                                        <div class="buttons">
+                                            @if ($item->status == 'Pending')
+                                                <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#approve-ot-hrs-{{ $item->id }}" data-toggle="modal" title="Approve">
+                                                <i class="ti-check btn-icon-prepend"></i>                                                    
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#overtime-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
+                                                    <i class="ti-close btn-icon-prepend"></i>                                                    
+                                                </button>
+                                            @elseif ($item->status == 'Approved')
+                                                <button type="button" class="btn btn-danger btn-sm" id="{{ $item->id }}" data-target="#overtime-declined-remarks-{{ $item->id }}" data-toggle="modal" title="Decline">
+                                                    <i class="ti-close btn-icon-prepend"></i>                                                    
+                                                </button>
+                                                <button type="button" class="btn btn-info btn-sm" id="{{ $item->id }}" data-target="#edit_time-{{ $item->id }}" data-toggle="modal" title="Edit">
+                                                    <i class="ti-pencil-alt btn-icon-prepend"></i>                                                    
+                                                </button>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td>
                                         Date: {{date('M d, Y', strtotime($item->ot_date))}} <br>
@@ -549,6 +572,7 @@
 @foreach ($obs as $ob)
   @include('for-approval.remarks.ob_approved_remarks')
   @include('for-approval.remarks.ob_declined_remarks')
+  @include('for-approval.remarks.edit_ob')
 @endforeach
 
 @foreach ($overtimes as $overtime)

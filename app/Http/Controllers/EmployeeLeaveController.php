@@ -257,7 +257,12 @@ class EmployeeLeaveController extends Controller
     {
         $employee = Employee::where('user_id',Auth::user()->id)->first();
         $new_leave = EmployeeLeave::findOrFail($id);
+        $new_leave->leave_type = $request->leave_type;
+        $new_leave->date_from = $request->date_from;
+        $new_leave->date_to = $request->date_to;
         $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
+        $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
+                $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : ""; 
         $new_leave->save();
 
             Alert::success('Successfully Updated')->persistent('Dismiss');
