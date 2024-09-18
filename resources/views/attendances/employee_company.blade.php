@@ -333,7 +333,7 @@
                                                                 $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 if($if_attendance_holiday){
                                                                     $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($if_attendance_holiday)),$employee_schedule);
-                                                                
+                                                                    // dd($if_attendance_holiday);
                                                                     if($check_leave){
                                                                         $if_attendance_holiday_status = 'With-Pay';
                                                                         $abs =0;
@@ -405,7 +405,27 @@
                                                                     
                                                                 }
                                                                 }
+                                                                if($emp->work_description == "Non-Monthly")
+                                                                {
+                                                                    $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 
+                                                                    if(empty($if_leave)){
+                                                                        if($employee_schedule->time_in_from != '00:00') {
+                                                                        if(empty($if_has_dtr)){
+                                                                                if($time_out == null){
+                                                                                    $is_absent = 'Absent';
+                                                                                }
+                                                                        }
+                                                                        }
+                                                                        else {
+                                                                            $abs = 0;
+                                                                            $if_restday = 'Restday';
+                                                                        }
+                                                                    } 
+                                                                    else {
+                                                                        $abs = 1;
+                                                                    }
+                                                                }
                                                             }else{
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 
