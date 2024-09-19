@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use Illuminate\Http\Request;
 use App\Employee;
 use App\EmployeeLeave;
@@ -9,6 +10,7 @@ use App\EmployeeOb;
 use App\EmployeeWfh;
 use App\EmployeeOvertime;
 use App\EmployeeDtr;
+use App\Leave;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TimekeepingDashboardController extends Controller
@@ -19,13 +21,22 @@ class TimekeepingDashboardController extends Controller
         $allowed_locations = getUserAllowedLocations(auth()->user()->id);
         $allowed_projects = getUserAllowedProjects(auth()->user()->id);
 
+        $companies = Company::whereHas('employee_has_company')
+                                ->whereIn('id',$allowed_companies)
+                                ->get();
+                                $company = isset($request->company) ? $request->company : "";                        
         $from = isset($request->from) ? $request->from : "";
         $to =  isset($request->to) ? $request->to : "";
         $status =  isset($request->status) ? $request->status : "";
-
+        $leave_types = Leave::all();
         $leaves = EmployeeLeave::with('approver.approver_info','user')
-                                ->whereHas('employee',function($q) use($allowed_companies){
-                                    $q->whereIn('company_id',$allowed_companies);
+                                // ->whereHas('employee',function($q) use($allowed_companies){
+                                //     $q->whereIn('company_id',$allowed_companies);
+                                // })
+                                ->whereHas('employee', function ($q) use ($company) {
+                                    if ($company) {
+                                        $q->where('company_id', $company);
+                                    }
                                 })
                                 ->when($allowed_locations,function($w) use($allowed_locations){
                                     $w->whereHas('employee',function($q) use($allowed_locations){
@@ -50,8 +61,13 @@ class TimekeepingDashboardController extends Controller
                                 ->orderBy('created_at','DESC')
                                 ->get();
         $obs = EmployeeOb::with('approver.approver_info','user')
-                                ->whereHas('employee',function($q) use($allowed_companies){
-                                    $q->whereIn('company_id',$allowed_companies);
+                                // ->whereHas('employee',function($q) use($allowed_companies){
+                                //     $q->whereIn('company_id',$allowed_companies);
+                                // })
+                                ->whereHas('employee', function ($q) use ($company) {
+                                    if ($company) {
+                                        $q->where('company_id', $company);
+                                    }
                                 })
                                 ->when($allowed_locations,function($w) use($allowed_locations){
                                     $w->whereHas('employee',function($q) use($allowed_locations){
@@ -106,8 +122,13 @@ class TimekeepingDashboardController extends Controller
                                 ->get();
         
         $overtimes = EmployeeOvertime::with('approver.approver_info','user')
-                                ->whereHas('employee',function($q) use($allowed_companies){
-                                    $q->whereIn('company_id',$allowed_companies);
+                                // ->whereHas('employee',function($q) use($allowed_companies){
+                                //     $q->whereIn('company_id',$allowed_companies);
+                                // })
+                                ->whereHas('employee', function ($q) use ($company) {
+                                    if ($company) {
+                                        $q->where('company_id', $company);
+                                    }
                                 })
                                 ->when($allowed_locations,function($w) use($allowed_locations){
                                     $w->whereHas('employee',function($q) use($allowed_locations){
@@ -184,9 +205,12 @@ class TimekeepingDashboardController extends Controller
                         'to' => $to,
                         'status' => $status,
                         'leaves' => $leaves,
+                        'leave_types' => $leave_types,
                         'obs' => $obs,
                         'wfhs' => $wfhs,
                         'overtimes' => $overtimes,
+                        'companies' => $companies,
+                        'company' => $company,
                         'dtrs' => $dtrs,
                         'emp_data' => $emp_data,
                     )
