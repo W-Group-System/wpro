@@ -1847,7 +1847,7 @@ class EmployeeController extends Controller
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
                                 })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
-                                // ->where('employee_code','A354913')
+                                // ->where('employee_code','A3121418')
                                 ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
@@ -2082,7 +2082,7 @@ class EmployeeController extends Controller
                 else 
                 {
                     $time_in_after = date('Y-m-d H:i:s',strtotime($att->datetime));
-                    $time_in_before = date('Y-m-d H:i:s', strtotime ( '-22 hour' , strtotime ( $time_in_after ) )) ;
+                    $time_in_before = date('Y-m-d H:i:s', strtotime ( '-23 hour' , strtotime ( $time_in_after ) )) ;
                     
                     $update = [
                         'time_out' =>  date('Y-m-d H:i:s', strtotime($att->datetime)),
