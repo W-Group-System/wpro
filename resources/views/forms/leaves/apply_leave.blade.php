@@ -36,7 +36,7 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_sil && $leave_type->code == 'SIL' && $employee_status->classifcation == 'Project Based')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
-                          @elseif($is_allowed_to_file_ml && $leave_type->code == 'ML')
+                          @elseif($leave_type->code == 'ML')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_pl && $leave_type->code == 'PL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
