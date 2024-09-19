@@ -30,12 +30,16 @@
                       <select v-on:change="validateLeave" v-model="leave_type" class="form-control"  id="leave_type" style='width:100%;' name='leave_type' required>
                         <option value="">--Select--</option>
                         @foreach($leave_types as $leave_type)
+                          @if($leave_type->code == 'LWOP')
+                          <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @endif
                           @if($leave_type->code == 'VL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($leave_type->code == 'SL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_sil && $leave_type->code == 'SIL' && $employee_status->classifcation == 'Project Based')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                        
                           @elseif($leave_type->code == 'ML')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_pl && $leave_type->code == 'PL')
