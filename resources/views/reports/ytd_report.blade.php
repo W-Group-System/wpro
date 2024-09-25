@@ -14,10 +14,10 @@
                   <div class=row>
                     <div class='col-md-4'>
                         <div class="form-group">
-                          <select data-placeholder="Filter By Employee" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='employee[]' required>
+                          <select data-placeholder="Filter By Employee" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='employee' required>
                               <option value="">-- Filter By Employee --</option>
                               @foreach($employees as $emp)
-                                  <option value="{{$emp->employee_number}}" @if($emp_code) @if (in_array($emp->employee_number,$emp_code)) selected @endif @endif>{{$emp->employee_number}} - {{$emp->first_name}} {{$emp->last_name}}</option>
+                                  <option value="{{$emp->employee_code}}" @if($employee_data == $emp->employee_code) selected @endif >{{$emp->employee_number}} - {{$emp->first_name}} {{$emp->last_name}}</option>
                               @endforeach
                           </select>
                         </div> 
@@ -35,7 +35,7 @@
                     
                     <div class='col-md-2'>
                         <div class="form-group">
-                          <input value='{{ date('Y', strtotime($from_date)) }}' class="form-control date-own" name="from" type="text" required/>
+                          <input value='{{ date('Y', strtotime($from_date)) }}' min='{{$from_date}}' class="form-control date-own" name="from" type="year" type='year' required/>
                         </div>
                     </div>
                     <div class='col-md-3'>
@@ -54,7 +54,7 @@
                 
                 <div class="table-responsive">
 
-                    @foreach($emp_data as $emp)
+                   @if($emp_data)
                     <table border="1" class="table table-hover table-bordered employee_attendance" id='employee_attendance'>
                         <thead>
                             {{-- <tr>
@@ -84,228 +84,52 @@
                          
                             <tr>
                                 <td>BASIC PAY</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-01-01',strtotime($from_date)),date('Y-01-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-02-01',strtotime($from_date)),date('Y-02-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-03-01',strtotime($from_date)),date('Y-03-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-04-01',strtotime($from_date)),date('Y-04-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-05-01',strtotime($from_date)),date('Y-05-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-06-01',strtotime($from_date)),date('Y-06-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-07-01',strtotime($from_date)),date('Y-07-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-08-01',strtotime($from_date)),date('Y-08-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-09-01',strtotime($from_date)),date('Y-09-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-10-01',strtotime($from_date)),date('Y-10-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-11-01',strtotime($from_date)),date('Y-11-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-12-01',strtotime($from_date)),date('Y-12-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->sum('basic_pay')}}</td>
                             </tr>
+                            @php
+                                $amounts = [
+                                    'ND' => 'reg_nd_amount',
+                                    'OT' => 'reg_ot_amount',
+                                    'OT ND' => 'reg_ot_nd_amount',
+                                    'RD ND' => 'rst_nd_amount',
+                                    'RD OT' => 'rst_ot_amount',
+                                    'RD OT GE' => 'rst_ot_ge_amount',
+                                    'RD ND GE' => 'rst_nd_ge_amount',
+                                    'LH ND' => 'lh_nd_amount',
+                                    'LH ND GE' => 'lh_nd_ge_amount',
+                                    'LH ND OT' => 'lh_ot_amount',
+                                    'LH ND OT GE' => 'lh_ot_ge_amount',
+                                    'SH' => 'sh_amount',
+                                    'SH ND' => 'sh_nd_amount',
+                                    'SH GE' => 'sh_ot_ge_amount',
+                                    'SH ND GE' => 'sh_nd_ge_amount',
+                                ];
+                            @endphp    
+                            @foreach ($amounts as $label => $field)
                             <tr>
-                                <td>LH ND GE</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
+                                <td>{{ $label }}</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                    <td>{{ $emp_data->whereBetween('cut_off_date', [
+                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),
+                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))
+                                    ])->sum($field) }}</td>
+                                @endfor
+                                <td>{{ $emp_data->sum($field) }}</td>
                             </tr>
-                            <tr>
-                                <td>LH OT</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>RST ND GE</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>RST OT</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>RST OT OVER 8</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>RSTSH ND</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>RSTSH OT</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>RSTSH OT Over 8</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>SH ND GE</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>SH OT</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>SH OT OVER 8</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>SL</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>VL</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                            </tr>
+                        @endforeach
+                          
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Taxable Income</strong></td>
                                 <td>0.00</td>
@@ -324,14 +148,40 @@
                             </tr>
                             <tr>
                                 <td>De Minimis</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('deminimis')}}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('deminimis')}}</td>
                             </tr>
                             <tr>
-                                <td>Load Allowance</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                <td>Other Allowances</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('other_allowances_basic_pay')}}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('other_allowances_basic_pay')}}</td>
                             </tr>
+                            <tr>
+                                <td>Subliq</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('subliq')}}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('subliq')}}</td>
+                            </tr>
+                            @foreach($allowances as $allowance)
+                            <tr>
+                                <td>{{$allowance->allowance_type->name}}</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{ $emp_data->whereBetween('cut_off_date', [
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))
+                                ])->flatMap(function($emp) use ($allowance) {
+                                    return $emp->pay_allowances->where('allowance_id',$allowance->allowance_id); // Filter by allowance_id
+                                })->sum('amount') }}
+                                </td>
+                                @endfor
+                                <td>{{$allowances_data->where('allowance_id',$allowance->allowance_id)->sum('amount')}}</td>
+                            </tr>
+                            @endforeach
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Non-Taxable Income</strong></td>
                                 <td>0.00</td>
@@ -366,18 +216,24 @@
                             </tr>
                             <tr>
                                 <td>Absent</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('absent_amount') * -1}}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('absent_amount') * -1}}</td>
                             </tr>
                             <tr>
                                 <td>Tardiness</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('tardiness_amount') * -1}}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('tardiness_amount') * -1}}</td>
                             </tr>
                             <tr>
                                 <td>Undertime</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('undertime_amount') * -1}}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('undertime_amount') * -1}}</td>
                             </tr>
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Taxable Deduction</strong></td>
@@ -397,23 +253,38 @@
                             </tr>
                             <tr>
                                 <td>SSS EMPLOYEE SHARE</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('sss_employee_share') 
+                              }}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('sss_employee_share') }}</td>
                             </tr>
                             <tr>
                                 <td>HDMF EMPLOYEE SHARE</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('hdmf_employee_share')}}
+                                </td>
+                                @endfor
+                                <td>{{$emp_data->sum('hdmf_employee_share')}}</td>
                             </tr>
                             <tr>
                                 <td>PHIC EMPLOYEE SHARE</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('phic_employee_share')}}
+                                </td>
+                                @endfor
+                                <td>{{$emp_data->sum('phic_employee_share')}}</td>
                             </tr>
                             <tr>
                                 <td>MPF EMPLOYEE SHARE</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('mpf_employee_share')}}
+                                </td>
+                                @endfor
+                                <td>{{$emp_data->sum('mpf_employee_share')}}</td>
                             </tr>
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Statutory</strong></td>
@@ -433,8 +304,12 @@
                             </tr>
                             <tr>
                                 <td>WITHHOLDING TAX</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('withholding_tax')}}
+                                </td>
+                                @endfor
+                                <td>{{$emp_data->sum('withholding_tax')}}</td>
                             </tr>
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Withholding Tax</strong></td>
@@ -452,21 +327,21 @@
                                 <td>0.00</td>
                                 <td></td>
                             </tr>
+                            @foreach($loans as $loan)
                             <tr>
-                                <td>SSS LOAN</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
+                                <td>{{$loan->loan_type->loan_name}}</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>{{ $emp_data->whereBetween('cut_off_date', [
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))
+                                ])->flatMap(function($emp) use ($loan) {
+                                    return $emp->pay_loan->where('loan_type_id',$loan->loan_type_id); // Filter by allowance_id
+                                })->sum('amount') }}
+                                </td>
+                                @endfor
+                                <td>{{$loans_data->where('loan_type_id',$loan->loan_type_id)->sum('amount')}}</td>
                             </tr>
-                            <tr>
-                                <td>TAX DUE</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
-                            </tr>
-                            <tr>
-                                <td>THIRTEENTH MONTH ADJUSTMENT DEDUCTION</td>
-                                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                                <td>0.00</td>
-                            </tr>
+                            @endforeach
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Non-Taxable Deduction</strong></td>
                                 <td>0.00</td>
@@ -501,24 +376,18 @@
                             </tr>
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Net Pay</strong></td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td></td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                <td>
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('netpay')}}
+                                </td>
+                                @endfor
+                                <td>{{$emp_data->sum('netpay')}}</td>
                             </tr>
                         </tbody>
                     </table>
+
                     <br>
-                    @endforeach
+                   @endif
 
                   </div>
                 </div>
@@ -583,7 +452,7 @@ function night_difference($start_work,$end_work)
 <script>
    $('.date-own').datepicker({
          minViewMode: 2,
-         format: 'yyyy'
+         format: 'yyyy',
        });
     function get_min(value)
     {

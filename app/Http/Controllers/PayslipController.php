@@ -45,6 +45,78 @@ class PayslipController extends Controller
             
         ));
     }
+    public function ytd_report(Request $request)
+    {
+        ini_set('memory_limit', '-1');
+    
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $allowed_locations = getUserAllowedLocations(auth()->user()->id);
+        $allowed_projects = getUserAllowedProjects(auth()->user()->id);
+
+        $attendance_controller = new AttendanceController;
+        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code')
+                                ->whereIn('company_id', $allowed_companies)
+                                ->when($allowed_locations,function($q) use($allowed_locations){
+                                    $q->whereIn('location',$allowed_locations);
+                                })
+                                ->when($allowed_projects,function($q) use($allowed_projects){
+                                    $q->whereIn('project',$allowed_projects);
+                                })
+                                ->get();
+        $from_date = $request->from;
+        $to_date = $request->to;
+        $date_range =  [];
+        $attendances = [];
+        $schedules = [];
+        $emp_code = $request->employee;
+        $schedule_id = null;
+        $emp_data = [];
+        $employee_data = $request->employee;
+        $allowances = [];
+        $allowances_data = [];
+
+
+        $company = isset($request->company) ? $request->company : "";
+
+        if ($from_date != null) {
+
+            $emp_data = Payregs::with('pay_allowances','pay_loan')->where('employee_no',$request->employee)->whereYear('cut_off_date',$from_date)->get();
+            // $allowances = $emp_data->pay_allowances;
+            
+            $allowances = PayregAllowance::with('allowance_type')->select('allowance_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('allowance_id')->get();
+            $loans = PayregLoan::with('loan_type')->select('loan_type_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('loan_type_id')->get();
+            $allowances_data = PayregAllowance::with('allowance_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
+            $loans_data = PayregLoan::with('loan_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
+        }
+        else
+
+        {
+            $from_date = date('Y-m-d');
+        }
+        $schedules = ScheduleData::all();
+        
+        $companies = Company::whereHas('employee_has_company')
+                                ->whereIn('id',$allowed_companies)
+                                ->get();
+        return view(
+            'reports.ytd_report',
+            array(
+                'header' => 'biometrics',
+                'employees' => $employees,
+                'from_date' => $from_date,
+                'date_range' => $date_range,
+                'emp_code' => $emp_code,
+                'emp_data' => $emp_data,
+                'employee_data' => $employee_data,
+                'companies' => $companies,
+                'company' => $company,
+                'allowances' => $allowances,
+                'allowances_data' => $allowances_data,
+                'loans' => $loans,
+                'loans_data' => $loans_data,
+            )
+        );
+    }
     public function payroll_datas(Request $request)
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
@@ -124,7 +196,7 @@ class PayslipController extends Controller
             )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
-            // ->where('employee_no','A3138920')
+            // ->where('employee_no','A3143520')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
             // dd($names);
