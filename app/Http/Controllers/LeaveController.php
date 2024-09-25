@@ -52,7 +52,7 @@ class LeaveController extends Controller
         $status =  isset($request->status) ? $request->status : "";
         $employee_leaves = [];
         if(isset($request->from) && isset($request->to)){
-            $employee_leaves = EmployeeLeave::with('user','leave')
+            $employee_leaves = EmployeeLeave::with('user','leave','approver.approver_info')
             ->whereDate('date_from','>=',$from)
             ->whereDate('date_from','<=',$to)
             ->whereHas('employee',function($q) use($company){

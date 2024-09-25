@@ -79,6 +79,7 @@
 										  <th>With Pay </th>
 										  <th>Half Day </th>
 										  <th>Leave Count</th>
+										  <th>Leave Approver</th>
 										  <th>Status</th> 
 										  <th>Approved Date</th> 
 										  <th>Reason/Remarks</th> 
@@ -107,6 +108,10 @@
 											<td></td>
 										  @endif 
 										  <td>{{get_count_days_report($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
+										  <td>@foreach($form_approval->approver as $approvers)
+												{{$approvers->approver_info->name}}
+											
+											@endforeach</td>
 										  <td>
 											{{$form_approval->status}}
 										  </td>
