@@ -74,6 +74,8 @@ class PayslipController extends Controller
         $employee_data = $request->employee;
         $allowances = [];
         $allowances_data = [];
+        $loans = [];
+        $loans_data = [];
 
 
         $company = isset($request->company) ? $request->company : "";
