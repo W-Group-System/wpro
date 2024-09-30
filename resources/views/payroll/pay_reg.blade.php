@@ -602,6 +602,16 @@
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
                                 }
+                                if($name->employee->employee_code == "A188323")
+                                {
+                                  $philhealth = 0;
+                                  $hdmf = 0;
+                                  $sss_ecc = 0;
+                                  $sss_ee = 0;
+                                  $sss_er = 0;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
+                                }
                                 if($name->employee->employee_code == "A185221")
                                 {
                                   $philhealth = 0;
