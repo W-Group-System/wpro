@@ -698,8 +698,8 @@
                                                                 $late = ($schedule_hours/2)-$work;
                                                                 if($work < $schedule_hours/2)
                                                                 {
-                                                                    $late = 0;
-                                                                    $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
+                                                                    $late = (double) number_format(($schedule_hours/2 - $work),2);
+                                                                    $undertime_hrs = 0;
                                                                 } 
                                                             }
                                                             else{
