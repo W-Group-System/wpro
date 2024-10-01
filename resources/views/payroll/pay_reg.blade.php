@@ -477,7 +477,7 @@
                                 {
                                   $government_amount = $government_amount +1020;
                                 }
-                                dd($government_amount);
+                                // dd($government_amount);
                                   $government_amount = $government_amount+$lastccc;
                                  
                                 
