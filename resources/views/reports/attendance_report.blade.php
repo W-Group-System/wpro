@@ -18,6 +18,10 @@
                             To
                             <input type="date" class="form-control form-control-sm" value='{{$to}}' id='to' name="to" required />
                         </div>
+                        <div class='col-md-2'>
+                            Greater Than (Count)
+                            <input type="number" class="form-control form-control-sm" value='{{$count}}' id='count' min=1 name="count" required />
+                        </div>
                             {{-- <div class='col-md-4'>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label text-right" for="monthSelect">Date From</label>
@@ -60,7 +64,7 @@
                             <h3 id="reportTitle">{{date('M d, Y',strtotime($from))}} - {{date('M d, Y',strtotime($to))}}</h3> 
                         </div>
                         <div class="col-md-9">
-                            <a href="{{ url('/attendance-report?from=' . $from . '&to=' . $to . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a>
+                            <a href="{{ url('/attendance-report?from=' . $from . '&to=' . $to .'&count=' .$count. '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a>
                         </div>
                     </div>
                     <div class="col-12">

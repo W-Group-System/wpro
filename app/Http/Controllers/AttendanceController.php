@@ -628,6 +628,7 @@ class AttendanceController extends Controller
         // Get the selected month and year from the request
         $from = $request->input('from');
         $to = $request->input('to');
+        $count = $request->input('count');
 
         // Validate that both month and year are provided
         if ($from && $to) {
@@ -642,7 +643,7 @@ class AttendanceController extends Controller
         // dd($data[0]);
 
         // Tardiness
-        $tardinessData = $data->filter(function ($item) {
+        $tardinessData = $data->filter(function ($item) use ($count) {
             return $item->late_min > 0;
         })->groupBy('name')->map(function ($group) {
             return [
@@ -656,10 +657,10 @@ class AttendanceController extends Controller
                 })->count(),
                 'remarks' => $group->first()->remarks
             ];
-        })->filter(function ($item) {
-            return $item['tardiness_days'] >= 4;
+        })->filter(function ($item) use ($count) {
+            return $item['tardiness_days'] >= $count;
         });
-        $undertimeData = $data->filter(function ($item) {
+        $undertimeData = $data->filter(function ($item) use ($count){
             return $item->undertime_min > 0;
         })->groupBy('name')->map(function ($group) {
             return [
@@ -673,8 +674,8 @@ class AttendanceController extends Controller
                 })->count(),
                 'remarks' => $group->first()->remarks
             ];
-        })->filter(function ($item) {
-            return $item['undertime_days'] >= 4;
+        })->filter(function ($item) use ($count) {
+            return $item['undertime_days'] >= $count;
         });
 
         // Leave without pay
@@ -785,6 +786,7 @@ class AttendanceController extends Controller
             'header' => 'attendance-report',
             'tardinessData' => $tardinessData,
             'undertimeData' => $undertimeData,
+            'count' => $count,
             'leaveWithoutData' => $leaveWithoutData,
             'leaveDeviationsData' => $leaveDeviationsData,
             // 'consecLeaveData' => $consecLeaveData,
