@@ -73,9 +73,7 @@
                                     <th>No.</th>
                                     <th>Company</th>
                                     <th>Name</th>
-                                    <th>No. of Days with Late</th>
-                                    <th>No. of Days with Undertime</th>
-                                    <th>Total</th>
+                                    <th>No. of Days</th>
                                     <th>Remarks/ Recommendation</th>
                                 </tr>
                             </thead>
@@ -86,14 +84,36 @@
                                         <td>{{ $tardiness['company_code'] }}</td>
                                         <td>{{ $tardiness['name'] }}</td>
                                         <td>{{ $tardiness['tardiness_days'] }}</td>
-                                        <td>{{ $tardiness['undertime_days'] }}</td>
-                                        <td>{{$tardiness['tardiness_days']+$tardiness['undertime_days']}}</td>
                                         <td>Excessive; for NOD issuance</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                        <label style="margin-bottom: 20px;"><b>II. Leaves</b></label><br>
+
+                        <label><b>II. Undertime</b></label>
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Company</th>
+                                    <th>Name</th>
+                                    <th>No. of Days</th>
+                                    <th>Remarks/ Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($undertimeData as $index => $undertime)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $undertime['company_code'] }}</td>
+                                        <td>{{ $undertime['name'] }}</td>
+                                        <td>{{ $undertime['undertime_days'] }}</td>
+                                        <td>Excessive; for NOD issuance</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <label style="margin-bottom: 20px;"><b>III. Leaves</b></label><br>
                         <label>A. Leave without Pay</label>
                         <table class="table table-hover table-bordered">
                             <thead>
@@ -184,7 +204,7 @@
                                 @endforeach --}}
                             </tbody>
                         </table>
-                        <label><b>III. Overtime</b></label>
+                        <label><b>IV. Overtime</b></label>
                         <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
