@@ -10,14 +10,12 @@
     <table class="table table-bordered" width="100%" border="1" cellspacing="0" cellpadding="0" style="margin-bottom: 10px;">
         <thead>
             <tr>
-            <th>No.</th>
-            <th>Company</th>
-            <th>Name</th>
-            <th>Lates</th>
-            <th>Undertime</th>
-            <th>Total</th>
-            <th>Remarks/ Recommendation</th>
-        </tr>
+                <th>No.</th>
+                <th>Company</th>
+                <th>Name</th>
+                <th>No. of Days</th>
+                <th>Remarks/ Recommendation</th>
+            </tr>
         </thead>
         <tbody>
             @foreach($tardinessData as $index => $tardiness)
@@ -26,8 +24,29 @@
                     <td>{{ $tardiness['company_code'] }}</td>
                     <td>{{ $tardiness['name'] }}</td>
                     <td>{{ $tardiness['tardiness_days'] }}</td>
-                    <td>{{ $tardiness['undertime_days'] }}</td>
-                    <td>{{$tardiness['tardiness_days']+$tardiness['undertime_days']}}</td>
+                    <td>Excessive; for NOD issuance</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <label><b>II. Undertime</b></label>
+    <table class="table table-bordered" width="100%" border="1" cellspacing="0" cellpadding="0" style="margin-bottom: 10px;">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Company</th>
+                <th>Name</th>
+                <th>No. of Days</th>
+                <th>Remarks/ Recommendation</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($undertimeData as $index => $undertime)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $undertime['company_code'] }}</td>
+                    <td>{{ $undertime['name'] }}</td>
+                    <td>{{ $undertime['undertime_days'] }}</td>
                     <td>Excessive; for NOD issuance</td>
                 </tr>
             @endforeach
