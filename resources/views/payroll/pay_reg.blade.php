@@ -485,7 +485,7 @@
                                 }
                           
                                 $sss_amount = $sss->where('salary_to','>',$government_amount)->first();
-                                dd($sss_amount);
+                                // dd($sss_amount);
                                 if($sss_amount)
                                 {
                                   // dd($sss_amount);
