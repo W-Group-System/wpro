@@ -479,7 +479,7 @@
                                 }
                                 // dd($government_amount);
                                 // dd($government_amount);
-                                  $government_amount = round($government_amount,2)+$lastccc;
+                                  $government_amount = round($government_amount+$lastccc,2);
                                  
                                 
                                 }
