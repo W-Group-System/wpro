@@ -178,7 +178,7 @@
 						</p>
 
                         <div class="table-responsive">
-                            <table class="table table-hover table-bordered" id="datatableEmployee">
+                            <table class="table table-hover table-bordered" id="">
                                 <thead>
                                     <tr>
                                         <th>Employee Code</th>
@@ -222,6 +222,9 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="mt-3">
+                            {{ $employees->appends(request()->only(['department', 'company', 'status','search']))->links() }} <!-- This will display the pagination links -->
                         </div>
                     </div>
                 </div>
