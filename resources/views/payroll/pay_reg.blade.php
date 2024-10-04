@@ -479,12 +479,12 @@
                                 }
                                 // dd($government_amount);
                                 // dd($government_amount);
-                                  $government_amount = $government_amount+$lastccc;
+                                  $government_amount = round($government_amount,2)+$lastccc;
                                  
                                 
                                 }
-                          
-                                $sss_amount = $sss->where('salary_to','>',$government_amount)->first();
+                                // dd($government_amount)
+                                $sss_amount = $sss->where('salary_to','>=',$government_amount)->first();
                                 // dd($sss_amount);
                                 if($sss_amount)
                                 {
