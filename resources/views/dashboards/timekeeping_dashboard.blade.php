@@ -68,6 +68,7 @@
                                   <th>Employee</th>
                                   <th>Details</th>
                                   <th>Approver</th>
+                                  <th>Date Filed</th>
                                 </tr>
                               </thead>
                               <tbody> 
@@ -135,6 +136,9 @@
                                             @else
                                             <label class="badge badge-danger mt-1">No Approver</label>
                                             @endif
+                                        </td>
+                                        <td>
+                                            {{ date('M d, Y', strtotime($item->created_at)) }}
                                         </td>
                                     </tr>
                                 @endforeach               
