@@ -242,13 +242,13 @@
       } else if ($(this).val() == 2) {
         
         $("[name='date_from']").attr({
-          'min': "{{date('Y-m-d', strtotime('-3 days'))}}",
-          'max': "{{date('Y-m-d', strtotime('-1 days'))}}"
+          'min': "{{date('Y-m-d', strtotime('-3 weekdays'))}}",
+          'max': "{{date('Y-m-d', strtotime('-1 weekdays'))}}"
         });
 
         $("[name='date_to']").attr({
-          'min': "{{date('Y-m-d', strtotime('-3 days'))}}",
-          'max': "{{date('Y-m-d', strtotime('-1 days'))}}"
+          'min': "{{date('Y-m-d', strtotime('-3 weekdays'))}}",
+          'max': "{{date('Y-m-d', strtotime('-1 weekdays'))}}"
         });
       }
       else {
