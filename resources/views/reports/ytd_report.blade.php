@@ -129,7 +129,14 @@
                                 <td>{{ $emp_data->sum($field) }}</td>
                             </tr>
                         @endforeach
-                          
+                        <tr >
+                            <td >SALARY ADJUSTMENT</td>
+                            
+                            @for ($i = 1; $i <= 12; $i++)
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('salary_adjustment')}}</td>
+                                @endfor
+                                <td>{{$emp_data->sum('salary_adjustment')}}</td>
+                        </tr>
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Taxable Income</strong></td>
                                 <td>0.00</td>

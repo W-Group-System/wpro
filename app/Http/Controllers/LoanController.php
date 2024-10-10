@@ -153,6 +153,34 @@ class LoanController extends Controller
             'loan_all' => $loan_all,
         ));
     }
+    public function companyLoan(Request $request)
+    {
+        $loans = LoanType::get();
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+        $company = $request->companies;
+        $companies_selected = Company::whereIn('id', $request->companies)->get();
+
+        $loan_all = Loan::with('employee','pay.pay_reg')
+        ->where('status', 'Active')
+        ->whereIn('loan_type_id',$request->loans)
+        ->whereHas('employee', function($query) use ($company) {
+            $query->whereIn('company_id', $company);
+        })
+        ->get();
+        // $loan_all = Loan::whereIn('loan_type_id',$request->loans)->where('status','Active')->get();
+        return view('reports.company_loan_report', array(
+            'header' => 'reports',
+            'companies' => $companies,
+            'company' => $company,
+            'loan_type' => $request->loans,
+            'loans' => $loans,
+            'loan_all' => $loan_all,
+            'companies_selected' => $companies_selected,
+        ));
+    }
     /**
      * Display the specified resource.
      *
