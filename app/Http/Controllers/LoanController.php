@@ -161,7 +161,7 @@ class LoanController extends Controller
         ->whereIn('id', $allowed_companies)
         ->get();
         $company = $request->companies;
-        $company = $request->companies;
+        $loan_type = $request->loans;
         if($request->companies == null)
         {
             $company = [];
