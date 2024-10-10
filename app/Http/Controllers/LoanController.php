@@ -79,7 +79,7 @@ class LoanController extends Controller
         $loans->encoded_by = auth()->user()->id;
         $loans->save();
 
-        if (isset($request->loan_beneficiaries))
+        if ($request->has('loan_beneficiaries'))
         {
             foreach($request->loan_beneficiaries as $loanBeneficiaries) {
                 $loan_beneficiaries = new Guarantor;
@@ -107,20 +107,15 @@ class LoanController extends Controller
         $loans->status = $request->status;
         $loans->save();
 
-        if (isset($request->loan_beneficiaries))
+        if ($request->has('loan_beneficiaries'))
         {
+            $loan_beneficiaries = Guarantor::where('loan_id', $id)->delete();
+            
             foreach($request->loan_beneficiaries as $guarantor) {
-                $target = array(
-                    'loan_id' => $loans->id,
-                    'employee_id' => $guarantor
-                );
-
-                $toSave = array(
-                    'loan_id' => $loans->id,
-                    'employee_id' => $guarantor
-                );
-
-                Guarantor::updateOrCreate($target, $toSave);
+                $loan_beneficiaries = new Guarantor;
+                $loan_beneficiaries->loan_id = $id;
+                $loan_beneficiaries->employee_id = $guarantor;
+                $loan_beneficiaries->save();
             }
         }
 

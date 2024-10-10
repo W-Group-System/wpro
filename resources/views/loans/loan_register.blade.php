@@ -117,10 +117,10 @@
 				$(this).find("#container").html(result);
 			});
 
-            $("#loanType").on('change', function() {
-                console.log('asdas');
-                $("#loanBeneficiariesParent").removeAttr('hidden');
-            })
+            // $("#loanType").on('change', function() {
+            //     console.log('asdas');
+            //     $("#loanBeneficiariesParent").removeAttr('hidden');
+            // })
 		});
 	</script>
 @endsection

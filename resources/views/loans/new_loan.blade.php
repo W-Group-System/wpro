@@ -76,8 +76,8 @@
 							<option value='Every 2nd cut off'>Every 2nd cut off</option>
 						</select>
 						</div>
-                        <div class="col-lg-12 form-group" id="loanBeneficiariesParent" hidden>
-                            <label for="loanBeneficiaries">Loan Beneficiaries</label>
+                        <div class="col-lg-12 form-group" id="loanBeneficiariesParent">
+                            <label for="loanBeneficiaries">Loan Guarantor</label>
                             <select data-placeholder="Loan Beneficiaries" class="form-control form-control-sm required js-example-basic-single"
                             style='width:100%;' name='loan_beneficiaries[]' multiple>
                                 <option value="">--Loan Beneficiaries--</option>
