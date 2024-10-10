@@ -103,8 +103,8 @@
                                         <td>{{ $loan_a->employee->last_name }},{{ $loan_a->employee->first_name }}</td>
                                         <td>{{ $loan_a->amount }}</td>
                                         <td>{{ $loan_a->monthly_ammort_amt }} </td>
-                                        <td><a href="#view{{$loan_a->id}}" data-toggle="modal" title='View'>{{ $loan_a->initial_amount+($loan_a->pay)->sum('amount') }}</td>
-                                        <td>{{ $loan_a->amount-$loan_a->initial_amount-($loan_a->pay)->sum('amount') }}</td>
+                                        <td><a href="#view{{$loan_a->id}}" data-toggle="modal" title='View'>{{ ($loan_a->pay)->sum('amount') }}</td>
+                                        <td>{{ $loan_a->initial_amount-($loan_a->pay)->sum('amount') }}</td>
                                         @if(($loan_a->pay->sortByDesc('id'))->first() != null)
                                         <td>{{$loan_a->pay->sortByDesc('id')->first()->pay_reg->pay_period_from}} - {{$loan_a->pay->sortByDesc('id')->first()->pay_reg->pay_period_to}}</td>
                                         @else
