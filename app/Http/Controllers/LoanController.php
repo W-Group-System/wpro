@@ -172,12 +172,13 @@ class LoanController extends Controller
         }
         $companies_selected = Company::whereIn('id', $company)->get();
 
-        $loan_all = Loan::with('employee','pay.pay_reg')
+        $loan_all = Loan::with('employee', 'pay.pay_reg')
         ->where('status', 'Active')
-        ->whereIn('loan_type_id',$loan_type)
+        ->whereIn('loan_type_id', $loan_type)
         ->whereHas('employee', function($query) use ($company) {
             $query->whereIn('company_id', $company);
         })
+        ->whereHas('pay.pay_reg')
         ->get();
         // $loan_all = Loan::whereIn('loan_type_id',$request->loans)->where('status','Active')->get();
         return view('reports.company_loan_report', array(
