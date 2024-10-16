@@ -495,6 +495,7 @@ class PayslipController extends Controller
                             $loa = new PayregLoan;
                             $loa->loan_type_id = $loan->loan_type_id;
                             $loa->payreg_id = $pay_register->id;
+                            $loa->loan_id = $loan->id;
                             $loa->amount = $loan->monthly_ammort_amt;
                             $loa->employee_id = $loan->employee_id;
                             $loa->remarks = $loan->schedule;

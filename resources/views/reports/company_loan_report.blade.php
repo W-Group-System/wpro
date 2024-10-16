@@ -90,7 +90,6 @@
 									<th>Balance</th>
 									<th>Period Covered</th>
 									<th>GUARANTOR </th>
-									<th>GUARANTOR </th>
 									<th>REMARKS </th>
 								</tr>
 							</thead>
@@ -110,8 +109,9 @@
                                         @else
                                         <td></td>
                                         @endif
-                                        <td>{{ $loan_a->guarantor1 }}</td>
-                                        <td>{{ $loan_a->guarantor2 }}</td>
+                                        <td> @foreach($loan_a->loan_beneficiaries as $loan_gua)
+												{{$loan_gua->employee->last_name}}, {{$loan_gua->employee->first_name}} <br>
+											@endforeach</td>
                                         <td>{{ $loan_a->remarks }}</td>
                                     </tr>
                                    
