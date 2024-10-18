@@ -14,6 +14,7 @@
 use App\HikAttLog2;
 
 Auth::routes();
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 Route::get('get-devices','AttendanceController@devices');
 Route::group(['middleware' => 'auth'], function () {
 
