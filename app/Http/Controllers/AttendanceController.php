@@ -168,7 +168,7 @@ class AttendanceController extends Controller
             ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"]);
         })
         ->get();
-
+        dd($attendances);
         return $attendances;
     }
     public function get_attendance_now($id)
