@@ -303,8 +303,8 @@ class EmployeeLeaveController extends Controller
         $new_leave->date_from = $request->date_from;
         $new_leave->date_to = $request->date_to;
         $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
-        $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
-                $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : ""; 
+        $new_leave->halfday = isset($request->halfday) ? 1 : 0;
+        $new_leave->halfday_status = $new_leave->halfday ? ($request->halfday_status ?? "") : ""; 
         $new_leave->save();
 
             Alert::success('Successfully Updated')->persistent('Dismiss');
