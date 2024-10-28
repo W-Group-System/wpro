@@ -26,7 +26,7 @@ class DailyScheduleImport implements WithHeadingRow, ToCollection
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $rows = $collection->toArray();
-
+        
         $rows = array_filter($rows, function ($row) {
             return array_filter($row);
         });
@@ -35,15 +35,24 @@ class DailyScheduleImport implements WithHeadingRow, ToCollection
 
         $employees = Employee::where('status', 'Active')
             ->whereIn('company_id', $allowed_companies)
-            ->whereIn('employee_code', $employeeCodes)
+            // ->whereIn('employee_code', $employeeCodes)
             ->get()
             ->keyBy('employee_code');
 
         $dailySchedules = [];
         foreach ($rows as $row) {
-            
-            if (!isset($employees[$row['employee_no']])) {
+            if ($employees->isNotEmpty())
+            {
+                $employees = $employees->whereIn('employee_code', $employeeCodes);
+                
+                if (!isset($employees[$row['employee_no']])) {
 
+                    Alert::error('Error: Some employee numbers do not exist in our company records. Please verify the employee numbers and try again.')->persistent('Dismiss');
+                    return back();
+                }
+            }
+            else
+            {
                 Alert::error('Error! You don\'t have access in this company')->persistent('Dismiss');
                 return back();
             }
