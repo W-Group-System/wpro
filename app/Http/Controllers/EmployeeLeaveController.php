@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Attendance;
+use App\AttendanceDetailedReport;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\EmployeeApproverController;
 use App\Employee;
@@ -78,7 +79,10 @@ class EmployeeLeaveController extends Controller
         }
 
         $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
-        
+        $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
+            ->pluck('log_date')
+            ->toArray();
+        // dd($attendance_report);
         return view('forms.leaves.leaves',
         array(
             'header' => 'forms',
@@ -105,7 +109,8 @@ class EmployeeLeaveController extends Controller
             'from' => $from,
             'to' => $to,
             'status' => $status,
-            'attendance_logs' => $attendance_logs
+            'attendance_logs' => $attendance_logs,
+            'attendance_report' => $attendance_report
         ));
     }  
 
