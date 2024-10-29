@@ -43,7 +43,18 @@ class DailyScheduleImport implements WithHeadingRow, ToCollection
         foreach ($rows as $row) {
             if ($employees->isNotEmpty())
             {
+                $employees_array = $employees->pluck('employee_code')->toArray();
+                foreach(array_unique($employeeCodes) as $code)
+                {
+                    $employee_id = $employees->where('employee_code',$code)->first();
+                    if($employee_id == null)
+                    {
+                        Alert::error('Error: Some employee numbers do not exist in our company records. Please verify the employee numbers and try again.'.$code)->persistent('Dismiss');
+                        return back();
+                    }
+                }
                 $employees = $employees->whereIn('employee_code', $employeeCodes);
+                
                 
                 if (!isset($employees[$row['employee_no']])) {
 
