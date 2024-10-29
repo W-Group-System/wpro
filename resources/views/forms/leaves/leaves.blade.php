@@ -507,29 +507,31 @@
                                 <i class="ti-upload"></i>
                             </button>
 
-                          @if($employee_leave->request_to_cancel == '1' || $employee_leave->request_to_cancel == null)
-                            <button type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
-                                    data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel'>
-                                <i class="fa fa-ban"></i>
-                            </button>  
-                          @elseif($employee_leave->request_to_cancel == '0')
-                            <button disabled type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
-                                    data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Declined'>
-                                <i class="fa fa-ban"></i>
-                            </button>  
-                          @elseif($employee_leave->request_to_cancel == '2')
-                            <button disabled type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
-                                    data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Approved'>
-                                <i class="fa fa-ban"></i>
-                            </button>  
-                          @endif
+                            @if(!in_array($employee_leave->date_from, $attendance_report) || !in_array($employee_leave->date_to, $attendance_report))
+                                @if($employee_leave->request_to_cancel == '1' || $employee_leave->request_to_cancel == null)
+                                    <button type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
+                                            data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel'>
+                                        <i class="fa fa-ban"></i>
+                                    </button>  
+                                @elseif($employee_leave->request_to_cancel == '0')
+                                    <button disabled type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
+                                            data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Declined'>
+                                        <i class="fa fa-ban"></i>
+                                    </button>  
+                                @elseif($employee_leave->request_to_cancel == '2')
+                                    <button disabled type="button" id="requestToCancel{{ $employee_leave->id }}" class="btn btn-warning btn-rounded btn-icon"
+                                            data-target="#requestToCancelLeave{{ $employee_leave->id }}" data-toggle="modal" title='Request to Cancel has been Approved'>
+                                        <i class="fa fa-ban"></i>
+                                    </button>  
+                                @endif
 
-                          @if(date('Y-m-d', strtotime($employee_leave->date_from)) > date('Y-m-d'))
-                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
-                                    class="btn btn-rounded btn-danger btn-icon">
-                                <i class="fa fa-ban"></i>
-                            </button> 
-                          @endif
+                                @if(date('Y-m-d', strtotime($employee_leave->date_from)) > date('Y-m-d'))
+                                    <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
+                                            class="btn btn-rounded btn-danger btn-icon">
+                                        <i class="fa fa-ban"></i>
+                                    </button> 
+                                @endif
+                            @endif
                           @else
                           <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon" data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'><i class="ti-eye"></i></button>                                                                               
                           @endif 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Attendance;
+use App\AttendanceDetailedReport;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\EmployeeApproverController;
 use App\Employee;
@@ -78,7 +79,10 @@ class EmployeeLeaveController extends Controller
         }
 
         $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
-        
+        $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
+            ->pluck('log_date')
+            ->toArray();
+        // dd($attendance_report);
         return view('forms.leaves.leaves',
         array(
             'header' => 'forms',
@@ -105,7 +109,8 @@ class EmployeeLeaveController extends Controller
             'from' => $from,
             'to' => $to,
             'status' => $status,
-            'attendance_logs' => $attendance_logs
+            'attendance_logs' => $attendance_logs,
+            'attendance_report' => $attendance_report
         ));
     }  
 
@@ -298,8 +303,8 @@ class EmployeeLeaveController extends Controller
         $new_leave->date_from = $request->date_from;
         $new_leave->date_to = $request->date_to;
         $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
-        $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
-                $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : ""; 
+        $new_leave->halfday = isset($request->halfday) ? 1 : 0;
+        $new_leave->halfday_status = $new_leave->halfday ? ($request->halfday_status ?? "") : ""; 
         $new_leave->save();
 
             Alert::success('Successfully Updated')->persistent('Dismiss');
