@@ -239,22 +239,22 @@
                 $("[name='date_from']").removeAttr('max');
                 $("[name='date_to']").removeAttr('max');
             } 
-            else if ($(this).val() == 2) {
-                // $("[name='date_from']").attr({
-                //     'min': "{{date('Y-m-d', strtotime('-3 weekdays'))}}",
-                //     'max': "{{date('Y-m-d', strtotime('-1 days'))}}"
-                // });
+            // else if ($(this).val() == 2) {
+            //     // $("[name='date_from']").attr({
+            //     //     'min': "{{date('Y-m-d', strtotime('-3 weekdays'))}}",
+            //     //     'max': "{{date('Y-m-d', strtotime('-1 days'))}}"
+            //     // });
 
-                $("[name='date_from']").attr({
-                    'min': "{{date('Y-m-d', strtotime('+1 day', strtotime($attendance_logs[1]->time_in)))}}",
-                    'max': "{{date('Y-m-d', strtotime('-1 day', strtotime($attendance_logs[0]->time_in ?? now())))}}"
-                });
+            //     $("[name='date_from']").attr({
+            //         'min': "{{date('Y-m-d', strtotime('+1 day', strtotime($attendance_logs[1]->time_in)))}}",
+            //         'max': "{{date('Y-m-d', strtotime('-1 day', strtotime($attendance_logs[0]->time_in ?? now())))}}"
+            //     });
 
-                $("[name='date_to']").attr({
-                    'min': "{{date('Y-m-d', strtotime('+1 day', strtotime($attendance_logs[1]->time_in)))}}",
-                    'max': "{{date('Y-m-d', strtotime('-1 day', strtotime($attendance_logs[0]->time_in ?? now())))}}"
-                });
-            }
+            //     $("[name='date_to']").attr({
+            //         'min': "{{date('Y-m-d', strtotime('+1 day', strtotime($attendance_logs[1]->time_in)))}}",
+            //         'max': "{{date('Y-m-d', strtotime('-1 day', strtotime($attendance_logs[0]->time_in ?? now())))}}"
+            //     });
+            // }
             else {
             $("[name='date_from']").removeAttr('min max');
 
