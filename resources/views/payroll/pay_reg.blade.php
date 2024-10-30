@@ -192,6 +192,8 @@
                               <th>GROSS PAY</th>
                               <th>DEDUCTIONS TOTAL</th>
                               <th>NETPAY</th>
+                              <th>SSS 1st</th>
+                              <th>SSS 2nd</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -450,6 +452,7 @@
 
                               // dd($de_minimis);
                               $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min+$de_minimis+$other_allowances_basic_pay;
+                              $lastccc = 0;
                               if($payroll_b)
                               {
                                 $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
@@ -470,20 +473,20 @@
                                   $government_amount = $government_amount +1000;
                                 }
                                   if($name->employee->employee_code == "A2104424")
-                                {
+                              {
                                   $government_amount = $government_amount +1020;
                                 }
                                   if($name->employee->employee_code == "A2104324")
                                 {
                                   $government_amount = $government_amount +1020;
                                 }
-                                // dd($government_amount);
+                                // dd($lastccc);
                                 // dd($government_amount);
                                   $government_amount = round($government_amount+$lastccc,2);
                                  
                                 
                                 }
-                                // dd($government_amount)
+                                // dd($government_amount);
                                 $sss_amount = $sss->where('salary_to','>=',$government_amount)->first();
                                 // dd($sss_amount);
                                 if($sss_amount)
@@ -866,6 +869,13 @@
                               <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq,2)}}<input type='hidden' name='gross_pay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq}}"></td>
                               <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}<input type='hidden' name='deductions_total[{{$key+1}}]' value="{{$taxable_deductable_total+$total_loans+$tax}}"></td>
                               <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}<input type='hidden' name='netpay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions}}"></td>
+                              @if($payroll_b)
+                              <td>{{$lastccc}}</td>
+                              <td>{{$government_amount-$lastccc}}</td>
+                              @else
+                              <td></td>
+                              <td></td>
+                              @endif
                             </tr>
                             @php
                             $object = new stdClass();
