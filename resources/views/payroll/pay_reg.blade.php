@@ -518,7 +518,7 @@
                                 if($name->employee->employee_code == "A178517")
                                 {
                                   $sss_ecc = 0;
-                                  $sss_ee = 2730;
+                                  $sss_ee = 2800;
                                   $sss_er = 0;
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
@@ -580,15 +580,15 @@
                                 }
                                 if($name->employee->employee_code == "A287819")
                                 {
-                                  $philhealth = 400;
+                                  $philhealth = 500;
                                 }
                                 if($name->employee->employee_code == "A178517")
                                 {
-                                  $philhealth = 400;
+                                  $philhealth = 500;
                                 }
                                 if($name->employee->employee_code == "A180518")
                                 {
-                                  $philhealth = 400;
+                                  $philhealth = 500;
                                 }
                                 if($name->employee->employee_code == "A162313")
                               {
