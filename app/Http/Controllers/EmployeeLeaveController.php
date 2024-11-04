@@ -78,7 +78,13 @@ class EmployeeLeaveController extends Controller
             }
         }
 
-        $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
+        // $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
+        $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->first();
+        if (date('Y-m-d', strtotime($attendance_logs->time_in)) == date('Y-m-d'))
+        {
+            $attendance_logs =  Attendance::where('employee_code', auth()->user()->employee->employee_number)->where('id', '<' , $attendance_logs->id)->orderBy('id', 'desc')->first();
+        }
+        
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->pluck('log_date')
             ->toArray();
