@@ -194,6 +194,8 @@
                               <th>NETPAY</th>
                               <th>SSS 1st</th>
                               <th>SSS 2nd</th>
+                              <th>PHIC 1st</th>
+                              <th>PHIC 2nd</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -872,7 +874,20 @@
                               @if($payroll_b)
                               <td>{{$lastccc}}</td>
                               <td>{{$government_amount-$lastccc}}</td>
+                              
+                              @if($name->employee->work_description == "Non-Monthly")
+                              {
+                                <td>{{$previous_basic_pay_rate}}</td>
+                                <td>{{$basic_pay}}</td>
+                              }
                               @else
+                              
+                              <td>{{$previous_pay_rate}}</td>
+                              <td>{{$pay_rate/2}}</td>
+                              @endif
+                              @else
+                              <td></td>
+                              <td></td>
                               <td></td>
                               <td></td>
                               @endif
