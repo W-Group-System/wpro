@@ -2467,11 +2467,23 @@ class EmployeeController extends Controller
 
     public function updateEmpNo(Request $request, $id)
     {
-        $employeeData = Employee::findOrFail($id);
-        $employeeData->employee_code = $request->employee_no;
-        $employeeData->save();
+        // dd($request->all());
+        $employee = Employee::where('employee_code', $request->employee_no)->first();
+        if (empty($employee))
+        {
+            $employeeData = Employee::findOrFail($id);
+            $employeeData->employee_code = $request->employee_no;
+            $employeeData->save();
 
-        Alert::success('Successfully Updated')->persistent('Dismiss');
+            Alert::success('Successfully Updated')->persistent('Dismiss');
+        }
+        else
+        {
+            $fullname = $employee->first_name.' '.$employee->last_name;
+
+            Alert::error('This employee number already exists in our records and is owned by '.$fullname)->persistent('Dismiss');
+        }
+
 
         return back();
     }
@@ -2621,5 +2633,12 @@ class EmployeeController extends Controller
                 'company' => $company,
             )
         );
+    }
+    
+    public function resigned()
+    {
+        $employee = Employee::where('status', 'Resigned')->get();
+
+        return response()->json($employee);
     }
 }
