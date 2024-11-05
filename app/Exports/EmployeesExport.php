@@ -113,6 +113,8 @@ class EmployeesExport implements FromQuery, WithHeadings, WithMapping
             'ID NUMBER HDMF',
             'ID NUMBER PHILHEALTH',
             'ID NUMBER TIN',
+            'DATE RESIGNED',
+
         ];
     }
 
@@ -157,6 +159,7 @@ class EmployeesExport implements FromQuery, WithHeadings, WithMapping
             $employee->hdmf_number,
             $employee->phil_number,
             $employee->tax_number,
+            $employee->date_resigned,
         ];
         
     }

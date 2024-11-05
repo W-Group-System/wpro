@@ -88,6 +88,7 @@ class EmployeeHRExport implements FromQuery, WithHeadings, WithMapping
             'Religion',
             'Company ID',
             'Company',
+            'Date Resigned'
             
         ];
     }
@@ -137,7 +138,8 @@ class EmployeeHRExport implements FromQuery, WithHeadings, WithMapping
             $employee->project,
             $employee->religion,
             $employee->company_id,
-            $company
+            $company,
+            $employee->date_resigned,
         ];
         
     }
