@@ -79,10 +79,22 @@ class EmployeeLeaveController extends Controller
         }
 
         // $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
-        $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->first();
+        $attendance_logs = Attendance::select(\DB::raw('DATE(time_in) as time_in'))
+            ->where('employee_code', auth()->user()->employee->employee_number)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->unique('time_in')
+            ->first();
+        
         if (date('Y-m-d', strtotime($attendance_logs->time_in)) == date('Y-m-d'))
         {
-            $attendance_logs =  Attendance::where('employee_code', auth()->user()->employee->employee_number)->where('id', '<' , $attendance_logs->id)->orderBy('id', 'desc')->first();
+            $attendance_logs =  Attendance::select(\DB::raw('DATE(time_in) as time_in'))
+                ->where('employee_code', auth()->user()->employee->employee_number)
+                ->whereDate('time_in', '<' , $attendance_logs->time_in)
+                ->orderBy('id', 'desc')
+                ->get()
+                ->unique('time_in')
+                ->first();
         }
         
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
