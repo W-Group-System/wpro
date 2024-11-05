@@ -1,7 +1,9 @@
 <div class="modal fade" id="editEmpNo">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header"></div>
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Employee No.</h5>
+            </div>
             <form action="{{url('update-employee-code/'.$user->employee->id)}}" method="post" onsubmit="show()">
                 {{csrf_field()}}
                 <div class="modal-body">
