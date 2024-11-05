@@ -485,7 +485,8 @@
                                 // dd($lastccc);
                                 // dd($government_amount);
                                   $ot_adjustments= ($name->employee->salary_adjustments)->where('name',"OT Adjustment")->sum('amount');
-                                  $government_amount = $government_amount+$ot_adjustments;
+                                  $salary_adjustment= ($name->employee->salary_adjustments)->where('name',"Salary Adjustment")->sum('amount');
+                                  $government_amount = $government_amount+$ot_adjustments+$salary_adjustment;
                                   $government_amount = round($government_amount+$lastccc,2);
                                  
                                 
