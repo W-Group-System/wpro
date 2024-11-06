@@ -44,7 +44,7 @@ class AttendanceNotif extends Notification
     {
         return (new MailMessage)
                     ->greeting('Good day!')
-                    ->line('Here is your attendance record for today.')
+                    ->line('Here is your attendance record for your review.')
                     ->line(new HtmlString($this->table))
                     // ->action('Notification Action', url('/'))
                     ->line('Thank you for using our application!');

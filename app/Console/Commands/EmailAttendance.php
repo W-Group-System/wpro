@@ -61,7 +61,7 @@ class EmailAttendance extends Command
             // dd($to_date);
           
             $emp_data = Employee::select('id','user_id','employee_number','first_name','last_name','schedule_id','employee_code')
-            ->with(['schedule_info','attendances' => function ($query) use ($from_date, $to_date) {
+            ->with(['schedule_info','approved_obs','attendances' => function ($query) use ($from_date, $to_date) {
                     $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
                             ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
                             ->orderBy('time_in','asc')
@@ -71,6 +71,9 @@ class EmailAttendance extends Command
             ->where('employee_number', $user_data->employee->employee_number)
             ->where('status','Active')
             ->first();
+            if($emp_data)
+            {
+                
             $table = "<table border='1' cellspacing='0' width='100%' style='text-align:center; margin-bottom:10px;'>
             <tr>
                 <th>Log Date</th>
@@ -179,6 +182,8 @@ class EmailAttendance extends Command
 
             $user_data->notify(new AttendanceNotif($table));
         }
+        
+    }
         
         $this->info('END');
     }
