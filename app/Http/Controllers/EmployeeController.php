@@ -2637,7 +2637,7 @@ class EmployeeController extends Controller
     
     public function resigned()
     {
-        $employee = Employee::where('status', 'Resigned')->get();
+        $employee = Employee::where('status', 'Active')->get();
 
         return response()->json($employee);
     }
