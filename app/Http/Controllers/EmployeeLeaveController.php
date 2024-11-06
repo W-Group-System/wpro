@@ -127,8 +127,7 @@ class EmployeeLeaveController extends Controller
         $employee = Employee::where('user_id',Auth::user()->id)->first();
         $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
         if($request->withpay == 'on'){
-            $existing_date_leave = EmployeeLeave::where('leave_type', $request->leave_type)
-                ->where(function($q)use($request) {
+            $existing_date_leave = EmployeeLeave::where(function($q)use($request) {
                     // $q->where('date_from', $request->date_from)->orWhere('date_to', $request->date_to);
                     $q->whereBetween('date_from', [$request->date_from, $request->date_to])
                         ->orWhereBetween('date_to',[$request->date_from, $request->date_to]);
@@ -182,8 +181,7 @@ class EmployeeLeaveController extends Controller
                 return back();
             }
         }else{
-            $existing_date_leave = EmployeeLeave::where('leave_type', $request->leave_type)
-                ->where(function($q)use($request) {
+            $existing_date_leave = EmployeeLeave::where(function($q)use($request) {
                     // $q->where('date_from', $request->date_from)->orWhere('date_to', $request->date_to);
                     $q->whereBetween('date_from', [$request->date_from, $request->date_to])
                         ->orWhereBetween('date_to',[$request->date_from, $request->date_to]);
