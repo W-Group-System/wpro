@@ -258,12 +258,12 @@
                 // @endphp
 
                 $("[name='date_from']").attr({
-                    'min': "{{date('Y-m-d', strtotime($attendance_logs->time_in))}}",
+                    'min': "{{date('Y-m-d', strtotime($attendance_logs->date))}}",
                     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
                 });
 
                 $("[name='date_to']").attr({
-                    'min': "{{date('Y-m-d', strtotime($attendance_logs->time_in))}}",
+                    'min': "{{date('Y-m-d', strtotime($attendance_logs->date))}}",
                     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
                 });
             }

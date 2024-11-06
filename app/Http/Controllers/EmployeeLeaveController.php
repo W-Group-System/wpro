@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Attendance;
+use App\AttendanceLog;
 use App\AttendanceDetailedReport;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\EmployeeApproverController;
@@ -79,24 +80,12 @@ class EmployeeLeaveController extends Controller
         }
 
         // $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
-        $attendance_logs = Attendance::select(\DB::raw('DATE(time_in) as time_in'))
-            ->where('employee_code', auth()->user()->employee->employee_number)
-            ->orderBy('id', 'desc')
-            ->get()
-            ->unique('time_in')
+        $attendance_logs = AttendanceLog::whereDate('date','<=',date('Y-m-d', strtotime('-3 weekdays')))
+            ->where('emp_code', auth()->user()->employee->employee_number)
+            ->orderBy('date', 'desc')
             ->first();
         
-        if (date('Y-m-d', strtotime($attendance_logs->time_in)) == date('Y-m-d'))
-        {
-            $attendance_logs =  Attendance::select(\DB::raw('DATE(time_in) as time_in'))
-                ->where('employee_code', auth()->user()->employee->employee_number)
-                ->whereDate('time_in', '<' , $attendance_logs->time_in)
-                ->orderBy('id', 'desc')
-                ->get()
-                ->unique('time_in')
-                ->first();
-        }
-        
+        // dd($attendance_logs);
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->pluck('log_date')
             ->toArray();
