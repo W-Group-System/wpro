@@ -46,7 +46,10 @@ class EmailAttendance extends Command
         $email_attendance = new EmailAttendance; 
         $this->info('START');
 
-        $user_list = User::where('status', 'Active')
+        $employeeList = User::where('status', 'Active')  // Filter Users where their status is Active
+        ->whereHas('employee', function ($query) {
+            $query->where('status', 'Active');  // Ensure the related Employee's status is Active
+        })
         ->whereNotNull('email')  // Ensure email is not null
         ->where('email', '!=', '')  // Ensure email is not an empty string
         ->get();
