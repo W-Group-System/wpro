@@ -373,6 +373,68 @@ function night_difference_per_company($start_work, $end_work)
 
     return 0; // Default case when no night shift overlap
 }
+
+// function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday)
+// {
+//     $date_from = Carbon::parse($date_from);
+//     $date_to = Carbon::parse($date_to);
+
+//     // Initialize count
+//     $count = 0;
+    
+//     if ($date_from->equalTo($date_to)) {
+//         // Single-day period
+//         $count = 1;
+//         foreach ($dailySchedules as $schedule) {
+//             $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date) : null;
+
+//             if ($log_date && $log_date->between($date_from, $date_to)) {
+//                 if (is_null($schedule->working_hours)) {
+//                     // If working_hours is null, set count to 0 and break out of the loop
+//                     return 0;
+//                 } else {
+//                     $count++;
+//                 }
+//             }
+//         }
+//     } else {
+//         // Multiple-day period
+//         foreach ($dailySchedules as $schedule) {
+//             $log_date = Carbon::parse($schedule->log_date); // Parse log_date to Carbon instance
+
+//             if ($log_date->between($date_from, $date_to)) {
+//                 if (is_null($schedule->working_hours)) {
+//                     // If working_hours is null, set count to 0 and break out of the loop
+//                     $count;
+//                 } else {
+//                     $count++;
+//                 }
+//             }
+//         }
+
+//         // If no entries found with non-empty time_in_from, count based on scheduleDatas
+//         if ($count === 0) {
+//             $data = $scheduleDatas->pluck('name')->toArray();
+//             $startTime = strtotime($date_from);
+//             $endTime = strtotime($date_to);
+            
+//             for ($i = $startTime; $i <= $endTime; $i += 86400) {
+//                 $thisDate = Carbon::createFromTimestamp($i)->format('l'); // Get the day name
+//                 if (in_array($thisDate, $data)) {
+//                     $count++;
+//                 }
+//             }
+//         }
+//     }
+
+//     // Adjust count for half-day if applicable
+//     if ($count == 1 && $halfday == 1) {
+//         return 0.5;
+//     } else {
+//         return $count;
+//     }
+// }
+
 function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday)
 {
     $date_from = Carbon::parse($date_from);
@@ -381,48 +443,23 @@ function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $
     // Initialize count
     $count = 0;
 
-    if ($date_from->equalTo($date_to)) {
-        // Single-day period
-        $count = 1;
-
-        foreach ($dailySchedules as $schedule) {
-            $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date) : null;
-
-            if ($log_date && $log_date->between($date_from, $date_to)) {
-                if (is_null($schedule->working_hours)) {
-                    // If working_hours is null, set count to 0 and break out of the loop
-                    return 0;
-                } else {
-                    $count++;
-                }
+    // Generate list of day names from scheduleDatas
+    $workingDays = $scheduleDatas->pluck('name')->toArray();
+    
+    // Loop over each day in the date range
+    for ($date = $date_from->copy(); $date->lte($date_to); $date->addDay()) {
+        $dailySchedule = $dailySchedules->firstWhere('log_date', $date->toDateString());
+        
+        if ($dailySchedule) {
+            // If a daily schedule exists, check if working_hours is set
+            if (!is_null($dailySchedule->working_hours)) {
+                $count++;
             }
-        }
-    } else {
-        // Multiple-day period
-        foreach ($dailySchedules as $schedule) {
-            $log_date = Carbon::parse($schedule->log_date); // Parse log_date to Carbon instance
-
-            if ($log_date->between($date_from, $date_to)) {
-                if (is_null($schedule->working_hours)) {
-                    // If working_hours is null, set count to 0 and break out of the loop
-                    $count;
-                } else {
-                    $count++;
-                }
-            }
-        }
-
-        // If no entries found with non-empty time_in_from, count based on scheduleDatas
-        if ($count === 0) {
-            $data = $scheduleDatas->pluck('name')->toArray();
-            $startTime = strtotime($date_from);
-            $endTime = strtotime($date_to);
-            
-            for ($i = $startTime; $i <= $endTime; $i += 86400) {
-                $thisDate = Carbon::createFromTimestamp($i)->format('l'); // Get the day name
-                if (in_array($thisDate, $data)) {
-                    $count++;
-                }
+        } else {
+            // If no daily schedule, check weekly schedule (scheduleDatas)
+            $dayName = $date->format('l'); // Get the day name (e.g., Monday, Tuesday)
+            if (in_array($dayName, $workingDays)) {
+                $count++;
             }
         }
     }
@@ -435,129 +472,132 @@ function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $
     }
 }
 
-function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired)
-{
-    $count = 0;
-    if ($date_hired) {
-        $today = date('Y-m-d');
-        $date_hired_md = date('m-d', strtotime($date_hired));
-        $last_year = date('Y', strtotime('-1 year', strtotime($today)));
-        $this_year = date('Y');
 
-        $date_hired_this_year = $this_year . '-' . $date_hired_md;
-
-        if ($today > $date_hired_this_year) {
-            $filter_date_leave = $this_year . '-' . $date_hired_md;
-        } else {
-            $filter_date_leave = $last_year . '-' . $date_hired_md;
-        }
-
-        // Fetch the employee_number from the Employee model
-        $employee = Employee::where('user_id', $user_id)->first();
-        if (!$employee) {
-            return $count; // If no employee found, return the count as 0
-        }
-        $employee_number = $employee->employee_number;
-
-        $employee_vl = EmployeeLeave::where('user_id', $user_id)
-            ->where('leave_type', $leave_type)
-            ->where('status', 'Approved')
-            // ->where('date_from', '>', $filter_date_leave)
-            ->get();
-
-        if ($employee_vl) {
-            foreach ($employee_vl as $leave) {
-                if ($leave->withpay == 1 && $leave->halfday == 1) {
-                    if (date('Y-m-d', strtotime($leave->date_from))) {
-                        $count += 0.5;
-                    }
-                } else {
-                    // Fetch daily schedules where log_date is within the leave date range
-                    $dailySchedules = DailySchedule::where('employee_number', $employee_number)
-                        ->whereBetween('log_date', [$leave->date_from, $leave->date_to])
-                        ->get();
-
-                    // Iterate through each date in the date range
-                    $date_range = dateRangeHelper($leave->date_from, $leave->date_to);
-                    if ($date_range) {
-                        foreach ($date_range as $date_r) {
-                            $leave_Date = date('Y-m-d', strtotime($date_r));
-                            // Check if withpay is 1 and leave_Date is valid
-                            if ($leave->withpay == 1 && $leave_Date) {
-                                // Check if log_date exists in dailySchedules
-                                $log_date_found = false;
-                                foreach ($dailySchedules as $schedule) {
-                                    $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
-                                    if ($log_date === $leave_Date) {
-                                        $log_date_found = true;
-                                        if (is_null($schedule->working_hours)) {
-                                        } else {
-                                            $count++; 
-                                        }
-                                    }
-                                }
-                                if (!$log_date_found) {
-                                    $count++;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return $count;
-}
-
-
-// function checkUsedSLVLSILLeave($user_id,$leave_type,$date_hired){
-
+// function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired)
+// {
 //     $count = 0;
-//     if($date_hired){
-//         $today  = date('Y-m-d');
-//         $date_hired_md = date('m-d',strtotime($date_hired));
-//         $date_hired_m = date('m',strtotime($date_hired));
-//         $last_year = date('Y', strtotime('-1 year', strtotime($today)) );
+//     if ($date_hired) {
+//         $today = date('Y-m-d');
+//         $date_hired_md = date('m-d', strtotime($date_hired));
+//         $last_year = date('Y', strtotime('-1 year', strtotime($today)));
 //         $this_year = date('Y');
 
-//         $date_hired_this_year = $this_year . '-'. $date_hired_md;
+//         $date_hired_this_year = $this_year . '-' . $date_hired_md;
 
-//         if($today > $date_hired_this_year  ){
-//             $filter_date_leave = $this_year . '-'. $date_hired_md;
-//         }else{
-//             $filter_date_leave = $last_year . '-'. $date_hired_md;
+//         if ($today > $date_hired_this_year) {
+//             $filter_date_leave = $this_year . '-' . $date_hired_md;
+//         } else {
+//             $filter_date_leave = $last_year . '-' . $date_hired_md;
 //         }
+
+//         // Fetch the employee_number from the Employee model
+//         $employee = Employee::where('user_id', $user_id)->first();
+//         if (!$employee) {
+//             return $count; // If no employee found, return the count as 0
+//         }
+//         $employee_number = $employee->employee_number;
+
+//         $employee_vl = EmployeeLeave::where('user_id', $user_id)
+//             ->where('leave_type', $leave_type)
+//             ->where('status', 'Approved')
+//             // ->where('date_from', '>', $filter_date_leave)
+//             ->get();
         
-//         $employee_vl = EmployeeLeave::where('user_id',$user_id)
-//                                         ->where('leave_type',$leave_type)
-//                                         ->where('status','Approved')
-//                                         // ->where('date_from','>',$filter_date_leave)
-//                                         ->get();
-        
-//         $date_today = date('Y-m-d');
-//         if($employee_vl){
-//             foreach($employee_vl as $leave){
-//                 if($leave->withpay == 1 && $leave->halfday == 1){
-//                     if(date('Y-m-d',strtotime($leave->date_from))){
+//         if ($employee_vl) {
+//             foreach ($employee_vl as $leave) {
+//                 if ($leave->withpay == 1 && $leave->halfday == 1) {
+//                     if (date('Y-m-d', strtotime($leave->date_from))) {
 //                         $count += 0.5;
 //                     }
-//                 }else{
-//                     $date_range = dateRange($leave->date_from,$leave->date_to);
-//                     if($date_range){
-//                         foreach($date_range as $date_r){
+//                 } else {
+//                     // Fetch daily schedules where log_date is within the leave date range
+//                     $dailySchedules = DailySchedule::where('employee_number', $employee_number)
+//                         ->whereBetween('log_date', [$leave->date_from, $leave->date_to])
+//                         ->get();
+                    
+//                     // Iterate through each date in the date range
+//                     $date_range = dateRangeHelper($leave->date_from, $leave->date_to);
+                    
+//                     if ($date_range) {
+//                         foreach ($date_range as $date_r) {
 //                             $leave_Date = date('Y-m-d', strtotime($date_r));
-//                             if($leave->withpay == 1 && $leave_Date){
-//                                 $count += 1;
+//                             // Check if withpay is 1 and leave_Date is valid
+//                             if ($leave->withpay == 1 && $leave_Date) {
+//                                 // Check if log_date exists in dailySchedules
+//                                 $log_date_found = false;
+//                                 foreach ($dailySchedules as $schedule) {
+//                                     $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
+                                    
+//                                     if ($log_date === $leave_Date) {
+//                                         $log_date_found = true;
+//                                         if (is_null($schedule->working_hours)) {
+//                                         } else {
+//                                             $count++; 
+//                                         }
+//                                     }
+//                                 }
+//                                 if (!$log_date_found) {
+//                                     $count++;
+//                                 }
 //                             }
 //                         }
 //                     }
 //                 }
-                
 //             }
 //         }
 //     }
 //     return $count;
 // }
+
+
+function checkUsedSLVLSILLeave($user_id,$leave_type,$date_hired){
+
+    $count = 0;
+    if($date_hired){
+        $today  = date('Y-m-d');
+        $date_hired_md = date('m-d',strtotime($date_hired));
+        $date_hired_m = date('m',strtotime($date_hired));
+        $last_year = date('Y', strtotime('-1 year', strtotime($today)) );
+        $this_year = date('Y');
+
+        $date_hired_this_year = $this_year . '-'. $date_hired_md;
+
+        if($today > $date_hired_this_year  ){
+            $filter_date_leave = $this_year . '-'. $date_hired_md;
+        }else{
+            $filter_date_leave = $last_year . '-'. $date_hired_md;
+        }
+        
+        $employee_vl = EmployeeLeave::where('user_id',$user_id)
+                                        ->where('leave_type',$leave_type)
+                                        ->where('status','Approved')
+                                        // ->where('date_from','>',$filter_date_leave)
+                                        ->get();
+        
+        $date_today = date('Y-m-d');
+        if($employee_vl){
+            foreach($employee_vl as $leave){
+                if($leave->withpay == 1 && $leave->halfday == 1){
+                    if(date('Y-m-d',strtotime($leave->date_from))){
+                        $count += 0.5;
+                    }
+                }else{
+                    $date_range = dateRange($leave->date_from,$leave->date_to);
+                    if($date_range){
+                        foreach($date_range as $date_r){
+                            $leave_Date = date('Y-m-d', strtotime($date_r));
+                            if($leave->withpay == 1 && $leave_Date){
+                                $count += 1;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+    return $count;
+}
 
 function checkEarnedLeave($user_id,$leave_type,$date_hired){
 

@@ -42,6 +42,6 @@ class EmployeeLeave extends Model implements Auditable
     
     public function dailySchedules()
     {
-        return $this->hasManyThrough(DailySchedule::class, Employee::class, 'user_id', 'employee_number', 'user_id', 'employee_number');
+        return $this->hasManyThrough(DailySchedule::class, Employee::class, 'user_id', 'employee_code', 'user_id', 'employee_code');
     }
 }
