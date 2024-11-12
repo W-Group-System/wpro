@@ -516,7 +516,7 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired)
                         ->get();
                     
                     // Iterate through each date in the date range
-                    $date_range = dateRangeHelper($leave->date_from, $leave->date_to);
+                    $date_range = dateRangeHelperLeave($leave->date_from, $leave->date_to);
                     
                     if ($date_range) {
                         foreach ($date_range as $date_r) {
@@ -530,8 +530,7 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired)
                                     
                                     if ($log_date === $leave_Date) {
                                         $log_date_found = true;
-                                        if (is_null($schedule->working_hours)) {
-                                        } else {
+                                        if (!is_null($schedule->working_hours)) {
                                             $count++; 
                                         }
                                     }
@@ -1059,50 +1058,4 @@ function benefits() {
   );
 
   return $benefits;
-}
-
-function pending_leave_count($approver_id){
-
-    $today = date('Y-m-d');
-    $from_date = date('Y-m-d',(strtotime ( '-1 month' , strtotime ( $today) ) ));
-    $to_date = date('Y-m-d');
-
-    return EmployeeLeave::select('user_id')->with('approver.approver_info')
-                                ->whereHas('approver',function($q) use($approver_id) {
-                                    $q->where('approver_id',$approver_id);
-                                })
-                                ->where('status','Pending')
-                                // ->whereDate('created_at','>=',$from_date)
-                                // ->whereDate('created_at','<=',$to_date)
-                                ->count();
-}
-
-function pending_overtime_count($approver_id){
-    
-    $today = date('Y-m-d');
-    $from_date = date('Y-m-d',(strtotime ( '-1 month' , strtotime ( $today) ) ));
-    $to_date = date('Y-m-d');
-
-    return EmployeeOvertime::select('user_id')->whereHas('approver',function($q) use($approver_id) {
-                                    $q->where('approver_id',$approver_id);
-                                })
-                                ->where('status','Pending')
-                                // ->whereDate('created_at','>=',$from_date)
-                                // ->whereDate('created_at','<=',$to_date)
-                                ->count();
-}
-
-function pending_ob_count($approver_id){
-    
-    $today = date('Y-m-d');
-    $from_date = date('Y-m-d',(strtotime ( '-1 month' , strtotime ( $today) ) ));
-    $to_date = date('Y-m-d');
-
-    return EmployeeOb::select('user_id')->whereHas('approver',function($q) use($approver_id) {
-                                    $q->where('approver_id',$approver_id);
-                                })
-                                ->where('status','Pending')
-                                // ->whereDate('created_at','>=',$from_date)
-                                // ->whereDate('created_at','<=',$to_date)
-                                ->count();
 }
