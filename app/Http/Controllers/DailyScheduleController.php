@@ -46,6 +46,9 @@ class DailyScheduleController extends Controller
 
     public function upload(Request $request)
     {
+        // dd($request->all());
+        ini_set('memory_limit', '-1');
+
         $request->validate([
             'file' => 'max:1024'
         ]);
