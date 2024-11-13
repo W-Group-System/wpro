@@ -386,7 +386,11 @@
                                                                
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
-                                                              
+                                                                $check_if_holiday = checkIfHoliday(date('Y-m-d',date('Y-m-d',strtotime("-1 day",strtotime($date_r)))),$emp->location);
+                                                                if($check_if_holiday)
+                                                                {
+                                                                    $abs = 0;
+                                                                }
                                                                 if($employee_schedule_before == null)
                                                                 {
                                                                     $abs = 0;
@@ -403,7 +407,7 @@
                                                                     }
 
                                                                     
-                                                                }
+                                                                    }
                                                                 }
                                                                 if($emp->work_description == "Non-Monthly")
                                                                 {
