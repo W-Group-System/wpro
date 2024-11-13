@@ -387,6 +387,7 @@
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
                                                                 $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->location);
+                                                               
                                                                 if($check_if_holiday_before)
                                                                 {
                                                                     $abs = 0;
@@ -429,6 +430,10 @@
                                                                     else {
                                                                         $abs = 1;
                                                                     }
+                                                                }
+                                                                if($date_r < $original_date_hired)
+                                                                {
+                                                                    $abs = 1;
                                                                 }
                                                             }else{
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
