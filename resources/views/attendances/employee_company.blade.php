@@ -436,6 +436,7 @@
                                                                     $abs = 1;
                                                                 }
                                                             }else{
+                                                                
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 
                                                                 if(empty($if_leave)){
@@ -451,6 +452,10 @@
                                                                         $if_restday = 'Restday';
                                                                     }
                                                                 } 
+                                                                if($date_r < $emp->original_date_hired)
+                                                                {
+                                                                    $abs = 1;
+                                                                }
                                                             }
                                                                 
                                                         @endphp
