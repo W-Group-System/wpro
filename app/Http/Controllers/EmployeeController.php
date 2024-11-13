@@ -1808,7 +1808,7 @@ class EmployeeController extends Controller
         $employees = [];
         
         if ($from_date != null) {
-            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description')
+            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired')
                                 ->with('company')
                                 ->with(['attendances' => function ($query) use ($date_from, $to_date) {
                                     $query->whereBetween('time_in', [$date_from." 00:00:01", $to_date." 23:59:59"])
