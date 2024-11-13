@@ -431,7 +431,7 @@
                                                                         $abs = 1;
                                                                     }
                                                                 }
-                                                                if($date_r < $original_date_hired)
+                                                                if($date_r < $emp->original_date_hired)
                                                                 {
                                                                     $abs = 1;
                                                                 }
