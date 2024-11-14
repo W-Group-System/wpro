@@ -18,9 +18,11 @@ class AttendanceNotif extends Notification
      * @return void
      */
     protected $table;
-    public function __construct($table)
+    protected $user;
+    public function __construct($table,$user)
     {
         $this->table = $table;
+        $this->user = $user;
     }
 
     /**
@@ -43,10 +45,11 @@ class AttendanceNotif extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->greeting('Good day!')
-                    ->line('Here is your attendance record for your review.')
+                    ->subject('Daily Time Record Cut-Off Reminder')
+                    ->greeting('Good day,'. $this->user.',')
+                    ->line('Here is your attendance record for your review. If you have any questions or concerns regarding your DTR, please click the link below to submit a ticket with ITD for further assistance.')
                     ->line(new HtmlString($this->table))
-                    // ->action('Notification Action', url('/'))
+                    ->action('Ticketing', "https://ticketing.rico.com.ph/itd/")
                     ->line('Thank you for using our application!');
     }
 
