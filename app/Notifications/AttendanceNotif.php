@@ -44,7 +44,7 @@ class AttendanceNotif extends Notification
     {
         return (new MailMessage)
                     ->subject('Daily Time Record Cut-Off Reminder')
-                    ->greeting('Good day,'. $this->user.',')
+                    ->greeting('Good day,')
                     ->line('Here is your attendance record for your review. If you have any questions or concerns regarding your DTR, please click the link below to submit a ticket with ITD for further assistance.')
                     ->line(new HtmlString($this->table))
                     ->action('Ticketing', "https://ticketing.rico.com.ph/itd/")
