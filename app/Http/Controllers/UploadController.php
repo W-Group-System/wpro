@@ -37,7 +37,7 @@ class UploadController extends Controller
         $path = $request->file('file')->getRealPath();
 
         $xlsx = SimpleXLSX::parse($path)->rows();
-        dd($xlsx);
+        // dd($xlsx);
         // Excel::import(new UploadImport($request->type), $request->file);
         // dd($xlsx);
         
