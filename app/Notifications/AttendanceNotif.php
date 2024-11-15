@@ -18,11 +18,9 @@ class AttendanceNotif extends Notification
      * @return void
      */
     protected $table;
-    protected $user;
-    public function __construct($table,$user)
+    public function __construct($table)
     {
         $this->table = $table;
-        $this->user = $user;
     }
 
     /**
