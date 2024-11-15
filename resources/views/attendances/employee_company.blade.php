@@ -1070,7 +1070,7 @@
                                                     }
                                                   
                                                 }
-                                                if($abs ==1)
+                                                if($abs == 1)
                                                 {
                                                     $work = 0;
                                                     $late = 0;
@@ -1079,7 +1079,7 @@
                                                 $subtotal_abs += $abs;
                                                 $subtotal_leave_w_pay += $leave_count;
                                                 $subtotal_reg_hrs += $work;
-                                                $subtotal_late += number_format($late);
+                                                $subtotal_late += ($late);
                                                 $subtotal_undertime += ($undertime_hrs*60);
                                                 $subtotal_overtimes +=$overtime;
                                                 $subtotal_nd += $night_diff;
