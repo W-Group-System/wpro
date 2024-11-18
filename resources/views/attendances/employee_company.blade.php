@@ -430,6 +430,11 @@
                                                                     else {
                                                                         $abs = 1;
                                                                     }
+                                                                    if($check_if_holiday == "Special Holiday")
+                                                                    {
+                                                                        $abs = 0;
+                                                                    }
+
                                                                 }
                                                                 if(date('Y-m-d',strtotime($date_r)) < $emp->original_date_hired)
                                                                 {
