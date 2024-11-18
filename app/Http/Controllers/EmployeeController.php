@@ -2641,4 +2641,11 @@ class EmployeeController extends Controller
 
         return response()->json($employee);
     }
+
+    public function getSchedule()
+    {
+        $get_schedules = Schedule::get();
+        
+        return $get_schedules;
+    }
 }
