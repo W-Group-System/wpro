@@ -432,7 +432,7 @@
                                                                     }
                                                                     if($check_if_holiday == "Special Holiday")
                                                                     {
-                                                                        $abs = 0;
+                                                                        $abs = 1;
                                                                     }
 
                                                                 }
