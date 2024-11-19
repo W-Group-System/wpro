@@ -198,7 +198,7 @@ class PayslipController extends Controller
             )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
             ->groupBy('company_id', 'employee_no', 'name')
-            // ->where('employee_no','A3143520')
+            // ->where('employee_no','A3170823')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
             // dd($names);
@@ -516,6 +516,7 @@ class PayslipController extends Controller
                             $loa = new PayregLoan;
                             $loa->loan_type_id = $loan->loan_type_id;
                             $loa->payreg_id = $pay_register->id;
+                            $loa->loan_id = $loan->id;
                             $loa->amount = $loan->monthly_ammort_amt;
                             $loa->employee_id = $loan->employee_id;
                             $loa->remarks = $loan->schedule;
@@ -552,7 +553,7 @@ class PayslipController extends Controller
        $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
         ->get();
-
+        
       
         return view('payroll.pay_instruction',
         array(
@@ -766,24 +767,35 @@ class PayslipController extends Controller
     }
     function monthly_benefit(Request $request)
     {
-        $employees = Payroll::select('emp_code','name','semi_month_pay','month_pay','department','location','bank_acctno','bank')->orderBy('name','asc')->orderBy('date_from','desc')->get()->unique('emp_code');
-        $payrolls = Payroll::whereYear('date_to',date('Y'))->get();
-        $year = date('Y-01-01');
-        $dates = [];
-        for($m=0;$m<12 ;$m++)
+        $company = $request->company;
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $companies = Company::whereHas('employee_has_company')
+        ->whereIn('id', $allowed_companies)
+        ->get();
+        $year = date('Y');
+        if($request->year)
         {
-            $data_date = date('Y-m-15',strtotime($year));
-            $data_date_2 = date('Y-m-t',strtotime($year));
-            array_push($dates,$data_date);
-            array_push($dates,$data_date_2);
-            $year = date("Y-m-d",strtotime("+1 month",strtotime($year)));
+            $year = date('Y',strtotime($request->year."-01-01"));
         }
-        return view('payroll.benefit',
+        $employees = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired')
+                                ->with('get_payreg')
+                                ->with('company')
+                                ->where('company_id', $request->company)
+                                ->where('classification','!=',8)
+                                ->where('status','Active')
+                                ->get()
+
+                                // ->where('employee_code','A3121418')
+                                ;
+        $dates = [];
+        return view('reports.month',
         array(
             'header' => 'Month-Benefit',
-            'employees' => $employees,
-            'payrolls' => $payrolls,
             'dates' => $dates,
+            'year' => $year,
+            'companies' => $companies,
+            'company' => $company,
+            'employees' => $employees,
             
         ));
     }

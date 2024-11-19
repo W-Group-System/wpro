@@ -181,6 +181,10 @@ class Employee extends Model implements Auditable
         }
         return $query;
     }
+    public function get_payreg()
+    {
+        return $this->hasMany(PayReg::class,'employee_no','employee_code');
+    }
     protected $fillable = [
         'department_id', 
         'project',
