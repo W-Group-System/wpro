@@ -6,6 +6,7 @@ use App\Employee;
 use App\ExitClearance;
 use App\ExitClearanceComment;
 use App\Mail\comment;
+use App\Mail\Cleared;
 use App\ExitClearanceChecklist;
 use App\ExitClearanceSignatory;
 use Illuminate\Support\Facades\Mail;
@@ -216,15 +217,8 @@ class ExitClearanceController extends Controller
             }
         }
         $resign_employee = ExitClearance::where('resign_id',$exit_signatory->clearance->resign_id)->pluck('id')->toArray();
-        $all_signatories = ExitClearanceSignatory::whereIn('exit_clearance_id',$resign_employee)->where('status',"Pending")->count();
-        if($all_signatories == 0)
-        {
-            $update = ExitResign::where('id',$exit_signatory->clearance->resign_id)->first();
-            $update->status = 'Cleared';
-            $update->date_cleared = date('Y-m0d');
-            $update->save();
-
-        }
+ 
+       
         
         $exit_signatory = ExitClearanceSignatory::findOrfail($id);
         $exit_signatory->status = "Cleared";
@@ -236,6 +230,16 @@ class ExitClearanceController extends Controller
         $comment->exit_clearance_id = $exit_signatory->exit_clearance_id;
         $comment->user_id = auth()->user()->id;
         $comment->save();
+
+        $all_signatories = ExitClearanceSignatory::whereIn('exit_clearance_id',$resign_employee)->where('status',"Pending")->count();
+        if($all_signatories == 0)
+        {
+            $update = ExitResign::where('id',$exit_signatory->clearance->resign_id)->first();
+            $update->status = 'Cleared';
+            $update->date_cleared = date('Y-m-d');
+            $update->save();
+
+        }
 
         
         $exitClearance = ExitClearance::with('department')->findOrfail($exit_signatory->exit_clearance_id);
@@ -255,6 +259,10 @@ class ExitClearanceController extends Controller
         $data['comment'] = $comment;
         $data['department'] = $exitClearance;
         $send_update = Mail::to([$exitResign->personal_email, $employee->user_info->email])->cc($cc_emails)->send(new comment($data));
+        if($all_signatories == 0)
+        {
+            $send_update = Mail::to([$exitResign->personal_email, $employee->user_info->email])->send(new Cleared($data));
+        }
 
         Alert::success('Successfully Change Status')->persistent('Dismiss');
 

@@ -389,7 +389,7 @@
                             <li class="nav-item"> <a class="nav-link" href="{{url('nte-reports')}}">NTE Upload</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('loans')}}">Loans</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="{{url('payslips')}}">Paylips</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('payslips')}}">Payslips</a></li>
                             <li class="nav-item"> <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">Proof of Availment</a></li>
                             </ul>
                         </div>
