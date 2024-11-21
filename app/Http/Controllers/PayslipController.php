@@ -778,7 +778,13 @@ class PayslipController extends Controller
             $year = date('Y',strtotime($request->year."-01-01"));
         }
         $employees = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired')
-                                ->with('get_payreg')
+                                ->with(['get_payreg' => function ($query) use ($year) {
+                                    $query->select('basic_pay', 'deminimis', 'other_allowances_basic_pay', 'subliq', 'cut_off_date')
+                                        ->whereBetween('cut_off_date', [
+                                            date('Y-01-01', strtotime("$year-01-01")),
+                                            date('Y-12-t', strtotime("$year-12-01"))
+                                        ]);
+                                }])
                                 ->with('company')
                                 ->where('company_id', $request->company)
                                 ->where('classification','!=',8)

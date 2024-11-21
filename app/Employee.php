@@ -185,6 +185,12 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(PayReg::class,'employee_no','employee_code');
     }
+    public function resign(){
+        return $this->hasOne(ExitResign::class);
+    }
+    public function as_resign(){
+        return $this->hasMany(ExitClearanceSignatory::class);
+    }
     protected $fillable = [
         'department_id', 
         'project',

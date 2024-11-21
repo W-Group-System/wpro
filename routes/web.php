@@ -423,6 +423,17 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Payslip
     Route::get('/generate-payslip', 'PayslipController@generatePayslip');
+
+
+    //Clearance
+    Route::get('/my-clearance','ExitClearanceController@viewMyClearance');
+    Route::get('view-comments/{id}','ExitClearanceController@viewComments')->name('Comments');
+    Route::post('new-comment/{id}','ExitClearanceController@submitComment');
+    Route::get('for-clearance','ExitClearanceController@forClearance')->name('For Clearance');
+    Route::get('view-as-signatory/{id}','ExitClearanceController@viewAsSignatory')->name('Signatory');
+    Route::post('change-status-checklist/{id}','ExitClearanceController@changestatus')->name('Change Status');
+    Route::post('mark-as-cleared/{id}','ExitClearanceController@cleared')->name('Change Status');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

@@ -325,6 +325,20 @@
                             <span class="menu-title">{{auth()->user()->employee->first_name . ' ' . auth()->user()->employee->last_name}}</span>   
                         </a>
                     </li>
+                    
+                    @if(auth()->user()->employee->resign)
+                    <li class="nav-item">
+                        <hr>
+                        <h5>As Resignee</h5>
+                        
+                    </li>
+                    <li class="nav-item @if ($header == 'my-clearance') active @endif">
+                        <a class="nav-link" href="{{ url('/my-clearance') }}" onclick='show()'>
+                            <i class="icon-head menu-icon"></i>
+                            <span class="menu-title">My Clearance</span>
+                        </a>
+                    </li>
+                    @endif
                     <li class="nav-item">
                         <hr>
                         <h5>Employee</h5>
@@ -363,24 +377,6 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="nav-item @if ($header == 'payslips') active @endif">
-                        <a class="nav-link" href="{{ url('/payslips') }}" onclick='show()'>
-                            <i class="icon-briefcase menu-icon"></i>
-                            <span class="menu-title">Payslips</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @if ($header == 'Loans') active @endif">
-                        <a class="nav-link" href="{{ url('/loans') }}" onclick='show()'>
-                            <i class="fa fa-money menu-icon"></i>
-                            <span class="menu-title">Loans</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @if ($header == 'Proof') active @endif">
-                        <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">
-                            <i class="fa fa-money menu-icon"></i>
-                            <span class="menu-title">Proof of Availment</span>
-                        </a>
-                    </li>
                     <li class="nav-item  @if ($header == 'hrReport') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#hrReport" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-paper menu-icon"></i>
@@ -392,9 +388,25 @@
                             <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{{url('nte-reports')}}">NTE Upload</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('loans')}}">Loans</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('payslips')}}">Paylips</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">Proof of Availment</a></li>
                             </ul>
                         </div>
                     </li>
+                   
+                  @if(count(auth()->user()->employee->as_resign) > 0)
+                    <li class="nav-item">
+                        <hr>
+                        <h5>Clearance</h5>
+                    </li>
+                    <li class="nav-item @if ($header == 'For Clearance') active @endif">
+                        <a class="nav-link" href="{{ url('/for-clearance') }}" onclick='show()'>
+                            <i class="icon-head menu-icon"></i>
+                            <span class="menu-title">For Approval <span class="badge badge-danger">{{for_clearance()}}</span></span>
+                        </a>
+                    </li>
+                    @endif
                     @if (auth()->user()->employee_under->count() != 0)
                     <li class="nav-item">
                         <hr>
@@ -508,8 +520,6 @@
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/schedules') }}">Schedules</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li>
-                                {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/handbooks') }}">Handbook</a></li> --}}
-
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/leavee-settings') }}">Leave Type</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/announcements') }}">Announcements</a></li>
                                 <li class="nav-item"> <a class="nav-link" href="{{ url('/logos') }}">Logos</a></li>
