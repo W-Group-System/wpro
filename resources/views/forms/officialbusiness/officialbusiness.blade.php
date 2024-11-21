@@ -135,11 +135,13 @@
                           <button type="button" id="uploadFile{{ $ob->id }}" class="btn btn-info btn-rounded btn-icon"
                             data-target="#upload_obForm{{ $ob->id }}" data-toggle="modal" title='Upload'>
                             <i class="ti-upload"></i>
-                          </button>                                    
+                          </button>                 
+                            @if($ob->applied_date >= date('Y-m-d') )                   
                             <button title='Cancel' id="{{ $ob->id }}" onclick="cancel({{ $ob->id }})"
                               class="btn btn-rounded btn-danger btn-icon">
                               <i class="fa fa-ban"></i>
                             </button>  
+                            @endif
                           @else
                             <button type="button" id="view{{ $ob->id }}" class="btn btn-primary btn-rounded btn-icon"
                               data-target="#view_ob{{ $ob->id }}" data-toggle="modal" title='View'>
