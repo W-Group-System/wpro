@@ -319,13 +319,14 @@
             <!-- partial:partials/_sidebar.html -->
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
+                    
+                   
                     <li class="nav-item @if ($header == 'account-setting') active @endif">
                         <a class="nav-link" href="{{ url('/account-setting') }}" onclick='show()'>
                             <i class="ti-settings menu-icon"></i>
                             <span class="menu-title">{{auth()->user()->employee->first_name . ' ' . auth()->user()->employee->last_name}}</span>   
                         </a>
                     </li>
-                    
                     @if(auth()->user()->employee->resign)
                     <li class="nav-item">
                         <hr>
@@ -339,6 +340,7 @@
                         </a>
                     </li>
                     @endif
+                    @if(auth()->user()->employee->status != "Inactive")
                     <li class="nav-item">
                         <hr>
                         <h5>Employee</h5>
@@ -701,6 +703,7 @@
             Upload OB/OT/Leaves
           </a>
         <li>
+        @endif
         @endif
         </ul>
         </nav>
