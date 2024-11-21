@@ -4,6 +4,7 @@
 @endsection
 @section('content')
 <div class="main-panel">
+  @if(auth()->user()->employee->status != "Inactive")
     <div class="content-wrapper">
         <div class="row">
             <div class="col-md-12 grid-margin">
@@ -316,6 +317,7 @@
           <div class='row'>
           </div>
     </div>
+    @endif
 </div>
 <div class="modal fade" id="event_data" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
