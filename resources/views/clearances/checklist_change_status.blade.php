@@ -12,7 +12,7 @@
                         Status
                         <input type='hidden' name='checklist' value='{{$checklist->checklist}}'>
                         <input type='hidden' name='old_status' value='{{$checklist->status}}'>
-                        <select name='status' class='form-control' required>
+                        <select name='status' class='form-control'  onchange='required_proof({{$checklist->id}},this.value)' required>
                                 <option value=""></option>
                                 <option value="Pending" @if($checklist->status == "Pending") selected @endif>Pending</option>
                                 <option value="N/A" @if($checklist->status == "N/A") selected @endif>N/A</option>
@@ -23,7 +23,7 @@
                 <div class=row>
                     <div class='col-md-12'>
                         Proof
-                       <input type='file' name='proof' class='form-control' >
+                       <input type='file' name='proof' id='proof{{$checklist->id}}' class='form-control' >
                     </div>
                 </div>
                 <div class=row>
