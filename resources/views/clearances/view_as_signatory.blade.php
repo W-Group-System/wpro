@@ -206,6 +206,7 @@
         </div>
     </div>
 </div>
+@if($for_clearances->status == "Pending")
 @if(Request::route()->getName() != "Comments")
 @include('clearances.mark_as_done')
 @foreach($for_clearances->clearance->checklists as $checklist)
@@ -214,6 +215,7 @@
     @endif
 @endforeach
 @endif
+@endif
 <script>
 function displayFileName(event) {
   const fileInput = event.target;  // The file input element
@@ -221,6 +223,18 @@ function displayFileName(event) {
   
   // Update the text input with the file name
   document.getElementById('fileName').value = fileName;
+}
+function required_proof(id,value)
+{
+  if(value == "Completed")
+  {
+    document.getElementById("proof"+id).required = true;
+  }
+else
+  {
+    document.getElementById("proof"+id).required = false;
+  }
+
 }
 </script>
 @endsection
