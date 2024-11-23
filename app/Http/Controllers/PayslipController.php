@@ -173,7 +173,7 @@ class PayslipController extends Controller
             ->whereHas('employee', function ($query) {
                 $query->where('status', 'Active');
             })
-            ->select('company_id', 'employee_no', 'name', 
+            ->select('company_id', 'employee_no', 'name', 'cut_off_date',
             DB::raw('COUNT(CASE WHEN shift NOT LIKE "%REST%" THEN 1 END) as shift_count'),
             DB::raw('SUM(abs) as total_abs'),
             DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
@@ -197,7 +197,7 @@ class PayslipController extends Controller
             DB::raw('SUM(undertime_min) as total_undertime_min')
             )->where('company_id', $request->company)
             ->where('cut_off_date', $cutoff)
-            ->groupBy('company_id', 'employee_no', 'name')
+            ->groupBy('company_id', 'employee_no', 'name','cut_off_date')
             // ->where('employee_no','A3170823')
             // ->whereDoesntHave('employee.salary')
             ->get(); 
