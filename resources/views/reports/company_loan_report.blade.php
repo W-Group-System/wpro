@@ -73,10 +73,10 @@
 						<div class="table-responsive">
                             
                             @foreach($companies_selected as $company)
-							<table class="table  table-hover table-bordered">
+							<table class="table  table-hover table-bordered company-loan-report">
 							<thead>
 								<tr>
-									<th colspan='14'>Company: {{$company->company_code}}</th>
+									<th colspan='11'>Company: {{$company->company_code}}</th>
 								</tr>
 								<tr>
 									<th>NO.</th>
@@ -141,7 +141,7 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function() {
-    new DataTable('.table-db', {
+    new DataTable('.company-loan-report', {
       // pagelenth:25,
       paginate:false,
       dom: 'Bfrtip',
