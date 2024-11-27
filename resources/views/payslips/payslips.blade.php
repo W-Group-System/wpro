@@ -19,7 +19,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                      @foreach($payslips as $payslip)
+                      @foreach($payslips->sortBy('pay_period_from') as $payslip)
                         <tr>
                               
                           <td>{{date('F d, Y',strtotime($payslip->created_at))}}</td>
