@@ -73,7 +73,31 @@
         <div class="col-md-8 grid-margin grid-margin-md-0 stretch-card">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">Clearance </h4>
+              @php
+              $total = 0;
+              $cleared = 0;
+          @endphp
+          @foreach($resignEmployee->exit_clearance as $exit)
+              @foreach($exit->signatories as $signatory)
+                  @php
+                      $total++;
+                  @endphp
+              @endforeach
+              @php
+                  $cleared = $cleared+count(($exit->signatories)->where('status','Cleared'));
+                  // dd($cleared);
+              @endphp
+          @endforeach
+          @if($cleared != 0)
+              @php
+                  $cleared = number_format(($cleared/$total)*100);
+              @endphp
+          @endif
+              <h4 class="card-title">Clearance 
+                <div class="progress progress-md mt-2">
+                  <div class="progress-bar @if($cleared > 80) bg-success @else bg-danger @endif progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{$cleared}}%" aria-valuenow="{{$cleared}}" aria-valuemin="0" aria-valuemax="100">{{$cleared}}%</div>
+                </div>
+              </h4>
               <div class="table-responsive">
                 <table class="table">
                   <thead>

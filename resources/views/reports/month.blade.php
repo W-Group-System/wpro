@@ -74,21 +74,21 @@
                                             {{number_format($payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
-                                            + $payregs->sum('subliq'),2)
+                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount'),2)
                                         }}
                                         </td>
                                     @endfor
                                     @php
-                                        $payregs_total = $employee->get_payreg->whereBetween('cut_off_date',[date('Y-01-01',strtotime($year."-01-01")),date('Y-12-t',strtotime($year."-01-01"))]);
+                                        $payregs_total = $employee->get_payreg()->whereBetween('cut_off_date',[date('Y-01-01',strtotime($year."-01-01")),date('Y-12-t',strtotime($year."-01-01"))]);
                                     @endphp
 									<td>{{ number_format($payregs_total->sum('basic_pay') 
                                         + $payregs_total->sum('deminimis') 
                                         + $payregs_total->sum('other_allowances_basic_pay') 
-                                        + $payregs_total->sum('subliq'),2)}}</td>
+                                        + $payregs_total->sum('subliq') - $payregs_total->sum('absent_amount'),2)}}</td>
 									<td>{{ number_format(($payregs_total->sum('basic_pay') 
                                         + $payregs_total->sum('deminimis') 
                                         + $payregs_total->sum('other_allowances_basic_pay') 
-                                        + $payregs_total->sum('subliq'))/12,2)}}</td>
+                                        + $payregs_total->sum('subliq')- $payregs_total->sum('absent_amount'))/12,2)}}</td>
 								</tr>
                                 @endforeach
 								
