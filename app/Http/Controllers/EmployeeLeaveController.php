@@ -80,11 +80,18 @@ class EmployeeLeaveController extends Controller
         }
 
         // $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
-        $attendance_logs = AttendanceLog::whereDate('date','<=',date('Y-m-d', strtotime('-3 weekdays')))
-            ->where('emp_code', auth()->user()->employee->employee_number)
+        $last_logs = date('Y-m-d');
+        $attendance_logs = AttendanceLog::where('emp_code', auth()->user()->employee->employee_number)
             ->orderBy('date', 'desc')
             ->first();
+
+        $last_logs = date('Y-m-d', strtotime($attendance_logs->date . ' +1 day'));
         
+        if($last_logs >= date('Y-m-d', strtotime('-3 weekdays')))
+        {
+            $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
+        }
+
         // dd($attendance_logs);
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->pluck('log_date')
@@ -117,7 +124,8 @@ class EmployeeLeaveController extends Controller
             'to' => $to,
             'status' => $status,
             'attendance_logs' => $attendance_logs,
-            'attendance_report' => $attendance_report
+            'attendance_report' => $attendance_report,
+            'last_logs' => $last_logs
         ));
     }  
 

@@ -258,12 +258,12 @@
                 // @endphp
 
                 $("[name='date_from']").attr({
-                    'min': "{{!empty($attendance_logs) ? date('Y-m-d', strtotime($attendance_logs->date)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
+                    'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
                     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
                 });
 
                 $("[name='date_to']").attr({
-                    'min': "{{!empty($attendance_logs) ? date('Y-m-d', strtotime($attendance_logs->date)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
+                    'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
                     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
                 });
             }
