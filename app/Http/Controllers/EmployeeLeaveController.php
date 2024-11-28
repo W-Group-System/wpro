@@ -51,8 +51,11 @@ class EmployeeLeaveController extends Controller
         $employee_leaves = EmployeeLeave::with('user','leave','schedule', 'dailySchedules')
                                             ->where('user_id',auth()->user()->id)
                                             ->where('status',$status)
-                                            ->whereDate('created_at','>=',$from)
-                                            ->whereDate('created_at','<=',$to)
+                                            // ->where(function($q)use($from, $to) {
+                                            //     $q->where('date_from', $from)
+                                            //         ->where('date_to', $to);
+                                            // })
+                                            ->whereBetween('date_from', [$from, $to])
                                             ->orderBy('created_at','DESC')
                                             ->get();
         // dd($employee_leaves);
