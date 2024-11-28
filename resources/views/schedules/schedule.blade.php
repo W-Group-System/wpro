@@ -88,3 +88,109 @@
     </div>
 </div>
 @endsection
+
+@section('js')
+<script>
+    $(document).ready(function() {
+        $('[name="restday[Monday]"]').on('click', function() {
+            
+            if ($(this).is(":checked"))
+            {
+                $("[name='time_in_from[Monday]']").val('').prop('required', false);
+                $("[name='time_in_to[Monday]']").val('').prop('required', false);
+                $("[name='time_out_from[Monday]']").val('').prop('required', false);
+                $("[name='time_out_to[Monday]']").val('').prop('required', false);
+                $("[name='working_hours[Monday]']").prop('required', false);
+            }
+            else
+            {
+                $("[name='time_in_from[Monday]']").val('07:00').prop('required', true);
+                $("[name='time_in_to[Monday]']").val('10:00').prop('required', true);
+                $("[name='time_out_from[Monday]']").val('17:30').prop('required', true);
+                $("[name='time_out_to[Monday]']").val('20:30').prop('required', true);
+                $("[name='working_hours[Monday]']").prop('required', true);
+            }
+        })
+
+        $('[name="restday[Tuesday]"]').on('click', function() {
+            
+            if ($(this).is(":checked"))
+            {
+                $("[name='time_in_from[Tuesday]']").val('').prop('required', false);
+                $("[name='time_in_to[Tuesday]']").val('').prop('required', false);
+                $("[name='time_out_from[Tuesday]']").val('').prop('required', false);
+                $("[name='time_out_to[Tuesday]']").val('').prop('required', false);
+                $("[name='working_hours[Tuesday]']").prop('required', false);
+            }
+            else
+            {
+                $("[name='time_in_from[Tuesday]']").val('07:00').prop('required', true);
+                $("[name='time_in_to[Tuesday]']").val('10:00').prop('required', true);
+                $("[name='time_out_from[Tuesday]']").val('17:30').prop('required', true);
+                $("[name='time_out_to[Tuesday]']").val('20:30').prop('required', true);
+                $("[name='working_hours[Tuesday]']").prop('required', true);
+            }
+        })
+
+        $('[name="restday[Wednesday]"]').on('click', function() {
+            
+            if ($(this).is(":checked"))
+            {
+                $("[name='time_in_from[Wednesday]']").val('').prop('required', false);
+                $("[name='time_in_to[Wednesday]']").val('').prop('required', false);
+                $("[name='time_out_from[Wednesday]']").val('').prop('required', false);
+                $("[name='time_out_to[Wednesday]']").val('').prop('required', false);
+                $("[name='working_hours[Wednesday]']").prop('required', false);
+            }
+            else
+            {
+                $("[name='time_in_from[Wednesday]']").val('07:00').prop('required', true);
+                $("[name='time_in_to[Wednesday]']").val('10:00').prop('required', true);
+                $("[name='time_out_from[Wednesday]']").val('17:30').prop('required', true);
+                $("[name='time_out_to[Wednesday]']").val('20:30').prop('required', true);
+                $("[name='working_hours[Wednesday]']").prop('required', true);
+            }
+        })
+
+        $('[name="restday[Thursday]"]').on('click', function() {
+            
+            if ($(this).is(":checked"))
+            {
+                $("[name='time_in_from[Thursday]']").val('').prop('required', false);
+                $("[name='time_in_to[Thursday]']").val('').prop('required', false);
+                $("[name='time_out_from[Thursday]']").val('').prop('required', false);
+                $("[name='time_out_to[Thursday]']").val('').prop('required', false);
+                $("[name='working_hours[Thursday]']").prop('required', false);
+            }
+            else
+            {
+                $("[name='time_in_from[Thursday]']").val('07:00').prop('required', true);
+                $("[name='time_in_to[Thursday]']").val('10:00').prop('required', true);
+                $("[name='time_out_from[Thursday]']").val('17:30').prop('required', true);
+                $("[name='time_out_to[Thursday]']").val('20:30').prop('required', true);
+                $("[name='working_hours[Thursday]']").prop('required', true);
+            }
+        })
+
+        $('[name="restday[Friday]"]').on('click', function() {
+            
+            if ($(this).is(":checked"))
+            {
+                $("[name='time_in_from[Friday]']").val('').prop('required', false);
+                $("[name='time_in_to[Friday]']").val('').prop('required', false);
+                $("[name='time_out_from[Friday]']").val('').prop('required', false);
+                $("[name='time_out_to[Friday]']").val('').prop('required', false);
+                $("[name='working_hours[Friday]']").prop('required', false);
+            }
+            else
+            {
+                $("[name='time_in_from[Friday]']").val('07:00').prop('required', true);
+                $("[name='time_in_to[Friday]']").val('10:00').prop('required', true);
+                $("[name='time_out_from[Friday]']").val('17:30').prop('required', true);
+                $("[name='time_out_to[Friday]']").val('20:30').prop('required', true);
+                $("[name='working_hours[Friday]']").prop('required', true);
+            }
+        })
+    })
+</script>
+@endsection
