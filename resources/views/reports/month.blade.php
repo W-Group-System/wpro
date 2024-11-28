@@ -61,12 +61,25 @@
 									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
 									<td>{{$employee->employee_code}}</td>
                                     @for($i = 1; $i <= 12; $i++)
-                                    @php
+                                        @php
+                                        if($company == 10)
+                                        {
+                                            $date_need = date('Y-m-01', strtotime($year . "-" . $i . '-01 -1 month'));
+                                            $date_need_next = date('Y-m-t', strtotime($year . "-" . $i . '-01 -1 month'));
+                                            $payregs = $employee->get_payreg()
+                                                ->whereBetween('cut_off_date', [
+                                                   $date_need, $date_need_next
+                                                ]);
+                                        }
+                                        else {
                                             $payregs = $employee->get_payreg()
                                                 ->whereBetween('cut_off_date', [
                                                     date('Y-m-01', strtotime($year . "-" . $i . '-01')), 
                                                     date('Y-m-t', strtotime($year . "-" . $i . '-01'))
                                                 ]);
+                                            
+                                        }
+                                            
                                         @endphp
 
                                         
