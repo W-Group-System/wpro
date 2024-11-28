@@ -22,8 +22,9 @@ class EmployeeObController extends Controller
         $obs = EmployeeOb::with('user')
                             ->where('user_id',auth()->user()->id)
                             ->where('status',$status)
-                            ->whereDate('created_at','>=',$from)
-                            ->whereDate('created_at','<=',$to)
+                            // ->whereDate('created_at','>=',$from)
+                            // ->whereDate('created_at','<=',$to)
+                            ->whereBetween('date_from', [$from, $to])
                             ->orderBy('created_at','DESC')
                             ->get();
 

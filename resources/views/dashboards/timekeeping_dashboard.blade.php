@@ -69,6 +69,7 @@
                                   <th>Details</th>
                                   <th>Approver</th>
                                   <th>Date Filed</th>
+                                  <th>Type of Leave</th>
                                 </tr>
                               </thead>
                               <tbody> 
@@ -142,6 +143,9 @@
                                         </td>
                                         <td>
                                             {{ date('M d, Y', strtotime($item->created_at)) }}
+                                        </td>
+                                        <td>
+                                            {{$item->leave->leave_type}}
                                         </td>
                                     </tr>
                                 @endforeach               

@@ -29,8 +29,9 @@ class EmployeeOvertimeController extends Controller
 
             $overtimes = EmployeeOvertime::where('user_id',auth()->user()->id)
                                             ->where('status',$status)
-                                            ->whereDate('created_at','>=',$from)
-                                            ->whereDate('created_at','<=',$to)
+                                            // ->whereDate('created_at','>=',$from)
+                                            // ->whereDate('created_at','<=',$to)
+                                            ->whereBetween('start_time', [$from, $to])
                                             ->orderBy('created_at','DESC')
                                             ->get();
             
