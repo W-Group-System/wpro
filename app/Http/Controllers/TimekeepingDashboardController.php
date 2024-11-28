@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AttendanceDetailedReport;
 use App\Company;
 use Illuminate\Http\Request;
 use App\Employee;
@@ -198,6 +199,8 @@ class TimekeepingDashboardController extends Controller
                             })
                             ->get();
 
+        $getLastCutOffDate = AttendanceDetailedReport::orderBy('id', 'desc')->first();
+
         return view('dashboards.timekeeping_dashboard', 
                     array(
                         'header' => 'Timekeeping',
@@ -213,6 +216,7 @@ class TimekeepingDashboardController extends Controller
                         'company' => $company,
                         'dtrs' => $dtrs,
                         'emp_data' => $emp_data,
+                        'getLastCutOffDate' => $getLastCutOffDate
                     )
         );
     }
