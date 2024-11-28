@@ -79,6 +79,8 @@
                                             {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                             <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                             <small>{{$item->user->employee->company->company_name}}</small>
+                                            
+                                            @if($item->date_from >= $getLastCutOffDate->cut_off_date)
                                             <div class="buttons">
                                                 @if ($item->status == 'Pending')
                                                 <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#leave-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
@@ -97,6 +99,7 @@
                                                 </button>
                                                 @endif
                                             </div>
+                                            @endif
                                         </td>
                                         <td>
                                             Date From: {{date('M d, Y', strtotime($item->date_from))}} <br>
@@ -169,6 +172,8 @@
                                         {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
+                                        
+                                        @if(date('Y-m-d', strtotime($item->date_from)) >= $getLastCutOffDate->cut_off_date)
                                         <div class="buttons">
                                             @if ($item->status == 'Pending')
                                                 <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#ob-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
@@ -186,6 +191,7 @@
                                                 </button>
                                             @endif
                                         </div>
+                                        @endif
                                     </td>
                                     <td>
                                         Date: {{date('M d, Y', strtotime($item->applied_date))}} <br>
@@ -311,6 +317,7 @@
                                   <th>Employee</th>
                                   <th>Details</th>
                                   <th>Approver</th>
+                                  <th>Approved OT</th>
                                 </tr>
                               </thead>
                               <tbody> 
@@ -321,6 +328,8 @@
                                         {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
+
+                                        @if($item->date_from >= $getLastCutOffDate->cut_off_date)
                                         <div class="buttons">
                                             @if ($item->status == 'Pending')
                                                 <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#approve-ot-hrs-{{ $item->id }}" data-toggle="modal" title="Approve">
@@ -338,6 +347,7 @@
                                                 </button>
                                             @endif
                                         </div>
+                                        @endif
                                     </td>
                                     <td>
                                         Date: {{date('M d, Y', strtotime($item->ot_date))}} <br>
@@ -375,6 +385,9 @@
                                         @else
                                         <label class="badge badge-danger mt-1">No Approver</label>
                                         @endif
+                                    </td>
+                                    <td>
+                                        {{$item->ot_approved_hrs - $item->break_hrs}}
                                     </td>
                                 </tr>
                                 @endforeach                      
