@@ -171,6 +171,7 @@ class UserController extends Controller
                 $user_privilege->reports_wfh = $request->reports_wfh;
                 $user_privilege->reports_ob = $request->reports_ob;
                 $user_privilege->reports_dtr = $request->reports_dtr;
+                $user_privilege->reports_loan = $request->reports_loan;
 
                 $user_privilege->biometrics_per_employee = $request->biometrics_per_employee;
                 $user_privilege->biometrics_per_location = $request->biometrics_per_location;

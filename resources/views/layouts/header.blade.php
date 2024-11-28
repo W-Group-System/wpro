@@ -660,12 +660,15 @@
                     @if (checkUserPrivilege('reports_dtr',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/dtr-report') }}">DTR Reports</a></li>
                     @endif
+                    @if (checkUserPrivilege('reports_loan',auth()->user()->id) == 'yes')
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/company-loan-report') }}">Company Loan Report</a></li>
+                    @endif
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/dtr-report') }}">DTR Reports</a></li> --}}
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/totalExpense-report') }}">Total Expenses</a></li>
                     
                     @if (checkUserPrivilege('payroll_view',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-report') }}">Loans Report</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ url('/company-loan-report') }}">Company Loan Report</a></li>
+                    {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/company-loan-report') }}">Company Loan Report</a></li> --}}
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/government-report') }}">Government Reports</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/payroll-report') }}">Payroll Reports</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/ytd-report') }}">YTD</a></li>

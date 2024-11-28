@@ -204,6 +204,18 @@
                                         Daily Time Record
                                         <br>
                                         <br>
+                                        @if($user->user_privilege)
+                                        @if($user->user_privilege->reports_loan == 'on')
+                                            <input type="checkbox" name="reports_loan" id="reports_loan{{$user->id}}" value="{{ $user->user_privilege->reports_loan }}" checked>
+                                        @else
+                                            <input type="checkbox" name="reports_loan" id="reports_loan{{$user->id}}">
+                                        @endif
+                                    @else
+                                        <input type="checkbox" name="reports_loan" id="reports_loan{{$user->id}}">
+                                    @endif
+                                    Loan Report
+                                    <br>
+                                    <br>
                                     </div>
                                     {{-- Biometrics --}}
                                     <div class="col-md-6 form-group">
