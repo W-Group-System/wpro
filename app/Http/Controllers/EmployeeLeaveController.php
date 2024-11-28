@@ -91,20 +91,17 @@ class EmployeeLeaveController extends Controller
         $attendance_obs = EmployeeOb::where('user_id',auth()->user()->employee->user_id)->orderBy('applied_date', 'desc')->where('status','Approved')
         ->first();
 
-        if ($attendance_logs != null)
+        $last_logs = date('Y-m-d', strtotime($attendance_logs->date . ' +1 day'));
+        if($attendance_obs)
         {
-            $last_logs = date('Y-m-d', strtotime($attendance_logs->date . ' +1 day'));
-            if($attendance_obs)
-            {
-               if($attendance_obs->applied_date > $last_logs)
-               {
-                $last_logs = date('Y-m-d',strtotime($$attendance_obs));
-               }
-            }
-            if($last_logs >= date('Y-m-d', strtotime('-3 weekdays')))
-            {
-                $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
-            }
+           if($attendance_obs->applied_date > $last_logs)
+           {
+            $last_logs = date('Y-m-d',strtotime($attendance_obs));
+           }
+        }
+        if($last_logs >= date('Y-m-d', strtotime('-3 weekdays')))
+        {
+            $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
         }
 
         // dd($attendance_logs);
