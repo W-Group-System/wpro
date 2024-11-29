@@ -69,9 +69,9 @@
                                         <td>{{ $employee->department->name}}</td>
                                         <td>
                                             @php
-                                                $used_vl = checkUsedSLVLSILLeave($employee->user_id,1,$employee->original_date_hired);
-                                                $used_sl = checkUsedSLVLSILLeave($employee->user_id,2,$employee->original_date_hired);
-                                                $used_sil = checkUsedSLVLSILLeave($employee->user_id,10,$employee->original_date_hired);
+                                                $used_vl = checkUsedSLVLSILLeave($employee->user_id,1,$employee->original_date_hired,$employee->ScheduleData);
+                                                $used_sl = checkUsedSLVLSILLeave($employee->user_id,2,$employee->original_date_hired,$employee->ScheduleData);
+                                                $used_sil = checkUsedSLVLSILLeave($employee->user_id,10,$employee->original_date_hired,$employee->ScheduleData);
                                                 $used_ml = checkUsedLeave($employee->user_id,3);
                                                 $used_pl = checkUsedLeave($employee->user_id,4);
                                                 $used_spl = checkUsedLeave($employee->user_id,5);

@@ -94,12 +94,26 @@ function dateRangeHelper( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
 
     while( $current <= $last ) {
         $curr = date('D',$current);
-        if ($curr == 'Sat' || $curr == 'Sun') {
-            $current = strtotime( $step, $current);
-        }else{
+      
             $dates[] = date( $format, $current);
             $current = strtotime( $step, $current );
-        }
+        
+    }
+
+    return $dates;
+}
+
+function dateRangeHelperLeaveCount( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
+    $dates = [];
+    $current = strtotime( $first );
+    $last = strtotime( $last );
+
+    while( $current <= $last ) {
+        $curr = date('D',$current);
+      
+        $dates[] = date( $format, $current);
+        $current = strtotime( $step, $current );
+        
     }
 
     return $dates;
@@ -439,18 +453,21 @@ function night_difference_per_company($start_work, $end_work)
 
 function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday)
 {
-    $date_from = Carbon::parse($date_from);
-    $date_to = Carbon::parse($date_to);
-
+    $date_from = date('Y-m-d', strtotime($date_from));
+    $date_to = date('Y-m-d', strtotime($date_to));
+    
     // Initialize count
     $count = 0;
-
+    
     // Generate list of day names from scheduleDatas
     $workingDays = $scheduleDatas->pluck('name')->toArray();
+    // Create DateTime objects from string dates
+    $dateFromObj = new DateTime($date_from);
+    $dateToObj = new DateTime($date_to);
     
     // Loop over each day in the date range
-    for ($date = $date_from->copy(); $date->lte($date_to); $date->addDay()) {
-        $dailySchedule = $dailySchedules->firstWhere('log_date', $date->toDateString());
+    while ($dateFromObj <= $dateToObj) {
+        $dailySchedule = $dailySchedules->firstWhere('log_date', $dateFromObj->format('Y-m-d'));
         
         if ($dailySchedule) {
             // If a daily schedule exists, check if working_hours is set
@@ -459,13 +476,16 @@ function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $
             }
         } else {
             // If no daily schedule, check weekly schedule (scheduleDatas)
-            $dayName = $date->format('l'); // Get the day name (e.g., Monday, Tuesday)
+            $dayName = $dateFromObj->format('l'); // Get the day name (e.g., Monday, Tuesday)
             if (in_array($dayName, $workingDays)) {
                 $count++;
             }
         }
+    
+        // Increment the date by one day
+        $dateFromObj->modify('+1 day');
     }
-
+    
     // Adjust count for half-day if applicable
     if ($count == 1 && $halfday == 1) {
         return 0.5;
@@ -475,10 +495,18 @@ function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $
 }
 
 
-function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired)
+function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired,$scheduleDatas = [])
 {
+    
     $count = 0;
+    $all_days = [];
+    $workingDays = [];
     if ($date_hired) {
+        if($scheduleDatas != [])
+        {
+            $workingDays = $scheduleDatas->pluck('name')->toArray();
+        }
+        // dd($workingDays);
         $today = date('Y-m-d');
         $date_hired_md = date('m-d', strtotime($date_hired));
         $last_year = date('Y', strtotime('-1 year', strtotime($today)));
@@ -502,9 +530,10 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired)
         $employee_vl = EmployeeLeave::where('user_id', $user_id)
             ->where('leave_type', $leave_type)
             ->where('status', 'Approved')
+            ->where('withpay',1)
             // ->where('date_from', '>', $filter_date_leave)
             ->get();
-        
+            // dd($employee_vl);
         if ($employee_vl) {
             foreach ($employee_vl as $leave) {
                 if ($leave->withpay == 1 && $leave->halfday == 1) {
@@ -518,28 +547,44 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired)
                         ->get();
                     
                     // Iterate through each date in the date range
-                    $date_range = dateRangeHelper($leave->date_from, $leave->date_to);
+                    $date_range = dateRangeHelperLeaveCount($leave->date_from, $leave->date_to);
                     
                     if ($date_range) {
+                        
                         foreach ($date_range as $date_r) {
                             $leave_Date = date('Y-m-d', strtotime($date_r));
                             // Check if withpay is 1 and leave_Date is valid
-                            if ($leave->withpay == 1 && $leave_Date) {
+                            if ($leave->withpay == 1) {
                                 // Check if log_date exists in dailySchedules
-                                $log_date_found = false;
-                                foreach ($dailySchedules as $schedule) {
-                                    $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
-                                    
-                                    if ($log_date === $leave_Date) {
-                                        $log_date_found = true;
-                                        if (is_null($schedule->working_hours)) {
-                                        } else {
-                                            $count++; 
+                                $d = $dailySchedules->where('log_date',$leave_Date)->first();
+                            
+                                if($d != null)
+                                {
+                                    foreach ($dailySchedules as $schedule) {
+                                        $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
+                                        
+                                        if ($log_date === $leave_Date) {
+                                            if (is_null($schedule->working_hours)) {
+    
+                                            } else {
+                                                $count++; 
+                                                $all_days[]=$leave_Date;
+                                            }
                                         }
                                     }
                                 }
-                                if (!$log_date_found) {
-                                    $count++;
+                                else
+                                {
+                              
+                                    $dayName = date('l',strtotime($leave_Date)); // Get the day name (e.g., Monday, Tuesday)
+                              
+                                    if (in_array($dayName, $workingDays)) {
+                                        // dd($dayName);
+                                        
+                                        $count++;
+                                        $all_days[]=$leave_Date;
+                                    }
+
                                 }
                             }
                         }

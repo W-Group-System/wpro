@@ -30,12 +30,12 @@ class EmployeeLeaveController extends Controller
         $to = isset($request->to) ? $request->to : date('Y-m-d');
         $status = isset($request->status) ? $request->status : 'Pending';
 
-        $employee_status = Employee::select('original_date_hired','classification','gender')->where('user_id',auth()->user()->id)->first();
-
-        $used_vl = checkUsedSLVLSILLeave(auth()->user()->id,1,$employee_status->original_date_hired);
-        $used_sl = checkUsedSLVLSILLeave(auth()->user()->id,2,$employee_status->original_date_hired);
-        $used_sil = checkUsedSLVLSILLeave(auth()->user()->id,10,$employee_status->original_date_hired);
-
+        $employee_status = Employee::where('user_id',auth()->user()->id)->first();
+        // dd($employee_status->ScheduleData);
+        $used_vl = checkUsedSLVLSILLeave(auth()->user()->id,1,$employee_status->original_date_hired,$employee_status->ScheduleData);
+        $used_sl = checkUsedSLVLSILLeave(auth()->user()->id,2,$employee_status->original_date_hired,$employee_status->ScheduleData);
+        $used_sil = checkUsedSLVLSILLeave(auth()->user()->id,10,$employee_status->original_date_hired,$employee_status->ScheduleData);
+        // dd($used_sl);
         $used_ml = checkUsedLeave(auth()->user()->id,3);
         $used_pl = checkUsedLeave(auth()->user()->id,4);
         $used_spl = checkUsedLeave(auth()->user()->id,5);

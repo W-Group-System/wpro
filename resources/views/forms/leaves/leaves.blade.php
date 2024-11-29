@@ -537,7 +537,7 @@
                           @endif 
                       </td>
                       <td>{{date('M. d, Y h:i A', strtotime($employee_leave->created_at))}}</td>
-                      <td>{{date('M. d, Y', strtotime($employee_leave->date_from))}} to {{date('M. d, Y', strtotime($employee_leave->date_to))}} </td>
+                      <td>{{date('M. d, Y - l', strtotime($employee_leave->date_from))}} to {{date('M. d, Y - l', strtotime($employee_leave->date_to))}} </td>
                       <td>{{ $employee_leave->leave->leave_type }}</td>
                       @if($employee_leave->withpay == 1)   
                         <td>Yes</td>
@@ -554,7 +554,7 @@
                           {{ $employee_leave->reason }}
                         </p>
                       </td>
-                      <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->schedule, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday) }}</td>
+                      <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->employee->ScheduleData, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday) }}</td>
 
                       <td id="tdStatus{{ $employee_leave->id }}">
                         @if ($employee_leave->status == 'Pending')
