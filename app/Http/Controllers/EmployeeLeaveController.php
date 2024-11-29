@@ -97,7 +97,7 @@ class EmployeeLeaveController extends Controller
         // dd($attendance_obs);
         if($attendance_logs)
         {
-            $last_logs = date('Y-m-d', strtotime($attendance_logs->date . ' +1 day'));
+            $last_logs = date('Y-m-d', strtotime($attendance_logs->date ));
         }
         if($attendance_obs)
         {
