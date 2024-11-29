@@ -121,7 +121,11 @@ class EmployeeLeaveController extends Controller
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->pluck('log_date')
             ->toArray();
-        // dd($attendance_report);
+
+        $cut_off_date = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
+            ->orderBy('id', 'desc')
+            ->first();
+        
         return view('forms.leaves.leaves',
         array(
             'header' => 'forms',
@@ -150,7 +154,8 @@ class EmployeeLeaveController extends Controller
             'status' => $status,
             'attendance_logs' => $attendance_logs,
             'attendance_report' => $attendance_report,
-            'last_logs' => $last_logs
+            'last_logs' => $last_logs,
+            'cut_off' => $cut_off_date
         ));
     }  
 
