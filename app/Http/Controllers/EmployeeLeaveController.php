@@ -11,6 +11,7 @@ use App\Employee;
 use App\ScheduleData;
 use App\Leave;
 use App\EmployeeLeave;
+use Carbon\Carbon;
 use App\EmployeeOb;
 use App\EmployeeLeaveCredit;
 use Illuminate\Http\Request;
@@ -85,27 +86,32 @@ class EmployeeLeaveController extends Controller
 
         // $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
         $last_logs = date('Y-m-d');
+        $threeDaysAgo = date('Y-m-d', strtotime('-3 weekdays'));
+        // dd($threeDaysAgo);
         $attendance_logs = AttendanceLog::where('emp_code', auth()->user()->employee->employee_number)
             ->orderBy('date', 'desc')
+            ->whereDate('date', '<', $threeDaysAgo)
             ->first();
             $attendance_obs = EmployeeOb::whereHas('employee', function($query) {
                 $query->where('user_id', auth()->user()->employee->user_id);
             })
             ->where('status', 'Approved')
             ->orderBy('applied_date', 'desc')
+            ->whereDate('applied_date', '<', $threeDaysAgo)
             ->first();
-        // dd($attendance_obs);
+        // dd($attendance_logs);
         if($attendance_logs)
         {
             $last_logs = date('Y-m-d', strtotime($attendance_logs->date ));
         }
         if($attendance_obs)
         {
-           if($attendance_obs->applied_date >= $last_logs)
+           if($attendance_obs->applied_date <= $last_logs)
            {
-            $last_logs = date('Y-m-d',strtotime($attendance_obs->applied_date. ' +1 day'));
+            $last_logs = date('Y-m-d',strtotime($attendance_obs->applied_date));
            }
         }
+        $last_logs = date('Y-m-d',strtotime($last_logs. "+1 day"));
         if($last_logs >= date('Y-m-d', strtotime('-3 weekdays')))
         {
             $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
@@ -217,11 +223,11 @@ class EmployeeLeaveController extends Controller
                 ->whereIn('status', ['Pending', 'Approved'])
                 ->first();
             
-            if ($existing_date_leave != null)
-            {
-                Alert::error('Error. You have a file leave on that day')->persistent('Dismiss');
-                return back();
-            }
+            // if ($existing_date_leave != null)
+            // {
+            //     Alert::error('Error. You have a file leave on that day')->persistent('Dismiss');
+            //     return back();
+            // }
             
             $new_leave = new EmployeeLeave;
             $new_leave->user_id = Auth::user()->id;
