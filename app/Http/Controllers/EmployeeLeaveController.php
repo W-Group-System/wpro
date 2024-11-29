@@ -88,7 +88,7 @@ class EmployeeLeaveController extends Controller
         $attendance_logs = AttendanceLog::where('emp_code', auth()->user()->employee->employee_number)
             ->orderBy('date', 'desc')
             ->first();
-        $attendance_obs = EmployeeOb::where('user_id',auth()->user()->employee->user_id)->orderBy('applied_date', 'desc')->where('status','Approved')
+        $attendance_obs = EmployeeOb::where('user_id',auth()->user()->employee->user_id)->where('status','Approved')->orderBy('applied_date', 'desc')
         ->first();
         // dd($attendance_obs);
         if($attendance_logs)
