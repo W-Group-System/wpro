@@ -90,13 +90,15 @@ class EmployeeLeaveController extends Controller
             ->first();
         $attendance_obs = EmployeeOb::where('user_id',auth()->user()->employee->user_id)->orderBy('applied_date', 'desc')->where('status','Approved')
         ->first();
-
-        $last_logs = date('Y-m-d', strtotime($attendance_logs->date . ' +1 day'));
+        if($attendance_logs)
+        {
+            $last_logs = date('Y-m-d', strtotime($attendance_logs->date . ' +1 day'));
+        }
         if($attendance_obs)
         {
-           if($attendance_obs->applied_date > $last_logs)
+           if($attendance_obs->applied_date <= $last_logs)
            {
-            $last_logs = date('Y-m-d',strtotime($$attendance_obs));
+            $last_logs = date('Y-m-d',strtotime($attendance_obs->applied_date . ' +1 day'));
            }
         }
         if($last_logs >= date('Y-m-d', strtotime('-3 weekdays')))
