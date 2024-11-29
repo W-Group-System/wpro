@@ -256,12 +256,14 @@
                 //     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
                 // });
                 // @endphp
-
+                  // Use PHP to format the date and pass it to JavaScript
+                  const formattedDate = "<?php echo date('Y-m-d', strtotime($last_logs)); ?>";
+                  console.log(formattedDate);
                 $("[name='date_from']").attr({
                     'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
                     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
                 });
-
+                // console.log({{!date('Y-m-d', strtotime($last_logs))}});
                 $("[name='date_to']").attr({
                     'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
                     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
