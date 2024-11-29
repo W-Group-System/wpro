@@ -655,7 +655,8 @@ class AttendanceController extends Controller
                 'undertime_days' => $group->filter(function ($item) {
                     return $item->undertime_min > 0;
                 })->count(),
-                'remarks' => $group->first()->remarks
+                'remarks' => $group->first()->remarks,
+                'employee_no' => $group->first()->employee_no
             ];
         })->filter(function ($item) use ($count) {
             return $item['tardiness_days'] >= $count;
@@ -672,7 +673,8 @@ class AttendanceController extends Controller
                 'undertime_days' => $group->filter(function ($item) {
                     return $item->undertime_min > 0;
                 })->count(),
-                'remarks' => $group->first()->remarks
+                'remarks' => $group->first()->remarks,
+                'employee_no' => $group->first()->employee_no
             ];
         })->filter(function ($item) use ($count) {
             return $item['undertime_days'] >= $count;
@@ -688,6 +690,7 @@ class AttendanceController extends Controller
                 'name' => $group->first()->name,
                 'no_lwop_days' => $group->count(), // Count the number of days matching the criteria
                 'remarks' => $group->first()->remarks,
+                'employee_no' => $group->first()->employee_no
             ];
         })->filter(function ($item) {
             return $item['no_lwop_days'] >= 3;
@@ -717,6 +720,7 @@ class AttendanceController extends Controller
                 'name' => $item->name,
                 'leave_date' => $item->log_date,
                 'leave_types' => $leaveTypes,
+                'employee_no' => $employee->employee_code
             ];
         });        
 
@@ -762,7 +766,8 @@ class AttendanceController extends Controller
                 'total_reg_hrs' => $totalRegHrs,
                 'total_ot' => $totalOt,
                 'percent_overtime' => $totalRegHrs > 0 ? ($totalOt / $totalRegHrs) * 100 : 0,
-                'remarks' => $group->first()->remarks
+                'remarks' => $group->first()->remarks,
+                'employee_no' => $group->first()->employee_no
             ];
         });
         
