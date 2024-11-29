@@ -68,6 +68,7 @@
 										<tr>
 										  
 										  {{-- <th>User ID</th> --}}
+                                          <th>Company</th>
 										  <th>Employee Code</th>
 										  <th>Employee Name</th>
 										  
@@ -88,6 +89,7 @@
 									  <tbody> 
 										@foreach ($employee_leaves as $form_approval)
 										<tr>
+                                            <td>{{$form_approval->employee->company->company_name}}</td>
 										  {{-- <td>{{$form_approval->user->id}}</td> --}}
 										  <td>{{$form_approval->employee->employee_code}}</td>
 										  <td>{{$form_approval->user->name}}</td>
