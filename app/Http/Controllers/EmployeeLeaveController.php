@@ -106,7 +106,7 @@ class EmployeeLeaveController extends Controller
             $last_logs = date('Y-m-d',strtotime($attendance_obs->applied_date. ' +1 day'));
            }
         }
-        if($last_logs >= date('Y-m-d', strtotime('-3 weekdays')))
+        if($last_logs <= date('Y-m-d', strtotime('-3 weekdays')))
         {
             $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
         }
