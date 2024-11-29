@@ -68,6 +68,7 @@
 										<tr>
 										  
 										  {{-- <th>User ID</th> --}}
+                                          <th>Company</th>
 										  <th>Employee Code</th>
 										  <th>Employee Name</th>
 										  
@@ -88,6 +89,7 @@
 									  <tbody> 
 										@foreach ($employee_leaves as $form_approval)
 										<tr>
+                                            <td>{{$form_approval->employee->company->company_name}}</td>
 										  {{-- <td>{{$form_approval->user->id}}</td> --}}
 										  <td>{{$form_approval->employee->employee_code}}</td>
 										  <td>{{$form_approval->user->name}}</td>
@@ -107,7 +109,11 @@
 										  @else
 											<td></td>
 										  @endif 
-										  <td>{{get_count_days_report($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
+										  <td>
+                                            @if($form_approval->leave->id != 13)
+                                            {{get_count_days_report($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}
+                                            @endif
+                                          </td>
 										  <td>@foreach($form_approval->approver as $approvers)
 												{{$approvers->approver_info->name}}
 											

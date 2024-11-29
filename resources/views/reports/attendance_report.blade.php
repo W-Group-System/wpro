@@ -75,6 +75,7 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
+                                    <th>Employee ID</th>
                                     <th>Company</th>
                                     <th>Name</th>
                                     <th>No. of Days</th>
@@ -85,6 +86,7 @@
                                 @foreach($tardinessData as $index => $tardiness)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        <td>{{$tardiness['employee_no']}}</td>
                                         <td>{{ $tardiness['company_code'] }}</td>
                                         <td>{{ $tardiness['name'] }}</td>
                                         <td>{{ $tardiness['tardiness_days'] }}</td>
@@ -98,6 +100,7 @@
                         <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Employee ID</th>
                                     <th>No.</th>
                                     <th>Company</th>
                                     <th>Name</th>
@@ -108,6 +111,7 @@
                             <tbody>
                                 @foreach($undertimeData as $index => $undertime)
                                     <tr>
+                                        <td>{{$undertime['employee_no']}}</td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $undertime['company_code'] }}</td>
                                         <td>{{ $undertime['name'] }}</td>
@@ -122,6 +126,7 @@
                         <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Employee ID</th>
                                     <th>No.</th>
                                     <th>Company</th>
                                     <th>Name</th>
@@ -133,6 +138,7 @@
                             <tbody>
                                 @foreach($leaveWithoutData as $index => $withoutLeave)
                                     <tr>
+                                        <td>{{$withoutLeave['employee_no']}}</td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $withoutLeave['company_code'] }}</td>
                                         <td>{{ $withoutLeave['name'] }}</td>
@@ -147,6 +153,7 @@
                         <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Employee ID</th>
                                     <th>No.</th>
                                     <th>Company</th>
                                     <th>Name</th>
@@ -158,6 +165,7 @@
                             <tbody>
                                 @foreach($leaveDeviationsData as $index => $leaveDeviations)
                                     <tr>
+                                        <td>{{$leaveDeviations['employee_no']}}</td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $leaveDeviations['company_code'] }}</td>
                                         <td>{{ $leaveDeviations['name'] }}</td>
@@ -212,6 +220,7 @@
                         <table class="table table-hover table-bordered">
                             <thead>
                                 <tr>
+                                    <th>Employee ID</th>
                                     <th>No.</th>
                                     <th>Company</th>
                                     <th>Regular Working Hours</th>
@@ -223,6 +232,7 @@
                             <tbody>
                                 @foreach($overtimeData as $index => $overtime)
                                     <tr>
+                                        <td>{{$overtime['employee_no']}}</td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $overtime['company_code'] }}</td>
                                         <td>{{ number_format($overtime['total_reg_hrs'], 2) }}</td>
