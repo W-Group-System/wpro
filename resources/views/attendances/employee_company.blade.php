@@ -603,6 +603,7 @@
                                                             if($schedule_hours > $work)
                                                             {
                                                                 $undertime = (double) number_format($schedule_hours - $work,2);
+                                                                // dd($undertime);
                                                             }
                                                            if($work_ot > $original_sched)
                                                            {
@@ -656,7 +657,13 @@
                                                     
                                                     if($undertime > 0){
                                                         if($late_diff_hours > 0){
-                                                            $undertime_hrs = $undertime - $late_diff_hours;
+                                                            $undertime_hrs = $undertime - ($late_diff_hours);
+
+                                                            if($late_diff_hours >= ($schedule_hours/2.25))
+                                                            {
+                                                                $undertime_hrs = $undertime - ($late_diff_hours-1);
+                                                            }
+                                                      
                                                         }else{
                                                             $undertime_hrs = $undertime;
                                                         }
@@ -681,10 +688,12 @@
                                                 @endif
                                                 @php
                                                     $late = $late_diff_hours*60;
-                                                    if($late/60 > ($schedule_hours/2))
-
+                                                  
+                                                    if($late/60 > (($schedule_hours)/2.25))
                                                     {
-                                                        $late = $late -60;
+                                                        // dd($late);
+                                                        $late = $late-60;
+                                                        
                                                     }
                                                     if($undertime_hrs/60 > ($schedule_hours/2))
 
@@ -785,7 +794,11 @@
                                                             $night_diff = $night_diff - 1;
                                                         }
                                                         }
-                                                        $night_diff_ot = night_difference_per_company($time_start,$time_end)-$night_diff;
+                                                        if($night_diff < 7)
+                                                        {
+                                                            $night_diff_ot = night_difference_per_company($time_start,$time_end)-$night_diff;
+                                                        }
+                                                        
                                                     }
                                                      
                                                     
