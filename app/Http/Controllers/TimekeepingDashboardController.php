@@ -198,8 +198,8 @@ class TimekeepingDashboardController extends Controller
                                 $q->whereIn('project',$allowed_projects);
                             })
                             ->get();
-
-        $getLastCutOffDate = AttendanceDetailedReport::orderBy('id', 'desc')->first();
+        
+        $getLastCutOffDate = AttendanceDetailedReport::where('company_id', $request->company)->orderBy('id', 'desc')->first();
 
         return view('dashboards.timekeeping_dashboard', 
                     array(
