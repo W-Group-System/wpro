@@ -529,7 +529,10 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired,$scheduleDatas
 
         $employee_vl = EmployeeLeave::where('user_id', $user_id)
             ->where('leave_type', $leave_type)
-            ->where('status', 'Approved')
+            ->where(function ($query) {
+                $query->where('status', 'Approved')
+                      ->orWhere('status', 'Pending');
+            })
             ->where('withpay',1)
             // ->where('date_from', '>', $filter_date_leave)
             ->get();
