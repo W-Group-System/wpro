@@ -169,8 +169,8 @@
         <div class="pagibig-number" style='font-size: 30px;'>{{$employee->hdmf_number}}</div>
         <div class="datehired" style='font-size: 30px;'>{{date('m-d-Y',strtotime($employee->original_date_hired))}}</div>
         {{-- <div class="email" style='font-size: 30px;'>{{$employee->user_info->email}}</div> --}}
-        <div class="contact_person" style='font-size: 30px;'>{{$employee->contact_person->name ?? null}} asd</div>
-        <div class="contact_number" style='font-size: 30px;'>{{$employee->contact_person->contact_number ?? null}} as</div>
+        <div class="contact_person" style='font-size: 30px;'>{{$employee->contact_person->name ?? null}}</div>
+        <div class="contact_number" style='font-size: 30px;'>{{$employee->contact_person->contact_number ?? null}}</div>
         {{-- <div class="qr-code" ><img src="data:image/png;base64, {!! base64_encode(QrCode::format('svg')->size(250)->errorCorrection('H')->generate('https://hris.wsystem.online/calling-card/'.$employee->employee_code)) !!}"></div> --}}
     </div>
 </body>
