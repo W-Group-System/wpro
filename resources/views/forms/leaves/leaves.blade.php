@@ -515,7 +515,7 @@
                             
 
                                 @if(date('Y-m-d', strtotime($employee_leave->date_from)) > date('Y-m-d'))
-                                    <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel(this.id)"
+                                    <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{$employee_leave->id}})"
                                             class="btn btn-rounded btn-danger btn-icon">
                                         <i class="fa fa-ban"></i>
                                     </button> 
@@ -656,6 +656,7 @@
     // console.log(id);
     var element = document.getElementById('tdActionId'+id);
     var dataID = element.getAttribute('data-id');
+    
     Swal.fire({
       title: "Are you sure?",
       text: "You want to cancel this leave?",
@@ -664,7 +665,7 @@
       dangerMode: true,
     })
     .then((willCancel) => {
-      if (willCancel) {
+      if (willCancel.isConfirmed) {
         document.getElementById("loader").style.display = "block";
         $.ajax({
           url: "disable-leave/" + id,
