@@ -61,7 +61,7 @@ return [
             [
                 'name' => 'WPro',
                 'description' => 'WPro',
-                'url' => 'hris.wsyste.online',
+                'url' => 'https://hris.wsystem.online',
                 'icons' => [
                     "src" => "/images/icons/icon-72x72.png",
                     "purpose" => "any"
