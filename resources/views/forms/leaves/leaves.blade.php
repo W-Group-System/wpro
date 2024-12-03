@@ -604,7 +604,7 @@
 @foreach ($employee_leaves as $leave)
   @include('forms.leaves.edit_leave')
   @include('forms.leaves.view_leave') 
-  {{-- @include('forms.leaves.request_to_cancel')  --}}
+  @include('forms.leaves.request_to_cancel') 
   @include('forms.leaves.leave_file') 
 @endforeach
 
