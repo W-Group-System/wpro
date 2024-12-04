@@ -61,6 +61,11 @@
 									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
 									<td>{{$employee->employee_code}}</td>
                                     @for($i = 1; $i <= 12; $i++)
+                                        @if($i == 12)
+                                        <td>
+                                            {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
+                                        </td>
+                                        @else
                                         @php
                                         if($company == 10)
                                         {
@@ -87,21 +92,16 @@
                                             {{number_format($payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
-                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount'),2)
+                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount'),2)
                                         }}
                                         </td>
+                                        @endif
                                     @endfor
                                     @php
                                         $payregs_total = $employee->get_payreg()->whereBetween('cut_off_date',[date('Y-01-01',strtotime($year."-01-01")),date('Y-12-t',strtotime($year."-01-01"))]);
                                     @endphp
-									<td>{{ number_format($payregs_total->sum('basic_pay') 
-                                        + $payregs_total->sum('deminimis') 
-                                        + $payregs_total->sum('other_allowances_basic_pay') 
-                                        + $payregs_total->sum('subliq') - $payregs_total->sum('absent_amount'),2)}}</td>
-									<td>{{ number_format(($payregs_total->sum('basic_pay') 
-                                        + $payregs_total->sum('deminimis') 
-                                        + $payregs_total->sum('other_allowances_basic_pay') 
-                                        + $payregs_total->sum('subliq')- $payregs_total->sum('absent_amount'))/12,2)}}</td>
+									<td></td>
+									<td></td>
 								</tr>
                                 @endforeach
 								
