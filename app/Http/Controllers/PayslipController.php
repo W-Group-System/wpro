@@ -787,7 +787,7 @@ class PayslipController extends Controller
         
         if($company == 10)
         {
-            $employees = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired')
+            $employees = Employee::select('employee_number','bank_account_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired','department_id')
             ->with(['get_payreg' => function ($query) use ($year) {
                 $query->select('basic_pay', 'deminimis', 'other_allowances_basic_pay', 'subliq', 'cut_off_date')
                 ->whereBetween('cut_off_date', [
@@ -795,8 +795,9 @@ class PayslipController extends Controller
                     date('Y-12-t', strtotime("$year-12-01"))
                 ]);
             }])
+            ->whereHas('salary')
             ->where('original_date_hired','<=',date('Y-11-30'))
-            ->with('company','benefits')
+            ->with('company','benefits','department')
             ->where('company_id', $request->company)
             ->where('classification','!=',8)
             ->where('status','Active')
@@ -804,7 +805,7 @@ class PayslipController extends Controller
         }
         else
         {
-            $employees = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired')
+            $employees = Employee::select('employee_number','bank_account_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired','department_id')
             ->with(['get_payreg' => function ($query) use ($year) {
                 $query->select('basic_pay', 'deminimis', 'other_allowances_basic_pay', 'subliq', 'cut_off_date')
                     ->whereBetween('cut_off_date', [
@@ -812,7 +813,8 @@ class PayslipController extends Controller
                         date('Y-12-t', strtotime("$year-12-01"))
                     ]);
             }])
-            ->with('company')
+            ->whereHas('salary')
+            ->with('company','benefits','department')
             ->where('original_date_hired','<=',date('Y-11-30'))
             ->where('company_id', $request->company)
             ->where('classification','!=',8)

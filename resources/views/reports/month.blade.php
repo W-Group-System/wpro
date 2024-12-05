@@ -46,19 +46,32 @@
 								<tr>
 									<th>Company</th>
 									{{-- <th>Name</th> --}}
-									<th>Employee No</th>
+                                    <th>Employee No</th>
+                                    <th>Last Name</th>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>Department</th>
+                                    <th>Cost Center</th>
+                                    <th>Account No</th>
+                                    
+                                    <th>Tax Status</th>
+                                    <th>Pay Rate</th>
                                     @for($i = 1; $i <= 12; $i++)
-                                        <th>{{ date('M',strtotime($year."-".$i.'-01')) }}</th>
+                                        {{-- <th>{{ date('M',strtotime($year."-".$i.'-01')) }}</th> --}}
                                     @endfor
-									<th>13th Month</th>
-									<th>Previous 13th Month</th>
-									<th>Current</th>
+                                    <th>Withholding Tax</th>
+									<th>Thirteenth Month Pay Nontaxable</th>
+									<th>Non Taxable Benefits Total</th>
+									<th>Gross Pay</th>
+									<th>1st Released (May 2024)</th>
+									<th>Net Pay</th>
 								</tr>
 							</thead>
 							<tbody>
-                                @foreach($employees->sortBy('last_name') as $employee)
+                                @foreach($employees->sortBy('last_name') as $key => $employee)
                                 @php
                                     $total_Payroll = 0;
+                                    $pay_rate = $employee->salary->basic_salary+$employee->salary->subliq+$employee->salary->de_minimis+$employee->salary->other_allowance;
                                     $previous= ($employee->benefits)->first();
                                     if($previous)
                                     {
@@ -70,22 +83,34 @@
                                     }
                                 @endphp
                                 <tr>
-									<td>{{$employee->company->company_code}}</td>
+                                    <td>{{$employee->company->company_code}} <input type='hidden' name='company_code[{{$key+1}}]' value="{{$employee->company->company_code}}"></td>
+                                    <td>{{$employee->employee_code}} <input type='hidden' name='employee_code[{{$key+1}}]' value="{{$employee->employee_code}}"></td>
+                                    <td>{{$employee->last_name}} <input type='hidden' name='last_name[{{$key+1}}]' value="{{$employee->last_name}}"></td>
+                                    <td>{{$employee->first_name}} <input type='hidden' name='first_name[{{$key+1}}]' value="{{$employee->first_name}}"></td>
+                                    <td>{{$employee->middle_name}} <input type='hidden' name='middle_name[{{$key+1}}]' value="{{$employee->middle_name}}"></td>
+                                    <td>{{$employee->department->name}} <input type='hidden' name='department_name[{{$key+1}}]' value="{{$employee->department->name}}"></td>
+                                    <td></td>
+                                    <td>{{$employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$employee->bank_account_number}}"></td>
+                                    <td></td>
+                                    <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
+								
 									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
-									<td>{{$employee->employee_code}}</td>
+									{{-- <td>{{$employee->employee_code}}</td> --}}
+                         
                                     @for($i = 1; $i <= 12; $i++)
                                         @if($i == 12)
                                         @if($employee->salary)
-                                        <td>
+                                        @php
+                                            $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
+                                        @endphp
+                                        {{-- <td>
                                             {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
-                                            @php
-                                                $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
-                                            @endphp
-                                        </td>
-                                        @else
+                                          
+                                        </td> --}}
+                                        {{-- @else
                                         <td>
                                             0.00
-                                        </td>
+                                        </td> --}}
                                         @endif
                                         @else
                                         @php
@@ -106,29 +131,37 @@
                                                 ]);
                                             
                                         }
-                                            
-                                        @endphp
-
-                                        
-                                        <td>
-                                            @php
-                                                $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
+                                        $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
                                             + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount');
+                                        @endphp
+
+{{--                                         
+                                        <td>
+                                            @php
+                                               
                                             @endphp
                                             {{number_format($payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
                                             + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount'),2)
                                         }}
-                                        </td>
+                                        </td> --}}
                                         @endif
                                     @endfor
-									<td>{{number_format($total_Payroll/12,2)}}</td>
-                                    
+                                    @php
+                                        $payroll = $total_Payroll/12;
+                                        $tax = 0;
+                                        $gross_pay = $payroll-$previous;
+                                        
+                                    @endphp
+                                    <td>{{number_format(0,2)}}</td>
+									<td>{{number_format($payroll,2)}}</td>
+									<td>{{number_format($payroll,2)}}</td>
+									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($previous,2)}}</td>
-									<td>{{number_format(($total_Payroll/12)-$previous,2)}}</td>
+									<td>{{number_format($gross_pay,2)}}</td>
 								</tr>
                                 @endforeach
 								
