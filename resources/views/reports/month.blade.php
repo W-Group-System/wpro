@@ -50,12 +50,25 @@
                                     @for($i = 1; $i <= 12; $i++)
                                         <th>{{ date('M',strtotime($year."-".$i.'-01')) }}</th>
                                     @endfor
-									<th>Total</th>
 									<th>13th Month</th>
+									<th>Previous 13th Month</th>
+									<th>Current</th>
 								</tr>
 							</thead>
 							<tbody>
                                 @foreach($employees->sortBy('last_name') as $employee)
+                                @php
+                                    $total_Payroll = 0;
+                                    $previous= ($employee->benefits)->first();
+                                    if($previous)
+                                    {
+                                        $previous = $previous->netpay;
+                                    }
+                                    else {
+                                        
+                                        $previous = 0.00;
+                                    }
+                                @endphp
                                 <tr>
 									<td>{{$employee->company->company_code}}</td>
 									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
@@ -64,6 +77,9 @@
                                         @if($i == 12)
                                         <td>
                                             {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
+                                            @php
+                                                $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
+                                            @endphp
                                         </td>
                                         @else
                                         @php
@@ -89,6 +105,12 @@
 
                                         
                                         <td>
+                                            @php
+                                                $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
+                                            + $payregs->sum('deminimis') 
+                                            + $payregs->sum('other_allowances_basic_pay') 
+                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount');
+                                            @endphp
                                             {{number_format($payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
@@ -97,11 +119,10 @@
                                         </td>
                                         @endif
                                     @endfor
-                                    @php
-                                        $payregs_total = $employee->get_payreg()->whereBetween('cut_off_date',[date('Y-01-01',strtotime($year."-01-01")),date('Y-12-t',strtotime($year."-01-01"))]);
-                                    @endphp
-									<td></td>
-									<td></td>
+									<td>{{number_format($total_Payroll/12,2)}}</td>
+                                    
+									<td>{{number_format($previous,2)}}</td>
+									<td>{{number_format(($total_Payroll/12)-$previous,2)}}</td>
 								</tr>
                                 @endforeach
 								

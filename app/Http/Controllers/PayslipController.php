@@ -795,7 +795,8 @@ class PayslipController extends Controller
                     date('Y-12-t', strtotime("$year-12-01"))
                 ]);
             }])
-            ->with('company')
+            ->where('original_date_hired','<=',date('Y-11-30'))
+            ->with('company','benefits')
             ->where('company_id', $request->company)
             ->where('classification','!=',8)
             ->where('status','Active')

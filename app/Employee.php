@@ -191,6 +191,12 @@ class Employee extends Model implements Auditable
     public function as_resign(){
         return $this->hasMany(ExitClearanceSignatory::class);
     }
+    public function benefits()
+    {
+        return $this->hasMany(PayReg::class, 'employee_no', 'employee_code')
+        ->whereYear('pay_period_from', now()->year)
+        ->whereColumn('pay_period_from', 'posting_date');
+    }
     protected $fillable = [
         'department_id', 
         'project',
