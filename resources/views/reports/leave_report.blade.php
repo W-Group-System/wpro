@@ -111,7 +111,7 @@
 										  @endif 
 										  <td>
                                             @if($form_approval->leave->id != 13)
-                                            {{get_count_days_report($form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}
+                                            {{get_count_days($form_approval->dailySchedules, $form_approval->employee->ScheduleData, $form_approval->date_from, $form_approval->date_to, $form_approval->halfday,$form_approval->withpay)}}
                                             @endif
                                           </td>
 										  <td>@foreach($form_approval->approver as $approvers)

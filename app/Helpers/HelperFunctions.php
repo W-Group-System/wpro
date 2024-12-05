@@ -451,7 +451,13 @@ function night_difference_per_company($start_work, $end_work)
 //     }
 // }
 
-function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday)
+function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday,$withpay = 0)
+{
+    if($withpay == 0)
+{
+    return 0;
+}
+else
 {
     $date_from = date('Y-m-d', strtotime($date_from));
     $date_to = date('Y-m-d', strtotime($date_to));
@@ -492,6 +498,8 @@ function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $
     } else {
         return $count;
     }
+}
+   
 }
 
 
