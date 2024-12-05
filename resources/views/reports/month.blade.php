@@ -75,12 +75,18 @@
 									<td>{{$employee->employee_code}}</td>
                                     @for($i = 1; $i <= 12; $i++)
                                         @if($i == 12)
+                                        @if($employee->salary)
                                         <td>
                                             {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
                                             @php
                                                 $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
                                             @endphp
                                         </td>
+                                        @else
+                                        <td>
+                                            0.00
+                                        </td>
+                                        @endif
                                         @else
                                         @php
                                         if($company == 10)
