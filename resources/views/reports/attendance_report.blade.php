@@ -221,7 +221,7 @@
                             <thead>
                                 <tr>
                                     <th>Employee ID</th>
-                                    <th>No.</th>
+                                    {{-- <th>No.</th> --}}
                                     <th>Company</th>
                                     <th>Regular Working Hours</th>
                                     <th>Overtime Hours Total</th>
@@ -233,7 +233,7 @@
                                 @foreach($overtimeData as $index => $overtime)
                                     <tr>
                                         <td>{{$overtime['employee_no']}}</td>
-                                        <td>{{ $loop->iteration }}</td>
+                                        {{-- <td>{{ $loop->iteration }}</td> --}}
                                         <td>{{ $overtime['company_code'] }}</td>
                                         <td>{{ number_format($overtime['total_reg_hrs'], 2) }}</td>
                                         <td>{{ number_format($overtime['total_ot'], 2) }}</td>
