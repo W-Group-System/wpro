@@ -813,6 +813,7 @@ class PayslipController extends Controller
                     ]);
             }])
             ->with('company')
+            ->where('original_date_hired','<=',date('Y-11-30'))
             ->where('company_id', $request->company)
             ->where('classification','!=',8)
             ->where('status','Active')
