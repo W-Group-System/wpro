@@ -57,8 +57,9 @@
                                     <th>Tax Status</th>
                                     <th>Pay Rate</th>
                                     @for($i = 1; $i <= 12; $i++)
-                                        {{-- <th>{{ date('M',strtotime($year."-".$i.'-01')) }}</th> --}}
+                                        <th>{{ date('M Y',strtotime($year."-".$i.'-01')) }}</th>
                                     @endfor
+                                    <th>Total</th>
                                     <th>Withholding Tax</th>
 									<th>Thirteenth Month Pay Nontaxable</th>
 									<th>Non Taxable Benefits Total</th>
@@ -103,14 +104,14 @@
                                         @php
                                             $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
                                         @endphp
-                                        {{-- <td>
+                                        <td>
                                             {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
                                           
-                                        </td> --}}
-                                        {{-- @else
+                                        </td>
+                                        @else
                                         <td>
                                             0.00
-                                        </td> --}}
+                                        </td>
                                         @endif
                                         @else
                                         @php
@@ -137,7 +138,7 @@
                                             + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount');
                                         @endphp
 
-{{--                                         
+                                        
                                         <td>
                                             @php
                                                
@@ -147,7 +148,7 @@
                                             + $payregs->sum('other_allowances_basic_pay') 
                                             + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount'),2)
                                         }}
-                                        </td> --}}
+                                        </td>
                                         @endif
                                     @endfor
                                     @php
@@ -156,6 +157,7 @@
                                         $gross_pay = $payroll-$previous;
                                         
                                     @endphp
+                                    <td>{{number_format($total_Payroll,2)}}</td>
                                     <td>{{number_format(0,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
