@@ -115,7 +115,8 @@
                                         @endif
                                         @else
                                         @php
-                                        if($company == 10)
+                                       
+                                       if($company == 10)
                                         {
                                             $date_need = date('Y-m-01', strtotime($year . "-" . $i . '-01 -1 month'));
                                             $date_need_next = date('Y-m-t', strtotime($year . "-" . $i . '-01 -1 month'));
@@ -152,6 +153,15 @@
                                         @endif
                                     @endfor
                                     @php
+                                        $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
+                                        
+                                        
+                                        $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
+                                        // dd($salary_adjustments_amount);
+                                        $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
+                                     
+                                        $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
+                                        // $total_Payroll = $total_Payroll;
                                         $payroll = $total_Payroll/12;
                                         $tax = 0;
                                         $gross_pay = $payroll-$previous;

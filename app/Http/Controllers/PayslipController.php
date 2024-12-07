@@ -814,14 +814,30 @@ class PayslipController extends Controller
                     ]);
             }])
             ->whereHas('salary')
-            ->with('company','benefits','department')
+            ->with('company','benefits','department','get_payreg')
             ->where('original_date_hired','<=',date('Y-11-30'))
             ->where('company_id', $request->company)
             ->where('classification','!=',8)
             ->where('status','Active')
+            // ->where('employee_code','A387115')
             ->get();
 
         }
+        $benefitIds = $employees->pluck('get_payreg')->flatten()->pluck('id')->toArray();
+        // dd($benefitIds);
+        $salary_adjustments = SalaryAdjustment::whereIn('pay_reg_id',$benefitIds)->where(function($query) {
+            $query->where('name', 'like', '%Salary%')
+                ->orWhere('name', 'like', '%Leave%')
+                ->orWhere('name', 'like', '%Undertime%')
+                ->orWhere('name', 'like', '%Absent%')
+                ->orWhere('name', 'like', '%Late%');
+        })->get();
+
+        $pay_instructions = PayregInstruction::whereIn('payreg_id',$benefitIds)->where(function($query) {
+            $query->where('instruction_name', 'like', '%Minimis%')
+                ->orWhere('instruction_name', 'like', '%Other Allowance%')
+                ->orWhere('instruction_name', 'like', '%Subliq%');
+        })->get();
        
                                 // ->where('employee_code','A3121418')
                               
@@ -834,6 +850,8 @@ class PayslipController extends Controller
             'companies' => $companies,
             'company' => $company,
             'employees' => $employees,
+            'salary_adjustments' => $salary_adjustments,
+            'pay_instructions' => $pay_instructions,
             
         ));
     }
