@@ -133,10 +133,15 @@
                                                 ]);
                                             
                                         }
+                                        $pay_reg_id = $payregs->pluck('id')->toArray();
+                                        $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
+                                        // dd($salary_adjustments_amount);
+                                        $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
+
                                         $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
-                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount');
+                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
                                         @endphp
 
                                         
@@ -147,20 +152,18 @@
                                             {{number_format($payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
-                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount'),2)
+                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount,2)
                                         }}
                                         </td>
                                         @endif
                                     @endfor
                                     @php
-                                        $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
+                                        // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
+                                        // dd($pay_reg_id);
                                         
-                                        
-                                        $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
-                                        // dd($salary_adjustments_amount);
-                                        $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
                                      
-                                        $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
+                                     
+                                        // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
                                         // $total_Payroll = $total_Payroll;
                                         $payroll = $total_Payroll/12;
                                         $tax = 0;
