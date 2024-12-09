@@ -99,7 +99,7 @@
 									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
 									{{-- <td>{{$employee->employee_code}}</td> --}}
                                     @php
-                                    $no_december = ['A3131019','A3156322','A3167723'];
+                                    $no_december = ['A3156322'];
                                     $salary_diff = 0;
                                     @endphp
                                     @for($i = 1; $i <= 12; $i++)
@@ -185,7 +185,7 @@
                                      
                                         // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
                                         // $total_Payroll = $total_Payroll;
-                                        $payroll = ($total_Payroll-$salary_diff)/12;
+                                        $payroll = ($total_Payroll+$salary_diff)/12;
                                         $tax = 0;
                                         $gross_pay = $payroll-$previous;
                                         
