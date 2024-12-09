@@ -669,7 +669,7 @@
         document.getElementById("loader").style.display = "block";
         $.ajax({
           url: "disable-leave/" + id,
-          method: "GET",
+          method: "POST",
           data: {
             id: id
           },

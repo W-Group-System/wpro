@@ -542,6 +542,7 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired,$scheduleDatas
                       ->orWhere('status', 'Pending');
             })
             ->where('withpay',1)
+            ->where('status','!=','Cancelled')
             // ->where('date_from', '>', $filter_date_leave)
             ->get();
             // dd($employee_vl);
