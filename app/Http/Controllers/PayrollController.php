@@ -66,13 +66,12 @@ class PayrollController extends Controller
         ->whereIn('id', $allowed_companies)
         ->get();
         $company = $request->company;
-        $pay_registers = Payregs::with('pay_allowances','pay_loan','pay_instructions','salary_adjustments_data')->selectRaw('
+        $pay_registers = Payregs::with('pay_allowances','pay_loan','pay_instructions','salary_adjustments_data','employee')->selectRaw('
         employee_no,
         last_name,
         first_name,
         middle_name,
         account_number,
-        department,
         SUM(days_rendered) as days_rendered,
         SUM(basic_pay) as basic_pay,
         SUM(other_allowances_basic_pay) as other_allowances_basic_pay,
@@ -148,7 +147,7 @@ class PayrollController extends Controller
     ')
     ->whereBetween('pay_period_from', [$request->from, $request->to])
     ->where('company_id', $request->company)
-    ->groupBy('employee_no', 'last_name', 'first_name', 'middle_name', 'account_number','department')
+    ->groupBy('employee_no', 'last_name', 'first_name', 'middle_name', 'account_number')
     ->get();
     $pay_register_ids = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
     ->where('company_id', $request->company)

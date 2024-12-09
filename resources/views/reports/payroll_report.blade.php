@@ -163,7 +163,7 @@
 						<td>{{$pay_reg->first_name}}</td>
 						<td>{{$pay_reg->middle_name}}</td>
 						<td>{{$pay_reg->cost_center}}</td>
-						<td>{{$pay_reg->department}}</td>
+						<td>{{$pay_reg->employee->department->name}}</td>
 						<td>{{$pay_reg->account_number}}</td>
 						<td>{{$pay_reg->tax_status}}</td>
 						<td>{{$pay_reg->days_rendered}}</td>
