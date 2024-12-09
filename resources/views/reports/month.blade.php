@@ -60,6 +60,7 @@
                                         <th>{{ date('M Y',strtotime($year."-".$i.'-01')) }}</th>
                                     @endfor
                                     <th>Total</th>
+                                    <th>Salary Diff</th>
                                     <th>Withholding Tax</th>
 									<th>Thirteenth Month Pay Nontaxable</th>
 									<th>Non Taxable Benefits Total</th>
@@ -97,10 +98,13 @@
 								
 									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
 									{{-- <td>{{$employee->employee_code}}</td> --}}
-                         
+                                    @php
+                                    $no_december = ['A3131019','A3156322','A3167723'];
+                                    $salary_diff = 0;
+                                    @endphp
                                     @for($i = 1; $i <= 12; $i++)
                                         @if($i == 12)
-                                        @if($employee->employee_code != "A3156322")
+                                        @if((!in_array($employee->employee_code, $no_december)))
                                         @if($employee->salary)
                                         @php
                                             $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
@@ -164,6 +168,16 @@
                                         @endif
                                     @endfor
                                     @php
+                                        if($employee->employee_code == "A3131019")
+                                        {
+                                            $salary_diff = 31934.05;
+                                        }
+                                        if($employee->employee_code == "A3167723")
+                                        {
+                                            $salary_diff = 26460.00;
+                                        }
+                                    @endphp
+                                    @php
                                         // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
                                         // dd($pay_reg_id);
                                         
@@ -171,12 +185,13 @@
                                      
                                         // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
                                         // $total_Payroll = $total_Payroll;
-                                        $payroll = $total_Payroll/12;
+                                        $payroll = ($total_Payroll-$salary_diff)/12;
                                         $tax = 0;
                                         $gross_pay = $payroll-$previous;
                                         
                                     @endphp
                                     <td>{{number_format($total_Payroll,2)}}</td>
+                                    <td>{{number_format($salary_diff,2)}}</td>
                                     <td>{{number_format(0,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
