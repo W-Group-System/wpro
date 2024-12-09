@@ -159,12 +159,12 @@
 					@foreach($pay_registers as $key => $pay_reg)
 					<tr>
 						<td>{{$pay_reg->employee_no}}</td>
-						<td>{{$pay_reg->last_name}}</td>
-						<td>{{$pay_reg->first_name}}</td>
-						<td>{{$pay_reg->middle_name}}</td>
+						<td>{{$pay_reg->employee->last_name}}</td>
+						<td>{{$pay_reg->employee->first_name}}</td>
+						<td>{{$pay_reg->employee->middle_name}}</td>
 						<td>{{$pay_reg->cost_center}}</td>
 						<td>{{$pay_reg->employee->department->name}}</td>
-						<td>{{$pay_reg->account_number}}</td>
+						<td>{{$pay_reg->employee->account_number}}</td>
 						<td>{{$pay_reg->tax_status}}</td>
 						<td>{{$pay_reg->days_rendered}}</td>
 						<td>{{$pay_reg->basic_pay}}</td>

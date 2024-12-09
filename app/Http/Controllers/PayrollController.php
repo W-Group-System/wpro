@@ -68,10 +68,6 @@ class PayrollController extends Controller
         $company = $request->company;
         $pay_registers = Payregs::with('pay_allowances','pay_loan','pay_instructions','salary_adjustments_data','employee')->selectRaw('
         employee_no,
-        last_name,
-        first_name,
-        middle_name,
-        account_number,
         SUM(days_rendered) as days_rendered,
         SUM(basic_pay) as basic_pay,
         SUM(other_allowances_basic_pay) as other_allowances_basic_pay,
