@@ -144,7 +144,7 @@ class EmployeeController extends Controller
                                                 ->get();
 
 
-        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','department_id','company_id','immediate_sup','classification','status', 'employee_code')
+        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','department_id','company_id','immediate_sup','classification','status', 'employee_code','avatar')
                                 ->with('department', 'immediate_sup_data', 'user_info', 'company','classification_info')
                                 ->when($search,function($q) use($search){
                                     $q->where(function($w) use($search){
@@ -1847,7 +1847,7 @@ class EmployeeController extends Controller
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
                                 })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
-                                // ->where('employee_code','A3121418')
+                                // ->where('employee_code','A371424')
                                 ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
