@@ -100,6 +100,7 @@
                          
                                     @for($i = 1; $i <= 12; $i++)
                                         @if($i == 12)
+                                        @if($employee->employee_code != "A3156322")
                                         @if($employee->salary)
                                         @php
                                             $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
@@ -108,6 +109,11 @@
                                             {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
                                           
                                         </td>
+                                        @else
+                                        <td>
+                                            0.00
+                                        </td>
+                                        @endif
                                         @else
                                         <td>
                                             0.00
