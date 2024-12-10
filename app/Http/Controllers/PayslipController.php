@@ -819,7 +819,7 @@ class PayslipController extends Controller
             ->where('company_id', $request->company)
             ->where('classification','!=',8)
             ->where('status','Active')
-            // ->where('employee_code','A3121718')
+            // ->where('employee_code','A3140520')
             ->get();
 
         }
@@ -829,6 +829,7 @@ class PayslipController extends Controller
             $query->where('name', 'like', '%Salary%')
                 ->orWhere('name', 'like', '%Leave%')
                 ->orWhere('name', 'like', '%Basic%')
+                ->orWhere('name', 'like', '%tardiness%')
                 ->orWhere('name', 'like', '%Undertime%')
                 ->orWhere('name', 'like', '%Absent%')
                 ->orWhere('name', 'like', '%Late%');
