@@ -144,6 +144,7 @@ class PayrollController extends Controller
     ->whereBetween('pay_period_from', [$request->from, $request->to])
     ->where('company_id', $request->company)
     ->groupBy('employee_no')
+    ->whereHas('employee')
     ->get();
     $pay_register_ids = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
     ->where('company_id', $request->company)
