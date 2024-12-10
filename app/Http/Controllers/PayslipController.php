@@ -832,7 +832,8 @@ class PayslipController extends Controller
                 ->orWhere('name', 'like', '%tardiness%')
                 ->orWhere('name', 'like', '%Undertime%')
                 ->orWhere('name', 'like', '%Absent%')
-                ->orWhere('name', 'like', '%Late%');
+                ->orWhere('name', 'like', '%Late%')
+                ->orWhere('name', '=', 'adj retro reg');
         })->get();
 
         $pay_instructions = PayregInstruction::whereIn('payreg_id',$benefitIds)->where(function($query) {
