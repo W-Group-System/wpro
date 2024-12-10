@@ -176,6 +176,25 @@
                                         {
                                             $salary_diff = 26460.00;
                                         }
+                                        if($employee->employee_code == "A3144920")
+                                        {
+                                            $salary_diff = 1290.08;
+                                        }
+                                        if($employee->employee_code == "A3150121")
+                                        {
+                                            $salary_diff =13080;
+                                        }
+                                        if($employee->employee_code == "A3167723")
+                                        {
+                                            $salary_diff =26460;
+                                        }
+                                        if($employee->employee_code == "A393916")
+                                        {
+                                            $salary_diff =38850;
+                                        }
+	
+	
+
                                     @endphp
                                     @php
                                         // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
