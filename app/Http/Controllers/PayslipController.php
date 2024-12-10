@@ -824,7 +824,7 @@ class PayslipController extends Controller
 
         }
         $benefitIds = $employees->pluck('get_payreg')->flatten()->pluck('id')->toArray();
-        dd($benefitIds);
+        // dd($benefitIds);
         $salary_adjustments = SalaryAdjustment::whereIn('pay_reg_id',$benefitIds)->where(function($query) {
             $query->where('name', 'like', '%Salary%')
                 ->orWhere('name', 'like', '%Leave%')
