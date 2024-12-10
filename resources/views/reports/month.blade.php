@@ -170,7 +170,7 @@
                                     @php
                                         if($employee->employee_code == "A3131019")
                                         {
-                                            $salary_diff = 31934.05;
+                                            $salary_diff = 2848;
                                         }
                                         if($employee->employee_code == "A3167723")
                                         {
