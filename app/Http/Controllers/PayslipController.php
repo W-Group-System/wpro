@@ -819,15 +819,16 @@ class PayslipController extends Controller
             ->where('company_id', $request->company)
             ->where('classification','!=',8)
             ->where('status','Active')
-            // ->where('employee_code','A387115')
+            // ->where('employee_code','A3121718')
             ->get();
 
         }
         $benefitIds = $employees->pluck('get_payreg')->flatten()->pluck('id')->toArray();
-        // dd($benefitIds);
+        dd($benefitIds);
         $salary_adjustments = SalaryAdjustment::whereIn('pay_reg_id',$benefitIds)->where(function($query) {
             $query->where('name', 'like', '%Salary%')
                 ->orWhere('name', 'like', '%Leave%')
+                ->orWhere('name', 'like', '%Basic%')
                 ->orWhere('name', 'like', '%Undertime%')
                 ->orWhere('name', 'like', '%Absent%')
                 ->orWhere('name', 'like', '%Late%');
@@ -863,6 +864,7 @@ class PayslipController extends Controller
     public function postuploadpayreg(Request $request)
     {
       $data =  Excel::import(new PayRegImport,request()->file('pay-reg'));
+    //   dd($data);
     //   dd($data[0]);
 
        return back();
