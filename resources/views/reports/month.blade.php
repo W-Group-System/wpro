@@ -193,20 +193,29 @@
                                             $salary_diff =38850;
                                         }
 	
-	
-
-                                    @endphp
-                                    @php
+                                        $tax = 0;
                                         // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
                                         // dd($pay_reg_id);
                                         
-                                     
+                                        if($employee->employee_code == "A287819")
+                                        {
+                                            $tax =($payroll-$previous)*.05;
+                                        }
+                                        if($employee->employee_code == "A178517")
+                                        {
+                                            $tax =($payroll-$previous)*.05;
+                                        }
+                                        if($employee->employee_code == "A180518")
+                                        {
+                                            $tax =($payroll-$previous)*.05;
+                                        }
                                      
                                         // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
                                         // $total_Payroll = $total_Payroll;
+                                        
                                         $payroll = ($total_Payroll+$salary_diff)/12;
-                                        $tax = 0;
-                                        $gross_pay = $payroll-$previous;
+                                        
+                                        $gross_pay = $payroll-$previous-$tax;
                                         
                                     @endphp
                                     <td>{{number_format($total_Payroll,2)}}</td>
