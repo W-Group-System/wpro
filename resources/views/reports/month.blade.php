@@ -220,7 +220,7 @@
                                     @endphp
                                     <td>{{number_format($total_Payroll,2)}}</td>
                                     <td>{{number_format($salary_diff,2)}}</td>
-                                    <td>{{number_format(0,2)}}</td>
+                                    <td>{{number_format($tax,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
