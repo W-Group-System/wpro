@@ -6,6 +6,7 @@ use App\Company;
 use App\PayregAllowance;
 use App\PayregLoan;
 use App\PayregInstruction;
+use App\Employee;
 use App\SalaryAdjustment;
 use Illuminate\Http\Request;
 
@@ -65,13 +66,13 @@ class PayrollController extends Controller
         $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
         ->get();
+        $employees = Employee::where('company_id',$request->company)->pluck('employee_code')->toArray();
         $company = $request->company;
         $pay_registers = Payregs::with('pay_allowances','pay_loan','pay_instructions','salary_adjustments_data','employee')->selectRaw('
         employee_no,
         SUM(days_rendered) as days_rendered,
         SUM(basic_pay) as basic_pay,
         SUM(other_allowances_basic_pay) as other_allowances_basic_pay,
-        SUM(subliq) as subliq,
         SUM(sh_nd) as sh_nd,
         SUM(sh_amount) as sh_amount,
         SUM(sh_ge) as sh_ge,
@@ -143,7 +144,7 @@ class PayrollController extends Controller
         SUM(netpay) as netpay
     ')
     ->whereBetween('pay_period_from', [$request->from, $request->to])
-    ->where('company_id', $request->company)
+    ->whereIn('employee_no', $employees)
     ->groupBy('employee_no')
     ->whereHas('employee')
     ->get();
