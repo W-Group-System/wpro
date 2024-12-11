@@ -122,6 +122,7 @@ class PayrollController extends Controller
         SUM(undertime_total) as undertime_total,
         SUM(undertime_amount) as undertime_amount,
         SUM(sss_ec) as sss_ec,
+        SUM(subliq) as subliq,
         SUM(sss_employee_share) as sss_employee_share,
         SUM(sss_employer_share) as sss_employer_share,
         SUM(hdmf_employee_share) as hdmf_employee_share,
