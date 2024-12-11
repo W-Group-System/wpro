@@ -61,6 +61,7 @@
                                     @endfor
                                     <th>Total</th>
                                     <th>Salary Diff</th>
+                                    <th>For Release(WLI)</th>
                                     <th>Withholding Tax</th>
 									<th>Thirteenth Month Pay Nontaxable</th>
 									<th>Non Taxable Benefits Total</th>
@@ -100,6 +101,7 @@
 									{{-- <td>{{$employee->employee_code}}</td> --}}
                                     @php
                                     $no_december = ['A3156322'];
+                                    $for_release = 0;
                                     $salary_diff = 0;
                                     @endphp
                                     @for($i = 1; $i <= 12; $i++)
@@ -192,6 +194,10 @@
                                         {
                                             $salary_diff =38850;
                                         }
+                                        if($employee->employee_code == "A3176524")
+                                        {
+                                            $for_release  =9914.41;
+                                        }
 	
                                         $tax = 0;
                                         // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
@@ -215,11 +221,12 @@
                                         {
                                             $tax =($payroll-$previous)*.05;
                                         }
-                                        $gross_pay = $payroll-$previous-$tax;
+                                        $gross_pay = $payroll-$previous-$tax-$for_release;
                                         
                                     @endphp
                                     <td>{{number_format($total_Payroll,2)}}</td>
                                     <td>{{number_format($salary_diff,2)}}</td>
+                                    <td>{{number_format($for_release,2)}}</td>
                                     <td>{{number_format($tax,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
