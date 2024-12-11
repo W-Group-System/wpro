@@ -196,7 +196,13 @@
                                         $tax = 0;
                                         // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
                                         // dd($pay_reg_id);
+                                       
+                                     
+                                        // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
+                                        // $total_Payroll = $total_Payroll;
                                         
+                                        $payroll = ($total_Payroll+$salary_diff)/12;
+                                         
                                         if($employee->employee_code == "A287819")
                                         {
                                             $tax =($payroll-$previous)*.05;
@@ -209,12 +215,6 @@
                                         {
                                             $tax =($payroll-$previous)*.05;
                                         }
-                                     
-                                        // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
-                                        // $total_Payroll = $total_Payroll;
-                                        
-                                        $payroll = ($total_Payroll+$salary_diff)/12;
-                                        
                                         $gross_pay = $payroll-$previous-$tax;
                                         
                                     @endphp
