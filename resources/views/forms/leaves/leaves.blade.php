@@ -543,7 +543,7 @@
                           {{ $employee_leave->reason }}
                         </p>
                       </td>
-                      <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->employee->ScheduleData, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday) }}</td>
+                      <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->employee->ScheduleData, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday,$employee_leave->withpay) }}</td>
 
                       <td id="tdStatus{{ $employee_leave->id }}">
                         @if ($employee_leave->status == 'Pending')
