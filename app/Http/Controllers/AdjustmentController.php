@@ -6,7 +6,7 @@ use App\SalaryAdjustment;
 use App\Allowance;
 use App\Employee;
 use Illuminate\Http\Request;
-
+use App\SalaryAdjustmentName;
 use RealRashid\SweetAlert\Facades\Alert;
 class AdjustmentController extends Controller
 {
@@ -23,6 +23,7 @@ class AdjustmentController extends Controller
                                     ->where('status','Active')
                                     ->get();
         $adjustments = SalaryAdjustment::where('pay_reg_id',null)->get();
+        $names = SalaryAdjustmentName::get();
         if($request->status)
         {
             $adjustments = SalaryAdjustment::where('pay_reg_id','!=',null)->get();
@@ -31,6 +32,7 @@ class AdjustmentController extends Controller
             'header' => 'salaryAdjustments',
             'employees' => $employees,
             'adjustments' => $adjustments,
+            'names' => $names,
         ));
     }
 
