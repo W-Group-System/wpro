@@ -25,7 +25,13 @@
 						</div>
 						<div class="col-lg-4 form-group">
 							<label for="name">Adjustment Name*:</label>
-							<input type="text" name='name' class="form-control form-control-sm" required>
+							<select name='name' data-placeholder="Select Name" style='width:100%;'  class='form-control form-control-sm required js-example-basic-single' required>
+								<option value=''></option>
+								@foreach($names as $name)
+								<option value='{{$name->name}}'>{{$name->name}}</option>
+								@endforeach
+
+							</select>
 						</div>
 						<div class="col-lg-4 form-group">
 							<label for="amount">Amount:*</label>
