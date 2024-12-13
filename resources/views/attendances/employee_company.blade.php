@@ -232,7 +232,7 @@
                                                     {
                                                         if($employee_schedule->time_in_from != '00:00')
                                                         {
-                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-7 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-5 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
                                                             // dd($cenvertedTime);
                                                         }
                                                     }
