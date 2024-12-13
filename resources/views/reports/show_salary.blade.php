@@ -95,15 +95,19 @@
                                         }
                                         if(array_key_exists('de_minimis',$newValues))
                                         {
+                                            // dd('renz');
+                                           
                                             $as_of_de_minimis = $newValues['de_minimis'];
+                                           
+                                      
                                         }
                                         if(array_key_exists('other_allowance',$newValues))
                                         {
-                                            $as_of_de_minimis = $newValues['other_allowance'];
+                                            $as_of_other_allowance = $newValues['other_allowance'];
                                         }
                                         if(array_key_exists('subliq',$newValues))
                                         {
-                                            $as_of_de_minimis = $newValues['subliq'];
+                                            $as_of_subliq = $newValues['subliq'];
                                         }
                                     }
                                     
@@ -120,7 +124,7 @@
                                 <td>{{number_format($employee->salary->de_minimis,2)}}</td>
                                 <td>{{number_format($employee->salary->other_allowance,2)}}</td>
                                 <td>{{number_format($employee->salary->subliq,2)}}</td>
-                                <td @if($as_of_total != $current_total) class='text-danger' @endif>{{number_format($current_total,2)}}</td>
+                                <td @if($as_of_total != $current_total) class='bg-danger' @endif>{{number_format($current_total,2)}}</td>
                             </tr>
                             @endforeach
                         </tbody>
