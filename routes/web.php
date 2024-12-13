@@ -15,10 +15,12 @@ use App\HikAttLog2;
 
 Auth::routes();
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+Route::get('/upload-pay-reg', 'PayslipController@uploadpayreg');
+Route::post('/upload-pay-reg', 'PayslipController@postuploadpayreg');
 Route::get('get-devices','AttendanceController@devices');
 Route::group(['middleware' => 'auth'], function () {
 
-    
+    Route::get('salary-history','EmployeeController@showsalary');
     //Users
     Route::get('account-setting', 'UserController@accountSetting');
     Route::post('upload-avatar', 'UserController@uploadAvatar');

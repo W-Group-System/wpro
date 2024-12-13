@@ -13,7 +13,7 @@ class Employee extends Model implements Auditable
     public function beneficiaries(){
         return $this->hasMany(EmployeeBeneficiary::class,'user_id','user_id');
     }
-    
+
     public function contact_person(){
         return $this->hasOne(EmployeeContactPerson::class,'user_id','user_id');
     }
@@ -126,7 +126,7 @@ class Employee extends Model implements Auditable
     }
 
     public function salaryMovement(){
-        return $this->hasMany(SalaryMovement::class,'user_id','id');
+        return $this->hasMany(SalaryMovement::class,'user_id','user_id');
     }
     public function salary()
     {

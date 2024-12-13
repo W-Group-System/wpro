@@ -498,7 +498,39 @@ class EmployeeController extends Controller
             return redirect('/employees');
         }
     }
+    public function showsalary(Request $request)
+    {
+        $companies = Company::get();
+        $company = $request->company;
+        $date_from = date('Y-m-d');
+        if($request->date_from)
+        {
+            $date_from = $request->date_from;
+        }
+      
+        $employees = Employee::whereHas('salary')
+        ->where('original_date_hired','<=',date('Y-11-30'))
+        ->with('company','benefits','department','salary','salaryMovement')
+        ->with(['salaryMovement' => function ($query) use ($date_from) {
+            $query->whereDate('created_at','<=',date($date_from))->orderBy('id','desc');
+        }])
+        ->where('company_id', $request->company)
+        ->where('classification','!=',8)
+        ->where('status','Active')
+        ->orderBy('last_name','asc')
+        ->get();
+        // dd($employees);
 
+        return view('reports.show_salary',
+            array(
+                'companies' => $companies,
+                'company' => $company,
+                'employees' => $employees,
+                'date_from' => $date_from,
+                'header' => 'Show Salary'
+            )
+        );
+    }
     public function upload(Request $request){
 
         ini_set('memory_limit', '-1');
