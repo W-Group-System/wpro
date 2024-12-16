@@ -108,13 +108,24 @@
                                         @if($i == 12)
                                         @if((!in_array($employee->employee_code, $no_december)))
                                         @if($employee->salary)
+                                        @if($company == 10)
+                                        
+                                            @php
+                                                $total_Payroll  = $total_Payroll + (($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance)/2);
+                                            @endphp
+                                            <td>
+                                                {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
+                                            
+                                            </td>
+                                        @else
                                         @php
-                                            $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
-                                        @endphp
-                                        <td>
-                                            {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
-                                          
-                                        </td>
+                                                $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
+                                            @endphp
+                                            <td>
+                                                {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
+                                            
+                                            </td>
+                                        @endif
                                         @else
                                         <td>
                                             0.00
@@ -164,7 +175,7 @@
                                             {{number_format($payregs->sum('basic_pay') 
                                             + $payregs->sum('deminimis') 
                                             + $payregs->sum('other_allowances_basic_pay') 
-                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount,2)
+                                            + $payregs->sum('subliq')-$payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount,2)
                                         }}
                                         </td>
                                         @endif
