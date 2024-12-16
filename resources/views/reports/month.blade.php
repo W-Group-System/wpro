@@ -111,10 +111,32 @@
                                         @if($company == 10)
                                         
                                             @php
+                                                $date_need = date('Y-m-01', strtotime($year . "-" . $i . '-01 -1 month'));
+                                                $date_need_next = date('Y-m-t', strtotime($year . "-" . $i . '-01 -1 month'));
+                                                $payregs = $employee->get_payreg()
+                                                    ->whereBetween('cut_off_date', [
+                                                    $date_need, $date_need_next
+                                                    ]);
+                                                $pay_reg_id = $payregs->pluck('id')->toArray();
+                                                $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
+                                                // dd($salary_adjustments_amount);
+                                                $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
+                                                $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
+                                                + $payregs->sum('deminimis') 
+                                                + $payregs->sum('other_allowances_basic_pay') 
+                                                + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
                                                 $total_Payroll  = $total_Payroll + (($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance)/2);
                                             @endphp
                                             <td>
-                                                {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
+                                                @php
+                                                    $first = $payregs->sum('basic_pay') 
+                                                + $payregs->sum('deminimis') 
+                                                + $payregs->sum('other_allowances_basic_pay') 
+                                                + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
+                                                $second = (($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance)/2);
+                                                @endphp
+                                                {{-- {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}} --}}
+                                                {{number_format($first+$second,2)}}
                                             
                                             </td>
                                         @else
