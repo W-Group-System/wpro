@@ -39,8 +39,8 @@ class FormApprovalController extends Controller
                                 ->when($filter_request_to_cancel, function($q) use($filter_request_to_cancel){
                                     $q->where('request_to_cancel',$filter_request_to_cancel);
                                 })
-                                ->whereDate('created_at','>=',$from_date)
-                                ->whereDate('created_at','<=',$to_date)
+                                // ->whereDate('created_at','>=',$from_date)
+                                // ->whereDate('created_at','<=',$to_date)
                                 ->orderBy('created_at','DESC')
                                 ->get();
         
