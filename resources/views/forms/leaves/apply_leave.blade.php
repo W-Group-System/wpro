@@ -66,8 +66,8 @@
                           <input type="hidden" v-model="leave_balances" name="leave_balances" :value="leave_balances">
                           <div>
                             <label class="form-check-label ">
-                              <input type="checkbox" name="withpay" class="form-check-input" :disabled="isAllowedWithPay" v-model="with_pay">
-                              With Pay
+                              <input type="checkbox" hidden name="withpay" class="form-check-input" :disabled="isAllowedWithPay" id='checkboxwithpay' onclick="return false;" v-model="with_pay">
+                              Leave Credit : <span id='leave_credit_total'></span>
                           </label>
                           </div>
                   
@@ -152,80 +152,95 @@
           },
           methods: {
             validateLeave() {
+             var amen = false;
               this.leave_balances = '';
               if(this.leave_type == '1'){ // Vacation Leave
-                  if(Number(this.vl_balance) > 0){
+                  if(Number(this.vl_balance) > 0.5){
                     this.leave_balances = this.vl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '2'){ // Sick Leave
-                  if(Number(this.sl_balance) > 0){
+                  if(Number(this.sl_balance) > 0.5){
                     this.leave_balances = this.sl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '3'){ // Maternity Leave
-                  if(Number(this.ml_balance) > 0){
+                  if(Number(this.ml_balance) > 0.5){
                     this.leave_balances = this.ml_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '4'){ // Paternity Leave
-                  if(Number(this.pl_balance) > 0){
+                  if(Number(this.pl_balance) > 0.5){
                     this.leave_balances = this.pl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '5'){ // SPL
-                  if(Number(this.spl_balance) > 0){
+                  if(Number(this.spl_balance) > 0.5){
                     this.leave_balances = this.spl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '7'){ // SPLW
-                  if(Number(this.splw_balance) > 0){
+                  if(Number(this.splw_balance) > 0.5){
                     this.leave_balances = this.splw_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '9'){ // SPLVV
-                  if(Number(this.splvv_balance) > 0){
+                  if(Number(this.splvv_balance) > 0.5){
                     this.leave_balances = this.splvv_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '6'){ // EL
-                  if(Number(this.el_balance) > 0){
+                  if(Number(this.el_balance) > 0.5){
                     this.leave_balances = this.el_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
               else if(this.leave_type == '11'){ // BL
-                  if(Number(this.bl_balance) > 0){
+                  if(Number(this.bl_balance) > 0.5){
                     this.leave_balances = this.bl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
-              
+              else { // BL
+                    this.isAllowedWithPay = false;
+             
+              }
+              document.getElementById('checkboxwithpay').checked = amen;
+              document.getElementById("leave_credit_total").innerHTML = this.leave_balances;
             }
           },
   });

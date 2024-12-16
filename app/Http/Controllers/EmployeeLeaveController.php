@@ -27,7 +27,7 @@ class EmployeeLeaveController extends Controller
 
         $today = date('Y-m-d');
         $from = isset($request->from) ? $request->from : date('Y-m-d',(strtotime ( '-1 month' , strtotime ( $today) ) ));
-        $to = isset($request->to) ? $request->to : date('Y-m-d');
+        $to = isset($request->to) ? $request->to : date('Y-m-d',(strtotime ( '+1 month' , strtotime ( $today) ) ));
         $status = isset($request->status) ? $request->status : 'Pending';
 
         $employee_status = Employee::where('user_id',auth()->user()->id)->first();
