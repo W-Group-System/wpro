@@ -484,7 +484,7 @@
                                     data-target="#edit_leave{{ $employee_leave->id }}" data-toggle="modal" title='Edit'>
                                 <i class="ti-pencil-alt"></i>
                             </button>
-                            @if($cut_off->cut_off_date != null)
+                            @if(isset($cut_off_date))
                                 @if($employee_leave->date_from >= $cut_off->cut_off_date)            
                                 <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
                                         class="btn btn-rounded btn-danger btn-icon">
@@ -501,7 +501,7 @@
                                     data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
                                 <i class="ti-eye"></i>
                             </button>
-                            @if($cut_off->cut_off_date != null)
+                            @if(isset($cut_off_date))
                                 @if($employee_leave->date_from >= $cut_off->cut_off_date)            
                                 <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
                                         class="btn btn-rounded btn-danger btn-icon">
