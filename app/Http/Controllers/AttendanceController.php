@@ -512,8 +512,8 @@ class AttendanceController extends Controller
         ini_set('memory_limit', '-1');
         $locations = ['CCC', 'Head Office', 'PBI', 'SPAI', 'WCC', 'WFA', 'WGC', 'WHI-Carmona', 'WOI', 'WTCC','PRI','FMTCC/MRDC'];
         $devices = AttendanceLog::select('*')
-    ->whereIn('id', function ($query) {
-        $query->select(DB::raw('MAX(id)'))
+    ->whereIn('datetime', function ($query) {
+        $query->select(DB::raw('MAX(datetime)'))
               ->from('attendance_logs')
               ->groupBy('location');
     })
