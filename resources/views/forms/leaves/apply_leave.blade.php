@@ -155,7 +155,7 @@
              var amen = false;
               this.leave_balances = '';
               if(this.leave_type == '1'){ // Vacation Leave
-                  if(Number(this.vl_balance) > 0.5){
+                  if(Number(this.vl_balance) >= 0.5){
                     this.leave_balances = this.vl_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -164,7 +164,7 @@
                   }
               }
               else if(this.leave_type == '2'){ // Sick Leave
-                  if(Number(this.sl_balance) > 0.5){
+                  if(Number(this.sl_balance) >= 0.5){
                     this.leave_balances = this.sl_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -173,7 +173,7 @@
                   }
               }
               else if(this.leave_type == '3'){ // Maternity Leave
-                  if(Number(this.ml_balance) > 0.5){
+                  if(Number(this.ml_balance) >= 0.5){
                     this.leave_balances = this.ml_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -182,7 +182,7 @@
                   }
               }
               else if(this.leave_type == '4'){ // Paternity Leave
-                  if(Number(this.pl_balance) > 0.5){
+                  if(Number(this.pl_balance) >= 0.5){
                     this.leave_balances = this.pl_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -191,7 +191,7 @@
                   }
               }
               else if(this.leave_type == '5'){ // SPL
-                  if(Number(this.spl_balance) > 0.5){
+                  if(Number(this.spl_balance) >= 0.5){
                     this.leave_balances = this.spl_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -200,7 +200,7 @@
                   }
               }
               else if(this.leave_type == '7'){ // SPLW
-                  if(Number(this.splw_balance) > 0.5){
+                  if(Number(this.splw_balance) >= 0.5){
                     this.leave_balances = this.splw_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -209,7 +209,7 @@
                   }
               }
               else if(this.leave_type == '9'){ // SPLVV
-                  if(Number(this.splvv_balance) > 0.5){
+                  if(Number(this.splvv_balance) >= 0.5){
                     this.leave_balances = this.splvv_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -218,7 +218,7 @@
                   }
               }
               else if(this.leave_type == '6'){ // EL
-                  if(Number(this.el_balance) > 0.5){
+                  if(Number(this.el_balance) >= 0.5){
                     this.leave_balances = this.el_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
@@ -227,7 +227,7 @@
                   }
               }
               else if(this.leave_type == '11'){ // BL
-                  if(Number(this.bl_balance) > 0.5){
+                  if(Number(this.bl_balance) >= 0.5){
                     this.leave_balances = this.bl_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
