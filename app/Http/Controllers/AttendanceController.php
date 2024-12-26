@@ -515,10 +515,10 @@ class AttendanceController extends Controller
     ->whereIn('id', function ($query) {
         $query->select(DB::raw('MAX(id)'))
               ->from('attendance_logs')
+              ->orderBy('datetime', 'desc') 
               ->groupBy('location');
     })
     ->whereIn('location',$locations)
-    ->orderBy('datetime', 'desc') 
     ->get();
     return $devices;
         return view('attendances.devices',
