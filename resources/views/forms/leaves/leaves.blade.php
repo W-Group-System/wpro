@@ -484,22 +484,34 @@
                                     data-target="#edit_leave{{ $employee_leave->id }}" data-toggle="modal" title='Edit'>
                                 <i class="ti-pencil-alt"></i>
                             </button>
-                            @if($employee_leave->date_from >= $cut_off->cut_off_date)            
-                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
-                                    class="btn btn-rounded btn-danger btn-icon">
-                                <i class="fa fa-ban"></i>
-                            </button>
+                            @if(isset($cut_off_date))
+                                @if($employee_leave->date_from >= $cut_off->cut_off_date)            
+                                <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
+                                        class="btn btn-rounded btn-danger btn-icon">
+                                    <i class="fa fa-ban"></i>
+                                </button>
+                                @endif
+                            @else
+                                <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})" class="btn btn-rounded btn-danger btn-icon">
+                                    <i class="fa fa-ban"></i>
+                                </button>
                             @endif
                           @elseif ($employee_leave->status == 'Pending' && $employee_leave->level == 1)
                             <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
                                     data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
                                 <i class="ti-eye"></i>
                             </button>
-                            @if($employee_leave->date_from >= $cut_off->cut_off_date)            
-                            <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
-                                    class="btn btn-rounded btn-danger btn-icon">
-                                <i class="fa fa-ban"></i>
-                            </button>
+                            @if(isset($cut_off_date))
+                                @if($employee_leave->date_from >= $cut_off->cut_off_date)            
+                                <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
+                                        class="btn btn-rounded btn-danger btn-icon">
+                                    <i class="fa fa-ban"></i>
+                                </button>
+                                @endif
+                            @else
+                                <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})" class="btn btn-rounded btn-danger btn-icon">
+                                    <i class="fa fa-ban"></i>
+                                </button>
                             @endif
                           @elseif ($employee_leave->status == 'Approved')
                             <button type="button" id="view{{ $employee_leave->id }}" class="btn btn-primary btn-rounded btn-icon"
