@@ -513,11 +513,12 @@ class AttendanceController extends Controller
         $locations = ['CCC', 'Head Office', 'PBI', 'SPAI', 'WCC', 'WFA', 'WGC', 'WHI-Carmona', 'WOI', 'WTCC','PRI','FMTCC/MRDC'];
         $devices = AttendanceLog::select('*')
     ->whereIn('id', function ($query) {
-        $query->select(DB::raw('MAX(datetime)'))
+        $query->select(DB::raw('MAX(id)'))
               ->from('attendance_logs')
               ->groupBy('location');
     })
     ->whereIn('location',$locations)
+    ->orderBy('datetime', 'desc') 
     ->get();
     return $devices;
         return view('attendances.devices',
