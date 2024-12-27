@@ -14,7 +14,8 @@
                             <select name="type" class="form-control required js-example-basic-single"
                                 style="width: 100%" required>
                                 <option value="">-Type-</option>
-                                <option value="VL/SL">Vacation Leave & Sick Leave</option>
+                                {{-- <option value="VL/SL">Vacation Leave & Sick Leave</option> --}}
+                                <option value="VL/SL">Leaves</option>
                                 <option value="OB">Official Business</option>
                                 <option value="OT">Overtime</option>
                                 <option value="DTR">Daily Time Record</option>
