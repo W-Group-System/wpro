@@ -144,6 +144,8 @@
                                                 $subtotal_rd_ot_ge = 0;
                                                 $subtotal_rd_nd = 0;
                                                 $subtotal_rd_nd_ge = 0;
+                                                
+                                                $previous_abs = 0;
                                             @endphp
 
                                             @foreach($date_range as $date_r)
@@ -440,6 +442,11 @@
                                                                 {
                                                                     $abs = 1;
                                                                 }
+                                                                if($previous_abs == 1)
+                                                                {
+                                                                    $abs = 1;
+                                                                }
+                                                                $previous_abs = $abs;
                                                             }else{
                                                                 
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
