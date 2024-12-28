@@ -117,6 +117,9 @@ class UploadController extends Controller
                         if ($row[6] == "Emergency Leave" || $row[6] == 'EL') {
                             $types = 6;
                         }
+                        if ($row[6] == "Bereavement Leave" || $row[6] == 'BL') {
+                            $types = 11;
+                        }
                         if (str_contains($row[6],"without") || $row[6] == "LWOP"){
                             $types = 13;
                             $pay =0;
