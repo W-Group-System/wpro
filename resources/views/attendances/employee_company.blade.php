@@ -232,7 +232,7 @@
                                                     {
                                                         if($employee_schedule->time_in_from != '00:00')
                                                         {
-                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-4 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-6 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
                                                             // dd($cenvertedTime);
                                                         }
                                                     }
@@ -324,7 +324,7 @@
                                                             $if_attendance_holiday = '';
                                                             $if_restday = '';
                                                             $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
-                                                            
+                                                            // dd($check_if_holiday);
                                                             $if_attendance_holiday_status = '';
                                                             
                                                           
@@ -387,7 +387,7 @@
                                                      
                                                                 $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
                                                                 $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->location);
-                                                               
+                                                                // dd($check_if_holiday_before);
                                                                 if($check_if_holiday_before)
                                                                 {
                                                                     $abs = 0;
