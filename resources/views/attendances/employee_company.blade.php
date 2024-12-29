@@ -339,15 +339,18 @@
                                                                     if($check_leave){
                                                                         $if_attendance_holiday_status = 'With-Pay';
                                                                         $abs =0;
+                                                                        $previous_abs = 0;
                                                                         if($check_leave){
                                                                             // dd($check_leave);
                                                                             if(str_contains($check_leave,"Without")){
                                                                                 // dd($check_leave);
                                                                                 $if_attendance_holiday_status = 'Without-Pay';
                                                                                 $abs = 1;
+                                                                                $previous_abs = 1;
                                                                                 if(str_contains($check_leave,".5"))
                                                                                 {
                                                                                     $abs = 0;
+                                                                                    $previous_abs = 0;
                                                                                 }
                                                                             }else{
                                                                                 $if_attendance_holiday_status = 'With-Pay';
@@ -1113,6 +1116,7 @@
                                                 $subtotal_rd_ot_ge += $restday_ot_ge;
                                                 $subtotal_rd_nd += $restnd;
                                                 $subtotal_rd_nd_ge += 0;
+                                               
                                                 @endphp
                                                 <td @if($abs-$leave_count>0) class='bg-danger'@endif ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
                                                 <td ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
