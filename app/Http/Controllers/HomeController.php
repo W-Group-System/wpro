@@ -9,7 +9,7 @@ use App\Announcement;
 use App\Classification;
 use App\ScheduleData;
 use App\Holiday;
-
+use App\Document;
 use App\EmployeeLeave;
 use App\EmployeeOvertime;
 use App\EmployeeWfh;
@@ -39,7 +39,7 @@ class HomeController extends Controller
     public function index()
     {
 
-     
+        $documents = Document::get();
         $schedules = [];
         $attendance_controller = new AttendanceController;
         $current_day = date('d');
@@ -88,8 +88,7 @@ class HomeController extends Controller
         ->orderBy('holiday_date','asc')->get();
 
         $employee_anniversaries = Employee::with('department', 'company') ->where(function($query) {
-            $query->where('status', 'Active')
-                  ->orWhere('status', 'HBU');
+            $query->where('status', 'Active');
         })
           ->whereYear('original_date_hired','!=',date('Y'))
           ->whereMonth('original_date_hired', date('m'))
@@ -122,7 +121,8 @@ class HomeController extends Controller
             'employee_anniversaries' => $employee_anniversaries,
             'probationary_employee' => $probationary_employee,
             'classifications' =>$classifications,
-            'leaveTypes' => $leaveTypes
+            'leaveTypes' => $leaveTypes,
+            'documents' => $documents,
         ));
     }
 
