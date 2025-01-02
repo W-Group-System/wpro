@@ -468,9 +468,13 @@
                                   // dd($government_amount);
                                   // dd($last_c);
                                   if($name->employee->employee_code == "A3177424")
-                                {
-                                  $lastccc = $lastccc +500;
-                                }
+                                  {
+                                    $lastccc = $lastccc +500;
+                                  }
+                                  if($name->employee->employee_code == "A3172023")
+                                  {
+                                    $lastccc = $lastccc +3150;
+                                  }
                                 //   if($name->employee->employee_code == "A2104524")
                                 // {
                                 //   $government_amount = $government_amount +1000;
