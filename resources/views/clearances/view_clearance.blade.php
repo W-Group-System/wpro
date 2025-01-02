@@ -66,6 +66,8 @@
                   
 
                 </div>
+                <hr>
+                
               </div>
             </div>
           </div>
@@ -93,6 +95,27 @@
                   $cleared = number_format(($cleared/$total)*100);
               @endphp
           @endif
+          <div class="row ">
+            <div class="col-12">
+              <b><h5>Final Pay</h5></b>
+            </div>
+            <hr>
+          </div>
+          <div class='row text-left'>
+            <div class='col-md-12'>
+                Status: <span class='badge badge-warning'>Ongoing Computation</span>
+
+            </div>
+            <div class='col-md-12'>
+                Assigned Personel: Marimar Carlos
+            </div>
+            <div class='col-md-12'>
+                Last Update: {{date('F d, Y H:m a')}}
+            </div>
+            
+
+          </div>
+          <hr>
               <h4 class="card-title">Clearance 
                 <div class="progress progress-md mt-2">
                   <div class="progress-bar @if($cleared > 80) bg-success @else bg-danger @endif progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{$cleared}}%" aria-valuenow="{{$cleared}}" aria-valuemin="0" aria-valuemax="100">{{$cleared}}%</div>
