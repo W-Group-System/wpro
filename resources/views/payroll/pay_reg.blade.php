@@ -457,7 +457,8 @@
                               $lastccc = 0;
                               if($payroll_b)
                               {
-                                $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
+                                $last_c = $last_cut_off->where('employee_no',$name->employee_no)->where('cut_off_date','>',date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')))->first();
+                                // dd($name->cut_off_date." - ".date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')));
                                 if($last_c)
                                 {
                                  
@@ -466,6 +467,10 @@
                                   $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay;
                                   // dd($government_amount);
                                   // dd($last_c);
+                                  if($name->employee->employee_code == "A3177424")
+                                  {
+                                    $lastccc = $lastccc + 500;
+                                  }
                                 //   if($name->employee->employee_code == "A2104524")
                                 // {
                                 //   $government_amount = $government_amount +1000;
