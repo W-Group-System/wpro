@@ -441,6 +441,7 @@
                                                                     }
 
                                                                 }
+                                                               
                                                                 if(date('Y-m-d',strtotime($date_r)) < $emp->original_date_hired)
                                                                 {
                                                                     $abs = 1;
@@ -694,6 +695,7 @@
                                                     @php
                                                         $abs =0;
                                                         $leave_count =0;
+                                                        $previous_abs = $abs;
                                                     @endphp
                                                 @endif
                                                 @php
