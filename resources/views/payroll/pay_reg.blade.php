@@ -467,6 +467,10 @@
                                   $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay;
                                   // dd($government_amount);
                                   // dd($last_c);
+                                  if($name->employee->employee_code == "A3177424")
+                                {
+                                  $lastccc = $lastccc +500;
+                                }
                                 //   if($name->employee->employee_code == "A2104524")
                                 // {
                                 //   $government_amount = $government_amount +1000;
