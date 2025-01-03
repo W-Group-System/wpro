@@ -303,15 +303,25 @@
                                 $de_minimis = $name->employee->salary->de_minimis/2;
                                 
                                 // dd($name->employee);
-                                if($name->employee->work_description == "Non-Monthly")
-                                {
-                                  $d = ($name->employee->salary->de_minimis*12)/313;
+                                // if($name->employee->work_description == "Non-Monthly")
+                                // {
+                                //  $d = ($name->employee->salary->de_minimis*12)/313;
                                   
-                                  $basic_pay = $daily_rate*(number_format($days_rendered,2));
+                                //  $basic_pay = $daily_rate*(number_format($days_rendered,2));
                                   // dd($days_rendered);
                                   
                                   
-                                  $de_minimis = $d*($days_rendered);
+                                //  $de_minimis = $d*($days_rendered);
+                                // }
+
+                                if (isset($name->employee) && $name->employee->work_description == "Non-Monthly") {
+                                  $d = ($name->employee->salary->de_minimis ?? 0) * 12 / 313;
+
+                                  $days_rendered = $days_rendered ?? 0; // Default to 0 if not set
+                                  $daily_rate = $daily_rate ?? 0; // Default to 0 if not set
+
+                                  $basic_pay = $daily_rate * number_format($days_rendered, 2);
+                                  $de_minimis = $d * $days_rendered;
                                 }
                                 
                                 if($name->employee->level == 4)
