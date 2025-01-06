@@ -35,7 +35,7 @@
                     
                     <div class='col-md-2'>
                         <div class="form-group">
-                          <input value='{{ date('Y', strtotime($from_date)) }}' min='{{$from_date}}' class="form-control date-own" name="from" type="year" type='year' required/>
+                          <input value='{{ $from_date }}'  class="form-control date-own" name="from" type="year" type='year' required/>
                         </div>
                     </div>
                     <div class='col-md-3'>
@@ -84,18 +84,18 @@
                          
                             <tr>
                                 <td>BASIC PAY</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-01-01',strtotime($from_date)),date('Y-01-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-02-01',strtotime($from_date)),date('Y-02-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-03-01',strtotime($from_date)),date('Y-03-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-04-01',strtotime($from_date)),date('Y-04-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-05-01',strtotime($from_date)),date('Y-05-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-06-01',strtotime($from_date)),date('Y-06-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-07-01',strtotime($from_date)),date('Y-07-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-08-01',strtotime($from_date)),date('Y-08-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-09-01',strtotime($from_date)),date('Y-09-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-10-01',strtotime($from_date)),date('Y-10-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-11-01',strtotime($from_date)),date('Y-11-t',strtotime($from_date))])->sum('basic_pay')}}</td>
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-12-01',strtotime($from_date)),date('Y-12-t',strtotime($from_date))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-01-01',strtotime($from_date."-01-01")),date('Y-01-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-02-01',strtotime($from_date."-01-01")),date('Y-02-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-03-01',strtotime($from_date."-01-01")),date('Y-03-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-04-01',strtotime($from_date."-01-01")),date('Y-04-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-05-01',strtotime($from_date."-01-01")),date('Y-05-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-06-01',strtotime($from_date."-01-01")),date('Y-06-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-07-01',strtotime($from_date."-01-01")),date('Y-07-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-08-01',strtotime($from_date."-01-01")),date('Y-08-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-09-01',strtotime($from_date."-01-01")),date('Y-09-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-10-01',strtotime($from_date."-01-01")),date('Y-10-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-11-01',strtotime($from_date."-01-01")),date('Y-11-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-12-01',strtotime($from_date."-01-01")),date('Y-12-t',strtotime($from_date."-01-01"))])->sum('basic_pay')}}</td>
                                 <td>{{$emp_data->sum('basic_pay')}}</td>
                             </tr>
                             @php
@@ -122,8 +122,8 @@
                                 <td>{{ $label }}</td>
                                 @for ($i = 1; $i <= 12; $i++)
                                     <td>{{ $emp_data->whereBetween('cut_off_date', [
-                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),
-                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))
+                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                     ])->sum($field) }}</td>
                                 @endfor
                                 <td>{{ $emp_data->sum($field) }}</td>
@@ -133,7 +133,7 @@
                             <td >SALARY ADJUSTMENT</td>
                             
                             @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('salary_adjustment')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment')}}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('salary_adjustment')}}</td>
                         </tr>
@@ -156,21 +156,21 @@
                             <tr>
                                 <td>De Minimis</td>
                                 @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('deminimis')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('deminimis')}}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('deminimis')}}</td>
                             </tr>
                             <tr>
                                 <td>Other Allowances</td>
                                 @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('other_allowances_basic_pay')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('other_allowances_basic_pay')}}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('other_allowances_basic_pay')}}</td>
                             </tr>
                             <tr>
                                 <td>Subliq</td>
                                 @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('subliq')}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq')}}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('subliq')}}</td>
                             </tr>
@@ -179,8 +179,8 @@
                                 <td>{{$allowance->allowance_type->name}}</td>
                                 @for ($i = 1; $i <= 12; $i++)
                                 <td>{{ $emp_data->whereBetween('cut_off_date', [
-                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),
-                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                 ])->flatMap(function($emp) use ($allowance) {
                                     return $emp->pay_allowances->where('allowance_id',$allowance->allowance_id); // Filter by allowance_id
                                 })->sum('amount') }}
@@ -224,21 +224,21 @@
                             <tr>
                                 <td>Absent</td>
                                 @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('absent_amount') * -1}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('absent_amount') * -1}}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('absent_amount') * -1}}</td>
                             </tr>
                             <tr>
                                 <td>Tardiness</td>
                                 @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('tardiness_amount') * -1}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('tardiness_amount') * -1}}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('tardiness_amount') * -1}}</td>
                             </tr>
                             <tr>
                                 <td>Undertime</td>
                                 @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('undertime_amount') * -1}}</td>
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('undertime_amount') * -1}}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('undertime_amount') * -1}}</td>
                             </tr>
@@ -261,7 +261,7 @@
                             <tr>
                                 <td>SSS EMPLOYEE SHARE</td>
                                 @for ($i = 1; $i <= 12; $i++)
-                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('sss_employee_share') 
+                                <td>{{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('sss_employee_share') 
                               }}</td>
                                 @endfor
                                 <td>{{$emp_data->sum('sss_employee_share') }}</td>
@@ -270,7 +270,7 @@
                                 <td>HDMF EMPLOYEE SHARE</td>
                                 @for ($i = 1; $i <= 12; $i++)
                                 <td>
-                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('hdmf_employee_share')}}
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('hdmf_employee_share')}}
                                 </td>
                                 @endfor
                                 <td>{{$emp_data->sum('hdmf_employee_share')}}</td>
@@ -279,7 +279,7 @@
                                 <td>PHIC EMPLOYEE SHARE</td>
                                 @for ($i = 1; $i <= 12; $i++)
                                 <td>
-                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('phic_employee_share')}}
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('phic_employee_share')}}
                                 </td>
                                 @endfor
                                 <td>{{$emp_data->sum('phic_employee_share')}}</td>
@@ -288,7 +288,7 @@
                                 <td>MPF EMPLOYEE SHARE</td>
                                 @for ($i = 1; $i <= 12; $i++)
                                 <td>
-                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('mpf_employee_share')}}
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('mpf_employee_share')}}
                                 </td>
                                 @endfor
                                 <td>{{$emp_data->sum('mpf_employee_share')}}</td>
@@ -313,7 +313,7 @@
                                 <td>WITHHOLDING TAX</td>
                                 @for ($i = 1; $i <= 12; $i++)
                                 <td>
-                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('withholding_tax')}}
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('withholding_tax')}}
                                 </td>
                                 @endfor
                                 <td>{{$emp_data->sum('withholding_tax')}}</td>
@@ -339,8 +339,8 @@
                                 <td>{{$loan->loan_type->loan_name}}</td>
                                 @for ($i = 1; $i <= 12; $i++)
                                 <td>{{ $emp_data->whereBetween('cut_off_date', [
-                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),
-                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                 ])->flatMap(function($emp) use ($loan) {
                                     return $emp->pay_loan->where('loan_type_id',$loan->loan_type_id); // Filter by allowance_id
                                 })->sum('amount') }}
@@ -385,7 +385,7 @@
                                 <td colspan="1"><strong>Net Pay</strong></td>
                                 @for ($i = 1; $i <= 12; $i++)
                                 <td>
-                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date)),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date))])->sum('netpay')}}
+                                {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('netpay')}}
                                 </td>
                                 @endfor
                                 <td>{{$emp_data->sum('netpay')}}</td>
