@@ -51,7 +51,7 @@
                                 <div class='col-md-3'>
 									<button type="submit" class="btn btn-primary">Filter</button>
                                     <a href="/employee-earned-leaves" class="btn btn-warning">Reset Filter</a>
-                                    <a href="/manual-employee-earned-leaves" class="btn btn-info">Manual</a>
+                                    {{-- <a href="/manual-employee-earned-leaves" class="btn btn-info">Manual</a> --}}
 								</div>
                             </div>
                         </form>
