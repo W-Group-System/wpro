@@ -331,9 +331,11 @@
                                                             
                                                           
                                                             if($check_if_holiday){
+                                                                   
+                                                              
                                                                     $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
-                                                                if($if_attendance_holiday){
+                                                               
                                                                     $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r."-1 day")),$employee_schedule);
                                                                     // dd($if_attendance_holiday);
                                                                     if($check_leave){
@@ -387,72 +389,78 @@
                                                                             $abs =0;
                                                                         }
                                                                     }
-                                                                    
-                                                               
+                                                                 
                                                      
-                                                                $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
-                                                                $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->location);
-                                                                // dd($check_if_holiday_before);
-                                                                if($check_if_holiday_before)
-                                                                {
-                                                                    $abs = 0;
-                                                                }
-                                                                if($employee_schedule_before == null)
-                                                                {
-                                                                    $abs = 0;
-                                                                   
-                                                                }
-                                                                else {
-                                                                    if($employee_schedule_before->time_in_from == '00:00')
+                                                                    $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
+                                                                    $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->location);
+                                                                
+                                                                  
+                                                                
+                                                                    if($check_if_holiday_before)
                                                                     {
                                                                         $abs = 0;
                                                                     }
-                                                                    if($employee_schedule_before->time_in_from == null)
+                                                                    if($employee_schedule_before == null)
                                                                     {
                                                                         $abs = 0;
-                                                                    }
-
                                                                     
                                                                     }
-                                                                }
-                                                                if($emp->work_description == "Non-Monthly")
-                                                                {
-                                                                    $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
-                                                                
-                                                                    if(empty($if_leave)){
-                                                                        if($employee_schedule->time_in_from != '00:00') {
-                                                                        if(empty($if_has_dtr)){
-                                                                                if($time_out == null){
-                                                                                    $is_absent = 'Absent';
-                                                                                }
-                                                                        }
-                                                                        }
-                                                                        else {
-                                                                            $abs = 0;
-                                                                            $if_restday = 'Restday';
-                                                                        }
-                                                                    } 
                                                                     else {
-                                                                        $abs = 1;
+                                                                        if($employee_schedule_before->time_in_from == '00:00')
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
+                                                                        if($employee_schedule_before->time_in_from == null)
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
+
+                                                                        
+                                                                        }
+                                                                        if($if_attendance_holiday)
+                                                                        {
+                                                                            $abs=0;
+                                                                        }
+                                                                  
+                                                                    if($emp->work_description == "Non-Monthly")
+                                                                    {
+                                                                        $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                    
+                                                                        if(empty($if_leave)){
+                                                                            if($employee_schedule->time_in_from != '00:00') {
+                                                                            if(empty($if_has_dtr)){
+                                                                                    if($time_out == null){
+                                                                                        $is_absent = 'Absent';
+                                                                                    }
+                                                                            }
+                                                                            }
+                                                                            else {
+                                                                                $abs = 0;
+                                                                                $if_restday = 'Restday';
+                                                                            }
+                                                                        } 
+                                                                        else {
+                                                                            $abs = 1;
+                                                                        }
+                                                                        if($check_if_holiday == "Special Holiday")
+                                                                        {
+                                                                            $abs = 1;
+                                                                        }
+
                                                                     }
-                                                                    if($check_if_holiday == "Special Holiday")
+                                                                
+                                                                    if(date('Y-m-d',strtotime($date_r)) < $emp->original_date_hired)
                                                                     {
                                                                         $abs = 1;
                                                                     }
-
-                                                                }
-                                                               
-                                                                if(date('Y-m-d',strtotime($date_r)) < $emp->original_date_hired)
-                                                                {
-                                                                    $abs = 1;
-                                                                }
-                                                                if($previous_abs == 1)
-                                                                {
-                                                                    $abs = 1;
-                                                                }
-                                                                $previous_abs = $abs;
+                                                                    if($previous_abs == 1)
+                                                                    {
+                                                                        $abs = 1;
+                                                                    }
+                                                                    $previous_abs = $abs;
+                                                                    
                                                             }else{
-                                                                
+                                                              
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 
                                                                 if(empty($if_leave)){
@@ -473,7 +481,7 @@
                                                                     $abs = 1;
                                                                 }
                                                             }
-                                                                
+                                                               
                                                         @endphp
                                                     @else
                                                     @endif
