@@ -255,6 +255,7 @@ class UserController extends Controller
 
     public function accountSetting()
     {
+        ini_set('memory_limit', '-1');
         $classifications = Classification::get();
 
         $employees = Employee::with('department', 'payment_info', 'ScheduleData', 'immediate_sup_data', 'user_info', 'company')->get();
