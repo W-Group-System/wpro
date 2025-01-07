@@ -1078,7 +1078,7 @@ class EmployeeController extends Controller
     {
 
         $user = User::where('id',$user->id)->with('allowed_overtime','employee.department','employee.payment_info','employee.contact_person','employee.beneficiaries','employee.employee_vessel','employee.classification_info','employee.level_info','employee.ScheduleData','employee.immediate_sup_data','approvers.approver_data','subbordinates')->first();
-
+        // dd($user);
         $classifications = Classification::get();
 
         $employees = Employee::with('department', 'payment_info', 'ScheduleData', 'immediate_sup_data', 'user_info', 'company','classification_info','level_info')->get();
@@ -1088,7 +1088,7 @@ class EmployeeController extends Controller
         $employee_approvers = Employee::pluck('user_id')
                                         ->toArray();
 
-        $hierarchy = getEmployeeHierarchy($user->id);
+        // $hierarchy = getEmployeeHierarchy($user->id);
         // dd($hierarchy);
         // $employee_approvers = Employee::whereHas('company',function($q) use($user){
         //                                         if($user->employee->company_id){
@@ -1145,7 +1145,7 @@ class EmployeeController extends Controller
             'employeeTraining' => $employeeTraining,
             'employeeNte' => $employeeNte,
             'employeeDocuments' => $employeeDocument,
-            'hierarchy' => $hierarchy,
+            // 'hierarchy' => $hierarchy,
         ));
     
     }
@@ -1879,7 +1879,8 @@ class EmployeeController extends Controller
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
                                 })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
-                                // ->where('employee_code','A371424')
+                                ->orderBy('last_name','asc')
+                                // ->where('employee_code','A189123')
                                 ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);

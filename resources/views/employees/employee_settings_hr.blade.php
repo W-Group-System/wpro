@@ -992,51 +992,5 @@
 @include('employees.edit_bank_details')
 @endsection
 @section('js')
-<script>
 
-var jsonData = {!! json_encode($hierarchy) !!};
-    console.log(jsonData);
-    outputData = [];
-    $.each(jsonData , function(index, item){
-        outputData.push({
-            id: item.id,
-            pid: item.pid,
-            company: item.company,
-            name: item.name,
-            position: item.position,
-            img: item.img,
-        });
-    });
-
-    var chart;
-    window.onload = function () {
-    var chart = new OrgChart(document.getElementById("orgChart"), {
-            // template: "luba",
-            menu: {
-                pdf: { text: "Export PDF" },
-                png: { text: "Export PNG" },
-                svg: { text: "Export SVG" },
-                csv: { text: "Export CSV" }
-            },
-            nodeMenu: {
-                pdf: { text: "Export PDF" },
-                png: { text: "Export PNG" },
-                svg: { text: "Export SVG" }
-            },
-            nodeBinding: {
-                field_0: "name",
-                field_1: "position",
-                field_3: "company",
-                img_0 : 'img'
-            },       
-            nodes: outputData
-        });
-        document.getElementById("selectTemplate").addEventListener("change", function () {
-        chart.config.template = this.value;
-        chart.draw();
-});
-};
-
-
-</script>
 @endsection
