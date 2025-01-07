@@ -131,7 +131,9 @@
                                     $if_has_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
                                 @endphp
                                 <tr>
-                                    <td>>{{$emp->first_name . ' ' . $emp->last_name}}</td>
+                                    
+                                    <td>{{ $emp->employee_code }}</td>
+                                    <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                     <td>{{date('d/m/Y',strtotime($date_r))}}</td>
                                     <td>
                                         @if($employee_schedule != null)
