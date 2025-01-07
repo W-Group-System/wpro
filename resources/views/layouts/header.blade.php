@@ -446,7 +446,7 @@
                     </li>
                     
                     @if (checkUserPrivilege('timekeeping_dashboard',auth()->user()->id) == 'yes')
-                    @if(request()->getHost() != "hris.wsystem.online")
+                    {{-- @if(request()->getHost() != "hris.wsystem.online") --}}
                     <li class="nav-item @if ($header == 'Timekeeping') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#Timekeeping" aria-expanded="@if ($header == 'Timekeeping') true @else false @endif" aria-controls="ui-basic">
                             <i class="icon-grid menu-icon"></i>
@@ -461,7 +461,7 @@
                             </ul>
                         </div>
                     </li>
-                    @endif
+                    {{-- @endif --}}
                     @endif
 
                     @if (checkUserPrivilege('employees_view',auth()->user()->id) == 'yes')
