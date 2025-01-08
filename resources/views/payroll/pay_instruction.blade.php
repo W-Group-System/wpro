@@ -38,8 +38,9 @@
                     <div class=row>
                     </div>
                   </form>
+                  <button id="btnExport" onclick="fnExcelReport();"> EXPORT </button>
                 <div class="table-responsive">
-                  <table class="table table-hover table-bordered">
+                  <table class="table table-hover table-bordered" id='pay_instruction'>
                     <thead>
                         <tr>
                             <th>Location </th>
@@ -79,7 +80,38 @@
     </div>
 </div>
 <script>
-    
+     function fnExcelReport() {
+    var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+    var j = 0;
+    var tab = document.getElementById('pay_instruction'); // id of table
+
+    for (j = 0; j < tab.rows.length; j++) {
+        tab_text = tab_text + tab.rows[j].innerHTML + "</tr>";
+        //tab_text=tab_text+"</tr>";
+    }
+
+    tab_text = tab_text + "</table>";
+    tab_text = tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+    tab_text = tab_text.replace(/<img[^>]*>/gi, ""); // remove if u want images in your table
+    tab_text = tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+    var msie = window.navigator.userAgent.indexOf("MSIE ");
+
+    // If Internet Explorer
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+        txtArea1.document.open("txt/html", "replace");
+        txtArea1.document.write(tab_text);
+        txtArea1.document.close();
+        txtArea1.focus();
+
+        sa = txtArea1.document.execCommand("SaveAs", true, "Say Thanks to Sumit.xls");
+    } else {
+        // other browser not tested on IE 11
+        sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+    }
+
+    return sa;
+}
 </script>
 @include('payroll.add_instruction')
 @include('payroll.upload_pay_instruction')
