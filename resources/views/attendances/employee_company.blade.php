@@ -1166,7 +1166,7 @@
                                             <tr>
                                                 <td><strong>Subtotal</strong></td>
                                                 <td><strong>{{ $emp->employee_code }}</strong></td>
-                                                <td><strong>{{$emp->first_name . ' ' . $emp->last_name}}</strong></td>
+                                                <td><strong>{{$emp->last_name . ' ' . $emp->first_name}}</strong></td>
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
