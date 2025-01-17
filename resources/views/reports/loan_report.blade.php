@@ -42,7 +42,7 @@
 									<div class="form-group row">
 										<label class="col-sm-4 col-form-label text-right">Loans</label>
 										<div class="col-sm-8">
-											<select data-placeholder="Select Loans"  class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="loan" id="loan" required>
+											<select data-placeholder="Select Loans"  class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="loan[]" id="loan" required multiple>
 												<option value="">-- Select Loan --</option>
 												@foreach($loans as $loan)
 												<option value="{{$loan->id}}">{{$loan->loan_name}}</option>

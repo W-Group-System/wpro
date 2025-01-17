@@ -129,6 +129,12 @@ class LoanController extends Controller
         $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
         ->get();
+        $loanType = [];
+        if ($request->loan)
+        {
+            $loanType = $request->loan;
+        }
+        // dd($loanType);
         $company = $request->company;
         $from = $request->from;
         $to = $request->to;
@@ -137,7 +143,7 @@ class LoanController extends Controller
         ->pluck('id')
         ->toArray();
 
-        $loan_all = PayregLoan::whereIn('payreg_id',$pay_register_ids)->where('loan_type_id',$request->loan)->get();
+        $loan_all = PayregLoan::whereIn('payreg_id',$pay_register_ids)->whereIn('loan_type_id',$loanType)->get();
         return view('reports.loan_report', array(
             'header' => 'reports',
             'companies' => $companies,
