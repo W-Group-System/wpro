@@ -1880,6 +1880,7 @@ class EmployeeController extends Controller
                                     $q->whereIn('project',$allowed_projects);
                                 })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
                                 ->orderBy('last_name','asc')
+                                ->orderBy('first_name','asc')
                                 // ->where('employee_code','A189123')
                                 ;
             if($department){
