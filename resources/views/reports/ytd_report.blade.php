@@ -414,15 +414,15 @@
                                     return $emp->pay_loan->where('loan_type_id',$loan->loan_type_id); // Filter by allowance_id
                                 })->sum('amount');
                                 @endphp
-                                <td>{{ $emp_data->whereBetween('cut_off_date', [
+                                <td>{{ number_format($emp_data->whereBetween('cut_off_date', [
                                     date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
                                     date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                 ])->flatMap(function($emp) use ($loan) {
                                     return $emp->pay_loan->where('loan_type_id',$loan->loan_type_id); // Filter by allowance_id
-                                })->sum('amount') }}
+                                })->sum('amount')*-1,2) }}
                                 </td>
                                 @endfor
-                                <td>{{$loans_data->where('loan_type_id',$loan->loan_type_id)->sum('amount')}}</td>
+                                <td>{{number_format($loans_data->where('loan_type_id',$loan->loan_type_id)->sum('amount')*-1,2)}}</td>
                             </tr>
                             @endforeach
                             @php
@@ -435,10 +435,10 @@
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Non-Taxable Deduction</strong></td>
                                 @for($i = 1; $i <= 12; $i++)
-                                <td>{{number_format($non_taxable_deduction["non_taxable_deduction".$i],2)}}</td>
+                                <td>{{number_format($non_taxable_deduction["non_taxable_deduction".$i]*-1,2)}}</td>
                                 @endfor
                                 
-                                <td>{{number_format(array_sum($non_taxable_deduction),2)}}</td>
+                                <td>{{number_format(array_sum($non_taxable_deduction)*-1,2)}}</td>
                             </tr>
                             <tr style="background-color: #e0e0e0;">
                                 <td colspan="1"><strong>Total Deductions</strong></td>
