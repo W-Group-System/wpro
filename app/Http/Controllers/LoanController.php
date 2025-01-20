@@ -33,7 +33,7 @@ class LoanController extends Controller
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $search = $request->search;
-        $loans = Loan::with('loan_type', 'employee')
+        $loans = Loan::with('loan_type', 'employee','pay')
             ->whereHas('employee', function($query) use ($search) {
                 $query->where('first_name', 'like', '%' . $search . '%')
                 ->orWhere('last_name', 'like', '%' . $search . '%')
