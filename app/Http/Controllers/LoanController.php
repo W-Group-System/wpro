@@ -182,8 +182,10 @@ class LoanController extends Controller
         $companies_selected = Company::whereIn('id', $company)->get();
         $loan_all = Loan::with([
             'employee',
-            'pay' => function($query) {
-                $query->whereHas('pay_reg'); // Filter to only include pay records that have pay_reg
+            'pay' => function($query)use($request) {
+                $query->whereHas('pay_reg', function ($q)use($request) {
+                    $q->where('pay_period_to', '<=', $request->as_of); // Filter to only include pay records that have pay_reg
+                });
             },
             'pay.pay_reg' // This still loads pay_reg, but only for filtered pay records
         ])
@@ -202,6 +204,7 @@ class LoanController extends Controller
             'loans' => $loans,
             'loan_all' => $loan_all,
             'companies_selected' => $companies_selected,
+            'as_of' => $request->as_of
         ));
     }
     /**

@@ -41,6 +41,14 @@
 										</div>
 									</div>
 								</div> --}}
+                                <div class="col-md-3">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label text-right">As of</label>
+                                        <div class="col-sm-8">
+                                            <input type="date" name="as_of" class="form-control" max="{{date('Y-m-d')}}" value="{{$as_of}}" required>
+                                        </div>
+                                    </div>
+                                </div>
 								<div class='col-md-4'>
 									<div class="form-group row">
 										<label class="col-sm-4 col-form-label text-right">Loans</label>
