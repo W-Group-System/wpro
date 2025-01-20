@@ -9,6 +9,7 @@ use App\Company;
 use App\Payregs;
 use App\PayregLoan;
 use App\LoanType;
+use App\PayregInstruction;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -125,6 +126,9 @@ class LoanController extends Controller
     public function loan_report(Request $request)
     {
         $loans = LoanType::get();
+
+        $pay_regs_instruction = PayregInstruction::select('instruction_name')->where('amount', '<', 0)->groupBy('instruction_name')->get();
+        
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
@@ -144,13 +148,15 @@ class LoanController extends Controller
         {
             $company_array = $company;
         }
-        // dd($company_array);
+        
         $pay_register_ids = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
         ->whereIn('company_id', $company_array)
         ->pluck('id')
         ->toArray();
 
         $loan_all = PayregLoan::whereIn('payreg_id',$pay_register_ids)->whereIn('loan_type_id',$loanType)->get();
+        $pay_regs = PayregInstruction::whereIn('payreg_id',$pay_register_ids)->whereIn('instruction_name',$loanType)->get();
+        // dd($loanType, $pay_regs);
         
         return view('reports.loan_report', array(
             'header' => 'reports',
@@ -160,6 +166,9 @@ class LoanController extends Controller
             'to' => $to,
             'loans' => $loans,
             'loan_all' => $loan_all,
+            'payRegs' => $pay_regs_instruction,
+            'pay_regs' => $pay_regs,
+            'loanType' => $loanType
         ));
     }
     public function companyLoan(Request $request)

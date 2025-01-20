@@ -45,8 +45,12 @@
 											<select data-placeholder="Select Loans"  class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="loan[]" id="loan" required multiple>
 												<option value="">-- Select Loan --</option>
 												@foreach($loans as $loan)
-												<option value="{{$loan->id}}">{{$loan->loan_name}}</option>
+												<option value="{{$loan->id}}" @if(in_array($loan->id, $loanType)) selected @endif>{{$loan->loan_name}}</option>
 												@endforeach
+
+                                                @foreach ($payRegs as $payReg)
+                                                    <option value="{{$payReg->instruction_name}}" @if(in_array($payReg->instruction_name, $loanType)) selected @endif>{{$payReg->instruction_name}}</option>
+                                                @endforeach
 												
 											</select>
 										</div>
@@ -61,47 +65,91 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-12 grid-margin stretch-card">
-				<div class="card">
-					<div class="card-body">
-						<div class="table-responsive">
-							<table class="table table-db table-hover table-bordered">
-							<thead>
-								<tr>
-									<th>Name</th>
-									
-									<th>Employee No</th>
-									<th>Birth Date</th>
-									<th>Government Number</th>
-									<th>Cutoff</th>
-									<th>Loan</th>
-									<th>Amount</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach($loan_all as $loan_al)
-								<tr>
-									<td>{{$loan_al->pay_reg->last_name}}, {{$loan_al->pay_reg->first_name}}</td>
-									
-									<td>{{$loan_al->pay_reg->employee_no}}</td>
-									<td>{{date('M d, Y',strtotime($loan_al->employee->birth_date))}}</td>
-									@if(str_contains($loan_al->loan_type->loan_name,"SSS"))
-									<td>{{$loan_al->employee->sss_number}}</td>
-									@elseif(str_contains($loan_al->loan_type->loan_name,"HDMF"))
-									<td>{{$loan_al->employee->hdmf_number}}</td>
-									@else
-									<td></td>
-									@endif
-									<td>{{date('M d, Y',strtotime($loan_al->pay_reg->cut_off_date))}}</td>
-									<td>{{$loan_al->loan_type->loan_name}}</td>
-									<td>{{$loan_al->amount}}</td>
-								</tr>
-								@endforeach
-							</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
+			<div class="row">
+			    <div class="col-lg-6 grid-margin stretch-card">
+    				<div class="card">
+    					<div class="card-body">
+    						<div class="table-responsive">
+    							<table class="table table-db table-hover table-bordered">
+    							<thead>
+                                    <tr>
+    									<th colspan="7">Government </th>
+    								</tr>
+    								<tr>
+    									<th>Name</th>
+    									
+    									<th>Employee No</th>
+    									<th>Birth Date</th>
+    									<th>Government Number</th>
+    									<th>Cutoff</th>
+    									<th>Loan</th>
+    									<th>Amount</th>
+    								</tr>
+    							</thead>
+    							<tbody>
+    								@foreach($loan_all as $loan_al)
+    								<tr>
+    									<td>{{$loan_al->pay_reg->last_name}}, {{$loan_al->pay_reg->first_name}}</td>
+    									
+    									<td>{{$loan_al->pay_reg->employee_no}}</td>
+    									<td>{{date('M d, Y',strtotime($loan_al->employee->birth_date))}}</td>
+    									@if(str_contains($loan_al->loan_type->loan_name,"SSS"))
+    									<td>{{$loan_al->employee->sss_number}}</td>
+    									@elseif(str_contains($loan_al->loan_type->loan_name,"HDMF"))
+    									<td>{{$loan_al->employee->hdmf_number}}</td>
+    									@else
+    									<td></td>
+    									@endif
+    									<td>{{date('M d, Y',strtotime($loan_al->pay_reg->cut_off_date))}}</td>
+    									<td>{{$loan_al->loan_type->loan_name}}</td>
+    									<td>{{$loan_al->amount}}</td>
+    								</tr>
+    								@endforeach
+    							</tbody>
+    							</table>
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+                <div class="col-lg-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-db table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th colspan="5">Pay Instructions </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Name</th>
+                                        
+                                        <th>Employee No</th>
+                                        {{-- <th>Birth Date</th> --}}
+                                        <th>Instruction Name</th>
+                                        <th>Cutoff</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pay_regs as $loan_al)
+                                    <tr>
+                                        <td>
+                                            {{$loan_al->pay_reg->last_name}}, {{$loan_al->pay_reg->first_name}}
+                                        </td>
+                                        
+                                        <td>{{$loan_al->pay_reg->employee_no}}</td>
+                                        {{-- <td>{{date('M d, Y',strtotime($loan_al->employee->birth_date))}}</td> --}}
+                                        <td>{{$loan_al->instruction_name}}</td>
+                                        <td>{{date('M d, Y',strtotime($loan_al->pay_reg->cut_off_date))}}</td>
+                                        <td>{{$loan_al->amount}}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>
