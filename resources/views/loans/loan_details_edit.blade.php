@@ -60,8 +60,11 @@
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="amount">Loan Balance</label>
+                        @php
+                            $loan_balance = number_format($loan->initial_amount-($loan->pay)->sum('amount'),2,'.','');
+                        @endphp
                         <input type="number" class="form-control form-control-sm" name="initial_amount" id="amount" required readonly
-                            min="1" value="{{ $loan->initial_amount }}" step=".01" placeholder="0.00">
+                            min="1" value="{{$loan_balance}}" step=".01" placeholder="0.00">
                     </div>
                     <div class="col-lg-6 form-group">
                         <label for="frequency">Frequency</label>
