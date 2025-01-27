@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use App\Employee;
 use App\Exports\OvertimeTemplate;
 use App\Exports\OvertimeTemplateExport;
@@ -238,5 +239,16 @@ class UploadController extends Controller
         }
 
         return back();
+    }
+
+    public function obFiles(Request $request)
+    {
+        $header = 'ob_files';
+        $companies = Company::get();
+        $company_filter = $request->company;
+
+        $files = UploadType::where('type','OB')->paginate(10);
+
+        return view('uploaded_leave_files.ob_file', compact('header','files','companies','company_filter'));
     }
 }

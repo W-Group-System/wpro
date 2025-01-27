@@ -681,6 +681,7 @@
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/ytd-report') }}">YTD</a></li>
                     @endif
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/attendance-report') }}">Attendance Reports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{url('ob_files')}}">OB Uploaded Files</a></li>
                 </ul>
             </div>
         </li>

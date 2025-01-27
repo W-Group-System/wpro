@@ -436,6 +436,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('change-status-checklist/{id}','ExitClearanceController@changestatus')->name('Change Status');
     Route::post('mark-as-cleared/{id}','ExitClearanceController@cleared')->name('Change Status');
 
+    // Uploaded Leave Files
+    Route::get('ob_files','UploadController@obFiles');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
