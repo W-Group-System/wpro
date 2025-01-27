@@ -67,6 +67,7 @@ class UploadController extends Controller
                                 $employeeOb->approved_date = date('Y-m-d',strtotime($row[4]));
                                 $employeeOb->status = $row[10];
                                 $employeeOb->created_by = auth()->user()->id;
+                                $employeeOb->remarks = $row[9];
                                 $employeeOb->save();
                             } else {
                                 $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[3]))." ".date('H:i:s',strtotime($row[5]))));
@@ -74,6 +75,7 @@ class UploadController extends Controller
                                 $employeeOb->approved_date = date('Y-m-d',strtotime($row[4]));
                                 $employeeOb->status =  $row[10];
                                 $employeeOb->created_by = auth()->user()->id;
+                                $employeeOb->remarks = $row[9];
                                 $employeeOb->save();
                             }
                         }
@@ -244,11 +246,19 @@ class UploadController extends Controller
     public function obFiles(Request $request)
     {
         $header = 'ob_files';
-        $companies = Company::get();
+        $companies = Company::where('id', 10)->get();
         $company_filter = $request->company;
+        $date_from = $request->date_from;
+        $date_to = $request->date_to;
+        
+        $files = UploadType::where('type','OB')
+            ->whereHas('user.employee', function($q)use($company_filter) {
+                $q->where('company_id', $company_filter);
+            })
+            ->whereBetween('uploaded_at', [$date_from, $date_to])
+            ->orderBy('uploaded_at','desc')
+            ->paginate(25);
 
-        $files = UploadType::where('type','OB')->paginate(10);
-
-        return view('uploaded_leave_files.ob_file', compact('header','files','companies','company_filter'));
+        return view('uploaded_leave_files.ob_file', compact('header','files','companies','company_filter','date_from','date_to'));
     }
 }
