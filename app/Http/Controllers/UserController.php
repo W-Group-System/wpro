@@ -40,9 +40,9 @@ class UserController extends Controller
             $limit = isset($request->limit) ? $request->limit : 1000;
             $companies = Company::whereHas('employee_has_company')->orderBy('company_name','ASC')->get();
             $users = User::select('id','name','email','status','role')
-                            ->whereHas('employee',function($q){
-                                $q->where('status','Active');
-                            })
+                            // ->whereHas('employee',function($q){
+                            //     $q->where('status','Active');
+                            // })
                             ->when($search,function($q) use($search){
                                 $q->whereHas('employee',function($w) use($search){
                                     $w->where('first_name', 'like' , '%' .  $search . '%')->orWhere('last_name', 'like' , '%' .  $search . '%')->orWhere('employee_number', 'like' , '%' .  $search . '%');
