@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AttendanceLog;
 use App\Company;
 use App\Employee;
 use App\Exports\OvertimeTemplate;
@@ -161,25 +162,26 @@ class UploadController extends Controller
                         }
                     }
                     else if ($request->type == "DTR") {
-                        $dateTime = Date::excelToDateTimeObject($row['date_time'])->format('Y-m-d H:i:s');
+                        // $dateTime = Date::excelToDateTimeObject($row['date_time'])->format('Y-m-d H:i:s');
+                        $dateTime = date('Y-m-d H:i:s',strtotime($row[1]));
                         
-                        $attendanceLogs = AttendanceLog::where('emp_code', $row['bio_number'])->where('datetime', $dateTime)->first();
+                        $attendanceLogs = AttendanceLog::where('emp_code', $row[0])->where('datetime', $dateTime)->first();
                         
                         if (empty($attendanceLogs)) {
                             $attendanceLogs = new AttendanceLog;
-                            $attendanceLogs->emp_code = $row['bio_number'];
-                            $attendanceLogs->date = Date::excelToDateTimeObject($row['date_time'])->format('Y-m-d');
+                            $attendanceLogs->emp_code = $row[0];
+                            $attendanceLogs->date = date('Y-m-d', strtotime($row[1]));
                             $attendanceLogs->datetime = $dateTime;
-                            $attendanceLogs->type = strtoupper($row['status']) == 'IN' ? 1 : 0;
+                            $attendanceLogs->type = strtoupper($row[0]) == 'IN' ? 1 : 0;
                             $attendanceLogs->location = "DTR";
                             $attendanceLogs->ip_address = 'DTR Upload';
                             $attendanceLogs->save();
                         }
                         else {
-                            $attendanceLogs->emp_code = $row['bio_number'];
-                            $attendanceLogs->date = Date::excelToDateTimeObject( $row['date_time'])->format('Y-m-d');
+                            $attendanceLogs->emp_code = $row[0];
+                            $attendanceLogs->date = date('Y-m-d', strtotime($row[1]));
                             $attendanceLogs->datetime = $dateTime;
-                            $attendanceLogs->type = strtoupper($row['status']) == 'IN' ? 1 : 0;
+                            $attendanceLogs->type = strtoupper($row[0]) == 'IN' ? 1 : 0;
                             $attendanceLogs->save();
                         }
                     }
