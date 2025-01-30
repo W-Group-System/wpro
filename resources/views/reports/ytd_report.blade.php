@@ -16,7 +16,7 @@
                         <div class="form-group">
                           <select data-placeholder="Filter By Employee" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='employee'>
                               <option value="">-- Filter By Employee --</option>
-                              <option value="null" @if($employee_data === null) selected @endif>-- Remove Employee --</option>
+                              <option value=" " @if($employee_data === null) selected @endif>-- Remove Employee --</option>
                               @foreach($employees as $emp)
                                   <option value="{{$emp->employee_code}}" @if($employee_data == $emp->employee_code) selected @endif >{{$emp->employee_number}} - {{$emp->first_name}} {{$emp->last_name}}</option>
                               @endforeach
@@ -27,7 +27,7 @@
                           <div class="form-group">
                               <select data-placeholder="Filter By Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company'>
                                   <option value="">-- Filter By Company --</option>
-                                  <option value="null" @if($company  === null) selected @endif>-- Remove Company --</option>
+                                  <option value=" " @if($company  === null) selected @endif>-- Remove Company --</option>
                                   @foreach($companies as $comp)
                                   <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_code}}</option>
                                   @endforeach
@@ -56,7 +56,7 @@
                 
                 <div class="table-responsive">
 
-                    @if(request()->get('company') && request()->get('company') !== 'null')
+                    @if(request()->get('company') && request()->get('company') !== null)
                    <button id="btnExport" onclick="fnExcelReport();"> EXPORT </button>
                     {{-- @foreach ($emp_data as $emp) --}}
                         @foreach ( $empD as $empDetail)
@@ -925,7 +925,7 @@
                              </table>
  
                      <br>
-                     @elseif(request()->query() === [])
+                     @else
                    @endif
 
                   </div>
