@@ -423,20 +423,34 @@ class AttendanceController extends Controller
             $attendance->save();
        }
        
-       if($attendance->id != null)
-       {
-       return array( 'code' => 200,
-        'attendance' => $attendance,
-        'message' => 'success',
-        );
-       }
-       else
-       {
-        return array( 'code' => 500,
-        'attendance' => $attendance,
-        'message' => 'error',
-        );
-       }
+       if ($attendance && isset($attendance->id)) {
+            return [
+                'code' => 200,
+                'attendance' => $attendance,
+                'message' => 'success',
+            ];
+        } else {
+            return [
+                'code' => 500,
+                'attendance' => null, // Ensure null is explicitly returned
+                'message' => 'error',
+            ];
+        }
+    
+    //    if($attendance->id != null)
+    //    {
+    //    return array( 'code' => 200,
+    //     'attendance' => $attendance,
+    //     'message' => 'success',
+    //     );
+    //    }
+    //    else
+    //    {
+    //     return array( 'code' => 500,
+    //     'attendance' => $attendance,
+    //     'message' => 'error',
+    //     );
+    //    }
     }
     public function store_logs_hk(Request $request)
     {
