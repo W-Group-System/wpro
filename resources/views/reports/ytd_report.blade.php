@@ -56,7 +56,7 @@
                 
                 <div class="table-responsive">
 
-                    @if(request('company') && request('company') !== 'null')
+                    @if(request()->get('company') && request()->get('company') !== 'null')
                    <button id="btnExport" onclick="fnExcelReport();"> EXPORT </button>
                     {{-- @foreach ($emp_data as $emp) --}}
                         @foreach ( $empD as $empDetail)
@@ -495,7 +495,7 @@
                         'page' => request('page')
                     ])->links() }}
                     <br>
-                    @else
+                    @elseif (request()->get('employee') !== null )
                     <button id="btnExport" onclick="fnExcelReport();"> EXPORT </button>
                          
                              <table border="1" width='100%' class="table table-hover table-bordered " id='YTD'>
@@ -508,7 +508,7 @@
                                      </tr>
                                      <tr>
                                      
-                                         <td colspan='14' class='text-center'>{{$empD->company->company_name}} - <b>{{$from_date}}</b></td>
+                                         {{-- <td colspan='14' class='text-center'>{{$empD->company->company_name}} - <b>{{$from_date}}</b></td> --}}
                                      </tr>
                                      <tr>
                                      
@@ -925,6 +925,7 @@
                              </table>
  
                      <br>
+                     @elseif(request()->query() === [])
                    @endif
 
                   </div>
