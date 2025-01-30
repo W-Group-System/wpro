@@ -45,7 +45,8 @@ class EmployeeHRExport implements FromQuery, WithHeadings, WithMapping
                                 })
                                 ->when($status,function($q) use($status){
                                     $q->where('status',$status);
-                                });
+                                }) 
+                                ->orderBy('last_name', 'asc');
     }
 
     public function headings(): array
@@ -115,7 +116,7 @@ class EmployeeHRExport implements FromQuery, WithHeadings, WithMapping
             $department,
             $employee->position,
             $employee->level,
-            date('d/m/Y',strtotime($employee->birth_date)),
+            date('m/d/Y',strtotime($employee->birth_date)),
             $employee->birth_place,
             $employee->gender,
             $employee->marital_status,
