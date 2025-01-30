@@ -69,6 +69,8 @@ class PayslipController extends Controller
         $employee_data = $request->employee;
         $allowances = [];
         $allowances_data = [];
+        $instructions = [];
+        $instructions_data = [];
         $loans = [];
         $loans_data = [];
         $emp = null;
@@ -79,14 +81,17 @@ class PayslipController extends Controller
         if ($from_date != null) {
             $emp = Employee::with('company')->where('employee_code',$request->employee)->first();
     
-            $emp_data = Payregs::with('pay_allowances','pay_loan')->where('employee_no',$request->employee)->whereYear('cut_off_date',$from_date)->get();
+            $emp_data = Payregs::with('pay_allowances','pay_loan','pay_instructions')->where('employee_no',$request->employee)->whereYear('cut_off_date',$from_date)->get();
             // dd($emp_data);
             // $allowances = $emp_data->pay_allowances;
             
             $allowances = PayregAllowance::with('allowance_type')->select('allowance_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('allowance_id')->get();
             $loans = PayregLoan::with('loan_type')->select('loan_type_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('loan_type_id')->get();
+            $instructions = PayregInstruction::select('instruction_name')->where('amount','<',0)->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('instruction_name')->get();
             $allowances_data = PayregAllowance::with('allowance_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
             $loans_data = PayregLoan::with('loan_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
+            $instructions_data = PayregInstruction::whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
+            // dd())
         }
         else
 
@@ -114,6 +119,8 @@ class PayslipController extends Controller
                 'loans' => $loans,
                 'loans_data' => $loans_data,
                 'empD' => $emp,
+                'instructions' => $instructions,
+                'instructions_data' => $instructions_data,
             )
         );
     }

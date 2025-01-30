@@ -151,16 +151,23 @@ class PayRegImport implements ToModel, WithHeadingRow
                             if($employee_info)
                                 {
                                     $pay_reg = Payregs::where('employee_no',$row['employee_no'])->where('posting_date',$posting_date)->first();
-                                    // dd($row[$index]);
-                                
-                                    // dd($row['employee_no']);
-                                        $data[] = new PayregInstruction([
+                                   if($pay_reg != null)
+                                   {
+                                    $data[] = new PayregInstruction([
                                         "employee_code" => $row['employee_no'],
                                         "instruction_name" => str_replace('_', ' ', $index),
                                         "amount" => $row[$index],
                                         "created_by" => "272",
                                         "payreg_id" => $pay_reg->id,
                                     ]);
+                                   }
+                                //    else
+                                //    {
+                                //     dd($row['employee_no']);
+                                //    }
+                                
+                                    // dd($row['employee_no']);
+                                  
                                 
                             
                                     

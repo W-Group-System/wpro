@@ -425,6 +425,29 @@
                                 <td>{{number_format($loans_data->where('loan_type_id',$loan->loan_type_id)->sum('amount')*-1,2)}}</td>
                             </tr>
                             @endforeach
+                            @foreach($instructions as $instruction)
+                            <tr>
+                                <td>{{strtoupper($instruction->instruction_name)}}</td>
+                                @for ($i = 1; $i <= 12; $i++)
+                                @php
+                                    $non_taxable_deduction["non_taxable_deduction".$i] = $non_taxable_deduction["non_taxable_deduction".$i]  + $emp_data->whereBetween('cut_off_date', [
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
+                                ])->flatMap(function($emp) use ($instruction) {
+                                    return $emp->pay_instructions->where('instruction_name',$instruction->instruction_name); // Filter by allowance_id
+                                })->sum('amount');
+                                @endphp
+                                <td>{{ number_format($emp_data->whereBetween('cut_off_date', [
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                    date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
+                                ])->flatMap(function($emp) use ($instruction) {
+                                    return $emp->pay_instructions->where('instruction_name',$instruction->instruction_name); // Filter by allowance_id
+                                })->sum('amount'),2) }}
+                                </td>
+                                @endfor
+                                <td>{{number_format($instructions_data->where('instruction_name',$instruction->instruction_name)->sum('amount'),2)}}</td>
+                            </tr>
+                            @endforeach
                             @php
                                 $total_deduction = [];
                                 for($i = 1; $i <= 12; $i++)
