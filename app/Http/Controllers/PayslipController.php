@@ -79,11 +79,26 @@ class PayslipController extends Controller
         $company = isset($request->company) ? $request->company : "";
 
         if ($from_date != null) {
-            $emp = Employee::with('company')->where('employee_code',$request->employee)->first();
-    
-            $emp_data = Payregs::with('pay_allowances','pay_loan','pay_instructions')->where('employee_no',$request->employee)->whereYear('cut_off_date',$from_date)->get();
-            // dd($emp_data);
-            // $allowances = $emp_data->pay_allowances;
+            if ($request->company == null || $request->company === 'null') {
+                $emp = Employee::with('company')->where('employee_code',$request->employee)->first();
+                
+                $emp_data = Payregs::with('pay_allowances','pay_loan')->where('employee_no',$request->employee)->whereYear('cut_off_date',$from_date)->get();
+
+                // dd($emp_data);
+                // $allowances = $emp_data->pay_allowances;
+                
+            }elseif ($request->company) {
+                $emp = Employee::with('company')
+                    ->where('company_id', $request->company)
+                    ->paginate(50);
+                
+                $emp_data = Payregs::with('pay_allowances','pay_loan','pay_instructions')
+                    ->whereIn('employee_no', $emp->pluck('employee_code')->toArray())
+                    ->whereYear('cut_off_date', $from_date)
+                    ->paginate(50);
+                // dd($emp_data);
+
+            }
             
             $allowances = PayregAllowance::with('allowance_type')->select('allowance_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('allowance_id')->get();
             $loans = PayregLoan::with('loan_type')->select('loan_type_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('loan_type_id')->get();
