@@ -129,7 +129,7 @@ class EmployeeHRExport implements FromQuery, WithHeadings, WithMapping
             $employee->hdmf_number,
             $employee->bank_name,
             $employee->bank_account_number,
-            date('d/m/Y',strtotime($employee->original_date_hired)),
+            date('m/d/Y',strtotime($employee->original_date_hired)),
             $employee->personal_email,
             $company_email,
             $employee->immediate_sup,
