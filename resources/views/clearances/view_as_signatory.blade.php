@@ -46,7 +46,7 @@
                   </div>
 
                 </div>
-                <hr>
+                {{-- <hr>
                 <div class="row ">
                   <div class="col-12">
                     <b><h5>Employee Contact Information</h5></b>
@@ -66,7 +66,7 @@
                   </div>
                   
 
-                </div>
+                </div> --}}
               </div>
             </div>
           </div>
