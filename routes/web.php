@@ -231,6 +231,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/payslip-employee','PayslipController@generatePayslipEmployee');
 
     Route::get('pay-instruction', 'PayslipController@payroll_instruction');
+    Route::post('deletePayRegInstruction/{id}', 'PayslipController@deletePayRegInstruction');
     Route::post('importPayinstructionExcel', 'PayslipController@importPayInstructionExcel');
     Route::post('add-payroll-instruction','PayslipController@add_payroll_instruction');
     Route::get('export-intruction-template', 'PayslipController@export');

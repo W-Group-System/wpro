@@ -991,4 +991,13 @@ class PayslipController extends Controller
 
         return $pdf->stream();
     }
+    public function deletePayRegInstruction($id)
+    {
+        // dd($id);
+        $payroll_instruction = PayInstruction::findOrFail($id);
+        $payroll_instruction->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
+    }
 }

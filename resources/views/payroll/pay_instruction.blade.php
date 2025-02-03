@@ -43,6 +43,7 @@
                   <table class="table table-hover table-bordered" id='pay_instruction'>
                     <thead>
                         <tr>
+                            <th>Action</th>
                             <th>Location </th>
                             <th>Employee Code</th>
                             <th>Name</th>
@@ -58,6 +59,15 @@
                     <tbody>
                         @foreach($names as $key => $name)
                         <tr>
+                            <td>
+                                <form method="POST" action="{{url('deletePayRegInstruction/'.$name->id)}}" id="deletePayRegInstructionForm{{$name->id}}" onsubmit="show()">
+                                    @csrf 
+                                    
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="deletePayReg({{$name->id}})">
+                                        <i class="ti-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
                             <td>{{$name->location}}</td>
                             <td>{{$name->site_id}}</td>
                             <td>{{$name->name}}</td>
@@ -111,6 +121,27 @@
     }
 
     return sa;
+}
+
+
+function deletePayReg(id)
+{
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to delete this Payroll Instruction",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, submit it!'
+    })
+    .then((confirmed) => {
+        if (confirmed) {
+            
+            document.getElementById("deletePayRegInstructionForm"+id).submit()
+
+        }
+    });
 }
 </script>
 @include('payroll.add_instruction')
