@@ -116,7 +116,7 @@ class EmployeeEarnedLeaveController extends Controller
         $day = "01";
         foreach($employees as $employee)
         {
-            $leave_credits = ($employee->employee_earned_credits)->where('leave_type',1)->orderBy('id','desc')->first();
+            $leave_credits = ($employee->employee_earned_credits)->where('leave_type',1)->sortByDesc('id')->first();
             if($leave_credits != null)
             {
               
