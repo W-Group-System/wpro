@@ -136,7 +136,7 @@ class EmployeeEarnedLeaveController extends Controller
                 $earned_leave->earned_month = $month;
                 $earned_leave->earned_year = $year;
                 $earned_leave->earned_date = date('Y-m-d');
-                $earned_leave->earned_leave = $check_if_exist_vl->earned_leave;
+                $earned_leave->earned_leave = $leave_credits->earned_leave;
                 $earned_leave->save();
                 }
             }
