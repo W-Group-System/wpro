@@ -116,22 +116,10 @@ class EmployeeEarnedLeaveController extends Controller
         $day = "01";
         foreach($employees as $employee)
         {
-            $leave_credits = ($employee->employee_leave_credits)->where('leave_type',1)->first();
+            $leave_credits = ($employee->employee_earned_credits)->where('leave_type',1)->orderBy('id','desc')->first();
             if($leave_credits != null)
             {
-                $fdate = date('Y-06-01');
-                $tdate = date('Y-01-01');
-                if($employee->date_regularized != null)
-                {
-                    $tdate = $employee->date_regularized;
-                }
-                
-                $datetime1 = new DateTime($fdate);
-                $datetime2 = new DateTime($tdate);
-                $interval = $datetime1->diff($datetime2);
-                $days = $interval->format('%a');
-                $leave_c = (($leave_credits->count/$days)*366)/12;
-                // dd($leave_c);
+              
                 $check_if_exist_vl = EmployeeEarnedLeave::where('user_id',$employee->user_id)
                 ->where(function($q) use($month,$year){
                     $q->whereMonth('earned_date',$month)
@@ -148,7 +136,7 @@ class EmployeeEarnedLeaveController extends Controller
                 $earned_leave->earned_month = $month;
                 $earned_leave->earned_year = $year;
                 $earned_leave->earned_date = date('Y-m-d');
-                $earned_leave->earned_leave = $leave_c;
+                $earned_leave->earned_leave = $check_if_exist_vl->earned_leave;
                 $earned_leave->save();
                 }
             }

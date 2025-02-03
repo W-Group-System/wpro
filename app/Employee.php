@@ -197,6 +197,10 @@ class Employee extends Model implements Auditable
         ->whereYear('pay_period_from', now()->year)
         ->whereColumn('pay_period_from', 'posting_date');
     }
+    public function employee_earned_credits()
+    {
+        return $this->hasMany(EmployeeEarnedLeave::class,'user_id','user_id');
+    }
     protected $fillable = [
         'department_id', 
         'project',
