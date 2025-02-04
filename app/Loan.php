@@ -25,4 +25,8 @@ class Loan extends Model implements Auditable
     {
         return $this->hasMany(PayregLoan::class);
     }
+    public function refund()
+    {
+        return $this->hasMany(PayregInstruction::class);
+    }
 }

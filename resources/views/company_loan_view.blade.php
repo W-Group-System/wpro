@@ -55,7 +55,7 @@
                     <hr>
                     <div class='row border'>
                         <div class='col-md-12 border'>
-                            <b> Total Payment: {{number_format(($loan_a->pay)->sum('amount'),2)}} </b>
+                            <b> Total Payment: {{number_format(($loan_a->pay)->sum('amount')-($loan_a->refund)->sum('amount'),2)}} </b>
                         </div>
                     </div>
                     <div class='row border'>
@@ -82,13 +82,35 @@
                             {{ $pay->pay_reg->pay_period_from}} - {{ $pay->pay_reg->pay_period_to}}
                         </div>
                         <div class='col-md-4 border'>
-                           {{ number_format($pay->amount,2)}}
+                           -{{ number_format($pay->amount,2)}}
                         </div>
                         <div class='col-md-4 border'>
                            {{ number_format($loan_balance,2)}}
                         </div>
                     </div>
+                    @php
+                        $amen = ($loan_a->refund)->where('payreg_id',$pay->payreg_id)->first();
+                    @endphp
+                    @if($amen)
+                    <div class='row border'>
+                        @php
+                            $loan_balance = $loan_balance+$amen->amount;
+                        @endphp
+                        <div class='col-md-4 border'>
+                            {{$amen->instruction_name}} <br>
+                            {{ $amen->pay_reg->pay_period_from}} - {{ $amen->pay_reg->pay_period_to}}
+                        </div>
+                        <div class='col-md-4 border'>
+                           {{ number_format($amen->amount,2)}}
+                        </div>
+                        <div class='col-md-4 border'>
+                           {{ number_format($loan_balance,2)}}
+                        </div>
+                    </div>
+                    @endif
                     @endforeach
+                
+                   
                 </div>
         </div>
     </div>
