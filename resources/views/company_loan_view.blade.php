@@ -38,7 +38,7 @@
                     <div class='row'>
                         <div class='col-md-12'>
                            
-                           <b> Loan Balance: {{ number_format($loan_a->initial_amount-($loan_a->pay)->sum('amount'),2) }}</b>
+                           <b> Loan Balance: {{ number_format($loan_a->initial_amount-($loan_a->pay)->sum('amount')+($loan_a->refund)->sum('amount'),2) }}</b>
                         </div>
                     </div>
                     <hr>
