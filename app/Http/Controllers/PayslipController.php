@@ -995,6 +995,9 @@ class PayslipController extends Controller
     {
         // dd($id);
         $payroll_instruction = PayInstruction::findOrFail($id);
+        $payroll_instruction->deleted_by = auth()->user()->id;
+        $payroll_instruction->save();
+        
         $payroll_instruction->delete();
 
         Alert::success('Successfully Deleted')->persistent('Dismiss');
