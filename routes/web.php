@@ -439,6 +439,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Uploaded Leave Files
     Route::get('ob_files','UploadController@obFiles');
+
+    // Leave Report Per Employee
+    Route::get('leave-report-per-employee','LeaveReportPerEmployeeController@index');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

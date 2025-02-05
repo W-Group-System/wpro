@@ -655,6 +655,7 @@
                     @if (checkUserPrivilege('reports_leave',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/leave-report') }}">Leave Reports</a></li>
                     @endif
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/leave-report-per-employee') }}">Leave Reports Per Employee</a></li>
                     @if (checkUserPrivilege('reports_overtime',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/overtime-report') }}">Overtime Reports</a></li>
                     @endif
