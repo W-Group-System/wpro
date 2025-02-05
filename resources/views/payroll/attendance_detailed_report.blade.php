@@ -417,9 +417,7 @@
                     <td><strong>{{ $totals['rst_sh_nd_over_eight'] }}</strong></td>
                 </tr>
               </tbody>
-          </table>
-          
-          
+            </table>
           </div>
         </div>
       </div>
