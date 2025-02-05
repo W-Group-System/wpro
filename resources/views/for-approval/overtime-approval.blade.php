@@ -91,6 +91,7 @@
                         <th>OT Approved (Hrs)</th>
                         <th>Total Approved (Hrs)</th>
                         <th>Remarks </th>
+                        <th>Attachments</th>
                         <th>Approvers </th>
                         <th>Status </th>                        
                       </tr>
@@ -142,6 +143,9 @@
                           <p title="{{$form_approval->remarks}}" style="width: 250px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">
                             {{$form_approval->remarks}}
                           </p>
+                        </td>
+                        <td>
+                            <a href="{{url($form_approval->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
                         </td>
                         <td id="tdStatus{{ $form_approval->id }}">
                           @foreach($form_approval->approver as $approver)
