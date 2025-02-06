@@ -145,7 +145,9 @@
                           </p>
                         </td>
                         <td>
+                            @if($form_approval->attachment)
                             <a href="{{url($form_approval->attachment)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+                            @endif
                         </td>
                         <td id="tdStatus{{ $form_approval->id }}">
                           @foreach($form_approval->approver as $approver)
