@@ -219,7 +219,7 @@
                                             @endphp
                                             {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('deminimis')}}</td>
                                         @endfor
-                                        <td>{{$emp_data->sum('deminimis')}}</td>
+                                        <td>{{number_format($emp_data->sum('deminimis'),2)}}</td>
                                     </tr>
                                     <tr>
                                         <td>Other Allowances</td>
@@ -557,14 +557,14 @@
                                                  date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date . "-01-01"))
                                              ])->sum('basic_pay');
                                          @endphp
-                                         <td>
+                                         <td class="text-right">
                                              {{number_format($emp_data->whereBetween('cut_off_date', [
                                                  date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date . "-01-01")),
                                                  date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date . "-01-01"))
                                              ])->sum('basic_pay'),2)}}
                                          </td>
                                      @endfor
-                                     <td>{{number_format($emp_data->sum('basic_pay'),2)}}</td>
+                                     <td class="text-right">{{number_format($emp_data->sum('basic_pay'),2)}}</td>
                                      </tr>
                                      @php
                                          $amounts = [
@@ -610,35 +610,35 @@
                                                      date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                                  ])->sum($field);
                                          @endphp
-                                             <td>{{ number_format($emp_data->whereBetween('cut_off_date', [
+                                             <td class="text-right">{{ number_format($emp_data->whereBetween('cut_off_date', [
                                                  date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
                                                  date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                              ])->sum($field) ,2)}}</td>
                                          @endfor
-                                         <td>{{ number_format($emp_data->sum($field),2) }}
+                                         <td class="text-right">{{ number_format($emp_data->sum($field),2) }}
  
                                              {{-- <input class="qty" type="hidden" value="{{$emp_data->sum($field)}}"> --}}
                                          </td>
                                      </tr>
                                  @endforeach
                                  <tr >
-                                     <td >SALARY ADJUSTMENT</td>
+                                     <td>SALARY ADJUSTMENT</td>
                                      
                                      @for ($i = 1; $i <= 12; $i++)
                                      @php
                                          $taxable["taxable".$i] = $taxable["taxable".$i]+$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment');
                                      @endphp
-                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment'),2)}}</td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('salary_adjustment'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('salary_adjustment'),2)}}</td>
                                  </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Taxable Income</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                             <td>{{ number_format($taxable["taxable".$i],2)}}</td>
+                                             <td class="text-right">{{ number_format($taxable["taxable".$i],2)}}</td>
                                          @endfor
                                  
-                                         <td>{{ number_format(array_sum($taxable),2)}}</td>
+                                         <td class="text-right">{{ number_format(array_sum($taxable),2)}}</td>
                                      </tr>
                                      @php
                                          $value = [];
@@ -650,13 +650,13 @@
                                      <tr>
                                          <td>De Minimis</td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>
+                                         <td class="text-right">
                                              @php
                                                  $value["nontaxable_".$i] = $value["nontaxable_".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('deminimis');
                                              @endphp
                                              {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('deminimis')}}</td>
                                          @endfor
-                                         <td>{{$emp_data->sum('deminimis')}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('deminimis'),2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>Other Allowances</td>
@@ -664,9 +664,9 @@
                                          @php
                                              $value["nontaxable_".$i] = $value["nontaxable_".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('other_allowances_basic_pay');
                                          @endphp
-                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('other_allowances_basic_pay'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('other_allowances_basic_pay'),2)}}</td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('other_allowances_basic_pay'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('other_allowances_basic_pay'),2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>Subliq</td>
@@ -674,9 +674,9 @@
                                          @php
                                              $value["nontaxable_".$i] = $value["nontaxable_".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq');
                                          @endphp
-                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq'),2)}}</td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('subliq'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('subliq'),2)}}</td>
                                      </tr>
                                      @php
                                          $allowances_pluck = $allowances->pluck('allowance_id')->toArray();
@@ -685,7 +685,7 @@
                                      <tr>
                                          <td>{{$allowance->allowance_type->name}}</td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>{{ $emp_data->whereBetween('cut_off_date', [
+                                         <td class="text-right">{{ $emp_data->whereBetween('cut_off_date', [
                                              date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
                                              date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                          ])->flatMap(function($emp) use ($allowance) {
@@ -693,22 +693,22 @@
                                          })->sum('amount') }}
                                          </td>
                                          @endfor
-                                         <td>{{$allowances_data->where('allowance_id',$allowance->allowance_id)->sum('amount')}}</td>
+                                         <td class="text-right">{{$allowances_data->where('allowance_id',$allowance->allowance_id)->sum('amount')}}</td>
                                      </tr>
                                      @endforeach
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Non-Taxable Income</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>{{number_format($value["nontaxable_".$i],2)}}</td>
+                                         <td class="text-right">{{number_format($value["nontaxable_".$i],2)}}</td>
                                          @endfor
-                                         <td>{{number_format(array_sum($value),2)}}</td>
+                                         <td class="text-right">{{number_format(array_sum($value),2)}}</td>
                                      </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Total Earnings</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>{{number_format($taxable['taxable'.$i] + $value["nontaxable_".$i],2)}}</td>
+                                         <td class="text-right">{{number_format($taxable['taxable'.$i] + $value["nontaxable_".$i],2)}}</td>
                                          @endfor
-                                         <td>{{number_format(array_sum($taxable) + array_sum($value),2)}}</td>
+                                         <td class="text-right">{{number_format(array_sum($taxable) + array_sum($value),2)}}</td>
                                      </tr>
                                      @php
                                          $taxable_deduction = [];
@@ -725,9 +725,9 @@
                                              $taxable_deduction["taxable_deduction".$i] = $taxable_deduction["taxable_deduction".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('absent_amount');
                                          @endphp
  
-                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('absent_amount') * -1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('absent_amount') * -1,2)}}</td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('absent_amount') * -1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('absent_amount') * -1,2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>Tardiness</td>
@@ -735,9 +735,9 @@
                                          @php
                                              $taxable_deduction["taxable_deduction".$i] = $taxable_deduction["taxable_deduction".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('tardiness_amount');
                                          @endphp
-                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('tardiness_amount') * -1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('tardiness_amount') * -1,2)}}</td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('tardiness_amount') * -1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('tardiness_amount') * -1,2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>Undertime</td>
@@ -745,16 +745,16 @@
                                          @php
                                              $taxable_deduction["taxable_deduction".$i] = $taxable_deduction["taxable_deduction".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('undertime_amount');
                                          @endphp
-                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('undertime_amount') * -1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('undertime_amount') * -1,2)}}</td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('undertime_amount') * -1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('undertime_amount') * -1,2)}}</td>
                                      </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Taxable Deduction</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>{{number_format($taxable_deduction["taxable_deduction".$i]*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($taxable_deduction["taxable_deduction".$i]*-1,2)}}</td>
                                          @endfor
-                                         <td>{{number_format(array_sum($taxable_deduction)*-1,2)}}</td>
+                                         <td class="text-right">{{number_format(array_sum($taxable_deduction)*-1,2)}}</td>
                                      </tr>
                                      @php
                                      $statutory = [];
@@ -769,10 +769,10 @@
                                          @php
                                          $statutory['statutory'.$i] =  $statutory['statutory'.$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('sss_employee_share');
                                          @endphp
-                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('sss_employee_share') 
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('sss_employee_share') 
                                      *-1,2)}}</td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('sss_employee_share')*-1 ,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('sss_employee_share')*-1 ,2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>HDMF EMPLOYEE SHARE</td>
@@ -780,11 +780,11 @@
                                          @php
                                          $statutory['statutory'.$i] =  $statutory['statutory'.$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('hdmf_employee_share');
                                      @endphp
-                                         <td>
+                                         <td class="text-right">
                                          {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('hdmf_employee_share')*-1,2)}}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('hdmf_employee_share')*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('hdmf_employee_share')*-1,2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>PHIC EMPLOYEE SHARE</td>
@@ -792,11 +792,11 @@
                                          @php
                                          $statutory['statutory'.$i] =  $statutory['statutory'.$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('phic_employee_share');
                                      @endphp
-                                         <td>
+                                         <td class="text-right">
                                          {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('phic_employee_share')*-1,2)}}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('phic_employee_share')*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('phic_employee_share')*-1,2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>MPF EMPLOYEE SHARE</td>
@@ -804,38 +804,38 @@
                                          @php
                                          $statutory['statutory'.$i] =  $statutory['statutory'.$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('mpf_employee_share');
                                      @endphp
-                                         <td>
+                                         <td class="text-right">
                                          {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('mpf_employee_share')*-1,2)}}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('mpf_employee_share')*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('mpf_employee_share')*-1,2)}}</td>
                                      </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Statutory</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>
+                                         <td class="text-right">
                                          {{number_format($statutory['statutory'.$i]*-1,2)}}
                                          </td>
                                          @endfor
-                                         <td>{{number_format(array_sum($statutory)*-1,2)}}</td>
+                                         <td class="text-right">{{number_format(array_sum($statutory)*-1,2)}}</td>
                                      </tr>
                                      <tr>
                                          <td>WITHHOLDING TAX</td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>
+                                         <td class="text-right">
                                          {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('withholding_tax')*-1,2)}}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('withholding_tax')*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('withholding_tax')*-1,2)}}</td>
                                      </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td><b>WITHHOLDING TAX</b></td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>
+                                         <td class="text-right">
                                          {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('withholding_tax')*-1,2)}}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('withholding_tax')*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('withholding_tax')*-1,2)}}</td>
                                      </tr>
                                      @php
                                          $non_taxable_deduction = [];
@@ -856,7 +856,7 @@
                                              return $emp->pay_loan->where('loan_type_id',$loan->loan_type_id); // Filter by allowance_id
                                          })->sum('amount');
                                          @endphp
-                                         <td>{{ number_format($emp_data->whereBetween('cut_off_date', [
+                                         <td class="text-right">{{ number_format($emp_data->whereBetween('cut_off_date', [
                                              date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
                                              date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                          ])->flatMap(function($emp) use ($loan) {
@@ -864,7 +864,7 @@
                                          })->sum('amount')*-1,2) }}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($loans_data->where('loan_type_id',$loan->loan_type_id)->sum('amount')*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($loans_data->where('loan_type_id',$loan->loan_type_id)->sum('amount')*-1,2)}}</td>
                                      </tr>
                                      @endforeach
                                      @foreach($instructions as $instruction)
@@ -879,7 +879,7 @@
                                              return $emp->pay_instructions->where('instruction_name',$instruction->instruction_name); // Filter by allowance_id
                                          })->sum('amount');
                                          @endphp
-                                         <td>{{ number_format($emp_data->whereBetween('cut_off_date', [
+                                         <td class="text-right">{{ number_format($emp_data->whereBetween('cut_off_date', [
                                              date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
                                              date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
                                          ])->flatMap(function($emp) use ($instruction) {
@@ -887,7 +887,7 @@
                                          })->sum('amount'),2) }}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($instructions_data->where('instruction_name',$instruction->instruction_name)->sum('amount'),2)}}</td>
+                                         <td class="text-right">{{number_format($instructions_data->where('instruction_name',$instruction->instruction_name)->sum('amount'),2)}}</td>
                                      </tr>
                                      @endforeach
                                      @php
@@ -900,26 +900,26 @@
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Non-Taxable Deduction</strong></td>
                                          @for($i = 1; $i <= 12; $i++)
-                                         <td>{{number_format($non_taxable_deduction["non_taxable_deduction".$i]*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($non_taxable_deduction["non_taxable_deduction".$i]*-1,2)}}</td>
                                          @endfor
                                          
-                                         <td>{{number_format(array_sum($non_taxable_deduction)*-1,2)}}</td>
+                                         <td class="text-right">{{number_format(array_sum($non_taxable_deduction)*-1,2)}}</td>
                                      </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Total Deductions</strong></td>
                                          @for($i = 1; $i <= 12; $i++)
-                                         <td>{{number_format($non_taxable_deduction["non_taxable_deduction".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('withholding_tax')*-1 + $statutory['statutory'.$i]*-1,2)}}</td>
+                                         <td class="text-right">{{number_format($non_taxable_deduction["non_taxable_deduction".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('withholding_tax')*-1 + $statutory['statutory'.$i]*-1,2)}}</td>
                                          @endfor
-                                         <td>{{number_format(array_sum($non_taxable_deduction) + $emp_data->sum('withholding_tax')*-1+ array_sum($statutory)*-1,2)}}</td>
+                                         <td class="text-right">{{number_format(array_sum($non_taxable_deduction) + $emp_data->sum('withholding_tax')*-1+ array_sum($statutory)*-1,2)}}</td>
                                      </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Net Pay</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
-                                         <td>
+                                         <td class="text-right">
                                          {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('netpay'),2)}}
                                          </td>
                                          @endfor
-                                         <td>{{number_format($emp_data->sum('netpay'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('netpay'),2)}}</td>
                                      </tr>
                                  </tbody>
                              </table>
