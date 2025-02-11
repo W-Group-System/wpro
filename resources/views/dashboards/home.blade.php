@@ -112,6 +112,7 @@
                                       <th>Name</th>
                                       <th>In</th>
                                       <th>Out</th>
+                                      <th>Leave Balances</th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -143,7 +144,37 @@
                                         @else
                                             Absent
                                         @endif
-                                    </td>                                    
+                                    </td> 
+                                        <td>
+                                            @php
+                                                $vl_balance = 0;
+                                                $sl_balance = 0;
+                                                
+                                                $vl_leave = ($emp->employee_leave_credits)->where('leave_type', 1)->first();
+
+                                                if(!empty($vl_leave))
+                                                {
+                                                    $earned_vl = checkEarnedLeave($emp->user_id,1,$emp->original_date_hired);
+                                                    $used_vl = checkUsedSLVLSILLeave($emp->user_id,1,$emp->original_date_hired,$emp->ScheduleData);
+                                                    $vl_beginning_balance =  $vl_leave->count;
+    
+                                                    $vl_balance = ($vl_beginning_balance + $earned_vl) - $used_vl;
+                                                }
+
+                                                $sl_leave = ($emp->employee_leave_credits)->where('leave_type', 2)->first();
+                                                if (!empty($sl_leave))
+                                                {
+                                                    $earned_sl = checkEarnedLeave($emp->user_id,2,$emp->original_date_hired);
+                                                    $used_sl = checkUsedSLVLSILLeave($emp->user_id,2,$emp->original_date_hired,$emp->ScheduleData);
+
+                                                    $sl_beginning_balance = $sl_leave->count;
+                                                    $sl_balance = ($sl_beginning_balance + $earned_sl) - $used_sl;
+                                                }
+                                            @endphp
+                                            VL = {{$vl_balance}}
+                                            <br>
+                                            SL = {{$sl_balance}}
+                                        </td>
                                     </tr>
                                     @endforeach
                     
