@@ -102,10 +102,12 @@ class FormApprovalController extends Controller
                             'status' => 'Approved',
                             'approval_remarks' => $request->approval_remarks,
                             'level' => 1,
+                            'approved_by' => auth()->user()->id
                         ]);
                     }else{
                         EmployeeLeave::Where('id', $id)->update([
                             'level' => 1,
+                            'approved_by' => auth()->user()->id
                         ]);
                     }
                 }
@@ -116,6 +118,7 @@ class FormApprovalController extends Controller
                         'status' => 'Approved',
                         'approval_remarks' => $request->approval_remarks,
                         'level' => 1,
+                        'approved_by' => auth()->user()->id
                     ]);
                 }
                
@@ -127,8 +130,10 @@ class FormApprovalController extends Controller
                     'status' => 'Approved',
                     'approval_remarks' => $request->approval_remarks,
                     'level' => 2,
+                    'approved_by' => auth()->user()->id
                 ]);
             }
+
             Alert::success('Leave has been approved.')->persistent('Dismiss');
             return back();
         }
@@ -138,6 +143,7 @@ class FormApprovalController extends Controller
         EmployeeLeave::Where('id', $id)->update([
                         'status' => 'Declined',
                         'approval_remarks' => $request->approval_remarks,
+                        'approved_by' => auth()->user()->id
                     ]);
         Alert::success('Leave has been declined.')->persistent('Dismiss');
         return back();
@@ -162,12 +168,14 @@ class FormApprovalController extends Controller
                                 'status' => 'Approved',
                                 'approval_remarks' => 'Approved',
                                 'level' => 1,
+                                'approved_by' => auth()->user()->id
                             ]);
                             $count++;
                         }else{
                             EmployeeLeave::Where('id', $id)->update([
                                 'approval_remarks' => 'Approved',
-                                'level' => 1
+                                'level' => 1,
+                                'approved_by' => auth()->user()->id
                             ]);
                             $count++;
                         }
@@ -179,6 +187,7 @@ class FormApprovalController extends Controller
                                 'status' => 'Approved',
                                 'approval_remarks' => 'Approved',
                                 'level' => 2,
+                                'approved_by' => auth()->user()->id
                             ]);
                             $count++;
                         }
@@ -204,6 +213,7 @@ class FormApprovalController extends Controller
                 EmployeeLeave::Where('id', $id)->update([
                     'status' => 'Declined',
                     'approval_remarks' => 'Declined',
+                    'approved_by' => auth()->user()->id
                 ]);
 
                 $count++;
@@ -288,7 +298,8 @@ class FormApprovalController extends Controller
                         'approval_remarks' => $request->approval_remarks,
                         'level' => 1,
                         'break_hrs' => $request->break_hrs,
-                        'ot_approved_hrs' => $ot_approved_hrs
+                        'ot_approved_hrs' => $ot_approved_hrs,
+                        'approved_by' => auth()->user()->id
                     ]);
                 }
                 else
@@ -301,14 +312,16 @@ class FormApprovalController extends Controller
                             'approval_remarks' => $request->approval_remarks,
                             'level' => 1,
                             'break_hrs' => $request->break_hrs,
-                            'ot_approved_hrs' => $ot_approved_hrs
+                            'ot_approved_hrs' => $ot_approved_hrs,
+                            'approved_by' => auth()->user()->id
                         ]);
                     }else{
                         EmployeeOvertime::Where('id', $employee_overtime->id)->update([
                             'approval_remarks' => $request->approval_remarks,
                             'level' => 1,
                             'break_hrs' => $request->break_hrs,
-                            'ot_approved_hrs' => $request->ot_approved_hrs
+                            'ot_approved_hrs' => $request->ot_approved_hrs,
+                            'approved_by' => auth()->user()->id
                         ]);
                     }
                 }
@@ -322,7 +335,8 @@ class FormApprovalController extends Controller
                     'approval_remarks' => $request->approval_remarks,
                     'level' => 2,
                     'break_hrs' => $request->break_hrs,
-                    'ot_approved_hrs' => $ot_approved_hrs
+                    'ot_approved_hrs' => $ot_approved_hrs,
+                    'approved_by' => auth()->user()->id
                 ]);
             }
             Alert::success('Overtime has been approved.')->persistent('Dismiss');
@@ -339,7 +353,8 @@ class FormApprovalController extends Controller
                 EmployeeOvertime::Where('id', $employee_overtime->id)->update([
                     'approval_remarks' => $request->approval_remarks,
                     'break_hrs' => $request->break_hrs,
-                    'ot_approved_hrs' => $ot_approved_hrs
+                    'ot_approved_hrs' => $ot_approved_hrs,
+                    'approved_by' => auth()->user()->id
                 ]);
             Alert::success('Overtime has been approved.')->persistent('Dismiss');
             return back();
@@ -350,6 +365,7 @@ class FormApprovalController extends Controller
         EmployeeOvertime::Where('id', $id)->update([
                             'status' => 'Declined',
                             'approval_remarks' => $request->approval_remarks,
+                            'approved_by' => auth()->user()->id
                         ]);
         Alert::success('Overtime has been declined.')->persistent('Dismiss');
         return back();
@@ -601,12 +617,14 @@ class FormApprovalController extends Controller
                             'status' => 'Approved',
                             'approval_remarks' => $request->approval_remarks,
                             'level' => 1,
+                            'approved_by' => auth()->user()->id
                         ]);
     
                     }else{
                         EmployeeOb::Where('id', $id)->update([
                             'level' => 1,
                             'approval_remarks' => $request->approval_remarks,
+                            'approved_by' => auth()->user()->id
                         ]);
                     }
                 }
@@ -618,6 +636,7 @@ class FormApprovalController extends Controller
                         'status' => 'Approved',
                         'approval_remarks' => $request->approval_remarks,
                         'level' => 1,
+                        'approved_by' => auth()->user()->id
                     ]);
                 }
               
@@ -628,6 +647,7 @@ class FormApprovalController extends Controller
                     'status' => 'Approved',
                     'approval_remarks' => $request->approval_remarks,
                     'level' => 2,
+                    'approved_by' => auth()->user()->id
                 ]);
             }
             Alert::success('OB has been approved.')->persistent('Dismiss');
@@ -639,6 +659,7 @@ class FormApprovalController extends Controller
         EmployeeOb::Where('id', $id)->update([
                     'status' => 'Declined',
                     'approval_remarks' => $request->approval_remarks,
+                    'approved_by' => auth()->user()->id
         ]);
         Alert::success('OB has been declined.')->persistent('Dismiss');
         return back();
@@ -663,12 +684,14 @@ class FormApprovalController extends Controller
                                 'status' => 'Approved',
                                 'approval_remarks' => 'Approved',
                                 'level' => 1,
+                                'approved_by' => auth()->user()->id
                             ]);
                             $count++;
                         }else{
                             EmployeeOb::Where('id', $id)->update([
                                 'approval_remarks' => 'Approved',
-                                'level' => 1
+                                'level' => 1,
+                                'approved_by' => auth()->user()->id
                             ]);
                             $count++;
                         }
@@ -680,6 +703,7 @@ class FormApprovalController extends Controller
                                 'status' => 'Approved',
                                 'approval_remarks' => 'Approved',
                                 'level' => 2,
+                                'approved_by' => auth()->user()->id
                             ]);
                             $count++;
                         }
@@ -705,6 +729,7 @@ class FormApprovalController extends Controller
                 EmployeeOb::Where('id', $id)->update([
                     'status' => 'Declined',
                     'approval_remarks' => 'Declined',
+                    'approved_by' => auth()->user()->id
                 ]);
 
                 $count++;

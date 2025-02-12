@@ -169,29 +169,39 @@
                           @endif                        
                         </td>
                         <td id="tdStatus{{ $ob->id }}">
-                          @if(count($ob->approver) > 0)
-                            @foreach($ob->approver as $approver)
-                              @if($ob->level >= $approver->level)
-                                @if ($ob->level == 0 && $ob->status == 'Declined')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                @elseif ($ob->level == 1 && $ob->status == 'Declined')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                            @if($ob->approved_by != null)
+                                @if($ob->status == 'Declined')
+                                    {{$ob->approvedBy->name}} - <label class="badge badge-danger mt-1">Declined</label>
+                                @elseif($ob->status == 'Approved')
+                                    {{$ob->approvedBy->name}} - <label class="badge badge-success mt-1">Approved</label>
                                 @else
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                    {{$ob->approvedBy->name}} - <label class="badge badge-warning mt-1">Pending</label>
                                 @endif
-                              @else
-                                @if ($ob->status == 'Declined')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                @elseif ($ob->status == 'Approved')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                            @else
+                                @if(count($ob->approver) > 0)
+                                    @foreach($ob->approver as $approver)
+                                    @if($ob->level >= $approver->level)
+                                        @if ($ob->level == 0 && $ob->status == 'Declined')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                        @elseif ($ob->level == 1 && $ob->status == 'Declined')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                        @else
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                        @endif
+                                    @else
+                                        @if ($ob->status == 'Declined')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                        @elseif ($ob->status == 'Approved')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                        @else
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                        @endif
+                                    @endif<br>
+                                    @endforeach
                                 @else
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                    <label class="badge badge-danger mt-1">No Approver</label>
                                 @endif
-                              @endif<br>
-                            @endforeach
-                          @else
-                            <label class="badge badge-danger mt-1">No Approver</label>
-                          @endif
+                            @endif
                       </td>
                       <td>
                       @if ($ob->ob_file)

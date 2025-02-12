@@ -32,4 +32,8 @@ class EmployeeOb extends Model implements Auditable
     {
         return $this->hasMany(EmployeeApprover::class,'user_id','user_id');
     } 
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class,'approved_by','id');
+    }
 }

@@ -26,5 +26,9 @@ class EmployeeOvertime extends Model implements Auditable
     public function approver()
     {
         return $this->hasMany(EmployeeApprover::class,'user_id','user_id');
-    }  
+    }
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class,'approved_by','id');
+    }
 }

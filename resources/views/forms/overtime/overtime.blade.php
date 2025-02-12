@@ -177,33 +177,43 @@
                           @endif                        
                         </td>
                         <td>
-                          @if(count($overtime->approver) > 0)
-                            @foreach($overtime->approver as $approver)
-                              @if($overtime->level >= $approver->level)
-                                @if ($overtime->level == 0 && $overtime->status == 'Declined')
-                                {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                @elseif ($overtime->level == 1 && $overtime->status == 'Declined')
-                                {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                @elseif($overtime->status == 'Cancelled')
-                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Cancelled</label>
+                            @if(!empty($overtime->approved_by))
+                                @if($overtime->status == 'Declined')
+                                    {{$overtime->approvedBy->name}} - <label class="badge badge-danger mt-1">Declined</label>
+                                @elseif($overtime->status == 'Approved')
+                                    {{$overtime->approvedBy->name}} - <label class="badge badge-success mt-1">Approved</label>
                                 @else
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                    {{$overtime->approvedBy->name}} - <label class="badge badge-warning mt-1">Pending</label>
                                 @endif
-                              @else
-                                @if ($overtime->status == 'Declined')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                @elseif ($overtime->status == 'Approved')
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
-                                @elseif($overtime->status == 'Cancelled')
-                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Cancelled</label>
+                            @else 
+                                @if(count($overtime->approver) > 0)
+                                @foreach($overtime->approver as $approver)
+                                    @if($overtime->level >= $approver->level)
+                                    @if ($overtime->level == 0 && $overtime->status == 'Declined')
+                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                    @elseif ($overtime->level == 1 && $overtime->status == 'Declined')
+                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                    @elseif($overtime->status == 'Cancelled')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Cancelled</label>
+                                    @else
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                    @endif
+                                    @else
+                                    @if ($overtime->status == 'Declined')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                    @elseif ($overtime->status == 'Approved')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                    @elseif($overtime->status == 'Cancelled')
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Cancelled</label>
+                                    @else
+                                        {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                    @endif
+                                    @endif<br>
+                                @endforeach
                                 @else
-                                  {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                <label class="badge badge-danger mt-1">No Approver</label>
                                 @endif
-                              @endif<br>
-                            @endforeach
-                          @else
-                            <label class="badge badge-danger mt-1">No Approver</label>
-                          @endif
+                            @endif
                         </td>
                         <td>
                           @if(!empty($overtime->file_path))

@@ -24,7 +24,9 @@ class EmployeeObController extends Controller
                             ->where('status',$status)
                             // ->whereDate('created_at','>=',$from)
                             // ->whereDate('created_at','<=',$to)
-                            ->whereBetween('date_from', [$from, $to])
+                            // ->whereBetween('date_from', [$from, $to])
+                            ->whereDate('date_from','>=',$from)
+                            ->whereDate('date_to', '<=', $to)
                             ->orderBy('created_at','DESC')
                             ->get();
 

@@ -31,11 +31,14 @@ class EmployeeOvertimeController extends Controller
                                             ->where('status',$status)
                                             // ->whereDate('created_at','>=',$from)
                                             // ->whereDate('created_at','<=',$to)
-                                            ->whereBetween('start_time', [$from, $to])
+                                            // ->whereBetweenDate('start_time', [$from, $to])
+                                            ->whereDate('start_time', '>=', $from)
+                                            ->whereDate('end_time', '<=', $to)
                                             ->orderBy('created_at','DESC')
                                             ->get();
             
             $overtimes_all = EmployeeOvertime::where('user_id',auth()->user()->id)->get();
+            
             $all_approvers = $get_approvers->get_approvers(auth()->user()->id);
             return view('forms.overtime.overtime',
             array(
