@@ -233,42 +233,42 @@ class EmployeeLeaveController extends Controller
             //     Alert::error('Error. You have a file leave on that day')->persistent('Dismiss');
             //     return back();
             // }
-            $new_leave = new EmployeeLeave;
-            $new_leave->user_id = Auth::user()->id;
-            $emp = Employee::where('user_id',auth()->user()->id)->first();
-            $new_leave->schedule_id = $emp->schedule_id;
-            $new_leave->leave_type = $request->leave_type;
-            $new_leave->date_from = $request->date_from;
-            $new_leave->date_to = $request->date_to;
-            $new_leave->reason = $request->reason;
-            $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
-            $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
-            $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : "" ; 
-
-            if($request->file('attachment')){
-                $logo = $request->file('attachment');
-                $original_name = $logo->getClientOriginalName();
-                $name = time() . '_' . $logo->getClientOriginalName();
-                $logo->move(public_path() . '/images/', $name);
-                $file_name = '/images/' . $name;
-                $new_leave->attachment = $file_name;
+            if ($request->leave_type == 13)
+            {
+                $new_leave = new EmployeeLeave;
+                $new_leave->user_id = Auth::user()->id;
+                $emp = Employee::where('user_id',auth()->user()->id)->first();
+                $new_leave->schedule_id = $emp->schedule_id;
+                $new_leave->leave_type = $request->leave_type;
+                $new_leave->date_from = $request->date_from;
+                $new_leave->date_to = $request->date_to;
+                $new_leave->reason = $request->reason;
+                $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
+                $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
+                $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : "" ; 
+    
+                if($request->file('attachment')){
+                    $logo = $request->file('attachment');
+                    $original_name = $logo->getClientOriginalName();
+                    $name = time() . '_' . $logo->getClientOriginalName();
+                    $logo->move(public_path() . '/images/', $name);
+                    $file_name = '/images/' . $name;
+                    $new_leave->attachment = $file_name;
+                }
+    
+                $new_leave->status = 'Pending';
+                $new_leave->level = 0;
+                $new_leave->created_by = Auth::user()->id;
+                $new_leave->save();
+    
+                Alert::success('Successfully Stored')->persistent('Dismiss');
+                return back();
             }
-
-            $new_leave->status = 'Pending';
-            $new_leave->level = 0;
-            $new_leave->created_by = Auth::user()->id;
-            $new_leave->save();
-
-            Alert::success('Successfully Stored')->persistent('Dismiss');
-            return back();
-            
-            // if($request->leave_balances >= $count_days){
-            // }
-            // else
-            // {
-            //     Alert::warning('Insufficient Balance. Please try again.')->persistent('Dismiss');
-            //     return back();
-            // }
+            else
+            {
+                Alert::warning('Insufficient Balance. Please try again.')->persistent('Dismiss');
+                return back();
+            }
         }
         
     }
