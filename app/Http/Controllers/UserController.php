@@ -41,7 +41,7 @@ class UserController extends Controller
             $companies = Company::whereHas('employee_has_company')->orderBy('company_name','ASC')->get();
             $users = User::select('id','name','email','status','role')
                             ->whereHas('employee',function($q){
-                                $q->whereIn('status',['Active','Resigned','Terminated']);
+                                $q->whereIn('status',['Active','Resigned','Terminated','Inactive']);
                             })
                             ->when($search,function($q) use($search){
                                 $q->whereHas('employee',function($w) use($search){
