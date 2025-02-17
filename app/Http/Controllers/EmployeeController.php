@@ -337,7 +337,7 @@ class EmployeeController extends Controller
                                         ->where('status', 'Active')
                                         ->first();
 
-        $validate_user = User::where('email',$request->work_email)->first();
+        $validate_user = User::where('email',$request->work_email)->where('status','Active')->first();
 
         if(empty($validate_employee) && empty($validate_user)){
             // $this->addNewUserInEdms($request);
