@@ -442,6 +442,18 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Leave Report Per Employee
     Route::get('leave-report-per-employee','LeaveReportPerEmployeeController@index');
+
+    // SL Banks
+    Route::get('sl_banks', 'SlBankController@index');
+
+    // Perfect Attendance
+    Route::get('perfect_attendance', 'PerfectAttendanceController@index');
+
+    // Leave Calendar
+    Route::get('leave_calendar', 'LeaveCalendarController@index');
+    Route::post('store_plan_leave', 'LeaveCalendarController@store');
+    Route::post('update_plan_leave/{id}', 'LeaveCalendarController@update');
+    Route::post('delete_plan_leave/{id}', 'LeaveCalendarController@destroy');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

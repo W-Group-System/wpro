@@ -14,6 +14,7 @@ use App\EmployeeLeave;
 use Carbon\Carbon;
 use App\EmployeeOb;
 use App\EmployeeLeaveCredit;
+use App\SlBank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -125,6 +126,8 @@ class EmployeeLeaveController extends Controller
         $cut_off_date = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->orderBy('id', 'desc')
             ->first();
+
+        $sl_bank = SlBank::where('employee_id', auth()->user()->employee->id)->first();
         
         return view('forms.leaves.leaves',
         array(
@@ -155,13 +158,15 @@ class EmployeeLeaveController extends Controller
             'attendance_logs' => $attendance_logs,
             'attendance_report' => $attendance_report,
             'last_logs' => $last_logs,
-            'cut_off' => $cut_off_date
+            'cut_off' => $cut_off_date,
+            'sl_bank' => $sl_bank
         ));
     }  
 
 
     public function new(Request $request)
     {
+        // dd($request->all());
         $employee = Employee::where('user_id',Auth::user()->id)->first();
         $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
         if($request->withpay == 'on'){

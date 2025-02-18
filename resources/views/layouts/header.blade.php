@@ -398,7 +398,12 @@
                             </ul>
                         </div>
                     </li>
-                   
+                    <li class="nav-item @if ($header == 'leave_calendar') active @endif">
+                        <a class="nav-link" href="{{ url('/leave_calendar') }}" onclick='show()'>
+                            <i class="ti-calendar menu-icon"></i>
+                            <span class="menu-title">Leave Calendar</span>
+                        </a>
+                    </li>
                   @if(count(auth()->user()->employee->as_resign) > 0)
                     <li class="nav-item">
                         <hr>
@@ -638,6 +643,9 @@
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li> --}}
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li> --}}
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-benefits') }}">Employee Benefits</a></li> --}}
+                    <li class="nav-item">
+                        <a class="nav-link @if($header == 'sl_banks') active @endif" href="{{ url('/sl_banks') }}">Employee SL Banks</a>
+                    </li>
                 </ul>
             </div>
         </li>
@@ -716,6 +724,12 @@
             Upload OB/OT/Leaves
           </a>
         <li>
+        <li class="nav-item">
+            <a href="{{url('perfect_attendance')}}" class="nav-link">
+                <i class="ti-calendar menu-icon"></i>
+                Perfect Attendance
+            </a>
+        </li>
         @endif
         @endif
         </ul>

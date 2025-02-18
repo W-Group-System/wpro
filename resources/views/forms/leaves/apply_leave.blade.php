@@ -133,6 +133,17 @@
     </div>
   </div>
 </div>
+@php
+    $vl_balance = 0;
+    if ($vl_balance_previous <= 0)
+    {
+        $vl_balance = $vl_balance_final;
+    }
+    else
+    {
+        $vl_balance = $vl_balance_previous;
+    }
+@endphp
 <script>
   var app = new Vue({
           el: '#app',
@@ -142,7 +153,8 @@
               isAllowedWithPay : true,
               leave_balances : '',
               vl_balance : '<?php echo $vl_balance; ?>',
-              sl_balance : '<?php echo $sl_balance; ?>',
+            //   sl_balance : '<?php echo $sl_balance; ?>',
+              sl_balance : '<?php echo $sl_balance_final; ?>',
               ml_balance : '<?php echo $ml_balance; ?>',
               pl_balance : '<?php echo $pl_balance; ?>',
               spl_balance : '<?php echo $spl_balance; ?>',

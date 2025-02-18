@@ -184,8 +184,22 @@
                                   }
 
                                   $vl_balance = $count_vl;
+                                
+                                    $vl_previous = $vl_balance - $earned_vl;
+                                    if($vl_previous <= 0.00 || $vl_previous <= 0.000)
+                                    {
+                                        $vl_previous = 0;
+                                    }
+                                    // dd($vl_previous);
+                                  $vl_balance_final = $vl_balance - $vl_previous;
+                                //   dd($vl_balance_final);
                                 @endphp
-                                {{ $vl_balance }}
+                                {{-- {{ $vl_balance }} --}}
+                                @if($vl_previous == 0)
+                                {{$vl_balance}}
+                                @else
+                                {{ $vl_balance_final }}
+                                @endif
                             @elseif ($leave->leave->id == '2')
                                 
                                 @php
@@ -240,8 +254,16 @@
                                   }
 
                                   $sl_balance = $count_sl;
+
+                                $sl_balance_previous_year = $sl_balance - $earned_sl;
+                                if ($sl_balance_previous_year <= 0.000 || $sl_balance_previous_year <= 0.00 )
+                                {
+                                    $sl_balance_previous_year = 0;
+                                }
+                                $sl_balance_final = $sl_balance - $sl_bank->sl_bank_balance;
                                 @endphp
-                                {{ $sl_balance}}
+                                {{-- {{ $sl_balance}} --}}
+                                {{ $sl_balance_final}}
                             @elseif ($leave->leave->id == '10')
                                 {{($leave->count + $earned_sil) - $used_sil}}
                                 @php
@@ -404,6 +426,53 @@
               </div>
             </div>
           </div> 
+        </div>
+        <div class="row">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Leave</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            VL from {{date('Y', strtotime('-1 year'))}}
+                                        </td>
+                                        <td>
+                                            @php
+                                                if(date('m') == '04')
+                                                {
+                                                    $vl_balance_previous = 0;
+                                                }
+                                                else
+                                                {
+                                                    $vl_balance_previous = $vl_balance - $earned_vl;
+                                                    if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                                    {
+                                                        $vl_balance_previous = 0;
+                                                    }
+                                                }
+                                            @endphp
+
+                                            {{$vl_balance_previous}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>SL Bank</td>
+                                        <td>{{$sl_bank->sl_bank_balance}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class='row'>
           <div class="col-lg-12 grid-margin stretch-card">
