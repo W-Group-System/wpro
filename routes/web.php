@@ -454,6 +454,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('store_plan_leave', 'LeaveCalendarController@store');
     Route::post('update_plan_leave/{id}', 'LeaveCalendarController@update');
     Route::post('delete_plan_leave/{id}', 'LeaveCalendarController@destroy');
+
+    // Upload Raw Logs
+    Route::get('upload_raw_logs', 'UploadRawLogsController@index');
+    Route::post('store_raw_logs', 'UploadRawLogsController@store');
+    Route::get('export_template', 'UploadRawLogsController@export');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

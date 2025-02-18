@@ -732,6 +732,14 @@
         </li>
         @endif
         @endif
+        @if(auth()->user()->id == 471 || auth()->user()->id == 555)
+        <li class="nav-item">
+            <a href="{{url('upload_raw_logs')}}" class="nav-link @if($header == 'upload_raw_logs') active @endif">
+                <i class="ti-upload menu-icon"></i>
+                Upload Raw Logs
+            </a>
+        </li>
+        @endif
         </ul>
         </nav>
         <!-- partial -->
