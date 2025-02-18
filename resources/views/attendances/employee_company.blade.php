@@ -417,10 +417,11 @@
 
                                                                         
                                                                         }
-                                                                        if($if_attendance_holiday)
-                                                                        {
-                                                                            $abs=0;
-                                                                        }
+                                                                        // dd($if_attendance_holiday);
+                                                                        // if($if_attendance_holiday)
+                                                                        // {
+                                                                        //     $abs=0;
+                                                                        // }
                                                                   
                                                                     if($emp->work_description == "Non-Monthly")
                                                                     {
