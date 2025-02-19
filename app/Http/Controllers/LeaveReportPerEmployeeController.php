@@ -19,8 +19,8 @@ class LeaveReportPerEmployeeController extends Controller
         $from = $request->from;
         $to = $request->to;
         $status = $request->status;
-        $employee = $request->employee;
-
+        $employee = !empty($request->employee) ? $request->employee : [];
+        
         $employees = Employee::with('user_info')->where('status','Active')->get();
         
         $employee_leaves = [];
