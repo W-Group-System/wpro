@@ -39,6 +39,9 @@
                           $splvv_balance = 0;
                           $el_balance = 0;
                           $bl_balance = 0;
+
+                          $sl_balance_final = 0;
+                          $vl_balance_final = 0;
                       @endphp
 
                       @if(count($leave_balances) > 0)
