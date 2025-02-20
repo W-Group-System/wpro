@@ -51,7 +51,7 @@
                             </thead>
                             <tbody>
                                 @foreach($for_clearances->where('status',$status) as $for_clearance)
-                                {{-- <tr >
+                                <!-- <tr >
                                     <td><a href='{{url("view-as-signatory/".$for_clearance->id)}}'>{{$for_clearance->clearance->resign->employee->last_name}}, {{$for_clearance->clearance->resign->employee->first_name}}</a></td>
                                     <td>{{$for_clearance->clearance->resign->employee->company->company_code}}</td>
                                     <td>{{$for_clearance->clearance->resign->employee->department->name}}</td>
@@ -69,7 +69,7 @@
                                             @endif
                                     </td>
                                     
-                                </tr> --}}
+                                </tr> -->
                                 <tr>
                                 <td>
                                   <a href='{{ url("view-as-signatory/" . $for_clearance->id) }}'>
