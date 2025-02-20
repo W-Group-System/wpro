@@ -40,6 +40,7 @@
                                 <td colspan='5'>{{$emp->emp_code}} - {{$emp->first_name}} {{$emp->last_name}}</td>
                             </tr> --}}
                             <tr>
+                                <th>Sync</th>
                                 <th>Employee #</th>
                                 <th>Name</th>
                                 <th>Log Date</th>
@@ -130,7 +131,18 @@
                                     $if_has_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
                                 @endphp
                                 <tr>
-                                    
+                                    <td>
+                                        <form method="POST" action="{{url('sync_attendance')}}" onsubmit="show()">
+                                            @csrf 
+                                            <input type="hidden" name="from" value="{{$from_date}}">
+                                            <input type="hidden" name="to" value="{{$to_date}}">
+                                            <input type="hidden" name="emp_code" value="{{$emp->employee_number}}">
+
+                                            <button type="submit" class="btn btn-sm btn-info">
+                                                <i class="ti-loop"></i>
+                                            </button>
+                                        </form>
+                                    </td>
                                     <td>{{ $emp->employee_code }}</td>
                                     <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
                                     <td>{{date('d/m/Y',strtotime($date_r))}}</td>

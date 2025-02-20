@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('attendance-report', 'AttendanceController@reports')->name('reports');
     Route::post('/store_attendance', 'AttendanceController@storeAttendance')->name('attendance.store');
     Route::get('get-attendance-bio', 'AttendanceController@get_attendances');
+    Route::post('sync_attendance','AttendanceController@syncAttendance');
     // Route::get('/fetch-log-dates/{company_id}', 'AttendanceController@checkLogDate');
     Route::get('/fetch-disabled-dates/{company_id}', 'AttendanceController@fetchDisabledDates');
 
@@ -445,6 +446,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // SL Banks
     Route::get('sl_banks', 'SlBankController@index');
+    Route::get('export_sl_bank_template', 'SlBankController@export');
+    Route::post('store_sl_bank', 'SlBankController@store');
 
     // Perfect Attendance
     Route::get('perfect_attendance', 'PerfectAttendanceController@index');

@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Company;
 use App\Department;
 use App\Employee;
+use App\Exports\SlBankExport;
+use App\SlBank;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
+use Shuchkin\SimpleXLSX;
 
 class SlBankController extends Controller
 {
@@ -26,8 +31,13 @@ class SlBankController extends Controller
         $departments = Department::where('status',1)->get();
 
         $employees = Employee::where('company_id', $request->company)
-            // ->where('department_id', $department_id)
+            ->where('department_id', $department_id)
             ->where('status', 'Active')
+            ->get();
+
+        $sl_banks = SlBank::with('employee')->whereHas('employee', function($empQuery)use($company_id, $department_id) {
+                $empQuery->where('department_id', $department_id)->where('company_id', $company_id);
+            })
             ->get();
 
         return view('sl_banks.sl_banks', compact(
@@ -36,7 +46,8 @@ class SlBankController extends Controller
             'employees', 
             'company_id', 
             'departments', 
-            'department_id'
+            'department_id',
+            'sl_banks'
             )
         );
     }
@@ -59,7 +70,24 @@ class SlBankController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+
+        $xlsx = SimpleXLSX::parse($request->file('sl_bank_file')->getRealPath())->rows();
+        
+        foreach($xlsx as $key => $row)
+        {
+            if($key > 0)
+            {
+                $employees = Employee::whereIn('employee_code', [$row[0]])->first();
+                
+                $sl_banks = SlBank::where('employee_id', $employees->id)->first();
+                $sl_banks->sl_bank_balance = $row[1];
+                $sl_banks->save();
+            }
+        }
+        
+        Alert::success('Successfully Imported')->persistent('Dismiss');
+        return back();
     }
 
     /**
@@ -105,5 +133,10 @@ class SlBankController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function export()
+    {
+        return Excel::download(new SlBankExport, 'sl_bank.xlsx');
     }
 }
