@@ -821,8 +821,9 @@ class AttendanceController extends Controller
         // dd($request->all());
         $from = $request->from;
         $to = $request->to;
+        $date = $request->date;
         
-        $attendanceLogs = AttendanceLog::whereBetween('date', [$from, $to])
+        $attendanceLogs = AttendanceLog::where('date', $date)
             ->where('emp_code', $request->emp_code)
             ->orderBy('datetime','asc')
             ->get();

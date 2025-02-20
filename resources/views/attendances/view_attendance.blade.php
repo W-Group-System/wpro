@@ -132,12 +132,12 @@
                                 @endphp
                                 <tr>
                                     <td>
-                                        {{-- @dd($employee_schedule) --}}
+                                        {{-- @dd($date_r) --}}
                                         @if($employee_schedule)
                                         <form method="POST" action="{{url('sync_attendance')}}" onsubmit="show()">
                                             @csrf 
-                                            <input type="hidden" name="from" value="{{$from_date}}">
-                                            <input type="hidden" name="to" value="{{$to_date}}">
+                                            <input type="hidden" name="date" value="{{$date_r}}">
+                                            {{-- <input type="hidden" name="to" value="{{$to_date}}"> --}}
                                             <input type="hidden" name="emp_code" value="{{$emp->employee_number}}">
 
                                             <button type="submit" class="btn btn-sm btn-info">
