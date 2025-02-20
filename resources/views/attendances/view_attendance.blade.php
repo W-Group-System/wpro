@@ -132,6 +132,8 @@
                                 @endphp
                                 <tr>
                                     <td>
+                                        {{-- @dd($employee_schedule) --}}
+                                        @if($employee_schedule)
                                         <form method="POST" action="{{url('sync_attendance')}}" onsubmit="show()">
                                             @csrf 
                                             <input type="hidden" name="from" value="{{$from_date}}">
@@ -142,6 +144,7 @@
                                                 <i class="ti-loop"></i>
                                             </button>
                                         </form>
+                                        @endif
                                     </td>
                                     <td>{{ $emp->employee_code }}</td>
                                     <td>{{$emp->first_name . ' ' . $emp->last_name}}</td>
