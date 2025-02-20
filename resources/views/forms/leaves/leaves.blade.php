@@ -188,6 +188,7 @@
 
                                   $vl_balance = $count_vl;
                                 
+                                    // Edited VL  
                                     $vl_previous = $vl_balance - $earned_vl;
                                     if($vl_previous <= 0.00 || $vl_previous <= 0.000)
                                     {
@@ -198,10 +199,14 @@
                                 //   dd($vl_balance_final);
                                 @endphp
                                 {{-- {{ $vl_balance }} --}}
-                                @if($vl_previous == 0)
-                                {{$vl_balance}}
+                                @if(date('Y', strtotime($employee_status->date_regularized)) == date('Y'))
+                                    {{$vl_balance}}
                                 @else
-                                {{ $vl_balance_final }}
+                                    @if($vl_previous == 0)
+                                    {{$vl_balance}}
+                                    @else
+                                    {{ $vl_balance_final }}
+                                    @endif
                                 @endif
                             @elseif ($leave->leave->id == '2')
                                 
@@ -449,16 +454,41 @@
                                         </td>
                                         <td>
                                             @php
-                                                if(date('m') == '04')
+                                                if($employee_status->date_regularized)
                                                 {
-                                                    $vl_balance_previous = 0;
+                                                    if (date('Y', strtotime($employee_status->date_regularized)) == date('Y'))
+                                                    {
+                                                        $vl_balance_previous = 0;
+                                                    }
+                                                    else
+                                                    {
+                                                        if(date('m') == '04')
+                                                        {
+                                                            $vl_balance_previous = 0;
+                                                        }
+                                                        else
+                                                        {
+                                                            $vl_balance_previous = $vl_balance - $earned_vl;
+                                                            if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                                            {
+                                                                $vl_balance_previous = 0;
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    $vl_balance_previous = $vl_balance - $earned_vl;
-                                                    if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                                    if(date('m') == '04')
                                                     {
                                                         $vl_balance_previous = 0;
+                                                    }
+                                                    else
+                                                    {
+                                                        $vl_balance_previous = $vl_balance - $earned_vl;
+                                                        if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                                        {
+                                                            $vl_balance_previous = 0;
+                                                        }
                                                     }
                                                 }
                                             @endphp
