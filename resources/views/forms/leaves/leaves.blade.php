@@ -244,12 +244,13 @@
                                   // if($last_year == 2022 && $today < $date_hired_this_year){
                                       $sl_beginning_balance = $leave->count;
                                   // }
-
+                                    
                                   // if($total_months < 11){
                                   //   $sl_beginning_balance = $leave->count;
                                   // }
                                   
-                                  $count_sl = ($sl_beginning_balance + $earned_sl) - $used_sl;
+                                //   $count_sl = ($sl_beginning_balance + $earned_sl) - $used_sl;
+                                  $count_sl = $earned_sl - $used_sl_this_yr;
                                   
                                   if($count_sl > 0){
                                     if($total_months > 11){
@@ -263,15 +264,9 @@
 
                                   $sl_balance = $count_sl;
 
-                                $sl_balance_previous_year = $sl_balance - $earned_sl;
-                                if ($sl_balance_previous_year <= 0.000 || $sl_balance_previous_year <= 0.00 )
-                                {
-                                    $sl_balance_previous_year = 0;
-                                }
-                                $sl_balance_final = $sl_balance - (optional($sl_bank)->sl_bank_balance ?? 0);
                                 @endphp
-                                {{-- {{ $sl_balance}} --}}
-                                {{ $sl_balance_final}}
+                                {{ $sl_balance}}
+                                
                             @elseif ($leave->leave->id == '10')
                                 {{($leave->count + $earned_sil) - $used_sil}}
                                 @php

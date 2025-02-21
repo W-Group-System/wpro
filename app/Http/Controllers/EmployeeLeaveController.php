@@ -128,6 +128,8 @@ class EmployeeLeaveController extends Controller
             ->first();
 
         $sl_bank = SlBank::where('employee_id', auth()->user()->employee->id)->first();
+
+        $used_sl_this_yr = usedSlThisYear(auth()->user()->id,2,$employee_status->original_date_hired,$employee_status->ScheduleData);
         
         return view('forms.leaves.leaves',
         array(
@@ -159,7 +161,8 @@ class EmployeeLeaveController extends Controller
             'attendance_report' => $attendance_report,
             'last_logs' => $last_logs,
             'cut_off' => $cut_off_date,
-            'sl_bank' => $sl_bank
+            'sl_bank' => $sl_bank,
+            'used_sl_this_yr' => $used_sl_this_yr
         ));
     }  
 
