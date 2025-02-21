@@ -268,7 +268,7 @@
                                 {
                                     $sl_balance_previous_year = 0;
                                 }
-                                $sl_balance_final = $sl_balance - $sl_bank->sl_bank_balance;
+                                $sl_balance_final = $sl_balance - (optional($sl_bank)->sl_bank_balance ?? 0);
                                 @endphp
                                 {{-- {{ $sl_balance}} --}}
                                 {{ $sl_balance_final}}
@@ -435,6 +435,7 @@
             </div>
           </div> 
         </div>
+        @if(auth()->user()->employee->department_id == 6 || auth()->user()->employee->department_id == 26)
         <div class="row">
             <div class="col-lg-6 mb-3">
                 <div class="card">
@@ -498,7 +499,7 @@
                                     </tr>
                                     <tr>
                                         <td>SL Bank</td>
-                                        <td>{{$sl_bank->sl_bank_balance}}</td>
+                                        <td>{{ optional($sl_bank)->sl_bank_balance ?? '0' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -507,6 +508,7 @@
                 </div>
             </div>
         </div>
+        @endif
         <div class='row'>
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">

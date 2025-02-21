@@ -133,7 +133,7 @@
     </div>
   </div>
 </div>
-@php
+{{-- @php
     $vl_balance = 0;
     if ($vl_balance_previous <= 0)
     {
@@ -143,7 +143,7 @@
     {
         $vl_balance = $vl_balance_previous;
     }
-@endphp
+@endphp --}}
 <script>
   var app = new Vue({
           el: '#app',
