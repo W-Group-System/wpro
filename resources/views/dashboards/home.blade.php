@@ -190,7 +190,7 @@
                   <div class="col-md-12">
                     <div class="card">
                       <div class="card-body">
-                        <p class="card-title ">Holiday(s):&nbsp;<i style="font-weight: normal"><small>{{date('M 01')}} - {{date('M t')}}</small></i></p>
+                        <p class="card-title ">Holidays:&nbsp;<i style="font-weight: normal"><small>{{date('M 01')}} - {{date('M t')}}</small></i></p>
                         <div class="table-responsive">
                           <table class="table table-striped table-borderless">
                             <thead>
