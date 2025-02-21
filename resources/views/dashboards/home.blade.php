@@ -190,12 +190,13 @@
                   <div class="col-md-12">
                     <div class="card">
                       <div class="card-body">
-                        <p class="card-title mb-0">(<small><i>{{date('M 01')}} - {{date('M t')}}</i></small>)</p>
+                        <p class="card-title ">Holidays:&nbsp;<i style="font-weight: normal"><small>{{date('M 01')}} - {{date('M t')}}</small></i></p>
                         <div class="table-responsive">
                           <table class="table table-striped table-borderless">
                             <thead>
                               <tr>
-                                <th>Holiday</th>
+                                <th>Holiday Name</th>
+                                <th>Location</th>
                                 <th>Date</th>
                               </tr>  
                             </thead>
@@ -203,6 +204,7 @@
                               @foreach($holidays as $holiday)
                               <tr>
                                 <td>{{$holiday->holiday_name}}</td>
+                                <td>{{$holiday->location}}</td>
                                 <td class="font-weight-medium"><div class="badge badge-success">{{date('M d',strtotime($holiday->holiday_date))}}</div></td>
                               </tr>
                               @endforeach
