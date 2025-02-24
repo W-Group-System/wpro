@@ -174,6 +174,11 @@ class EmployeeLeaveController extends Controller
         // dd($request->all());
         $employee = Employee::where('user_id',Auth::user()->id)->first();
         $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
+        if ($request->date_from > $request->date_to)
+        {
+            Alert::warning('Date From is cannot be greater than Date To')->persistent('Dismiss');
+            return back();
+        }
         if($request->withpay == 'on'){
             $existing_date_leave = EmployeeLeave::where(function($q)use($request) {
                     // $q->where('date_from', $request->date_from)->orWhere('date_to', $request->date_to);
