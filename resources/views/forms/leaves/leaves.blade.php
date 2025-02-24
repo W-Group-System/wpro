@@ -175,7 +175,16 @@
                                   
                                       $vl_beginning_balance = $leave->count;
                                  
-                                  $count_vl = ($vl_beginning_balance + $earned_vl) - $used_vl;
+                                //   $count_vl = ($vl_beginning_balance + $earned_vl) - $used_vl;
+                                  if ($earned_vl == 0)
+                                  {
+                                    $count_vl = $vl_beginning_balance - $used_vl_this_yr;
+                                  }
+                                  else
+                                  {
+                                     $count_vl = $earned_vl - $used_vl_this_yr;
+                                  }
+
                                   if($count_vl > 0){
                                     if($total_months > 11){
                                         $is_allowed_to_file_vl = true;
@@ -187,27 +196,8 @@
                                   }
 
                                   $vl_balance = $count_vl;
-                                
-                                    // Edited VL  
-                                    $vl_previous = $vl_balance - $earned_vl;
-                                    if($vl_previous <= 0.00 || $vl_previous <= 0.000)
-                                    {
-                                        $vl_previous = 0;
-                                    }
-                                    // dd($vl_previous);
-                                  $vl_balance_final = $vl_balance - $vl_previous;
-                                //   dd($vl_balance_final);
                                 @endphp
-                                {{-- {{ $vl_balance }} --}}
-                                @if(date('Y', strtotime($employee_status->date_regularized)) == date('Y'))
-                                    {{$vl_balance}}
-                                @else
-                                    @if($vl_previous == 0)
-                                    {{$vl_balance}}
-                                    @else
-                                    {{ $vl_balance_final }}
-                                    @endif
-                                @endif
+                                {{ $vl_balance }}
                             @elseif ($leave->leave->id == '2')
                                 
                                 @php
@@ -250,7 +240,14 @@
                                   // }
                                   
                                 //   $count_sl = ($sl_beginning_balance + $earned_sl) - $used_sl;
-                                  $count_sl = $earned_sl - $used_sl_this_yr;
+                                    if ($earned_sl == 0)
+                                    {
+                                        $count_sl = $sl_beginning_balance - $used_sl_this_yr;
+                                    }
+                                    else
+                                    {
+                                        $count_sl = $earned_sl - $used_sl_this_yr;
+                                    }
                                   
                                   if($count_sl > 0){
                                     if($total_months > 11){

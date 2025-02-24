@@ -1218,7 +1218,7 @@ function get_avatar($id)
     return $image;
 }
 
-function usedSlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas = [])
+function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas = [])
 {
     $count = 0;
     $all_days = [];
@@ -1243,7 +1243,7 @@ function usedSlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas = [])
                       ->orWhere('status', 'Pending');
             })
             ->where('withpay',1)
-            ->whereYear('date_from', date('Y'))
+            ->whereYear('created_at', date('Y'))
             ->where('status','!=','Cancelled')
             // ->where('date_from', '>', $filter_date_leave)
             ->get();
