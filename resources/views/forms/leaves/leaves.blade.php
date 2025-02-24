@@ -175,15 +175,16 @@
                                   
                                       $vl_beginning_balance = $leave->count;
                                  
-                                //   $count_vl = ($vl_beginning_balance + $earned_vl) - $used_vl;
-                                  if ($earned_vl == 0)
-                                  {
-                                    $count_vl = $vl_beginning_balance - $used_vl_this_yr;
-                                  }
-                                  else
-                                  {
-                                     $count_vl = $earned_vl - $used_vl_this_yr;
-                                  }
+                                  $count_vl = ($vl_beginning_balance + $earned_vl) - $used_vl;
+
+                                //   if ($earned_vl == 0)
+                                //   {
+                                //     $count_vl = $vl_beginning_balance - $used_vl_this_yr;
+                                //   }
+                                //   else
+                                //   {
+                                //      $count_vl = $earned_vl - $used_vl_this_yr;
+                                //   }
 
                                   if($count_vl > 0){
                                     if($total_months > 11){
