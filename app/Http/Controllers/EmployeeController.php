@@ -1100,9 +1100,16 @@ class EmployeeController extends Controller
         //                                 ->pluck('user_id')
         //                                 ->toArray();
         if($user->employee->level >= 2){
-            $users = User::all();
+            $users = User::whereHas('employee', function($query) {
+                    $query->where('status', 'Active');
+                })
+                ->get();
         }else{
-            $users = User::whereIn('id',$employee_approvers)->get();
+            $users = User::whereHas('employee', function($query) {
+                    $query->where('status', 'Active');
+                })
+                ->whereIn('id',$employee_approvers)
+                ->get();
         }
         
         $schedules = Schedule::get();
