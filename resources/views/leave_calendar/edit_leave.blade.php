@@ -1,10 +1,10 @@
-<div class="modal fade" id="edit{{$leave_plan->id}}">
+<div class="modal fade" id="edit{{$leave_plan->leave_calendar_id}}">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Edit plan leave</h4>
             </div>
-            <form method="POST" action="{{url('update_plan_leave/'.$leave_plan->id)}}" onsubmit="show()">
+            <form method="POST" action="{{url('update_plan_leave/'.$leave_plan->leave_calendar_id)}}" onsubmit="show()">
                 @csrf 
 
                 <div class="modal-body">

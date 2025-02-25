@@ -30,7 +30,7 @@
                             @if(count($leave_plans_per_month) > 0)
                                 @foreach ($leave_plans_per_month as $leave_plan)
                                     <div class="row">
-                                        <div class="col-lg-10">
+                                        <div class="col-lg-12">
                                             <div class="row">
                                                 <div class="col-sm-3">
                                                     <small>Date From</small>
@@ -58,7 +58,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2">
+                                        {{-- <div class="col-lg-2">
                                             <div class="row">
                                                 <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit{{$leave_plan->id}}">
                                                     <i class="ti-pencil-alt"></i>
@@ -71,7 +71,7 @@
                                                     </button>
                                                 </form>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     
                                     <hr>
@@ -88,7 +88,7 @@
     </div>
 
     @include('leave_calendar.new_leave_calendar')
-    @foreach ($leave_plans_per_month as $leave_plan)
+    @foreach ($leave_plan_array as $leave_plan)
         @include('leave_calendar.edit_leave')
     @endforeach
 
@@ -103,7 +103,11 @@
             // editable: true,
             eventLimit: true,
             displayEventTime: false,
-            events: leave_plan
+            events: leave_plan,
+            eventClick: function(calEvent, jsEvent, view)
+            {
+                $("#edit"+calEvent.leave_calendar_id).modal('show')
+            }
         });
     </script>
 @endsection

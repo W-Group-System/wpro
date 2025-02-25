@@ -31,6 +31,10 @@ class LeaveCalendarController extends Controller
             $object->start = date('Y-m-d h:i:s', strtotime($leave_plan->date_from));
             $object->end = date('Y-m-d h:i:s', strtotime($leave_plan->date_to));
             $object->color = '#57B657';
+            $object->leave_calendar_id = $leave_plan->id;
+            $object->reason = $leave_plan->reason;
+            $object->date_from = $leave_plan->date_from;
+            $object->date_to = $leave_plan->date_to;
             $leave_plan_array[] = $object;
         }
         
