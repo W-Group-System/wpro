@@ -310,7 +310,7 @@
               <!-- START MAIN CONTENT AREA -->
               <tr>
                 <td class="wrapper">
-                  <p>Hi {{$data['employee_info']->last_name}},</p>
+                  <p>Hi @if($data['employee_info']->gender == "MALE") Mr @else Ms. @endif {{$data['employee_info']->last_name}},</p>
                   <p>Signatory Department: @if($data['department']->department_id == "immediate_sup")
                     Immediate Head
                     @elseif($data['department']->department_id == "dep_head")

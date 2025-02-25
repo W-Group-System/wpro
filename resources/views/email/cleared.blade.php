@@ -310,7 +310,7 @@
               <!-- START MAIN CONTENT AREA -->
               <tr>
                 <td class="wrapper">
-                  <p>Hi {{$data['employee_info']->last_name}},</p>
+                  <p>Hi @if($data['employee_info']->gender == "MALE") Mr @else Ms. @endif {{$data['employee_info']->last_name}},</p>
                   <p>We are pleased to inform you that your clearance process has been successfully completed today. </p>
                   <p>Kindly await further updates regarding the release of your final pay. </p>
                   <p>If you have any questions or concerns, please feel free to email: hrd@wgroup.com.ph or hrd@rico.com.ph. Thank you! </p>
