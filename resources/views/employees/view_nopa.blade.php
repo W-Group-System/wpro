@@ -51,6 +51,32 @@
                                     </th>
                                     <td>
                                         @if ($key == 'department_id' && isset($oldValues[$key]))
+                                            {{ optional($departments->where('id', $oldValues[$key])->first())->name ?? 'N/A' }}
+                                        @elseif ($key == 'level' && isset($oldValues[$key]))
+                                            {{ optional($levels->where('id', $oldValues[$key])->first())->name ?? 'N/A' }}
+                                        @elseif ($key == 'classification' && isset($oldValues[$key]))
+                                            {{ optional($classifications->where('id', $oldValues[$key])->first())->name ?? 'N/A' }}
+                                        @elseif ($key == 'immediate_sup' && isset($oldValues[$key]))
+                                            {{ optional($users->where('id', $oldValues[$key])->first())->name ?? 'N/A' }}
+                                        @else
+                                            {{ $oldValues[$key] ?? 'N/A' }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($key == 'department_id' && isset($newValues[$key]))
+                                            {{ optional($departments->where('id', $newValues[$key])->first())->name ?? 'N/A' }}
+                                        @elseif ($key == 'level' && isset($newValues[$key]))
+                                            {{ optional($levels->where('id', $newValues[$key])->first())->name ?? 'N/A' }}
+                                        @elseif ($key == 'classification' && isset($newValues[$key]))
+                                            {{ optional($classifications->where('id', $newValues[$key])->first())->name ?? 'N/A' }}
+                                        @elseif ($key == 'immediate_sup' && isset($newValues[$key]))
+                                            {{ optional($users->where('id', $newValues[$key])->first())->name ?? 'N/A' }}
+                                        @else
+                                            {{ $newValues[$key] ?? 'N/A' }}
+                                        @endif
+                                    </td>
+                                    <!-- <td>
+                                        @if ($key == 'department_id' && isset($oldValues[$key]))
                                             {{ ($departments->where('id',$oldValues[$key])->first())->name }}
                                         @elseif ($key == 'level' && isset($oldValues[$key]))
                                         {{ ($levels->where('id',$oldValues[$key])->first())->name }}
@@ -74,7 +100,7 @@
                                         @else
                                             {{ $newValues[$key] ?? '' }}
                                         @endif
-                                    </td>
+                                    </td> -->
                                 </tr>
                             @endforeach
                         </tbody>
