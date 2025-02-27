@@ -1121,7 +1121,8 @@ class EmployeeController extends Controller
 
         $employeeBenefits = EmployeeBenefits::where('user_id', $user->id)->get();
         
-        $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->id)->get();
+        // $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->id)->get();
+        $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->user_id)->get();
         $employeeNte = NteFile::where('employee_id', $user->employee->id)->get();
         $employeeDocument = EmployeeDocument::with('employee')->where('employee_id', $user->employee->id)->get();
         // dd($users);
