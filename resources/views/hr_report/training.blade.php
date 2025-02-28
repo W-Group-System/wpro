@@ -16,6 +16,8 @@
                       <th>Employee Name</th>
                       <th>Department</th>
                       <th>Training</th>
+                      <th>Certificate</th>
+                      <th>Attachment</th>
                       <th>Start Date</th>
                       <th>End Date</th>
                       <th>Amount</th>
@@ -29,6 +31,16 @@
                         <td>{{$et->employee->first_name.' '.$et->employee->last_name}}</td>
                         <td>{{$et->employee->department->name}}</td>
                         <td>{{$et->training}}</td>
+                        <td> 
+                          @if ($et->attachment)
+                            <a href="{{ url($et->attachment) }}" target="_blank">Attachment</a>
+                          @endif
+                        </td>
+                        <td> 
+                          @if ($et->training_attachment)
+                            <a href="{{ url($et->training_attachment) }}" target="_blank">Certificate</a>
+                          @endif
+                        </td>
                         <td>{{date('M. d, Y', strtotime($et->start_date))}}</td>
                         <td>{{date('M. d, Y', strtotime($et->end_date))}}</td>
                         <td><span>&#8369;</span>{{$et->amount}}</td>

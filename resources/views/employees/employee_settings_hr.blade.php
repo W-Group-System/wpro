@@ -591,7 +591,7 @@
                                 @foreach ($user->employee->employeeMovement as $movement)
                                 <div class='row m-2 border-bottom'>
                                     <div class='col-md-3'>
-                                        {{ $movement->user_info->name }}
+                                        {{ optional($movement->user_info)->name ?? 'N/A' }}
                                     </div>
                                     <div class='col-md-3'>
                                         {{date('M d, Y',strtotime($movement->changed_at ))}}
@@ -636,7 +636,7 @@
                                 @foreach ($user->employee->salaryMovement as $movement)
                                 <div class='row m-2 border-bottom'>
                                     <div class='col-md-3'>
-                                        {{ $movement->change_by->name }}
+                                        {{ optional($movement->change_by)->name ?? 'N/A' }}
                                     </div>
                                     <div class='col-md-3'>
                                         {{date('M d, Y',strtotime($movement->changed_at ))}}
