@@ -54,7 +54,7 @@
                                         @elseif ($key == 'classification' && isset($oldValues[$key]))
                                         {{ ($classifications->where('id',$oldValues[$key])->first())->name }}
                                         @elseif ($key == 'immediate_sup' && isset($oldValues[$key]))
-                                        {{ ($users->where('id',$oldValues[$key])->first())->name }}
+                                        {{ optional(($users->where('id',$oldValues[$key])->first()))->name }}
                                         @else
                                             {{ $oldValues[$key] ?? '' }}
                                         @endif
@@ -67,7 +67,7 @@
                                         @elseif ($key == 'classification' && isset($newValues[$key]))
                                         {{ ($classifications->where('id',$newValues[$key])->first())->name }}
                                         @elseif ($key == 'immediate_sup' && isset($newValues[$key]))
-                                        {{ ($users->where('id',$newValues[$key])->first())->name }}
+                                        {{ optional(($users->where('id',$oldValues[$key])->first()))->name }}
                                         @else
                                             {{ $newValues[$key] ?? '' }}
                                         @endif
