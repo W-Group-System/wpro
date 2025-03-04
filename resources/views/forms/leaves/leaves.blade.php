@@ -194,9 +194,16 @@
                                   }else{
                                     $is_allowed_to_file_vl = false;
                                   }
-
+                                  
                                 //   $vl_balance = $count_vl ;
-                                  $vl_balance = $count_vl - $used_vl_this_yr;
+                                $total_count_vl = $count_vl - $earned_vl;
+                                $vl_balance_previous = $total_count_vl - $used_vl_this_yr;
+                                if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                {
+                                    $vl_balance_previous = 0;
+                                }
+                                
+                                  $vl_balance = $count_vl - $vl_balance_previous;
                                 @endphp
                                 {{ $vl_balance }}
                             @elseif ($leave->leave->id == '2')
@@ -494,6 +501,9 @@
                                                 else
                                                 {
                                                     $vl_balance_previous = $count_vl - $earned_vl;
+                                                    // dd($count_vl, $earned_vl);
+                                                    // dd($total_count_vl, $used_vl_this_yr);
+                                                    // $vl_balance_previous = $total_count_vl - $used_vl_this_yr;
                                                     if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
                                                     {
                                                         $vl_balance_previous = 0;
@@ -501,7 +511,7 @@
                                                 }
                                             @endphp
 
-                                            {{$vl_balance_previous}}
+                                            {{round($vl_balance_previous, 10)}}
                                         </td>
                                     </tr>
                                     {{-- <tr>
