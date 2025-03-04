@@ -176,7 +176,6 @@
                                       $vl_beginning_balance = $leave->count;
                                  
                                   $count_vl = ($vl_beginning_balance + $earned_vl) - $used_vl;
-
                                 //   if ($earned_vl == 0)
                                 //   {
                                 //     $count_vl = $vl_beginning_balance - $used_vl_this_yr;
@@ -196,7 +195,8 @@
                                     $is_allowed_to_file_vl = false;
                                   }
 
-                                  $vl_balance = $count_vl;
+                                //   $vl_balance = $count_vl ;
+                                  $vl_balance = $count_vl - $used_vl_this_yr;
                                 @endphp
                                 {{ $vl_balance }}
                             @elseif ($leave->leave->id == '2')
@@ -428,7 +428,7 @@
             </div>
           </div> 
         </div>
-        @if(auth()->user()->employee->department_id == 6 || auth()->user()->employee->department_id == 26)
+        {{-- @if(auth()->user()->employee->department_id == 6 || auth()->user()->employee->department_id == 26) --}}
         <div class="row">
             <div class="col-lg-6 mb-3">
                 <div class="card">
@@ -448,41 +448,55 @@
                                         </td>
                                         <td>
                                             @php
-                                                if($employee_status->date_regularized)
+                                                $vl_balance_previous = 0;
+                                                // if($employee_status->date_regularized)
+                                                // {
+                                                //     if (date('Y', strtotime($employee_status->date_regularized)) == date('Y'))
+                                                //     {
+                                                //         $vl_balance_previous = 0;
+                                                //     }
+                                                //     else
+                                                //     {
+                                                //         if(date('m') == '04')
+                                                //         {
+                                                //             $vl_balance_previous = 0;
+                                                //         }
+                                                //         else
+                                                //         {
+                                                //             $vl_balance_previous = $vl_balance - $earned_vl;
+                                                //             if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                                //             {
+                                                //                 $vl_balance_previous = 0;
+                                                //             }
+                                                //         }
+                                                //     }
+                                                // }
+                                                // else
+                                                // {
+                                                //     if(date('m') == '04')
+                                                //     {
+                                                //         $vl_balance_previous = 0;
+                                                //     }
+                                                //     else
+                                                //     {
+                                                //         $vl_balance_previous = $vl_balance - $earned_vl;
+                                                //         if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                                //         {
+                                                //             $vl_balance_previous = 0;
+                                                //         }
+                                                //     }
+                                                // }
+                                                
+                                                if(date('m') == '04')
                                                 {
-                                                    if (date('Y', strtotime($employee_status->date_regularized)) == date('Y'))
-                                                    {
-                                                        $vl_balance_previous = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        if(date('m') == '04')
-                                                        {
-                                                            $vl_balance_previous = 0;
-                                                        }
-                                                        else
-                                                        {
-                                                            $vl_balance_previous = $vl_balance - $earned_vl;
-                                                            if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                            {
-                                                                $vl_balance_previous = 0;
-                                                            }
-                                                        }
-                                                    }
+                                                    $vl_balance_previous = 0;
                                                 }
                                                 else
                                                 {
-                                                    if(date('m') == '04')
+                                                    $vl_balance_previous = $count_vl - $earned_vl;
+                                                    if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
                                                     {
                                                         $vl_balance_previous = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        $vl_balance_previous = $vl_balance - $earned_vl;
-                                                        if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                        {
-                                                            $vl_balance_previous = 0;
-                                                        }
                                                     }
                                                 }
                                             @endphp
@@ -490,10 +504,10 @@
                                             {{$vl_balance_previous}}
                                         </td>
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <td>SL Bank</td>
                                         <td>{{ optional($sl_bank)->sl_bank_balance ?? '0' }}</td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -501,7 +515,7 @@
                 </div>
             </div>
         </div>
-        @endif
+        {{-- @endif --}}
         <div class='row'>
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
