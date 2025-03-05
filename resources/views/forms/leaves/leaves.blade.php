@@ -500,7 +500,7 @@
                                                 }
                                                 else
                                                 {
-                                                    $vl_balance_previous = $count_vl - $earned_vl;
+                                                    $vl_balance_previous = ($count_vl ?? 0) - $earned_vl;
                                                     // dd($count_vl, $earned_vl);
                                                     // dd($total_count_vl, $used_vl_this_yr);
                                                     // $vl_balance_previous = $total_count_vl - $used_vl_this_yr;
