@@ -203,12 +203,13 @@ class LoanController extends Controller
                 $q->where('pay_period_to', '<=', $request->as_of); // Filter to only include pay records that have pay_reg
             });
         }])
-        ->where('status', 'Active')
+        // ->where('status', 'Active')
         ->whereIn('loan_type_id', $loan_type)
         ->whereHas('employee', function($query) use ($company) {
             $query->whereIn('company_id', $company);
         })
         ->get();
+        // dd($loan_all);
         // $loan_all = Loan::whereIn('loan_type_id',$request->loans)->where('status','Active')->get();
         return view('reports.company_loan_report', array(
             'header' => 'reports',
