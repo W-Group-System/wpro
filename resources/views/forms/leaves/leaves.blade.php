@@ -196,8 +196,9 @@
                                   }
                                   
                                 //   $vl_balance = $count_vl ;
-                                $total_count_vl = $count_vl - $earned_vl;
-                                $vl_balance_previous = $total_count_vl - $used_vl_this_yr;
+                                $vl_balance_previous = $count_vl - $earned_vl;
+                                // $vl_balance_previous = $total_count_vl - $used_vl_this_yr;
+                                // dd($vl_balance_previous);
                                 if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
                                 {
                                     $vl_balance_previous = 0;
