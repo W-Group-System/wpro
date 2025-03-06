@@ -176,7 +176,7 @@
                         </td>
                         <td>{{$form_approval->leave->leave_type}}</td>
                         <td>{{date('M d, Y', strtotime($form_approval->date_from))}} - {{date('M d, Y', strtotime($form_approval->date_to))}}</td>
-                        <td>{{get_count_days($form_approval->dailySchedules, $form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday)}}</td>
+                        <td>{{get_count_days($form_approval->dailySchedules, $form_approval->schedule,$form_approval->date_from,$form_approval->date_to,$form_approval->halfday,$form_approval->withpay)}}</td>
                         @if($form_approval->withpay == 1)   
                           <td>Yes</td>
                         @else
