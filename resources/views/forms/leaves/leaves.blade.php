@@ -196,12 +196,19 @@
                                   }
                                   
                                 //   $vl_balance = $count_vl ;
-                                $vl_balance_previous = $count_vl - $earned_vl;
-                                // $vl_balance_previous = $total_count_vl - $used_vl_this_yr;
-                                // dd($vl_balance_previous);
-                                if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                $emp_movement = $employee_status->employeeMovement->first();
+                                $date_regularized = json_decode($emp_movement->new_values);
+                                if (date('Y', strtotime($date_regularized->date_to)) == date('Y'))
                                 {
                                     $vl_balance_previous = 0;
+                                }
+                                else
+                                {
+                                    $vl_balance_previous = $count_vl - $earned_vl;
+                                    if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                    {
+                                        $vl_balance_previous = 0;
+                                    }
                                 }
                                 
                                   $vl_balance = $count_vl - $vl_balance_previous;
@@ -494,17 +501,17 @@
                                                 //         }
                                                 //     }
                                                 // }
-                                                
-                                                if(date('m') == '04')
+                                                $emp_movement = $employee_status->employeeMovement->first();
+                                                $date_regularized = json_decode($emp_movement->new_values);
+
+                                                if((date('m') == '04') || (date('Y', strtotime($date_regularized->date_to)) == date('Y')))
                                                 {
                                                     $vl_balance_previous = 0;
                                                 }
                                                 else
                                                 {
                                                     $vl_balance_previous = ($count_vl ?? 0) - $earned_vl;
-                                                    // dd($count_vl, $earned_vl);
-                                                    // dd($total_count_vl, $used_vl_this_yr);
-                                                    // $vl_balance_previous = $total_count_vl - $used_vl_this_yr;
+                                                    
                                                     if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
                                                     {
                                                         $vl_balance_previous = 0;
