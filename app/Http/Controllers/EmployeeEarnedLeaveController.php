@@ -121,23 +121,23 @@ class EmployeeEarnedLeaveController extends Controller
             {
               
                 $check_if_exist_vl = EmployeeEarnedLeave::where('user_id',$employee->user_id)
-                ->where(function($q) use($month,$year){
+                    ->where(function($q) use($month,$year){
                     $q->whereMonth('earned_date',$month)
                     ->whereYear('earned_date',$year);
                 })
-                ->where('leave_type',1)
-                ->first();                
+                    ->where('leave_type',1)
+                    ->first();                
                
                 if(empty($check_if_exist_vl)){
-                $earned_leave = new EmployeeEarnedLeave;
-                $earned_leave->leave_type = 1; // Vacation Leave
-                $earned_leave->user_id = $employee->user_id;
-                $earned_leave->earned_day = $day;
-                $earned_leave->earned_month = $month;
-                $earned_leave->earned_year = $year;
-                $earned_leave->earned_date = date('Y-m-d');
-                $earned_leave->earned_leave = $leave_credits->earned_leave;
-                $earned_leave->save();
+                    $earned_leave = new EmployeeEarnedLeave;
+                    $earned_leave->leave_type = 1; // Vacation Leave
+                    $earned_leave->user_id = $employee->user_id;
+                    $earned_leave->earned_day = $day;
+                    $earned_leave->earned_month = $month;
+                    $earned_leave->earned_year = $year;
+                    $earned_leave->earned_date = date('Y-m-d');
+                    $earned_leave->earned_leave = $leave_credits->earned_leave;
+                    $earned_leave->save();
                 }
             }
         }
@@ -219,7 +219,7 @@ class EmployeeEarnedLeaveController extends Controller
                             $earned_leave->earned_month = $month;
                             $earned_leave->earned_year = $year;
                             $earned_leave->earned_date = $earned_date;
-                            $earned_leave->earned_leave = 0.833;
+                            // $earned_leave->earned_leave = 0.833;
                             $earned_leave->save();
                             $count++;
                     }
