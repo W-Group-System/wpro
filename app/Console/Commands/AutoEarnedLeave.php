@@ -122,62 +122,62 @@ class AutoEarnedLeave extends Command
     }
 
     //Earned Sick Leave
-    public function getEmployeeEarnedSickLeaves(){
+    // public function getEmployeeEarnedSickLeaves(){
 
-        $month = date('m');
-        $day = date('01');
-        $year = date('Y');
-        $today = date('Y-m-d');
+    //     $month = date('m');
+    //     $day = date('01');
+    //     $year = date('Y');
+    //     $today = date('Y-m-d');
         
-        $classifications = [1,2,3];
-        // $companies = [14,11,7,2,1,4,16]; //PLC, OBN , PIVI, MAC, PMI, MBI, PIMI
+    //     $classifications = [1,2,3];
+    //     // $companies = [14,11,7,2,1,4,16]; //PLC, OBN , PIVI, MAC, PMI, MBI, PIMI
 
-        $employees = Employee::select('id','user_id','classification','original_date_hired')
-                                ->whereIn('classification',$classifications)
-                                // ->whereIn('company_id',$companies)
-                                ->where('status','Active')
-                                ->get();
+    //     $employees = Employee::select('id','user_id','classification','original_date_hired')
+    //                             ->whereIn('classification',$classifications)
+    //                             // ->whereIn('company_id',$companies)
+    //                             ->where('status','Active')
+    //                             ->get();
 
-        $count = 0;
-        if(count($employees)){
-            foreach($employees as $employee){
+    //     $count = 0;
+    //     if(count($employees)){
+    //         foreach($employees as $employee){
 
-                $check_if_exist = EmployeeEarnedLeave::where('user_id',$employee->user_id)
-                                                        ->where(function($q) use($month,$year){
-                                                            $q->whereMonth('earned_date',$month)
-                                                            ->whereYear('earned_date',$year);
-                                                        })
-                                                        ->where('leave_type',2)
-                                                        ->first();
-                if(empty($check_if_exist)){
-                    $earned_leave = new EmployeeEarnedLeave;
-                    if($employee->classification = '3' || $employee->classification = '5'){ // Project Based and Fixed Rate
-                        if($employee->original_date_hired < '2023-04-01'){
-                            $earned_leave->user_id = $employee->user_id;
-                            $earned_leave->earned_day = $day;
-                            $earned_leave->earned_month = $month;
-                            $earned_leave->earned_year = $year;
-                            $earned_leave->earned_date = $today;
-                            $earned_leave->earned_leave = 0.833;
-                            $earned_leave->leave_type = 2;
-                            $earned_leave->save();
-                            $count++;
-                        }
-                    }else if($employee->classification = '1' || $employee->classification = '2' || $employee->classification = '6'){ // Regular and Probitionary and Project Based Old
-                        $earned_leave->user_id = $employee->user_id;
-                        $earned_leave->earned_day = $day;
-                        $earned_leave->earned_month = $month;
-                        $earned_leave->earned_year = $year;
-                        $earned_leave->earned_date = $today;
-                        $earned_leave->earned_leave = 0.833;
-                        $earned_leave->leave_type = 2;
-                        $earned_leave->save();
-                        $count++;
-                    }
-                }
+    //             $check_if_exist = EmployeeEarnedLeave::where('user_id',$employee->user_id)
+    //                                                     ->where(function($q) use($month,$year){
+    //                                                         $q->whereMonth('earned_date',$month)
+    //                                                         ->whereYear('earned_date',$year);
+    //                                                     })
+    //                                                     ->where('leave_type',2)
+    //                                                     ->first();
+    //             if(empty($check_if_exist)){
+    //                 $earned_leave = new EmployeeEarnedLeave;
+    //                 if($employee->classification = '3' || $employee->classification = '5'){ // Project Based and Fixed Rate
+    //                     if($employee->original_date_hired < '2023-04-01'){
+    //                         $earned_leave->user_id = $employee->user_id;
+    //                         $earned_leave->earned_day = $day;
+    //                         $earned_leave->earned_month = $month;
+    //                         $earned_leave->earned_year = $year;
+    //                         $earned_leave->earned_date = $today;
+    //                         $earned_leave->earned_leave = 0.833;
+    //                         $earned_leave->leave_type = 2;
+    //                         $earned_leave->save();
+    //                         $count++;
+    //                     }
+    //                 }else if($employee->classification = '1' || $employee->classification = '2' || $employee->classification = '6'){ // Regular and Probitionary and Project Based Old
+    //                     $earned_leave->user_id = $employee->user_id;
+    //                     $earned_leave->earned_day = $day;
+    //                     $earned_leave->earned_month = $month;
+    //                     $earned_leave->earned_year = $year;
+    //                     $earned_leave->earned_date = $today;
+    //                     $earned_leave->earned_leave = 0.833;
+    //                     $earned_leave->leave_type = 2;
+    //                     $earned_leave->save();
+    //                     $count++;
+    //                 }
+    //             }
 
-            }
-        }
-        return $count;
-    }
+    //         }
+    //     }
+    //     return $count;
+    // }
 }
