@@ -135,7 +135,7 @@
 </div>
 @php
     $total_vl_balance = 0;
-    if ($vl_balance_previous < 0.5)
+    if ($vl_balance_previous <= 0.5)
     {
         $total_vl_balance = $vl_balance;
     }
