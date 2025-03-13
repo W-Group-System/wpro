@@ -21,7 +21,7 @@
                                 </div>
                                 <div class="col-lg-3">
                                     Month
-                                    <input type="month" name="month" class="form-control" value="{{$month}}" max="{{date('Y-m', strtotime('-2 month'))}}">
+                                    <input type="month" name="month" class="form-control" value="{{$month}}" max="{{date('Y-m', strtotime('-1 month'))}}">
                                 </div>
                                 {{-- <div class="col-lg-3">
                                     Date From
