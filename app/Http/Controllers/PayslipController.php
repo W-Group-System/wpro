@@ -484,6 +484,7 @@ class PayslipController extends Controller
                             $ins->amount = $instruction->amount;
                             $ins->employee_code = $instruction->site_id;
                             $ins->remarks = $instruction->frequency;
+                            $ins->created_by = auth()->user()->id;
                             $ins->save();
                         }
                     }
@@ -799,6 +800,7 @@ class PayslipController extends Controller
         $companies = Company::whereHas('employee_has_company')
         ->whereIn('id', $allowed_companies)
         ->get();
+        
         $year = date('Y');
         if($request->year)
         {
@@ -854,13 +856,13 @@ class PayslipController extends Controller
                 ->orWhere('name', 'like', '%Absent%')
                 ->orWhere('name', 'like', '%Late%');
         })->get();
-
+        
         $pay_instructions = PayregInstruction::whereIn('payreg_id',$benefitIds)->where(function($query) {
             $query->where('instruction_name', 'like', '%Minimis%')
                 ->orWhere('instruction_name', 'like', '%Other Allowance%')
                 ->orWhere('instruction_name', 'like', '%Subliq%');
         })->get();
-       
+        
                                 // ->where('employee_code','A3121418')
                               
         $dates = [];
