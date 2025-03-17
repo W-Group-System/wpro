@@ -158,21 +158,31 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 
 <script>
-  $(document).ready(function() {
-    new DataTable('.table-detailed', {
-      // pagelenth:25,
-      paginate:false,
-      dom: 'Bfrtip',
-      buttons: [
-          'copy', 'excel'
-      ],
-      columnDefs: [{
-        "defaultContent": "-",
-        "targets": "_all"
-      }],
-      order: [] 
-    });
-  });
+  	$(document).ready(function() {
+		var companyName = 'Leave Filling Report'; // Replace with dynamic company name if available
+		var currentYear = new Date().getFullYear(); // Gets the current year
+
+		new DataTable('.table-detailed', {
+			paginate: false,
+			dom: 'Bfrtip',
+			buttons: [
+				{
+					extend: 'copy',
+					title: companyName
+				},
+				{
+					extend: 'excel',
+					title: companyName, // Sets the Excel title
+					filename: companyName// Formats filename
+				}
+			],
+			columnDefs: [{
+				"defaultContent": "-",
+				"targets": "_all"
+			}],
+			order: []
+		});
+	});
 </script>
 
 @php
