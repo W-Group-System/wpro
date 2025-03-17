@@ -59,7 +59,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($employees->where('employee_code', 'A3176324') as $key=>$employee)
+                                @foreach($employees as $key=>$employee)
                                     @php
                                         $count = 0;
                                     @endphp
