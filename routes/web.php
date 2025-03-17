@@ -462,6 +462,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('upload_raw_logs', 'UploadRawLogsController@index');
     Route::post('store_raw_logs', 'UploadRawLogsController@store');
     Route::get('export_template', 'UploadRawLogsController@export');
+
+    // NOPA
+    Route::get('nopa', 'EmployeeController@nopa');
+
+    // Weekly Attendance Report
+    Route::get('weekly_attendance_report', 'WeeklyReportController@index');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

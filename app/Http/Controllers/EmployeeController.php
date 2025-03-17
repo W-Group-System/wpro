@@ -2691,4 +2691,15 @@ class EmployeeController extends Controller
         
         return $get_schedules;
     }
+
+    public function nopa()
+    {
+        $header = 'hrReport';
+
+        $employee_movement = EmployeeMovement::with('user')->where('user_id', auth()->user()->id)->first();
+        $department = Department::get();
+        $employee = Employee::with('user_info')->get();
+        
+        return view('nopa.nopa', compact('header', 'employee_movement', 'department', 'employee'));
+    }
 }

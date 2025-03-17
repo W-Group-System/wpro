@@ -38,5 +38,8 @@ class EmployeeMovement extends Model
     {
         return $this->belongsTo(User::class,'changed_by','id');
     }
-    
+    public function user()
+    {
+        return $this->belongsTo(User::class,'user_id','id');
+    }
 }

@@ -391,6 +391,7 @@
                         <div class="collapse" id="hrReport">
                             <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="{{url('nte-reports')}}">NTE Upload</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{url('nopa')}}">NOPA</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('loans')}}">Loans</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('payslips')}}">Payslips</a></li>
@@ -691,6 +692,7 @@
                     @endif
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/attendance-report') }}">Attendance Reports</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url('ob_files')}}">OB Uploaded Files</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{url('weekly_attendance_report')}}">Weekly Attendance Report</a></li>
                 </ul>
             </div>
         </li>
