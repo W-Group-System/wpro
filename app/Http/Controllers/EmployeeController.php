@@ -2696,7 +2696,7 @@ class EmployeeController extends Controller
     {
         $header = 'hrReport';
 
-        $employee_movement = EmployeeMovement::with('user')->where('user_id', auth()->user()->employee->id)->first();
+        $employee_movement = EmployeeMovement::with('employee')->where('user_id', auth()->user()->employee->id)->first();
         $department = Department::get();
         $employee = Employee::with('user_info')->get();
         
