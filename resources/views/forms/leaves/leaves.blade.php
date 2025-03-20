@@ -200,9 +200,20 @@
                                 if ($emp_movement)
                                 {
                                     $date_regularized = json_decode($emp_movement->new_values);
-                                    if (date('Y', strtotime($date_regularized->date_to)) == date('Y'))
+                                    if (isset($date_regularized->date_to))
                                     {
-                                        $vl_balance_previous = 0;
+                                        if (date('Y', strtotime($date_regularized->date_to)) == date('Y'))
+                                        {
+                                            $vl_balance_previous = 0;
+                                        }
+                                        else
+                                        {
+                                            $vl_balance_previous = $count_vl - $earned_vl;
+                                            if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                            {
+                                                $vl_balance_previous = 0;
+                                            }
+                                        }
                                     }
                                     else
                                     {
@@ -523,15 +534,25 @@
                                                 if ($emp_movement)
                                                 {
                                                     $date_regularized = json_decode($emp_movement->new_values);
-    
-                                                    if((date('m') == '04') || (date('Y', strtotime($date_regularized->date_to)) == date('Y')))
+                                                    if (isset($date_regularized->date_to))
                                                     {
-                                                        $vl_balance_previous = 0;
+                                                        if((date('m') == '04') || (date('Y', strtotime($date_regularized->date_to)) == date('Y')))
+                                                        {
+                                                            $vl_balance_previous = 0;
+                                                        }
+                                                        else
+                                                        {
+                                                            $vl_balance_previous = ($count_vl ?? 0) - $earned_vl;
+                                                            
+                                                            if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                                            {
+                                                                $vl_balance_previous = 0;
+                                                            }
+                                                        }
                                                     }
                                                     else
                                                     {
                                                         $vl_balance_previous = ($count_vl ?? 0) - $earned_vl;
-                                                        
                                                         if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
                                                         {
                                                             $vl_balance_previous = 0;
