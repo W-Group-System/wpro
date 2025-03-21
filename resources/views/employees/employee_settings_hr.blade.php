@@ -966,8 +966,7 @@
     .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
         color: #fff;
         background-color: #248AFD;
-    }
-    .tab-employee {
+    }     .tab-employee {
         padding: 10px;
     }
 </style>
@@ -994,5 +993,21 @@
 @include('employees.edit_bank_details')
 @endsection
 @section('js')
-
+<script>
+    $(document).ready(function() {
+        $("[name='status']").on('change', function() {
+            var value = $(this).val()
+            // console.log(value);
+            if (value == 'Resigned')
+            {
+                $("#clearancePortalEmail").removeAttr('hidden')
+            }
+            else
+            {
+                $("#clearancePortalEmail").prop('hidden', true)
+            }
+        })
+        
+    })
+</script>
 @endsection
