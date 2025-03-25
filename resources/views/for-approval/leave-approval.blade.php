@@ -214,9 +214,10 @@
                           @endforeach
                         </td>
                         <td>
-                          <p title="{{$form_approval->reason}}" style="width: 250px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">
+                          {{-- <p title="{{$form_approval->reason}}" style="width: 250px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">
                             {{$form_approval->reason}}
-                          </p>
+                          </p> --}}
+                          {!! nl2br(e($form_approval->reason)) !!}
                         </td>
                         <td>
                           @if($form_approval->attachment)
