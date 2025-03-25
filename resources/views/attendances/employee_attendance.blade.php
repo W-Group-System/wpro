@@ -154,7 +154,13 @@
                                 <tr>
                                     <td>{{$emp->employee_code}}</td>
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][name]" value="{{$emp->last_name .', '. $emp->first_name . ' ' . $emp->middle_name}}">{{$emp->first_name . ' ' . $emp->last_name}}</td>
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][log_date]" value="{{date('Y-m-d',strtotime($date_r))}}">{{date('d/m/Y',strtotime($date_r))}}</td>
+                                    <!-- <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][log_date]" value="{{date('Y-m-d',strtotime($date_r))}}">{{date('d/m/Y',strtotime($date_r))}}</td> -->
+                                    <td>
+                                        <input type="hidden" 
+                                            name="employees[{{ $emp->employee_code ?? '' }}][{{ $date_r ?? '' }}][log_date]" 
+                                            value="{{ !empty($date_r) ? date('Y-m-d', strtotime($date_r)) : '' }}">
+                                            {{ !empty($date_r) ? date('d/m/Y', strtotime($date_r)) : 'N/A' }}
+                                    </td>
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_from != '00:00' ? date('h:i A', strtotime($employee_schedule->time_in_from)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
                                         @if($employee_schedule != null)
                                             @if($employee_schedule->time_in_from != '00:00')
