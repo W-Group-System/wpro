@@ -157,7 +157,7 @@
                                     <!-- <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][log_date]" value="{{date('Y-m-d',strtotime($date_r))}}">{{date('d/m/Y',strtotime($date_r))}}</td> -->
                                     <td>
                                         <input type="hidden" 
-                                            name="employees[{{ $emp->employee_code ?? '' }}][{{ $date_r ?? '' }}][log_date]" 
+                                            name="employees[{{ $emp->employee_code ?? '' }}][{{ $date_r ?? '' }}]" 
                                             value="{{ !empty($date_r) ? date('Y-m-d', strtotime($date_r)) : '' }}">
                                             {{ !empty($date_r) ? date('d/m/Y', strtotime($date_r)) : 'N/A' }}
                                     </td>
@@ -775,8 +775,8 @@
                                 @endforeach
                                 <tr>
                                     <td><strong>Subtotal</strong></td>
-                                    <td><strong>{{ $emp->employee_code }}</strong></td>
                                     <td><strong>{{$emp->first_name . ' ' . $emp->last_name}}</strong></td>
+                                    <td><strong>{{ $emp->employee_code }}</strong></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
