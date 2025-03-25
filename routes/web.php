@@ -29,8 +29,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('updateInfo/{id}', 'UserController@updateInfo');
     Route::post('updateEmpInfo/{id}', 'UserController@updateEmpInfo');
     Route::post('updateEmpContactInfo/{id}', 'UserController@updateEmpContactInfo');
-    
-    
 
     //employees
     Route::get('/dashboard', 'HomeController@index')->name('home');

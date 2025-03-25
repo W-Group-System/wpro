@@ -678,6 +678,16 @@
                                          @endfor
                                          <td class="text-right">{{number_format($emp_data->sum('subliq'),2)}}</td>
                                      </tr>
+                                     <tr>
+                                         <td>13th Month</td>
+                                         @for ($i = 1; $i <= 12; $i++)
+                                         @php
+                                             $value["nontaxable_".$i] = $value["nontaxable_".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq');
+                                         @endphp
+                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq'),2)}}</td>
+                                         @endfor
+                                         <td class="text-right">{{number_format($emp_data->sum('subliq'),2)}}</td>
+                                     </tr>
                                      @php
                                          $allowances_pluck = $allowances->pluck('allowance_id')->toArray();
                                      @endphp
