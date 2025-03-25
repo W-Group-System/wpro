@@ -396,6 +396,7 @@
                                         $undertime = 0;
                                         $original_sched = 0;
                                         $overtime = 0;
+                                        $schedule_hours = 0;
                                     @endphp
                                     @if((($time_start)&&($time_end)) && $employee_schedule)    
                                         @php
