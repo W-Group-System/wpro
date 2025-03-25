@@ -25,11 +25,11 @@
                                             @php
                                                 $old_values = json_decode($employee_movement->old_values);
                                                 $old_department = $department->where('id', $old_values->department_id)->first();
-                                                $old_immediate_sup = $employee->where('id', $old_values->immediate_sup)->first();
+                                                $old_immediate_sup = $employee->where('user_id', $old_values->immediate_sup)->first();
 
                                                 $new_values = json_decode($employee_movement->new_values);
                                                 $new_department = $department->where('id', $new_values->department_id)->first();
-                                                $new_immediate_sup = $employee->where('id', $new_values->immediate_sup)->first();
+                                                $new_immediate_sup = $employee->where('user_id', $new_values->immediate_sup)->first();
                                             @endphp
 
                                             <td>{{ $employee_movement->employee->user_info->name }}</td>
