@@ -23,17 +23,17 @@
                           </select>
                         </div> 
                     </div>
-                    <div class='col-md-3'>
-                          <div class="form-group">
-                              <select data-placeholder="Filter By Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company'>
-                                  <option value="">-- Filter By Company --</option>
-                                  <option value=" " @if($company  === null) selected @endif>-- Remove Company --</option>
-                                  @foreach($companies as $comp)
-                                  <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_code}}</option>
-                                  @endforeach
-                              </select>
-                          </div>
-                    </div>
+                    <!-- <div class='col-md-3'>
+                        <div class="form-group">
+                            <select data-placeholder="Filter By Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company'>
+                                <option value="">-- Filter By Company --</option>
+                                <option value=" " @if($company  === null) selected @endif>-- Remove Company --</option>
+                                @foreach($companies as $comp)
+                                <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_code}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div> -->
                     
                     <div class='col-md-2'>
                         <div class="form-group">
@@ -507,7 +507,6 @@
                                          <td colspan='14' class='text-center'><b>Annual Payroll Summary</b></td>
                                      </tr>
                                      <tr>
-                                     
                                          {{-- <td colspan='14' class='text-center'>{{$empD->company->company_name}} - <b>{{$from_date}}</b></td> --}}
                                      </tr>
                                      <tr>
@@ -654,7 +653,7 @@
                                              @php
                                                  $value["nontaxable_".$i] = $value["nontaxable_".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('deminimis');
                                              @endphp
-                                             {{$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('deminimis')}}</td>
+                                             {{  number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('deminimis'), 2)}}</td>
                                          @endfor
                                          <td class="text-right">{{number_format($emp_data->sum('deminimis'),2)}}</td>
                                      </tr>
@@ -678,41 +677,57 @@
                                          @endfor
                                          <td class="text-right">{{number_format($emp_data->sum('subliq'),2)}}</td>
                                      </tr>
-                                     <tr>
-                                         <td>13th Month</td>
-                                         @for ($i = 1; $i <= 12; $i++)
-                                         @php
-                                             $value["nontaxable_".$i] = $value["nontaxable_".$i] + $emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq');
-                                         @endphp
-                                         <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('subliq'),2)}}</td>
-                                         @endfor
-                                         <td class="text-right">{{number_format($emp_data->sum('subliq'),2)}}</td>
-                                     </tr>
                                      @php
                                          $allowances_pluck = $allowances->pluck('allowance_id')->toArray();
                                      @endphp
-                                     @foreach($allowances as $allowance)
-                                     <tr>
-                                         <td>{{$allowance->allowance_type->name}}</td>
-                                         @for ($i = 1; $i <= 12; $i++)
-                                         <td class="text-right">{{ $emp_data->whereBetween('cut_off_date', [
-                                             date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
-                                             date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
-                                         ])->flatMap(function($emp) use ($allowance) {
-                                             return $emp->pay_allowances->where('allowance_id',$allowance->allowance_id); // Filter by allowance_id
-                                         })->sum('amount') }}
-                                         </td>
-                                         @endfor
-                                         <td class="text-right">{{$allowances_data->where('allowance_id',$allowance->allowance_id)->sum('amount')}}</td>
-                                     </tr>
-                                     @endforeach
-                                     <tr style="background-color: #e0e0e0;">
-                                         <td colspan="1"><strong>Non-Taxable Income</strong></td>
-                                         @for ($i = 1; $i <= 12; $i++)
-                                         <td class="text-right">{{number_format($value["nontaxable_".$i],2)}}</td>
-                                         @endfor
-                                         <td class="text-right">{{number_format(array_sum($value),2)}}</td>
-                                     </tr>
+                                    @foreach($allowances as $allowance)
+                                        <tr>
+                                            <td>{{$allowance->allowance_type->name}}</td>
+                                            @for ($i = 1; $i <= 12; $i++)
+                                                @php
+                                                    $allowance_total = $emp_data->whereBetween('cut_off_date', [
+                                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
+                                                    ])->flatMap(function($emp) use ($allowance) {
+                                                        return $emp->pay_allowances->where('allowance_id', $allowance->allowance_id);
+                                                    })->sum('amount');
+
+                                                    // Add the allowance to the non-taxable income
+                                                    $value["nontaxable_".$i] += $allowance_total;
+                                                @endphp
+
+                                                <td class="text-right">{{ number_format($allowance_total, 2) }}</td>
+                                            @endfor
+                                            <td class="text-right">{{$allowances_data->where('allowance_id',$allowance->allowance_id)->sum('amount')}}</td>
+                                        </tr>
+                                    @endforeach
+                                    @foreach($non_instructions as $non_instruction)
+                                        <tr>
+                                            <td>{{ strtoupper($non_instruction->instruction_name) }}</td>
+                                            @for ($i = 1; $i <= 12; $i++)
+                                                @php
+                                                    $monthly_amount = $emp_data->whereBetween('cut_off_date', [
+                                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                                        date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
+                                                    ])->flatMap(function($emp) use ($non_instruction) {
+                                                        return $emp->pay_instructions->where('instruction_name', $non_instruction->instruction_name);
+                                                    })->sum('amount');
+
+                                                    // Add to Non-Taxable Income
+                                                    $value["nontaxable_".$i] += $monthly_amount;
+                                                @endphp
+                                                <td class="text-right">{{ number_format($monthly_amount, 2) }}</td>
+                                            @endfor
+                                            <td class="text-right"><strong>{{ number_format($non_instructions_data->where('instruction_name', $non_instruction->instruction_name)->sum('amount'), 2) }}</strong></td>
+                                        </tr>
+                                    @endforeach
+                                    <tr style="background-color: #e0e0e0;">
+                                        <td colspan="1"><strong>Non-Taxable Income</strong></td>
+                                        @for ($i = 1; $i <= 12; $i++)
+                                        <td class="text-right">{{number_format($value["nontaxable_".$i],2)}}</td>
+                                        @endfor
+                                        <td class="text-right">{{number_format(array_sum($value),2)}}</td>
+                                    </tr>
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Total Earnings</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
