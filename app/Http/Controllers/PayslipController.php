@@ -45,25 +45,122 @@ class PayslipController extends Controller
             
         ));
     }
+    // public function ytd_report(Request $request)
+    // {
+    //     ini_set('memory_limit', '-1');
+    
+    //     $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+    //     $allowed_locations = getUserAllowedLocations(auth()->user()->id);
+    //     $allowed_projects = getUserAllowedProjects(auth()->user()->id);
+
+    //     $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code')
+    //                             ->whereIn('company_id', $allowed_companies)
+    //                             ->when($allowed_locations,function($q) use($allowed_locations){
+    //                                 $q->whereIn('location',$allowed_locations);
+    //                             })
+    //                             ->when($allowed_projects,function($q) use($allowed_projects){
+    //                                 $q->whereIn('project',$allowed_projects);
+    //                             })
+    //                             ->get();
+    //     $from_date = $request->from;
+    //     $date_range =  [];
+    //     $emp_code = $request->employee;
+    //     $emp_data = [];
+    //     $employee_data = $request->employee;
+    //     $allowances = [];
+    //     $allowances_data = [];
+    //     $instructions = [];
+    //     $instructions_data = [];
+    //     $loans = [];
+    //     $loans_data = [];
+    //     $emp = null;
+        
+
+    //     $company = isset($request->company) ? $request->company : "";
+
+    //     if ($from_date != null) {
+    //         if ($request->company == null || $request->company === 'null') {
+    //             $emp = Employee::with('company')->where('employee_code',$request->employee)->first();
+                
+    //             $emp_data = Payregs::with('pay_allowances','pay_loan')->where('employee_no',$request->employee)->whereYear('cut_off_date',$from_date)->get();
+
+    //             // dd($emp_data);
+    //             // $allowances = $emp_data->pay_allowances;
+                
+    //         }elseif ($request->company) {
+    //             $emp = Employee::with('company')
+    //                 ->where('company_id', $request->company)
+    //                 ->paginate(50);
+                
+    //             $emp_data = Payregs::with('pay_allowances','pay_loan','pay_instructions')
+    //                 ->whereIn('employee_no', $emp->pluck('employee_code')->toArray())
+    //                 ->whereYear('cut_off_date', $from_date)
+    //                 ->paginate(50);
+    //             // dd($emp_data);
+
+    //         }
+            
+    //         $allowances = PayregAllowance::with('allowance_type')->select('allowance_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('allowance_id')->get();
+    //         $loans = PayregLoan::with('loan_type')->select('loan_type_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('loan_type_id')->get();
+    //         $instructions = PayregInstruction::select('instruction_name')->where('amount','<',0)->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('instruction_name')->get();
+    //         $allowances_data = PayregAllowance::with('allowance_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
+    //         $loans_data = PayregLoan::with('loan_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
+    //         $instructions_data = PayregInstruction::whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
+    //         // dd())
+    //     }
+    //     else
+
+    //     {
+    //         $from_date = date('Y');
+    //     }
+    //     $companies = Company::whereHas('employee_has_company')
+    //                             ->whereIn('id',$allowed_companies)
+    //                             ->get();
+    //                             // dd($from_date)
+    //     return view(
+    //         'reports.ytd_report',
+    //         array(
+    //             'header' => 'biometrics',
+    //             'employees' => $employees,
+    //             'from_date' => $from_date,
+    //             'date_range' => $date_range,
+    //             'emp_code' => $emp_code,
+    //             'emp_data' => $emp_data,
+    //             'employee_data' => $employee_data,
+    //             'companies' => $companies,
+    //             'company' => $company,
+    //             'allowances' => $allowances,
+    //             'allowances_data' => $allowances_data,
+    //             'loans' => $loans,
+    //             'loans_data' => $loans_data,
+    //             'empD' => $emp,
+    //             'instructions' => $instructions,
+    //             'instructions_data' => $instructions_data,
+    //         )
+    //     );
+    // }
+
     public function ytd_report(Request $request)
     {
         ini_set('memory_limit', '-1');
-    
+
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $allowed_locations = getUserAllowedLocations(auth()->user()->id);
         $allowed_projects = getUserAllowedProjects(auth()->user()->id);
 
-        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code')
-                                ->whereIn('company_id', $allowed_companies)
-                                ->when($allowed_locations,function($q) use($allowed_locations){
-                                    $q->whereIn('location',$allowed_locations);
-                                })
-                                ->when($allowed_projects,function($q) use($allowed_projects){
-                                    $q->whereIn('project',$allowed_projects);
-                                })
-                                ->get();
-        $from_date = $request->from;
-        $date_range =  [];
+        $employees = Employee::select('id', 'user_id', 'employee_number', 'first_name', 'last_name', 'employee_code')
+            ->whereIn('company_id', $allowed_companies)
+            ->when($allowed_locations, function ($q) use ($allowed_locations) {
+                $q->whereIn('location', $allowed_locations);
+            })
+            ->when($allowed_projects, function ($q) use ($allowed_projects) {
+                $q->whereIn('project', $allowed_projects);
+            })
+            ->get();
+
+        // Initialize variables to avoid "Undefined Variable" errors
+        $from_date = $request->from ?? date('Y');
+        $date_range = [];
         $emp_code = $request->employee;
         $emp_data = [];
         $employee_data = $request->employee;
@@ -71,74 +168,98 @@ class PayslipController extends Controller
         $allowances_data = [];
         $instructions = [];
         $instructions_data = [];
+        $non_instructions_data = [];
         $loans = [];
         $loans_data = [];
         $emp = null;
-        
+        $non_instructions = []; 
+        $company = $request->company ?? "";
 
-        $company = isset($request->company) ? $request->company : "";
+        if ($from_date) { 
+            if (empty($request->company) || $request->company === 'null') {
+                $emp = Employee::with('company')->where('employee_code', $request->employee)->first();
 
-        if ($from_date != null) {
-            if ($request->company == null || $request->company === 'null') {
-                $emp = Employee::with('company')->where('employee_code',$request->employee)->first();
-                
-                $emp_data = Payregs::with('pay_allowances','pay_loan')->where('employee_no',$request->employee)->whereYear('cut_off_date',$from_date)->get();
+                $emp_data = Payregs::with(['pay_allowances', 'pay_loan', 'pay_instructions'])
+                    ->where('employee_no', $request->employee)
+                    ->whereYear('cut_off_date', $from_date)
+                    ->get();
 
-                // dd($emp_data);
-                // $allowances = $emp_data->pay_allowances;
-                
-            }elseif ($request->company) {
+            } elseif ($request->company) {
                 $emp = Employee::with('company')
                     ->where('company_id', $request->company)
-                    ->paginate(50);
-                
-                $emp_data = Payregs::with('pay_allowances','pay_loan','pay_instructions')
+                    ->get();
+
+                $emp_data = Payregs::with(['pay_allowances', 'pay_loan', 'pay_instructions'])
                     ->whereIn('employee_no', $emp->pluck('employee_code')->toArray())
                     ->whereYear('cut_off_date', $from_date)
                     ->paginate(50);
-                // dd($emp_data);
-
             }
-            
-            $allowances = PayregAllowance::with('allowance_type')->select('allowance_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('allowance_id')->get();
-            $loans = PayregLoan::with('loan_type')->select('loan_type_id')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('loan_type_id')->get();
-            $instructions = PayregInstruction::select('instruction_name')->where('amount','<',0)->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->groupBy('instruction_name')->get();
-            $allowances_data = PayregAllowance::with('allowance_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
-            $loans_data = PayregLoan::with('loan_type')->whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
-            $instructions_data = PayregInstruction::whereIn('payreg_id',$emp_data->pluck('id')->toArray())->get();
-            // dd())
-        }
-        else
 
-        {
-            $from_date = date('Y');
+            // Fetch Allowances, Loans, and Instructions Data
+            $allowances = PayregAllowance::with('allowance_type')
+                ->select('allowance_id')
+                ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
+                ->groupBy('allowance_id')
+                ->get();
+
+            $loans = PayregLoan::with('loan_type')
+                ->select('loan_type_id')
+                ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
+                ->groupBy('loan_type_id')
+                ->get();
+
+            $instructions = PayregInstruction::select('instruction_name')
+                ->where('amount', '<', 0)
+                ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
+                ->groupBy('instruction_name')
+                ->get();
+
+            $allowances_data = PayregAllowance::with('allowance_type')
+                ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
+                ->get();
+
+            $loans_data = PayregLoan::with('loan_type')
+                ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
+                ->get();
+
+            $instructions_data = PayregInstruction::whereIn('payreg_id', $emp_data->pluck('id')->toArray())->get();
+
+            $non_instructions = PayregInstruction::select('instruction_name')
+                ->whereIn('instruction_name', ['KPI BONUS', 'THIRTEENTH MONTH PAY NONTAXABLE'])
+                ->where('amount', '>', 0)
+                ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
+                ->groupBy('instruction_name')
+                ->get();
+
+            $non_instructions_data = PayregInstruction::whereIn('payreg_id', $emp_data->pluck('id')->toArray())->get();
         }
+
         $companies = Company::whereHas('employee_has_company')
-                                ->whereIn('id',$allowed_companies)
-                                ->get();
-                                // dd($from_date)
-        return view(
-            'reports.ytd_report',
-            array(
-                'header' => 'biometrics',
-                'employees' => $employees,
-                'from_date' => $from_date,
-                'date_range' => $date_range,
-                'emp_code' => $emp_code,
-                'emp_data' => $emp_data,
-                'employee_data' => $employee_data,
-                'companies' => $companies,
-                'company' => $company,
-                'allowances' => $allowances,
-                'allowances_data' => $allowances_data,
-                'loans' => $loans,
-                'loans_data' => $loans_data,
-                'empD' => $emp,
-                'instructions' => $instructions,
-                'instructions_data' => $instructions_data,
-            )
-        );
+            ->whereIn('id', $allowed_companies)
+            ->get();
+
+        return view('reports.ytd_report', [
+            'header' => 'biometrics',
+            'employees' => $employees,
+            'from_date' => $from_date,
+            'date_range' => $date_range,
+            'emp_code' => $emp_code,
+            'emp_data' => $emp_data,
+            'employee_data' => $employee_data,
+            'companies' => $companies,
+            'company' => $company,
+            'allowances' => $allowances,
+            'allowances_data' => $allowances_data,
+            'loans' => $loans,
+            'loans_data' => $loans_data,
+            'empD' => $emp,
+            'instructions' => $instructions,
+            'non_instructions' => $non_instructions,
+            'non_instructions_data' => $non_instructions_data,
+            'instructions_data' => $instructions_data,
+        ]);
     }
+
     public function payroll_datas(Request $request)
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
