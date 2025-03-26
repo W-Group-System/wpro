@@ -1697,7 +1697,7 @@ class EmployeeController extends Controller
             $date_range =  $attendance_controller->dateRange($from_date, $to_date);
            
         }
-        dd($emp_data);
+        // dd($emp_data);
         $schedules = ScheduleData::all();
         
         $companies = Company::whereHas('employee_has_company')
