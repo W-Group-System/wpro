@@ -1,4 +1,10 @@
 @extends('layouts.header')
+
+@section('css_header')
+<link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
+@endsection
+
 @section('content')
 <div class="main-panel">
     <div class="content-wrapper">
@@ -47,7 +53,7 @@
                         {{-- <h3 id="reportTitle"></h3> <a href="{{url('/attendance-report?form='.$from.'&year='.$to.'&type=pdf')}}" target="_blank" class='btn btn-danger btn-sm' >Print</a><br> --}}
 
                         <label><b>I. Tardiness</b></label>
-                        <table class="table table-hover table-bordered">
+                        <table class="table table-hover table-bordered" id="tardiness">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -101,11 +107,11 @@
                         <hr>
 
                         <label><b>II. Undertime</b></label>
-                        <table class="table table-hover table-bordered">
+                        <table class="table table-hover table-bordered" id="undertime">
                             <thead>
                                 <tr>
-                                    <th>Employee ID</th>
                                     <th>No.</th>
+                                    <th>Employee ID</th>
                                     <th>Company</th>
                                     <th>Name</th>
                                     <th>No. of Days</th>
@@ -156,7 +162,7 @@
 
                         <label style="margin-bottom: 20px;"><b>III. Leaves</b></label><br>
                         <label>A. Leave without Pay</label>
-                        <table class="table table-hover table-bordered mb-2">
+                        <table class="table table-hover table-bordered mb-2" id="leaves">
                             <thead>
                                 <tr>
                                     <th>Employee ID</th>
@@ -196,9 +202,6 @@
                                                 {{ collect($total_array)->sum() }}
                                             </td>
                                             <td>
-                                                {{-- @foreach ($employee->leaves->where('withpay', 0)->sortBy('date_from') as $leaves)
-                                                    {{ get_count_days($leaves->employee->dailySchedule, $leaves->employee->scheduleData, $leaves->date_from, $leaves->date_to, $leaves->halfday,) }} 
-                                                @endforeach --}}
                                             </td>
                                             <td>
                                                 No leave Credits balance
@@ -210,7 +213,7 @@
                         </table>
                         
                         <label>B. Leave Deviations</label>
-                        <table class="table table-hover table-bordered">
+                        <table class="table table-hover table-bordered" id="leaveDeviations">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -262,7 +265,7 @@
                         <hr>
 
                         <label><b>IV. Overtime</b></label>
-                        <table class="table table-hover table-bordered">
+                        <table class="table table-hover table-bordered" id="overtime">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -351,4 +354,116 @@
 </div>
 
 
+@endsection
+
+@section('js')
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script> 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $("#tardiness").DataTable({
+            paginate: false,
+            sDom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title: 'Weekly Attendance Report'
+                },
+                {
+                    extend: 'excel',
+                    title: 'Weekly Report - Tardiness', // Sets the Excel title
+                    filename: 'Weekly Attendance Report - Tardiness'// Formats filename
+                }
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: []
+        });
+        $("#undertime").DataTable({
+            paginate: false,
+            sDom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title: 'Weekly Attendance Report'
+                },
+                {
+                    extend: 'excel',
+                    title: 'Weekly Report - Undertime', // Sets the Excel title
+                    filename: 'Weekly Attendance Report - Undertime'// Formats filename
+                }
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: []
+        });
+        $("#leaves").DataTable({
+            paginate: false,
+            sDom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title: 'Weekly Attendance Report'
+                },
+                {
+                    extend: 'excel',
+                    title: 'Weekly Report - Leaves', // Sets the Excel title
+                    filename: 'Weekly Attendance Report - Leaves'// Formats filename
+                }
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: []
+        });
+        $("#leaveDeviations").DataTable({
+            paginate: false,
+            sDom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title: 'Weekly Attendance Report'
+                },
+                {
+                    extend: 'excel',
+                    title: 'Weekly   Report - Leave Deviations', // Sets the Excel title
+                    filename: 'Weekly Attendance Report - Leave Deviations'// Formats filename
+                }
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: []
+        });
+        $("#overtime").DataTable({
+            paginate: false,
+            sDom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'copy',
+                    title: 'Weekly Attendance Report'
+                },
+                {
+                    extend: 'excel',
+                    title: 'Weekly   Report - Overtime', // Sets the Excel title
+                    filename: 'Weekly Attendance Report - Overtime'// Formats filename
+                }
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: []
+        });
+    })
+
+</script>
 @endsection
