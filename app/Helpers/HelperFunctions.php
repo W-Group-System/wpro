@@ -1243,7 +1243,7 @@ function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas = []
                       ->orWhere('status', 'Pending');
             })
             ->where('withpay',1)
-            ->whereYear('created_at', date('Y'))
+            ->whereYear('date_from', date('Y'))
             ->where('status','!=','Cancelled')
             // ->where('date_from', '>', $filter_date_leave)
             ->get();
