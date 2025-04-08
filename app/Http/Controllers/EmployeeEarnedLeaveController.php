@@ -142,7 +142,7 @@ class EmployeeEarnedLeaveController extends Controller
         }
     }
     public function manual_store(Request $request){
-
+        
         $this->validate($request, [
             'user_id' => 'required',
             'from' => 'required',
@@ -197,7 +197,7 @@ class EmployeeEarnedLeaveController extends Controller
                             $earned_leave->earned_month = $month;
                             $earned_leave->earned_year = $year;
                             $earned_leave->earned_date = $earned_date;
-                            $earned_leave->earned_leave = 0.833;
+                            $earned_leave->earned_leave = $request->leave_balance;
                             $earned_leave->save();
                             $count++;
 

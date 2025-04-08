@@ -18,7 +18,7 @@
                         <form method='POST' action='manual-employee-earned-leaves-store' onsubmit='show()'>
                             <div class="row">
                                     @csrf
-                                    <div class="col-md-3 mt-1">
+                                    <div class="col-md-4 mt-1">
                                         Employee : 
                                         <select data-placeholder="Select Employee" class="form-control form-control-sm required js-example-basic-multiple "
                                             style='width:100%;' name='user_id' required>
@@ -29,15 +29,19 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-3 mt-1">
+                                    <div class="col-md-4 mt-1">
                                         From : 
                                         <input type="month" class="form-control" name="from" value="{{$date_from}}">
                                     </div>
-                                    <div class="col-md-3 mt-1">
+                                    <div class="col-md-4 mt-1">
                                         To : 
                                         <input type="month" class="form-control" name="to" value="{{$date_to}}">
                                     </div>
-                                    <div class="col-md-3 mt-1">
+                                    <div class="col-md-4 mt-1">
+                                        Leave Balance : 
+                                        <input type="number" class="form-control" name="leave_balance" step=".01">
+                                    </div>
+                                    <div class="col-md-4 mt-1">
                                         <button class="btn btn-md btn-primary mt-1">Submit</button>
                                         <a href="{{ url('employee-earned-leaves') }}" class="btn btn-info mt-1" onclick="show()">Earned Leaves</a>
                                     </div>
