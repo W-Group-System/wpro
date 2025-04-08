@@ -39,7 +39,7 @@
                                     </div>
                                     <div class="col-md-3 mt-1">
                                         <button class="btn btn-md btn-primary mt-1">Submit</button>
-                                        <a href="/employee-earned-leaves" class="btn btn-info mt-1">Earned Leaves</a>
+                                        <a href="{{ url('employee-earned-leaves') }}" class="btn btn-info mt-1" onclick="show()">Earned Leaves</a>
                                     </div>
                             </div>
                         </form>

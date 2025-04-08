@@ -56,6 +56,11 @@
                             </div>
                         </form>
 
+                        <a href="{{ url('manual-employee-earned-leaves') }}" class="btn btn-outline-success" onclick="show()">
+                            <i class="ti-plus"></i>
+                            Add Manual Earned Leave
+                        </a>
+
 						<div class="table-responsive">
 							<table class="table table-hover table-bordered tablewithSearch">
 								<thead>

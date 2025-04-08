@@ -7,9 +7,8 @@ use App\EmployeeEarnedLeave;
 use App\Leave;
 use App\Employee;
 
-use Alert;
-
 use DateTime;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class EmployeeEarnedLeaveController extends Controller
 {
@@ -189,7 +188,7 @@ class EmployeeEarnedLeaveController extends Controller
                                                                 })
                                                                 ->where('leave_type',1)
                                                                 ->first();                
-
+                    // dd($check_if_exist_vl);                                            
                     if(empty($check_if_exist_vl)){
                             $earned_leave = new EmployeeEarnedLeave;
                             $earned_leave->leave_type = 1; // Vacation Leave
@@ -201,34 +200,40 @@ class EmployeeEarnedLeaveController extends Controller
                             $earned_leave->earned_leave = 0.833;
                             $earned_leave->save();
                             $count++;
+
+                        Alert::success('Successfully Stored')->persistent('Dismiss');
+                    }
+                    else
+                    {
+                        Alert::warning('This employee have already earned leave in that month')->persistent('Dismiss');
                     }
     
-                    $check_if_exist_sl = EmployeeEarnedLeave::where('user_id',$request->user_id)
-                                                                ->where(function($q) use($month,$year){
-                                                                    $q->whereMonth('earned_date',$month)
-                                                                    ->whereYear('earned_date',$year);
-                                                                })
-                                                                ->where('leave_type',2)
-                                                                ->first();
+                    // $check_if_exist_sl = EmployeeEarnedLeave::where('user_id',$request->user_id)
+                    //                                             ->where(function($q) use($month,$year){
+                    //                                                 $q->whereMonth('earned_date',$month)
+                    //                                                 ->whereYear('earned_date',$year);
+                    //                                             })
+                    //                                             ->where('leave_type',2)
+                    //                                             ->first();
     
-                    if(empty($check_if_exist_sl)){
-                            $earned_leave = new EmployeeEarnedLeave;
-                            $earned_leave->leave_type = 2; // Sick Leave
-                            $earned_leave->user_id = $employee->user_id;
-                            $earned_leave->earned_day = $day;
-                            $earned_leave->earned_month = $month;
-                            $earned_leave->earned_year = $year;
-                            $earned_leave->earned_date = $earned_date;
-                            // $earned_leave->earned_leave = 0.833;
-                            $earned_leave->save();
-                            $count++;
-                    }
+                    // if(empty($check_if_exist_sl)){
+                    //         $earned_leave = new EmployeeEarnedLeave;
+                    //         $earned_leave->leave_type = 2; // Sick Leave
+                    //         $earned_leave->user_id = $employee->user_id;
+                    //         $earned_leave->earned_day = $day;
+                    //         $earned_leave->earned_month = $month;
+                    //         $earned_leave->earned_year = $year;
+                    //         $earned_leave->earned_date = $earned_date;
+                    //         // $earned_leave->earned_leave = 0.833;
+                    //         $earned_leave->save();
+                    //         $count++;
+                    // }
                 }
             }
         }
 
-        Alert::success('Successfully Stored')->persistent('Dismiss');
-        return redirect('/manual-employee-earned-leaves?user_id=' .$request->user_id . '&date_from=' . $request->from . '&date_to=' . $request->to);
+        // return redirect('/manual-employee-earned-leaves?user_id=' .$request->user_id . '&date_from=' . $request->from . '&date_to=' . $request->to);
+        return redirect('employee-earned-leaves');
     }
 
     public function manual_delete(Request $request){
