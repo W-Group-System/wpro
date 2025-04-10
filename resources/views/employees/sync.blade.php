@@ -43,7 +43,6 @@
 							</div>
 						</form>
 						
-						
 						{{-- <p class="card-description">
 							<form method='get' action='sync-biometric-per-employee' onsubmit='show();' enctype="multipart/form-data">
 								<div class=row>
@@ -168,6 +167,39 @@
 							</form>
 						</p>
 						@endif --}}
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-12 grid-margin stretch-card">
+				<div class="card">
+					<div class="card-body">
+						<h4 class="card-title">Sync Biometrics (Per Location)</h4>
+						
+                        <form method='POST' action="{{url('sync-per-location')}}" onsubmit='show();'>
+                            {{csrf_field()}}
+							<div class=row>
+								<div class='col-md-2'>
+                                    Location
+                                    <select name="location" class="form-control form-control-sm required js-example-basic-single" required>
+                                        <option value="">- Location -</option>
+                                        @foreach ($locations as $loc)
+                                        <option value="{{$loc->location}}">{{$loc->location}}</option>
+                                        @endforeach
+                                    </select>
+								</div>
+								<div class='col-md-2'>
+                                    From
+                                    <input type="date" class="form-control form-control-sm" id='from' name="from" required />
+								</div>
+								<div class='col-md-2'>
+                                    To
+                                    <input type="date" class="form-control form-control-sm" id='to' name="to" required />
+								</div>
+								<div class='col-md-2'>
+									<button type="submit" class="form-control form-control-sm btn btn-primary mb-2 btn-sm">Sync BioTime</button>
+								</div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>

@@ -2089,10 +2089,14 @@ class EmployeeController extends Controller
         ->whereIn('company_id', $allowed_companies)
         ->get();
 
+        $location_array = ['PRI', 'PRI-BMO'];
+        $locations = AttendanceLog::select('location')->whereIn('location', $location_array)->groupBy('location')->get();
+
         return view('employees.sync', array(
             'header' => 'biometrics',
             'employees' => $employees,
-            'companies' => $companies
+            'companies' => $companies,
+            'locations' => $locations
         ));
     }
 
@@ -2702,5 +2706,72 @@ class EmployeeController extends Controller
         $employee = Employee::with('user_info')->get();
         
         return view('nopa.nopa', compact('header', 'employee_movement', 'department', 'employee'));
+    }
+
+    public function syncPerLocation(Request $request)
+    {
+        $from = $request->from;
+        $to = $request->to;
+        $location = $request->location;
+        
+        $attendanceLogs = AttendanceLog::whereBetween('date', [$from, $to])
+            ->where('location', $location)
+            ->orderBy('datetime','asc')
+            ->get();
+        
+        if ($attendanceLogs != null) 
+        {
+            foreach($attendanceLogs as $att)
+            {
+                if ($att->type == 0)
+                {
+                    $attend = Attendance::where('employee_code', $att->emp_code)->where('time_in', date('Y-m-d H:i:s', strtotime($att->datetime)))->first();
+                    
+                    if($attend == null)
+                    {
+                        $attendance = new Attendance;
+                        $attendance->employee_code  = $att->emp_code;   
+                        $attendance->time_in = date('Y-m-d H:i:s',strtotime($att->datetime));
+                        $attendance->device_in = $att->location ." - ".$att->ip_address;
+                        $attendance->last_id = $att->id;
+                        $attendance->save();
+                    }
+                }
+                else 
+                {
+                    $time_in_after = date('Y-m-d H:i:s',strtotime($att->datetime));
+                    $time_in_before = date('Y-m-d H:i:s', strtotime ( '-23 hour' , strtotime ( $time_in_after ) )) ;
+                    
+                    $update = [
+                        'time_out' =>  date('Y-m-d H:i:s', strtotime($att->datetime)),
+                        'device_out' => $att->location ." - ".$att->ip_address,
+                        'last_id' =>$att->id,
+                    ];
+                
+                    $attendance_in = Attendance::where('employee_code',$att->emp_code)
+                        ->whereBetween('time_in',[$time_in_before,$time_in_after])
+                        ->first();
+                    
+                    Attendance::where('employee_code',(string)$att->emp_code)
+                    ->whereBetween('time_in',[$time_in_before,$time_in_after])
+                    ->update($update);
+                    
+                    if($attendance_in == null)
+                    {
+                        $attendance = new Attendance;
+                        $attendance->employee_code  = $att->emp_code;   
+                        $attendance->time_out = date('Y-m-d H:i:s', strtotime($att->datetime));
+                        $attendance->device_out = $att->location ." - ".$att->ip_address;
+                        $attendance->last_id = $att->id;
+                        $attendance->save(); 
+                    }
+                }
+            }
+            Alert::success("Successfully Sync")->persistent('Dismiss');
+        }
+        else 
+        {
+            Alert::error("Cannot Sync. Because the employee is not existing in attendance logs")->persistent('Dismiss');
+        }
     }
 }

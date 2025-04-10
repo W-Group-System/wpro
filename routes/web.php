@@ -215,6 +215,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('sync-biometric-per-employee','EmployeeController@sync_per_employee');
     // Route::get('sync-biometric-per-employee-hik','EmployeeController@sync_per_employee_hik');
     Route::get('sync-biometric-per-employee-hik','EmployeeController@sync_per_employee_hik_with_upload');
+    Route::post('sync-per-location','EmployeeController@syncPerLocation');
 
     Route::get('biologs-employee-attendance-report', 'EmployeeController@employee_attendance_report');
 
