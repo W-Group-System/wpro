@@ -316,7 +316,7 @@
                                                     if($if_attendance_holiday){
 
                                                         $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($if_attendance_holiday)),$employee_schedule);
-                                                    
+                                                        
                                                         if($check_leave){
                                                             $if_attendance_holiday_status = 'With-Pay';
                                                             $abs =0;
@@ -336,6 +336,12 @@
                                                             }else{
                                                                 $if_attendance_holiday_status = 'With-Pay';
                                                                 $abs =0;
+                                                            }
+
+                                                            $time_in_ob = ($emp->approved_obs)->where('applied_date',date('Y-m-d',strtotime($date_r." 00:00:00")-86400))->sortBy('applied_date')->first();
+                                                            if ($time_in_ob)
+                                                            {
+                                                                $abs=0;
                                                             }
                                                         }
                                                     }
