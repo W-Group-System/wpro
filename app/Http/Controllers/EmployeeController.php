@@ -2773,5 +2773,7 @@ class EmployeeController extends Controller
         {
             Alert::error("Cannot Sync. Because the employee is not existing in attendance logs")->persistent('Dismiss');
         }
+
+        return back();
     }
 }
