@@ -255,9 +255,9 @@ class EmployeeOvertimeController extends Controller
     }
 
     public function uploadOvertimeAttachments(Request $request, $id) {
-      $request->validate([
-        'file' => 'mimes:jpg,png,pdf,doc,docx|max:2048'
-      ]);
+    //   $request->validate([
+    //     'file' => 'mimes:jpg,png,pdf,doc,docx|max:2048'
+    //   ]);
 
       $file = $request->file('file');
       $fileName = time().'_'.$file->getClientOriginalName();
