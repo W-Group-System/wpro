@@ -87,7 +87,7 @@ class EmployeeLeaveController extends Controller
 
         // $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
         $last_logs = date('Y-m-d');
-        $threeDaysAgo = date('Y-m-d', strtotime('-3 weekdays'));
+        $threeDaysAgo = date('Y-m-d', strtotime('-4 weekdays'));
         // dd($threeDaysAgo);
         $attendance_logs = AttendanceLog::where('emp_code', auth()->user()->employee->employee_number)
             ->orderBy('date', 'desc')
