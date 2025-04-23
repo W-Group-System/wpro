@@ -504,6 +504,15 @@
                                         Employee Allowances
                                         <br>
                                         <br>
+
+                                        <hr>
+                                        @if($user->user_privilege->ivms_attendance == 'on')
+                                            <input type="checkbox" name="ivms_attendance" id="ivms_attendance{{$user->id}}" value="{{ $user->user_privilege->ivms_attendance }}" checked>
+                                        @else
+                                            <input type="checkbox" name="ivms_attendance" id="ivms_attendance{{$user->id}}">
+                                        @endif
+
+                                        IVMS Attendance
                                     </div>
 
                                 </div>

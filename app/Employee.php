@@ -201,6 +201,10 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(EmployeeEarnedLeave::class,'user_id','user_id');
     }
+    public function vms_attendance()
+    {
+        return $this->hasMany(Vms::class, 'id_bio', 'employee_number');
+    }
     // public function daily_schedules()
     // {
     //     return $this->hasMany(DailySchedule::class,'employee_code','employee_code');

@@ -467,6 +467,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Weekly Attendance Report
     Route::get('weekly_attendance_report', 'WeeklyReportController@index');
+
+    // Extract Attendance
+    Route::get('extract_attendance', 'AttendanceController@extractAttendance');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

@@ -734,14 +734,22 @@
         </li>
         @endif
         @endif
-        @if(auth()->user()->id == 471 || auth()->user()->id == 555)
+        {{-- @if(auth()->user()->id == 471 || auth()->user()->id == 555)
         <li class="nav-item">
             <a href="{{url('upload_raw_logs')}}" class="nav-link @if($header == 'upload_raw_logs') active @endif">
                 <i class="ti-upload menu-icon"></i>
                 Upload Raw Logs
             </a>
         </li>
-        @endif
+        @endif --}}
+            @if (checkUserPrivilege('ivms_attendance',auth()->user()->id) == 'yes')
+            <li class="nav-item">
+                <a href="{{ url('extract_attendance') }}" class="nav-link">
+                    <i class="icon-clock menu-icon"></i>
+                    IVMS Attendance
+                </a>
+            </li>
+            @endif
         </ul>
         </nav>
         <!-- partial -->

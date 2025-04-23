@@ -22,7 +22,7 @@ use App\Exports\AttendanceSeabasedExport;
 use App\Imports\EmployeeSeabasedAttendanceImport;
 use App\Imports\HikAttLogAttendanceImport;
 use App\AttendanceDetailedReport;
-
+use App\Vms;
 use Excel;
 
 use RealRashid\SweetAlert\Facades\Alert;
@@ -885,5 +885,30 @@ class AttendanceController extends Controller
             }
             
             return back();
+    }
+
+    public function extractAttendance(Request $request)
+    {
+        $from = $request->date_from;
+        $to = $request->date_to;
+        $type = $request->type;
+
+        $header = 'extract_attendance';
+
+        $id_bio = Vms::whereBetween('date_input', [$request->date_from, $request->date_to])
+            ->orderBy('id_bio','asc')
+            ->get()
+            ->unique('id_bio')
+            ->pluck('id_bio')
+            ->toArray();
+        
+        $emps = Employee::with('vms_attendance', 'user_info')
+            ->where('status', 'Active')
+            ->whereIn('employee_number', $id_bio)
+            ->orderBy('employee_number', 'asc')
+            ->get();
+        
+        // dd($attendances[10]);
+        return view('extract_attendances.extract_attendances', compact('header', 'emps', 'from', 'to', 'type'));
     }
 }
