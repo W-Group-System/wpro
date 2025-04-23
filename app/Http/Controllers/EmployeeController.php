@@ -1194,7 +1194,7 @@ class EmployeeController extends Controller
         $employee->company_id = $request->company;
         $employee->position = $request->position;
         $employee->department_id = $request->department;
-        $employee->location = $request->location;
+        $employee->location = $request->location; 
         $employee->project = $request->project;
         $employee->classification = $request->classification;
         $employee->phil_number = $request->philhealth;
