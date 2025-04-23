@@ -1186,7 +1186,7 @@ class EmployeeController extends Controller
 
     public function updateEmpInfoHR(Request $request, $id){
         $user = User::findOrFail($request->user_id);
-        $user->email = $request->clearance_email;
+        $user->email = $request->work_email;
         $user->save();
 
         $employee = Employee::findOrFail($id);

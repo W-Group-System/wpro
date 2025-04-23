@@ -117,7 +117,7 @@
                 </div>
                 <div class='col-md-4'>
                   Work Email
-                  <input type="email" name="work_email" value="{{ $user->email }}" readonly="true" class='form-control form-control-sm required' placeholder="Work Email"/>
+                  <input type="email" name="work_email" value="{{ $user->email }}" class='form-control form-control-sm required' placeholder="Work Email"/>
                 </div>
                 <div class='col-md-4'>
                   Schedule
@@ -203,11 +203,11 @@
                   <input type="date" name="date_resigned" value="{{ $user->employee->date_resigned }}" class='form-control form-control-sm' placeholder="Date"/>
                 </div>
 
-                <div class='col-md-4' id="clearancePortalEmail" @if($user->employee->status != 'Resigned') hidden @endif>
-                    Email for clearance portal
+                {{-- <div class='col-md-4' id="clearancePortalEmail" @if($user->employee->status != 'Resigned') hidden @endif>
+                    Email for clearance portal --}}
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
-                    <input type="email" name="clearance_email" class="form-control" value="{{ $user->email }}" placeholder="Personal Email" required>
-                </div>
+                    {{-- <input type="email" @if($user->employee->status == 'Resigned') name="clearance_email" @endif class="form-control" value="{{ $user->email }}" placeholder="Personal Email" required>
+                </div> --}}
 
               </div>
               <hr>
