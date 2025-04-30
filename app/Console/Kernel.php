@@ -13,15 +13,16 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\AutoGetAttendance::class,
-        Commands\AutoGetAttendanceHik::class,
-        Commands\LeaveApproval::class,
-        Commands\OfficialBusinessApproval::class,
-        Commands\OvertimeApproval::class,
-        Commands\WorkFromHomeApproval::class,
-        Commands\DailyTimeRecordApproval::class,
-        Commands\AutoEarnedLeave::class,
-        Commands\EmailAttendance::class
+        // Commands\AutoGetAttendance::class,
+        // Commands\AutoGetAttendanceHik::class,
+        // Commands\LeaveApproval::class,
+        // Commands\OfficialBusinessApproval::class,
+        // Commands\OvertimeApproval::class,
+        // Commands\WorkFromHomeApproval::class,
+        // Commands\DailyTimeRecordApproval::class,
+        // Commands\AutoEarnedLeave::class,
+        Commands\EmailAttendance::class,
+        Commands\EarnedVacationLeave::class
     ];
 
     /**
@@ -35,12 +36,13 @@ class Kernel extends ConsoleKernel
         // $schedule->command('command:auto_get_attendance')->twiceDaily(8,20);
         // $schedule->command('command:auto_get_attendance_hik')->twiceDaily(8,20);
 
-        $schedule->command('command:leave_approval')->everyMinute();
-        $schedule->command('command:official_business_approval')->everyMinute();
-        $schedule->command('command:overtime_approval')->everyMinute();
-        $schedule->command('command:work_from_home_approval')->everyMinute();
-        $schedule->command('command:dtr_approval')->everyMinute();
+        // $schedule->command('command:leave_approval')->everyMinute();
+        // $schedule->command('command:official_business_approval')->everyMinute();
+        // $schedule->command('command:overtime_approval')->everyMinute();
+        // $schedule->command('command:work_from_home_approval')->everyMinute();
+        // $schedule->command('command:dtr_approval')->everyMinute();
         $schedule->command('command:email_attendance')->dailyAt('8:00');
+        $schedule->command('command:auto_earned_leaves')->everyMonth();
         // $schedule->command('command:auto_earned_leave')->dailyAt('8:00');
     }
 
