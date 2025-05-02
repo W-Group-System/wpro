@@ -357,11 +357,12 @@ class PayslipController extends Controller
                 $salary_adjustments = SalaryAdjustment::whereIn('employee_id',$employee_ids)->where('cut_off_date',null)->select('name')->groupBy('name')->get();
                 $loans_all = Loan::with('loan_type')->whereIn('employee_id',$employee_ids)->select('loan_type_id')->groupBy('loan_type_id')->get();
                 $instructions = PayInstruction::whereIn('site_id',$employee_codes)
-                ->where('start_date', '>=', $cutoff)
-                              ->where('end_date', '<=', $cutoff)
-                              ->select('benefit_name')->groupBy('benefit_name')->get();
+                                ->where('start_date', '>=', $cutoff)
+                                ->where('end_date', '<=', $cutoff)
+                                ->select('benefit_name')->groupBy('benefit_name')->get();
                                         
                 }
+                // dd($instructions);
             }
           
                 

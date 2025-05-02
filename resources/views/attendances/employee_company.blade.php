@@ -274,25 +274,25 @@
                                                 }
                                                 if($if_has_ob)
                                                 {
-                                                
-                                                if($final_time_in != null)
-                                                {
-                                                    if($if_has_ob->date_from < $final_time_in)
+                                                    
+                                                    if($final_time_in != null)
                                                     {
-                                                        $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
+                                                        if($if_has_ob->date_from < $final_time_in)
+                                                        {
+                                                            $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
+                                                        }
+                                                        else {
+                                                            $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
+                                                        }
                                                     }
                                                     else {
-                                                        $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
+                                                        
+                                                        $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
                                                     }
-                                                }
-                                                else {
-                                                    
-                                                    $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
-                                                }
                                                 
                                                     if($final_time_out != null){
-                                                        // dd($time_in);
-                                                        if(strtotime($if_has_ob->date_to) > strtotime($final_time_out))
+                                                        // if(strtotime($if_has_ob->date_to) > strtotime($final_time_out))
+                                                        if($if_has_ob->date_to > $final_time_out)
                                                         {
                                                         
                                                         $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));

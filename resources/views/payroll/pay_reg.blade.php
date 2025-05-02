@@ -893,7 +893,15 @@
                               @endphp
                               <td>{{number_format(-1*($lllloan),2)}}  </td>
                               @endforeach
-                              <td>{{number_format(-1*($total_loans),2)}}<input type='hidden' name='nontaxable_deductible_benefits_total[{{$key+1}}]' value="{{$total_loans}}"></td> 
+                              <!-- <td>{{number_format(-1*($total_loans),2)}}<input type='hidden' name='nontaxable_deductible_benefits_total[{{$key+1}}]' value="{{$total_loans}}"></td>  -->
+                              @php
+                                  $nontaxable_total = $total_loans + $total_payroll_instructions;
+                              @endphp
+
+                              <td>
+                                  {{ number_format(-1 * $nontaxable_total, 2) }}
+                                  <input type="hidden" name="nontaxable_deductible_benefits_total[{{ $key + 1 }}]" value="{{ $nontaxable_total }}">
+                              </td>
                               <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq,2)}}<input type='hidden' name='gross_pay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq}}"></td>
                               <td>{{number_format($taxable_deductable_total+$total_loans+$tax,2)}}<input type='hidden' name='deductions_total[{{$key+1}}]' value="{{$taxable_deductable_total+$total_loans+$tax}}"></td>
                               <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}<input type='hidden' name='netpay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions}}"></td>
