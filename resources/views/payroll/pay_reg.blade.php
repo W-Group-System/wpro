@@ -897,7 +897,6 @@
                               @php
                                   $nontaxable_total = $total_loans + $total_payroll_instructions;
                               @endphp
-
                               <td>
                                   {{ number_format(-1 * $nontaxable_total, 2) }}
                                   <input type="hidden" name="nontaxable_deductible_benefits_total[{{ $key + 1 }}]" value="{{ $nontaxable_total }}">
