@@ -305,7 +305,7 @@
                                                 if($check_if_holiday){
                                                        
                                                   
-                                                        $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
+                                                    $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                     $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                    
                                                         $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r."-1 day")),$employee_schedule);
@@ -841,14 +841,11 @@
                                                 }
                                                 if($employee_schedule->time_in_from == '')
                                                 {
-                                                    $rest = "RESTDAY";
-                                                    
-                                           
+                                                    $rest = "RESTDAY";                                           
                                                 }
                                                 if($employee_schedule->time_in_from == null)
                                                 {
                                                     $rest = "RESTDAY";
-                                                   
                                                 }
                                            
                                         }
@@ -894,7 +891,7 @@
                                                     $work_rest = $approved_overtime_hrs;
                                                 }
                                                 
-                                                if($work_rest >2)
+                                                if($work_rest > 2)
                                                 {
                                                     $restday_ot = $work_rest;
                                                     if($work_rest >= 8)
@@ -912,10 +909,12 @@
                                     }
                                     $lh_ot = 0;
                                     $sh_ot = 0;
+                                    $rst_sh_ot = 0;
                                     $lh_ot_ge = 0;
                                     $sh_ot_ge = 0;
                                     $sh_ot_nd = 0;
                                     $sh_ot_nd_ge = 0;
+                                    $rst_sh_ot_gt_8 = 0;
                                     $lh_ot_nd = 0;
                                     $lh_ot_nd_ge = 0;
                                     $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
@@ -941,8 +940,10 @@
                                       $restday_ot = 0;
                                       $restday_ot_ge = 0;
                                       $restnd = 0;
+                                      $rest = "";
                                       
                                         $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
+                                        
                                         if(strtotime($time_end) - strtotime($time_start) > 2)
                                         {
                                             if($approved_overtime_hrs > 2)
@@ -963,11 +964,22 @@
                                                 if($approved_overtime_hrs <= 8)
                                                 {
                                                     
-                                                    $sh_ot = $approved_overtime_hrs;
+                                                    // $sh_ot = $approved_overtime_hrs && $rest != "RESTDAY";
+                                                    $sh_ot = ($rest == "RESTDAY") ? $approved_overtime_hrs : 0;
                                                 }
                                                 else
                                                 {
                                                     $sh_ot_ge = $approved_overtime_hrs-8;
+                                                }
+                                                if($approved_overtime_hrs <= 8)
+                                                {
+                                                    
+                                                    // $rst_sh_ot = $approved_overtime_hrs && $rest != "RESTDAY";
+                                                    $rst_sh_ot = $approved_overtime_hrs;
+                                                }
+                                                else
+                                                {
+                                                    $rst_sh_ot_gt_8 = $approved_overtime_hrs-8;
                                                 }
 
                                                 if($employee_schedule)
@@ -1111,7 +1123,7 @@
                                     <td @if($restday_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="{{$restday_ot}}">{{number_format($restday_ot,2)}}</td>  {{-- RST OT --}}
                                     <td @if($restday_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="{{$restday_ot_ge}}">{{number_format($restday_ot_ge,2)}}</td> {{-- RST OT > 8 --}}
                                     <td @if($restnd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="{{$restnd}}">{{number_format($restnd,2)}}</td> {{-- RST ND --}}
-                                    <td  @if($restnd_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="{{$restnd_ge}}">{{number_format($restnd_ge,2)}}</td> {{-- RST ND > 8 --}}
+                                    <td @if($restnd_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="{{$restnd_ge}}">{{number_format($restnd_ge,2)}}</td> {{-- RST ND > 8 --}}
                                     <td @if($lh_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot]" value="{{$lh_ot}}">{{number_format($lh_ot,2)}}</td> {{-- LH OT --}}
                                     <td @if($lh_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot_over_eight]" value="{{$lh_ot_ge}}">{{number_format($lh_ot_ge,2)}}</td> {{-- LH OT > 8 --}}
                                     <td @if($lh_ot_nd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_nd]" value="{{$lh_ot_nd}}">{{number_format($lh_ot_nd,2)}}</td> {{-- LH ND --}}
@@ -1124,8 +1136,9 @@
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_ot_over_eight]" value="0.00">0.00</td> {{-- RST LH OT > 8 --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_nd]" value="0.00">0.00</td> {{-- RST LH ND --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_nd_gt_8]" value="0.00">0.00</td> {{-- RST LH ND > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot]" value="0.00">0.00</td> {{-- RST SH OT --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot_gt_8]" value="0.00">0.00</td> {{-- RST SH OT > 8 --}}
+                                    <!-- <td><input type="text" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot]" value="{{$rst_sh_ot}}">0.00</td> {{-- RST SH OT --}} -->
+                                    <td @if($rst_sh_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot]" value="{{$rst_sh_ot}}">{{number_format($rst_sh_ot,2)}}</td> {{-- RST SH OT --}}
+                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot_gt_8]" value="{{$rst_sh_ot_gt_8}}">0.00</td> {{-- RST SH OT > 8 --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_nd]" value="0.00">0.00</td> {{--RST SH ND--}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_nd_over_eight]" value="0.00">0.00</td> {{-- RST SH ND > 8 --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][remarks]" value="{{$if_leave}} {{$if_has_ob ? 'OB' : ''}}">
