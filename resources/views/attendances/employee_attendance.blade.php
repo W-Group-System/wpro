@@ -514,6 +514,15 @@
                                             }
                                         }  
                                     }
+                                    $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                    if($check_if_holiday)
+                                    {
+                                        if ($employee_schedule)
+                                        {
+                                            $schedule_hours = $employee_schedule->working_hours - 1;
+                                            $work = $schedule_hours;
+                                        }
+                                    }
                                     @endphp
                                     @if($work > 0)
                                         @php
