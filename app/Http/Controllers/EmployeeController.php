@@ -1657,6 +1657,7 @@ class EmployeeController extends Controller
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
                                 })
+                                ->where('status', 'Active')
                                 ->get();
         $from_date = $request->from;
         $to_date = $request->to;
