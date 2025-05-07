@@ -3,10 +3,10 @@
 @section('content')
 	<div class="main-panel">
 		<div class="content-wrapper">
-			<div class="col-lg-12 grid-margin stretch-card">
+			<div class="col-lg-12 stretch-card">
 				<div class="card">
 					<div class="card-body">
-						<h4 class="card-title">13th month </h4>
+						<h4 class="card-title">13th Month Register</h4>
 						<p class="card-description">
 						<form method='get' onsubmit='show();' enctype="multipart/form-data">
 							<div class=row>
@@ -51,10 +51,10 @@
                                     <th>First Name</th>
                                     <th>Middle Name</th>
                                     <th>Department</th>
-                                    <th>Cost Center</th>
+                                    <!-- <th>Cost Center</th> -->
                                     <th>Account No</th>
                                     
-                                    <th>Tax Status</th>
+                                    <!-- <th>Tax Status</th> -->
                                     <th>Pay Rate</th>
                                     @for($i = 1; $i <= 12; $i++)
                                         <th>{{ date('M Y',strtotime($year."-".$i.'-01')) }}</th>
@@ -66,7 +66,7 @@
 									<th>Thirteenth Month Pay Nontaxable</th>
 									<th>Non Taxable Benefits Total</th>
 									<th>Gross Pay</th>
-									<th>1st Released (May 2024)</th>
+									<th>1st Released {{$year}}</th>
 									<th>Net Pay</th>
 								</tr>
 							</thead>
@@ -92,9 +92,9 @@
                                     <td>{{$employee->first_name}} <input type='hidden' name='first_name[{{$key+1}}]' value="{{$employee->first_name}}"></td>
                                     <td>{{$employee->middle_name}} <input type='hidden' name='middle_name[{{$key+1}}]' value="{{$employee->middle_name}}"></td>
                                     <td>{{$employee->department->name}} <input type='hidden' name='department_name[{{$key+1}}]' value="{{$employee->department->name}}"></td>
-                                    <td></td>
+                                    <!-- <td></td> -->
                                     <td>{{$employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$employee->bank_account_number}}"></td>
-                                    <td></td>
+                                    <!-- <td></td> -->
                                     <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
 								
 									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
@@ -103,6 +103,7 @@
                                     $no_december = ['A3156322'];
                                     $for_release = 0;
                                     $salary_diff = 0;
+                                    $first_release = 0;
                                     @endphp
                                     @for($i = 1; $i <= 12; $i++)
                                         @if($i == 12)
@@ -254,8 +255,8 @@
                                         {
                                             $tax =($payroll-$previous)*.05;
                                         }
-                                        $gross_pay = $payroll-$previous-$tax-$for_release;
-                                        
+                                        $first_release = $pay_rate / 2;
+                                        $gross_pay = $payroll-$previous-$tax-$for_release-$first_release;
                                     @endphp
                                     <td>{{number_format($total_Payroll,2)}}</td>
                                     <td>{{number_format($salary_diff,2)}}</td>
@@ -264,7 +265,7 @@
 									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
 									<td>{{number_format($payroll,2)}}</td>
-									<td>{{number_format($previous,2)}}</td>
+									<td>{{number_format($first_release,2)}}</td>
 									<td>{{number_format($gross_pay,2)}}</td>
 								</tr>
                                 @endforeach
@@ -278,13 +279,13 @@
         </div>
     </div>
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
 
-<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
     <script>
         $(document).ready(function() 
         {

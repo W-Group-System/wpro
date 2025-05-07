@@ -225,7 +225,7 @@ class PayslipController extends Controller
             $instructions_data = PayregInstruction::whereIn('payreg_id', $emp_data->pluck('id')->toArray())->get();
 
             $non_instructions = PayregInstruction::select('instruction_name')
-                ->whereIn('instruction_name', ['KPI BONUS', 'THIRTEENTH MONTH PAY NONTAXABLE'])
+                // ->whereIn('instruction_name', ['KPI BONUS', 'THIRTEENTH MONTH PAY NONTAXABLE', 'TAX REFUND'])
                 ->where('amount', '>', 0)
                 ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
                 ->groupBy('instruction_name')
@@ -915,13 +915,14 @@ class PayslipController extends Controller
      Alert::success('Successfully Import')->persistent('Dismiss');
      return back();
     }
+
     function monthly_benefit(Request $request)
     {
         $company = $request->company;
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $companies = Company::whereHas('employee_has_company')
-        ->whereIn('id', $allowed_companies)
-        ->get();
+                ->whereIn('id', $allowed_companies)
+                ->get();
         
         $year = date('Y');
         if($request->year)
@@ -984,8 +985,6 @@ class PayslipController extends Controller
                 ->orWhere('instruction_name', 'like', '%Other Allowance%')
                 ->orWhere('instruction_name', 'like', '%Subliq%');
         })->get();
-        
-                                // ->where('employee_code','A3121418')
                               
         $dates = [];
         return view('reports.month',
