@@ -12,7 +12,7 @@
                       <tr>
                         <th>Leave Type</th>
                         <th>Total</th>
-                        <th>Used</th>
+                        <th>Used ({{ date('Y') }})</th>
                         <th>Balance</th>
                       </tr>
                     </thead>
@@ -128,9 +128,11 @@
                           </td>
                           <td>
                             @if ($leave->leave->id == '1')
-                                {{$used_vl}}
+                                {{-- {{$used_vl}} --}}
+                                {{ $used_vl_this_yr }}
                             @elseif ($leave->leave->id == '2')
-                                {{$used_sl}}
+                                {{-- {{$used_sl}} --}}
+                                {{ $used_sl_this_yr }}
                             @elseif ($leave->leave->id == '10')
                                 {{$used_sil}}
                             @elseif ($leave->leave->id == '3')
