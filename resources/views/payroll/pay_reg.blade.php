@@ -20,7 +20,7 @@
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Generated Payroll 
+                <h4 class="card-title">Payroll Register
                     {{-- <button type="button" class="btn btn-outline-danger btn-icon-text btn-sm"  data-toggle="modal" data-target="#payrollD">
                         <i class="ti-upload btn-icon-prepend"></i>                                                    
                         Upload

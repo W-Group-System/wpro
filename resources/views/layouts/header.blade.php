@@ -554,14 +554,14 @@
                         </a>
                         <div class="collapse" id="payroll">
                             <ul class="nav flex-column sub-menu">
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-reg') }}">Payroll Register</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/generated-payroll') }}">Generated Payroll</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/pay-instruction') }}">Payroll Instruction</a></li>
-                                <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a></li>
-                                <li class="nav-item">  <a class="nav-link" href="{{ url('/salary-adjustment') }}">Salary Adjustment</a></li>
-                                <li class="nav-item">  <a class="nav-link" href="{{ url('/month-benefit') }}">13th Month Pay</a></li>
-
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/pay-reg') }}">Payroll Register</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/generated-payroll') }}">Generated Payroll</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/13th-register') }}">13th Month Register</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/month-benefit') }}">Generated 13th Month</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/loan-reg') }}">Loan Register</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/pay-instruction') }}">Payroll Instruction</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/salary-adjustment') }}">Salary Adjustment</a></li>
                             </ul>
                         </div>
                     </li>
@@ -574,7 +574,7 @@
                       </a>
                       <div class="collapse" id="payrollSetting">
                         <ul class="nav flex-column sub-menu">
-                          <li class="nav-item"> <a class="nav-link" href="{{ url('tax-mapping') }}">Tax Mapping</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="{{ url('tax-mapping') }}">Tax Mapping</a></li>
                         </ul>
                       </div>
                     </li>

@@ -332,10 +332,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('dtr-report-export', 'DailytimerecordController@export');
     Route::get('ytd-report', 'PayslipController@ytd_report');
 
-
     //13th month
+    Route::get('13th-register','PayslipController@monthly_benefit');
     Route::get('month-benefit', 'PayslipController@monthly_benefit');
-
+    
     // Employee Leave Credits
     Route::get('employee-leave-credits', 'LeaveCreditsController@index');
     Route::post('new-employee-leave-credit', 'LeaveCreditsController@store');
