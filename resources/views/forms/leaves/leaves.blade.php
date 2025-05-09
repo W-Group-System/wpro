@@ -11,8 +11,8 @@
                     <thead>
                       <tr>
                         <th>Leave Type</th>
-                        <th>Total</th>
-                        <th>Used ({{ date('Y') }})</th>
+                        <th>Leave Credits</th>
+                        <th>Used</th>
                         <th>Balance</th>
                       </tr>
                     </thead>
@@ -73,10 +73,18 @@
                                 // }
 
                         
-                                    $vl_beginning_balance = $leave->count;
+                                $vl_beginning_balance = $leave->count;
                                 
                                 
-                                $total_vl = $vl_beginning_balance + $earned_vl;
+                                // $total_vl = $vl_beginning_balance + $earned_vl;
+                                if ($earned_vl)
+                                {
+                                    $total_vl = $earned_vl;
+                                }
+                                else
+                                {
+                                    $total_vl = $vl_beginning_balance;
+                                }
                               @endphp
                               {{ ($total_vl) }}
                             @elseif ($leave->leave->id == '2')
@@ -105,7 +113,15 @@
                                 $sl_beginning_balance = $leave->count;
 
                                 
-                                $total_sl = $sl_beginning_balance + $earned_sl;
+                                // $total_sl = $sl_beginning_balance + $earned_sl;
+                                if ($earned_sl)
+                                {
+                                    $total_sl = $earned_sl;
+                                }
+                                else
+                                {
+                                    $total_sl = $sl_beginning_balance;
+                                }
                               @endphp
                                 {{ ($total_sl) }}
                             @elseif ($leave->leave->id == '10')
