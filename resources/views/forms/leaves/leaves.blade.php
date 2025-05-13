@@ -77,13 +77,50 @@
                                 
                                 
                                 // $total_vl = $vl_beginning_balance + $earned_vl;
-                                if ($earned_vl)
+                                $emp_movement = $employee_status->employeeMovement->first();
+                                if ($emp_movement)
                                 {
-                                    $total_vl = $earned_vl;
+                                    $date_regularized = json_decode($emp_movement->new_values);
+                                    if (isset($date_regularized->date_to))
+                                    {
+                                        if(date('Y', strtotime($date_regularized->date_to)) == date('Y'))
+                                        {
+                                            $total_vl = $vl_beginning_balance + $earned_vl;
+                                        }
+                                        else
+                                        {
+                                            if ($earned_vl)
+                                            {
+                                                $total_vl = $earned_vl;
+                                            }
+                                            else
+                                            {
+                                                $total_vl = $vl_beginning_balance;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if ($earned_vl)
+                                        {
+                                            $total_vl = $earned_vl;
+                                        }
+                                        else
+                                        {
+                                            $total_vl = $vl_beginning_balance;
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    $total_vl = $vl_beginning_balance;
+                                    if ($earned_vl)
+                                    {
+                                        $total_vl = $earned_vl;
+                                    }
+                                    else
+                                    {
+                                        $total_vl = $vl_beginning_balance;
+                                    }
                                 }
                               @endphp
                               {{ ($total_vl) }}
