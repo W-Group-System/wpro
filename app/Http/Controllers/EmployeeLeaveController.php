@@ -131,6 +131,7 @@ class EmployeeLeaveController extends Controller
 
         $used_sl_this_yr = usedSlVlThisYear(auth()->user()->id,2,$employee_status->original_date_hired,$employee_status->ScheduleData);
         $used_vl_this_yr = usedSlVlThisYear(auth()->user()->id,1,$employee_status->original_date_hired,$employee_status->ScheduleData);
+        $count_previous_vl_used = countPreviousVLUsed(auth()->user()->id,1,$employee_status->original_date_hired,$employee_status->ScheduleData);
         
         return view('forms.leaves.leaves',
         array(
@@ -164,7 +165,8 @@ class EmployeeLeaveController extends Controller
             'cut_off' => $cut_off_date,
             'sl_bank' => $sl_bank,
             'used_sl_this_yr' => $used_sl_this_yr,
-            'used_vl_this_yr' => $used_vl_this_yr
+            'used_vl_this_yr' => $used_vl_this_yr,
+            'count_previous_vl_used' => $count_previous_vl_used
         ));
     }  
 
