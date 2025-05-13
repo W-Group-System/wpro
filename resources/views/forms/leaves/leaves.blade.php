@@ -597,7 +597,7 @@
                                                 }
                                                 else
                                                 {
-                                                    if((date('m') == '04'))
+                                                    if((date('m') >= '04'))
                                                     {
                                                         $vl_balance_previous = 0;
                                                     }
