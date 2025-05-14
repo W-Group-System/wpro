@@ -263,17 +263,22 @@
                                         }
                                         else
                                         {
-                                            if (date('m') >= '04')
+                                            // if (date('m') >= '04')
+                                            // {
+                                            //     $vl_balance_previous = 0;
+                                            // }
+                                            // else
+                                            // {
+                                            //     $vl_balance_previous = $count_vl - $earned_vl;
+                                            //     if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
+                                            //     {
+                                            //         $vl_balance_previous = 0;
+                                            //     }
+                                            // }
+                                            $vl_balance_previous = $count_vl - $earned_vl;
+                                            if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
                                             {
                                                 $vl_balance_previous = 0;
-                                            }
-                                            else
-                                            {
-                                                $vl_balance_previous = $count_vl - $earned_vl;
-                                                if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                {
-                                                    $vl_balance_previous = 0;
-                                                }
                                             }
                                         }
                                     }
@@ -288,25 +293,25 @@
                                 }
                                 else
                                 {
-                                    if (date('m') == '04')
+                                    // if (date('m') >= '04')
+                                    // {
+                                    //     $vl_balance_previous = 0;
+                                    // }
+                                    // else
+                                    // {
+                                    // }
+                                    $vl_balance_previous = $count_vl - $earned_vl;
+                                    if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
                                     {
                                         $vl_balance_previous = 0;
-                                    }
-                                    else
-                                    {
-                                        $vl_balance_previous = $count_vl - $earned_vl;
-                                        if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                        {
-                                            $vl_balance_previous = 0;
-                                        }
                                     }
                                 }
                                 
                                 $vl_balance = $count_vl - $vl_balance_previous;
-                                if($vl_balance > $count_previous_vl_used)
-                                {
-                                    $vl_balance = $vl_balance - $count_previous_vl_used;
-                                }
+                                // if($vl_balance > $count_previous_vl_used)
+                                // {
+                                //     $vl_balance = $vl_balance - $count_previous_vl_used;
+                                // }
                                 @endphp
                                 {{ $vl_balance }}
                             @elseif ($leave->leave->id == '2')
