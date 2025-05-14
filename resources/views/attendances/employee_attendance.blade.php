@@ -522,7 +522,7 @@
                                             $schedule_hours = $employee_schedule->working_hours - 1;
                                             $work = $schedule_hours;
                                         }
-                                    }g
+                                    }
                                     @endphp
                                     @if($work > 0)
                                         @php
