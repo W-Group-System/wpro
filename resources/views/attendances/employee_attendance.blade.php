@@ -522,7 +522,7 @@
                                             $schedule_hours = $employee_schedule->working_hours - 1;
                                             $work = $schedule_hours;
                                         }
-                                    }
+                                    }g
                                     @endphp
                                     @if($work > 0)
                                         @php
@@ -543,7 +543,7 @@
                                     @php
                                         $late = $late_diff_hours*60;
                                         if($leave_count == .5)
-                                        {
+                                        { 
                                             if($work < ($schedule_hours/2))
                                             {
                                                 $late = ($schedule_hours/2)-$work;
