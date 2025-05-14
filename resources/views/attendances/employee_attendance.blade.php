@@ -573,7 +573,6 @@
                                     {
                                         $undertime_hrs = 0;
                                     }
-                              
                                     @endphp
                                     @php
                                     $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
@@ -711,6 +710,11 @@
                                     if($overtime == null)
                                     {
                                         $overtime = 0;
+                                    }
+                                    if($check_if_holiday)
+                                    {
+                                        $late = 0;
+                                        $night_diff = 0;
                                     }
                                     $subtotal_abs += $abs;
                                     $subtotal_leave_w_pay += $leave_count;
