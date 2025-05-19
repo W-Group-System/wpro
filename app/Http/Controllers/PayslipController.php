@@ -944,7 +944,8 @@ class PayslipController extends Controller
             ->where('original_date_hired','<=',date('Y-11-30'))
             ->with('company','benefits','department')
             ->where('company_id', $request->company)
-            ->where('classification','!=',8)
+            ->whereNotIn('classification', [8, 1])
+            // ->where('classification','!=',8)
             ->where('status','Active')
             ->get();
         }
@@ -962,7 +963,8 @@ class PayslipController extends Controller
             ->with('company','benefits','department','get_payreg')
             ->where('original_date_hired','<=',date('Y-11-30'))
             ->where('company_id', $request->company)
-            ->where('classification','!=',8)
+            // ->where('classification','!=',8)
+            ->whereNotIn('classification', [8, 1])
             ->where('status','Active')
             // ->where('employee_code','A3140520')
             ->get();
