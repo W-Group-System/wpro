@@ -10,6 +10,7 @@ use App\EmployeeEarnedLeave;
 use App\EmployeeLeaveCredit;
 use App\Holiday;
 use App\Attendance;
+use App\Classification;
 use App\DailySchedule;
 use App\EmployeeOvertime;
 use App\EmployeeWfh;
@@ -19,7 +20,8 @@ use App\ScheduleData;
 use App\Tax;
 use App\ExitClearanceSignatory;
 use App\ExitResign;
-
+use App\Leave;
+use App\Level;
 use Carbon\Carbon;
 
 function employee_name($employee_names,$employee_number){
@@ -1218,92 +1220,94 @@ function get_avatar($id)
     return $image;
 }
 
-function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas = [])
+function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas)
 {
+    // dd($user_id, $leave_type, $date_hired, $scheduleDatas);
+    // dd($scheduleDatas);
     $count = 0;
     $all_days = [];
     $workingDays = [];
     if ($date_hired) {
-        if($scheduleDatas != [])
+        if(count($scheduleDatas) > 0)
         {
             $workingDays = $scheduleDatas->pluck('name')->toArray();
         }
-
+        
         // Fetch the employee_number from the Employee model
         $employee = Employee::where('user_id', $user_id)->first();
-        if (!$employee) {
+        if (empty($employee)) {
             return $count; // If no employee found, return the count as 0
         }
+        
         $employee_number = $employee->employee_number;
-
-        $employee_sl = EmployeeLeave::where('user_id', $user_id)
+        
+        $employee_leave = EmployeeLeave::where('user_id', $user_id)
             ->where('leave_type', $leave_type)
             ->where(function ($query) {
                 $query->where('status', 'Approved')
-                      ->orWhere('status', 'Pending');
+                    ->orWhere('status', 'Pending');
             })
             ->where('withpay',1)
             ->whereYear('date_from', date('Y'))
             ->where('status','!=','Cancelled')
-            // ->where('date_from', '>', $filter_date_leave)
+            ->whereYear('created_at', date('Y'))
             ->get();
-            
-        if ($employee_sl) {
-            foreach ($employee_sl as $leave) {
-                if ($leave->withpay == 1 && $leave->halfday == 1) {
-                    if (date('Y-m-d', strtotime($leave->date_from))) {
+        // // dd($employee_leave);
+        if (count($employee_leave) > 0) 
+        {
+            foreach ($employee_leave as $leave) 
+            {
+                if ($leave->withpay == 1 && $leave->halfday == 1) 
+                {
+                    if (date('Y-m-d', strtotime($leave->date_from))) 
+                    {
                         $count += 0.5;
                     }
                 } else {
                     // Fetch daily schedules where log_date is within the leave date range
-                    $dailySchedules = DailySchedule::where('employee_number', $employee_number)
-                        ->whereBetween('log_date', [$leave->date_from, $leave->date_to])
-                        ->get();
-                    
+                    // $dailySchedules = DailySchedule::select('log_date')->where('employee_number', $employee_number)
+                    //     ->whereBetween('log_date', [$leave->date_from, $leave->date_to])
+                    //     ->get()
+                    //     ->pluck('log_date')
+                    //     ->toArray();
+                    // dd($dailySchedules);
                     // // // Iterate through each date in the date range
                     $date_range = dateRangeHelperLeaveCount($leave->date_from, $leave->date_to);
-                    
-                    if ($date_range) {
-                        
+                    // // dd($date_range);
+                    if (count($date_range) > 0) {
                         foreach ($date_range as $date_r) {
                             $leave_Date = date('Y-m-d', strtotime($date_r));
-                            // Check if withpay is 1 and leave_Date is valid
+                            // // Check if withpay is 1 and leave_Date is valid
                             if ($leave->withpay == 1) {
                                 // Check if log_date exists in dailySchedules
-                                $d = $dailySchedules->where('log_date',$leave_Date)->first();
-                            
-                                if($d != null)
-                                {
-                                    foreach ($dailySchedules as $schedule) {
-                                        $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
+                                // $d = $dailySchedules->where('log_date',$leave_Date)->first();
+                                // if($d)
+                                // {
+                                //     foreach ($dailySchedules as $schedule) {
+                                //         $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
                                         
-                                        if ($log_date === $leave_Date) {
-                                            if (is_null($schedule->working_hours)) {
+                                //         if ($log_date === $leave_Date) {
+                                //             if (is_null($schedule->working_hours)) {
     
-                                            } else {
-                                                $count++; 
-                                                $all_days[]=$leave_Date;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                              
-                                    $dayName = date('l',strtotime($leave_Date)); // Get the day name (e.g., Monday, Tuesday)
-                                    
-                                    if (in_array($dayName, $workingDays)) {
-                                        // dd($dayName);
-                                        
-                                        $count++;
-                                        $all_days[]=$leave_Date;
-                                    }
-
+                                //             } else {
+                                //                 $count++; 
+                                //                 $all_days[]=$leave_Date;
+                                //             }
+                                //         }
+                                //     }
+                                // }
+                                // else
+                                // {
+                                // }
+                                $dayName = date('l',strtotime($leave_Date)); // Get the day name (e.g., Monday, Tuesday)
+                                // dd($dayName);
+                                if (in_array($dayName, $workingDays)) {
+                                    $count++;
+                                    $all_days[]=$leave_Date;
                                 }
                             }
                         }
                     }
-                    
                 }
             }
         }
@@ -1403,4 +1407,166 @@ function countPreviousVLUsed($user_id, $leave_type, $date_hired,$scheduleDatas =
     }
     
     return $count;
+}
+
+function get_leave_entitlement($level, $date_hired)
+{
+    $rank_level = Level::where('id', $level)->first();
+    
+    $date_now = new DateTime(date('Y-m-d'));
+    $date_hired = new DateTime($date_hired);
+    $date_diff = $date_now->diff($date_hired);
+    
+    $leave_entitlement = 0;
+    if ($rank_level->name == 'RANK&FILE')
+    {
+        if ($date_diff->y <= 1)
+        {
+            $leave_entitlement =  10;
+        }
+        elseif ($date_diff->y > 1 && $date_diff->y <= 3)
+        {
+            $leave_entitlement =  10;
+        }
+        elseif($date_diff->y > 3 && $date_diff->y <= 5)
+        {
+            $leave_entitlement = 12;
+        }
+        elseif($date_diff->y > 5 && $date_diff->y <= 10)
+        {
+            $leave_entitlement = 15;
+        }
+        elseif($date_diff->y > 10 && $date_diff->y <= 15)
+        {
+            $leave_entitlement = 16;
+        }
+        elseif($date_diff->y > 15 && $date_diff->y <= 20)
+        {
+            $leave_entitlement = 17;
+        }
+        elseif($date_diff->y > 20)
+        {
+            $leave_entitlement = 18;
+        }
+    }
+    elseif($rank_level->name == 'SUPERVISOR')
+    {
+        if ($date_diff->y <= 1)
+        {
+            $leave_entitlement =  12;
+        }
+        elseif ($date_diff->y >= 1 && $date_diff->y <= 3)
+        {
+            $leave_entitlement =  12;
+        }
+        elseif($date_diff->y > 3 && $date_diff->y <= 5)
+        {
+            $leave_entitlement = 12;
+        }
+        elseif($date_diff->y > 5 && $date_diff->y <= 10)
+        {
+            $leave_entitlement = 15;
+        }
+        elseif($date_diff->y > 10 && $date_diff->y <= 15)
+        {
+            $leave_entitlement = 16;
+        }
+        elseif($date_diff->y > 15 && $date_diff->y <= 20)
+        {
+            $leave_entitlement = 17;
+        }
+        elseif($date_diff->y > 20)
+        {
+            $leave_entitlement = 18;
+        }
+    }
+    elseif($rank_level->name == 'MANAGER')
+    {
+        if ($date_diff->y <= 1)
+        {
+            $leave_entitlement =  15;
+        }
+        elseif ($date_diff->y > 1 && $date_diff->y <= 3)
+        {
+            $leave_entitlement =  15;
+        }
+        elseif($date_diff->y > 3 && $date_diff->y <= 5)
+        {
+            $leave_entitlement = 15;
+        }
+        elseif($date_diff->y > 5 && $date_diff->y <= 10)
+        {
+            $leave_entitlement = 17;
+        }
+        elseif($date_diff->y > 10 && $date_diff->y <= 15)
+        {
+            $leave_entitlement = 18;
+        }
+        elseif($date_diff->y > 15 && $date_diff->y <= 20)
+        {
+            $leave_entitlement = 19;
+        }
+        elseif($date_diff->y > 20)
+        {
+            $leave_entitlement = 20;
+        }
+    }
+    
+    return $leave_entitlement;
+}
+
+function compute_leave_credits($leave,$leave_entitlement,$date_hired,$date_regularization)
+{
+    $leave_type = Leave::where('id', $leave)->first();
+    // dd($leave_type);
+    if ($leave_type->code == 'VL')
+    {
+        $date_regular = new DateTime($date_regularization);
+        $end_date = new DateTime(date('Y').'-12-31');
+        $count_days = $end_date->diff($date_regular);
+
+        $days = $count_days->days;
+        $total_vl_credits = (int)$days / 365 * (int)$leave_entitlement;
+
+        return round($total_vl_credits,2);
+    }
+    elseif($leave_type->code == 'SL')
+    {
+        $date_regular = new DateTime($date_regularization);
+        $end_date = new DateTime(date('Y').'-12-31');
+        $count_days = $end_date->diff($date_regular);
+
+        $days = $count_days->days;
+        $total_vl_credits = (int)$days / 365 * (int)$leave_entitlement;
+
+        return round($total_vl_credits,2);
+    }
+}
+
+function earn_per_month($leave,$date_regularization="")
+{
+    $leave_type = Leave::where('id', $leave)->first();
+    
+    if ($leave_type->code == 'VL')
+    {
+        $date_regular = new DateTime($date_regularization);
+        $end_date = new DateTime(date('Y').'-12-31');
+        $count_days = $end_date->diff($date_regular);
+
+        $days = $count_days->days;
+        $total_earned = (int)$days / 365;
+
+        return round($total_earned, 2);
+    }
+    elseif($leave_type->code == 'SL')
+    {
+        $date_regular = new DateTime($date_regularization);
+        $end_date = new DateTime(date('Y').'-12-31');
+        $count_days = $end_date->diff($date_regular);
+
+        $days = $count_days->days;
+        $total_earned = (int)$days / 365;
+
+        return round($total_earned, 2);
+    }
 }

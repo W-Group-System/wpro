@@ -623,29 +623,32 @@
                     {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-companies') }}">Employee Groups</a>
                     </li> --}}
-                    @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
+                    {{-- @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-leave-credits') }}">Employee Leave Credits</a>
                     </li>
-                    @endif
-                    @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
-                    {{-- <li class="nav-item">
+                    @endif --}}
+                    {{-- @if(checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url('/manual-employee-earned-leaves') }}">Manual Earned Leaves</a>
-                    </li> --}}
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-leave-balances') }}">Employee Leave Balances</a>
                     </li>
-                    @endif
-                    @if(checkUserPrivilege('masterfiles_employee_leave_earned',auth()->user()->id) == 'yes')
+                    @endif --}}
+                    {{-- @if(checkUserPrivilege('masterfiles_employee_leave_earned',auth()->user()->id) == 'yes')
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('/employee-earned-leaves') }}">Employee Earned Leaves</a>
                     </li>
-                    @endif
+                    @endif --}}
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/allowances') }}">Allowances</a></li> --}}
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/incentives') }}">Incentives</a></li> --}}
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-benefits') }}">Employee Benefits</a></li> --}}
                     <li class="nav-item">
                         <a class="nav-link @if($header == 'sl_banks') active @endif" href="{{ url('/sl_banks') }}">Employee SL Banks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @if($header == 'employee_leaves_list') active @endif" href="{{ url('/employee_leaves_list') }}">Employee Leaves List</a>
                     </li>
                 </ul>
             </div>
@@ -662,8 +665,9 @@
                 <ul class="nav flex-column sub-menu">
                     {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('/employee-report') }}">Employees</a></li> --}}
                     @if (checkUserPrivilege('reports_leave',auth()->user()->id) == 'yes')
-                    <li class="nav-item"> <a class="nav-link" href="{{ url('/leave-report') }}">Leave Reports</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/leave-filling') }}">Leave Fillings</a></li>
                     @endif
+                    <li class="nav-item"> <a class="nav-link" href="{{ url('/leave_report') }}">Leave Report</a></li>
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/leave-report-per-employee') }}">Leave Reports Per Employee</a></li>
                     @if (checkUserPrivilege('reports_overtime',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/overtime-report') }}">Overtime Reports</a></li>

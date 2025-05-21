@@ -313,7 +313,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Reports
     Route::get('employee-report', 'EmployeeController@employee_report');
-    Route::get('leave-report', 'LeaveController@leave_report');
+    Route::get('leave-filling', 'LeaveController@leave_report');
     Route::get('leave-report-export', 'LeaveController@export');
     Route::get('totalExpense-report', 'PayrollController@totalExpense_report');
     Route::get('loan-report', 'LoanController@loan_report');
@@ -470,6 +470,14 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Extract Attendance
     Route::get('extract_attendance', 'AttendanceController@extractAttendance');
+
+    // Employee Leaves
+    Route::get('employee_leaves_list','EmployeeLeaveListController@index');
+    Route::post('store_employee_leaves_list', 'EmployeeLeaveListController@store');
+    Route::post('delete_leave/{id}', 'EmployeeLeaveListController@destroy');
+    Route::post('refresh_employee', 'EmployeeLeaveListController@refreshEmployee');
+    Route::get('refresh_leave', 'EmployeeLeaveListController@refreshLeave');
+    Route::get('leave_report', 'EmployeeLeaveListController@leaveReport');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
