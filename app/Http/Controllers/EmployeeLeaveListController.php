@@ -125,7 +125,7 @@ class EmployeeLeaveListController extends Controller
 
     public function refreshEmployee(Request $request)
     {
-        $employee = Employee::where('id', $request->employee_id)->first();
+        $employee = Employee::where('user_id', $request->employee_id)->first();
 
         return $employee;
     }
@@ -218,5 +218,15 @@ class EmployeeLeaveListController extends Controller
         $merge_arr = collect($vl_leave_array)->merge($sl_leave_array);
 
         return view('employee_leave_list.leave_report', compact('header', 'merge_arr'));
+    }
+
+    public function refreshLeaveCredit(Request $request)
+    {
+        // dd($request->all());
+        $employee = Employee::where('user_id', $request->employee)->first();
+        $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired);
+        $leave_credits = compute_leave_credits($request->leave, $leave_entitlement, $request->date_hired, $request->date_regularization);
+        
+        return $leave_credits;
     }
 }

@@ -80,9 +80,33 @@
                     _token: "{{ csrf_token() }}"
                 },
                 success:function(res) {
-                    // console.log(res);
                     $("[name='level']").val(res.level).trigger('change')
                     $("[name='date_hired']").val(res.original_date_hired)
+                }
+            })
+        })
+
+        $("[name='date_regularization']").on('change', function() {
+            var employee = $("[name='employee']").val()
+            var leave = $("[name='leave']").val()
+            var level = $("[name='level']").val()
+            var dateHired = $("[name='date_hired']").val()
+            var dateRegularization = $(this).val()
+
+            $.ajax({
+                type: "POST",
+                url: "{{ url('refresh_leave_credit') }}",
+                data: {
+                    employee: employee,
+                    leave: leave,
+                    level: level,
+                    date_hired: dateHired,
+                    date_regularization: dateRegularization,
+                    _token: "{{ csrf_token() }}",
+                },
+                success: function(data)
+                {
+                    $("[name='leave_credit']").val(data)
                 }
             })
         })

@@ -44,6 +44,10 @@
                             Date Regularization
                             <input type="date" name="date_regularization" class="form-control" required>
                         </div>
+                        <div class="col-md-6">
+                            Leave Credit
+                            <input type="text" name="leave_credit" class="form-control" readonly>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

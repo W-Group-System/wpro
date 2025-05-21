@@ -477,6 +477,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('delete_leave/{id}', 'EmployeeLeaveListController@destroy');
     Route::post('refresh_employee', 'EmployeeLeaveListController@refreshEmployee');
     Route::get('refresh_leave', 'EmployeeLeaveListController@refreshLeave');
+    Route::post('refresh_leave_credit', 'EmployeeLeaveListController@refreshLeaveCredit');
     Route::get('leave_report', 'EmployeeLeaveListController@leaveReport');
 });
 Route::post('new-employee', 'EmployeeController@new');

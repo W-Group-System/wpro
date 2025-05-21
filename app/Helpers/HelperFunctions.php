@@ -1518,7 +1518,7 @@ function get_leave_entitlement($level, $date_hired)
 function compute_leave_credits($leave,$leave_entitlement,$date_hired,$date_regularization)
 {
     $leave_type = Leave::where('id', $leave)->first();
-    // dd($leave_type);
+
     if ($leave_type->code == 'VL')
     {
         $date_regular = new DateTime($date_regularization);
