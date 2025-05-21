@@ -88,7 +88,7 @@
 
         $("[name='date_regularization']").on('change', function() {
             var employee = $("[name='employee']").val()
-            var leave = $("[name='leave']").val()
+            var leave = $("[name='leave']").val() 
             var level = $("[name='level']").val()
             var dateHired = $("[name='date_hired']").val()
             var dateRegularization = $(this).val() 
