@@ -82,7 +82,7 @@
                 success:function(res) {
                     $("[name='level']").val(res.level).trigger('change')
                     $("[name='date_hired']").val(res.original_date_hired)
-                }
+                } 
             })
         })
 
