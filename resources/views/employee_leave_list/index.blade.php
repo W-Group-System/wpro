@@ -91,7 +91,7 @@
             var leave = $("[name='leave']").val()
             var level = $("[name='level']").val()
             var dateHired = $("[name='date_hired']").val()
-            var dateRegularization = $(this).val()
+            var dateRegularization = $(this).val() 
 
             $.ajax({
                 type: "POST",
