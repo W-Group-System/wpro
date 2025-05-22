@@ -715,6 +715,7 @@
                                     {
                                         $late = 0;
                                         $night_diff = 0;
+                                        $undertime_hrs = 0;
                                     }
                                     $subtotal_abs += $abs;
                                     $subtotal_leave_w_pay += $leave_count;
