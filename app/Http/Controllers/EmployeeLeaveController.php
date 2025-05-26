@@ -90,10 +90,11 @@ class EmployeeLeaveController extends Controller
         $threeDaysAgo = date('Y-m-d', strtotime('-3 weekdays'));
         // dd($threeDaysAgo);
         $attendance_logs = AttendanceLog::where('emp_code', auth()->user()->employee->employee_number)
-            ->orderBy('date', 'desc')
+            // ->orderBy('date', 'desc')
+            ->orderBy('datetime', 'desc')
             ->whereDate('date', '<', $threeDaysAgo)
             ->first();
-            $attendance_obs = EmployeeOb::whereHas('employee', function($query) {
+        $attendance_obs = EmployeeOb::whereHas('employee', function($query) {
                 $query->where('user_id', auth()->user()->employee->user_id);
             })
             ->where('status', 'Approved')
@@ -113,12 +114,16 @@ class EmployeeLeaveController extends Controller
            }
         }
         $last_logs = date('Y-m-d',strtotime($last_logs. "+1 day"));
+        $last_time = date('H:i:s', strtotime($attendance_logs->datetime));
         if($last_logs >= date('Y-m-d', strtotime('-3 weekdays')))
         {
             $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
         }
-
-        // dd($attendance_logs);
+        if ($last_time <= '16:00:00')
+        {
+            $last_logs = date('Y-m-d', strtotime('-4 weekdays'));
+        }
+        
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->pluck('log_date')
             ->toArray();
