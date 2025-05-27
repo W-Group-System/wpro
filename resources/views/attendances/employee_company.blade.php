@@ -864,7 +864,7 @@
                                                 
                                                     if($employee_schedule != null)
                                                     {
-                                                            if($employee_schedule->time_in_from == '00:00')
+                                                            if(empty($employee_schedule->time_in_from))
                                                             {
                                                                 $rest = "RESTDAY";
                                                             }
