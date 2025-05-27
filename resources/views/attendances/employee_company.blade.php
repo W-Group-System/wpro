@@ -179,7 +179,7 @@
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][log_date]" value="{{date('Y-m-d',strtotime($date_r))}}">{{date('d/m/Y',strtotime($date_r))}}</td>
                                                 <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != '00:00' ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
                                                     @if($employee_schedule != null)
-                                                        @if($employee_schedule->time_in_from != '00:00')
+                                                        @if($employee_schedule->time_in_from)
                                                         <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
                                                         @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
                                                             <small>(Flexi)</small>
