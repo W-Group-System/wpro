@@ -232,7 +232,7 @@
                                                     $cenvertedTime = date('Y-m-d 00:00:00',strtotime($date_r));
                                                     if($employee_schedule != null)
                                                     {
-                                                        if($employee_schedule->time_in_from != '00:00')
+                                                        if($employee_schedule->time_in_from)
                                                         {
                                                             $cenvertedTime = date('Y-m-d H:i:s',strtotime('-6 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
                                                             // dd($cenvertedTime);
@@ -428,7 +428,7 @@
                                                                         $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                     
                                                                         if(empty($if_leave)){
-                                                                            if($employee_schedule->time_in_from != '00:00') {
+                                                                            if($employee_schedule->time_in_from) {
                                                                             if(empty($if_has_dtr)){
                                                                                     if($time_out == null){
                                                                                         $is_absent = 'Absent';
@@ -465,7 +465,7 @@
                                                                 $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 
                                                                 if(empty($if_leave)){
-                                                                    if($employee_schedule->time_in_from != '00:00') {
+                                                                    if($employee_schedule->time_in_from) {
                                                                     if(empty($if_has_dtr)){
                                                                             if($time_out == null){
                                                                                 $is_absent = 'Absent';
