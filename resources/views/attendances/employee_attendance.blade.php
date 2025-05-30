@@ -714,7 +714,7 @@
                                     if($check_if_holiday)
                                     {
                                         $late = 0;
-                                        $night_diff = 0;
+                                        // $night_diff = 0;
                                         $undertime_hrs = 0;
                                     }
                                     $subtotal_abs += $abs;
