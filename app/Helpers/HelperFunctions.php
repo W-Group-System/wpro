@@ -1251,6 +1251,7 @@ function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas)
             ->whereYear('date_from', date('Y'))
             ->where('status','!=','Cancelled')
             ->whereYear('created_at', date('Y'))
+            ->whereNull('is_previous_year')
             ->get();
         // // dd($employee_leave);
         if (count($employee_leave) > 0) 
