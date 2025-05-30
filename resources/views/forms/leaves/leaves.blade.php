@@ -44,7 +44,7 @@
                           $vl_balance_final = 0;
                       @endphp
 
-                      @if(count($leave_balances) > 0)
+                      {{-- @if(count($leave_balances) > 0)
                         @foreach($leave_balances as $leave)
                         <tr>
                           <td>{{$leave->leave->leave_type}}</td>
@@ -181,10 +181,8 @@
                           </td>
                           <td>
                             @if ($leave->leave->id == '1')
-                                {{-- {{$used_vl}} --}}
                                 {{ $used_vl_this_yr }}
                             @elseif ($leave->leave->id == '2')
-                                {{-- {{$used_sl}} --}}
                                 {{ $used_sl_this_yr }}
                             @elseif ($leave->leave->id == '10')
                                 {{$used_sil}}
@@ -497,7 +495,261 @@
                             }
                           @endphp
                         </tr>
-                      @endif
+                      @endif --}}
+                        @if(count($employee_leave_lists) > 0)
+                            @foreach($employee_leave_lists->groupBy('leave_id') as $leave_id => $leave)
+                                <tr>
+                                    <td>
+                                        @if ($leave_id == '1')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '2')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '10')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '3')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '4')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '5')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '7')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '8')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '6')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @elseif ($leave_id == '11')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{-- @if($leave_id == 1)
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif($leave_id == 2)
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @endif --}}
+                                        @if ($leave_id == '1')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '2')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '10')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '3')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '4')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '5')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '7')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '8')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '6')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '11')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($leave_id == '1')
+                                            {{ $used_vl_this_yr }}
+                                        @elseif ($leave_id == '2')
+                                            {{ $used_sl_this_yr }}
+                                        @elseif ($leave_id == '10')
+                                            {{$used_sil}}
+                                        @elseif ($leave_id == '3')
+                                            {{$used_ml}}
+                                        @elseif ($leave_id == '4')
+                                            {{$used_pl}}
+                                        @elseif ($leave_id == '5')
+                                            {{$used_spl}}
+                                        @elseif ($leave_id == '7')
+                                            {{$used_splw}}
+                                        @elseif ($leave_id == '8')
+                                            {{$used_splvv}}
+                                        @elseif ($leave_id == '6')
+                                            {{$used_el}}
+                                        @elseif ($leave_id == '11')
+                                            {{$used_bl}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($leave_id == '1')
+                                            @php
+                                                $date_from = new DateTime($employee_status->original_date_hired);
+                                                $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
+                                                $total_months = (($date_diff->y) * 12) + ($date_diff->m);
+
+                                                $count_vl =  ($leave->pluck('earned_per_month')->sum()) - $used_vl_this_yr;
+
+                                                if($count_vl > 0){
+                                                    if($total_months > 11){
+                                                        $is_allowed_to_file_vl = true;
+                                                    }else{
+                                                        $is_allowed_to_file_vl = false;
+                                                    }
+                                                }else{
+                                                    $is_allowed_to_file_vl = false;
+                                                }
+
+                                                $vl_balance = $count_vl;
+                                            @endphp
+                                            @if($vl_balance > 0)
+                                            {{ $vl_balance }}
+                                            @else
+                                            0
+                                            @endif
+                                        @elseif ($leave_id == '2')
+                                            @php
+                                                $date_from = new DateTime($employee_status->original_date_hired);
+                                                $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
+                                                $total_months = (($date_diff->y) * 12) + ($date_diff->m);
+
+                                                $count_sl =  ($leave->pluck('earned_per_month')->sum()) - $used_sl_this_yr;
+
+                                                if($count_sl > 0){
+                                                    if($total_months > 11){
+                                                        $is_allowed_to_file_sl = true;
+                                                    }else{
+                                                        $is_allowed_to_file_sl = false;
+                                                    }
+                                                }else{
+                                                    $is_allowed_to_file_sl = false;
+                                                }
+
+                                                $sl_balance = $count_sl;
+                                            @endphp
+                                            @if($sl_balance > 0)
+                                            {{ $sl_balance}}
+                                            @else
+                                            0
+                                            @endif
+                                            
+                                        @elseif ($leave_id == '10')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_sil }}
+                                            @php
+                                            $count_sil = ($leave->pluck('earned_per_month')->sum()) - $used_sil;
+                                            if($count_sil > 0){
+                                                $is_allowed_to_file_sil = true;
+                                            }else{
+                                                $is_allowed_to_file_sil = false;
+                                            }
+                                            @endphp
+                                        @elseif ($leave_id == '3')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_ml}}
+                                            @php
+                                            $count_ml = ($leave->pluck('earned_per_month')->sum()) - $used_ml;
+                                            if($count_ml > 0){
+                                                $is_allowed_to_file_ml = true;
+                                            }else{
+                                                $is_allowed_to_file_ml = false;
+                                            }
+
+                                            $ml_balance = $count_ml;
+                                            @endphp
+                                        @elseif ($leave_id == '4')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_pl}}
+                                            @php
+                                            $count_pl = ($leave->pluck('earned_per_month')->sum()) - $used_pl;
+                                            if($count_pl > 0){
+                                                $is_allowed_to_file_pl = true;
+                                            }else{
+                                                $is_allowed_to_file_pl = false;
+                                            }
+
+                                            $pl_balance = $count_pl;
+                                            @endphp
+                                        @elseif ($leave_id == '5')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_spl}}
+                                            @php
+                                                $count_spl = ($leave->pluck('earned_per_month')->sum()) - $used_spl;
+                                            if($count_spl > 0){
+                                                $is_allowed_to_file_spl = true;
+                                            }else{
+                                                $is_allowed_to_file_spl = false;
+                                            }
+                                            $spl_balance = $count_spl;
+                                            @endphp
+                                        @elseif ($leave_id == '7')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_splw}}
+                                            @php
+                                            $count_splw = ($leave->pluck('earned_per_month')->sum()) - $used_splw;
+                                            if($count_splw > 0){
+                                                $is_allowed_to_file_splw = true;
+                                            }else{
+                                                $is_allowed_to_file_splw = false;
+                                            }
+
+                                            $splw_balance = $count_splw;
+                                            @endphp
+                                        @elseif ($leave_id == '9')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_splvv}}
+                                            @php
+                                            $count_splvv = ($leave->pluck('earned_per_month')->sum()) - $used_splvv;
+                                            if($count_splvv > 0){
+                                                $is_allowed_to_file_splvv = true;
+                                            }else{
+                                                $is_allowed_to_file_splvv = false;
+                                            }
+                                            $splvv_balance = $count_splvv;
+                                            @endphp
+                                        @elseif ($leave_id == '6')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_el}}
+                                            @php
+                                            $count_el = ($leave->pluck('earned_per_month')->sum()) - $used_el;
+                                            if($count_el > 0){
+                                                $is_allowed_to_file_el = true;
+                                            }else{
+                                                $is_allowed_to_file_el = false;
+                                            }
+                                            $el_balance = $count_el;
+                                            @endphp
+                                        @elseif ($leave_id == '11')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_bl}}
+                                            @php
+                                            $count_bl = ($leave->pluck('earned_per_month')->sum()) - $used_bl;
+                                            if($count_bl > 0){
+                                                $is_allowed_to_file_bl = true;
+                                            }else{
+                                                $is_allowed_to_file_bl = false;
+                                            }
+                                            $bl_balance = $count_bl;
+                                            @endphp
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                   </table>
                 </div>
