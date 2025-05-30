@@ -56,23 +56,36 @@ class EmployeeLeaveListController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $employee = Employee::where('user_id', $request->employee)->first();
-        $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired);
-        $leave_credits = compute_leave_credits($request->leave, $leave_entitlement, $request->date_hired, $request->date_regularization);
-        $earned_per_month = earn_per_month($request->leave, $request->date_regularization);
-        
-        $employee_leave_list = new EmployeeLeaveList;
-        $employee_leave_list->user_id = $request->employee;
-        $employee_leave_list->leave_id = $request->leave;
-        $employee_leave_list->year = date('Y');
-        $employee_leave_list->month = date('m');
-        $employee_leave_list->total_leaves = $leave_credits;
-        $employee_leave_list->leave_entitlement = $leave_entitlement;
-        if ($request->leave == 1)
+        if ($request->type == 1)
         {
-            $employee_leave_list->earned_per_month = $earned_per_month;
+            $employee = Employee::where('user_id', $request->employee)->first();
+            $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired);
+            $leave_credits = compute_leave_credits($request->leave, $leave_entitlement, $request->date_hired, $request->date_regularization);
+            $earned_per_month = earn_per_month($request->leave, $request->date_regularization);
+            
+            $employee_leave_list = new EmployeeLeaveList;
+            $employee_leave_list->user_id = $request->employee;
+            $employee_leave_list->leave_id = $request->leave;
+            $employee_leave_list->year = date('Y');
+            $employee_leave_list->month = date('m');
+            $employee_leave_list->total_leaves = $leave_credits;
+            $employee_leave_list->leave_entitlement = $leave_entitlement;
+            if ($request->leave == 1)
+            {
+                $employee_leave_list->earned_per_month = $earned_per_month;
+            }
+            $employee_leave_list->save();
         }
-        $employee_leave_list->save();
+        elseif($request->type == 2)
+        {
+            $employee_leave_list = new EmployeeLeaveList;
+            $employee_leave_list->user_id = $request->employee;
+            $employee_leave_list->leave_id = $request->leave;
+            $employee_leave_list->earned_per_month = $request->earned_per_month;
+            $employee_leave_list->year = date('Y');
+            $employee_leave_list->month = date('m');
+            $employee_leave_list->save();
+        }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();

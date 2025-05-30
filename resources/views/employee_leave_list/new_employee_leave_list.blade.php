@@ -10,6 +10,15 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
+                            Type
+                            <select data-placeholder="Select type" name="type" class="form-control js-example-basic-single" style="width: 100%; position: relative;" required>
+                                <option value=""></option>
+                                <option value="1">New Leave Credit</option>
+                                <option value="2">For Tenure</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
                             Employee
                             <select data-placeholder="Select employee" name="employee" class="form-control js-example-basic-single" style="width: 100%; position: relative;" required>
                                 <option value=""></option>
@@ -40,13 +49,17 @@
                             Date Hired
                             <input type="date" name="date_hired" class="form-control" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="dateRegularization" hidden>
                             Date Regularization
-                            <input type="date" name="date_regularization" class="form-control" required>
+                            <input type="date" name="date_regularization" class="form-control" >
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" id="leaveCredit" hidden>
                             Leave Credit
                             <input type="text" name="leave_credit" class="form-control" readonly>
+                        </div>
+                        <div class="col-md-6" id="addLeave" hidden>
+                            Add Leave Balance
+                            <input type="number" step=".01" name="earned_per_month" class="form-control" >
                         </div>
                     </div>
                 </div>

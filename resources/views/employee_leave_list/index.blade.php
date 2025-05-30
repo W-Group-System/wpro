@@ -25,7 +25,7 @@
                             @endif
     
                             <div class="table-responsive">
-                                <table class="table table-hover table-bordered tablewithSearch">
+                                <table class="table table-hover table-bordered" id="tablewithSearch">
                                     <thead>
                                         <tr>
                                             {{-- <th>Action</th> --}}
@@ -69,6 +69,17 @@
 @endforeach --}}
 <script>
     $(document).ready(function() {
+        $('#tablewithSearch').DataTable({
+            dom: 'Bfrtip',
+            stateSave: true,
+            pageLength: 25,
+            //"ordering": true,
+            //"paging": false,
+            //"fixedColumns": {
+            //	"left": 2
+            //}
+        });
+
         $("[name='employee']").on('change', function() {
             var value = $(this).val()
     
@@ -109,6 +120,30 @@
                     $("[name='leave_credit']").val(data)
                 }
             })
+        })
+
+        $("[name='type']").on('change', function() {
+            var value = $(this).val()
+            var dateRegularization = $("#dateRegularization")
+            var leaveCredit = $("#leaveCredit")
+            var addLeave = $("#addLeave")
+
+            if (value == 1)
+            {
+                dateRegularization.removeAttr('hidden')
+                dateRegularization.prop('required', true)
+
+                leaveCredit.removeAttr('hidden')
+                addLeave.prop('hidden', true)
+            }
+            else if(value == 2)
+            {
+                dateRegularization.prop('hidden', true)
+                dateRegularization.removeAttr('required')
+
+                leaveCredit.prop('hidden', true)
+                addLeave.removeAttr('hidden')
+            }
         })
     })
 </script>
