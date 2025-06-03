@@ -111,6 +111,7 @@ class EarnedVacationLeave extends Command
                         $q->whereMonth('earned_date',$month)
                         ->whereYear('earned_date',$year);
                     })
+                    ->whereNotNull('earned_date')
                     ->where('leave_id',1)
                     ->first();                
                 
