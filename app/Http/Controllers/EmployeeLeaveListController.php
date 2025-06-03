@@ -148,7 +148,7 @@ class EmployeeLeaveListController extends Controller
         $employees = Employee::with('employee_leave_list')
             ->where('status','Active')
             ->whereHas('employee_leave_list')
-            ->where('user_id', 470)
+            // ->where('user_id', 470)
             ->get();
         // dd($employees);
         $f_d = date('Y-m-01');
