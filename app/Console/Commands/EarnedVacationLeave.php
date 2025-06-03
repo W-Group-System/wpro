@@ -106,7 +106,8 @@ class EarnedVacationLeave extends Command
             // dd($leave_credits);
             if($leave_credits != null)
             {
-                $check_if_exist_vl = EmployeeLeaveList::where(function($q) use($month,$year){
+                $check_if_exist_vl = EmployeeLeaveList::where('user_id', $employee->user_id)
+                    ->where(function($q) use($month,$year){
                         $q->whereMonth('earned_date',$month)
                         ->whereYear('earned_date',$year);
                     })

@@ -165,10 +165,11 @@ class EmployeeLeaveListController extends Controller
         foreach($employees as $employee)
         {
             $leave_credits = ($employee->employee_leave_list)->where('leave_id',1)->sortByDesc('id')->first();
-            // dd($leave_credits);
+            
             if($leave_credits != null)
             {
-                $check_if_exist_vl = EmployeeLeaveList::where(function($q) use($month,$year){
+                $check_if_exist_vl = EmployeeLeaveList::where('user_id', $employee->user_id)
+                    ->where(function($q) use($month,$year){
                         $q->whereMonth('earned_date',$month)
                         ->whereYear('earned_date',$year);
                     })
