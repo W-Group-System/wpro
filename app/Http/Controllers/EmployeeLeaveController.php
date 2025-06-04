@@ -45,7 +45,8 @@ class EmployeeLeaveController extends Controller
         $used_splvv = checkUsedLeave(auth()->user()->id,9);
         $used_el = checkUsedLeave(auth()->user()->id,6);
         $used_bl = checkUsedLeave(auth()->user()->id,11);
-       
+        $used_mc = checkUsedLeave(auth()->user()->id,12);
+
         $earned_vl = checkEarnedLeave(auth()->user()->id,1,$employee_status->original_date_hired);
         $earned_sl = checkEarnedLeave(auth()->user()->id,2,$employee_status->original_date_hired);
         $earned_sil = checkEarnedLeave(auth()->user()->id,10,$employee_status->original_date_hired);
@@ -175,7 +176,8 @@ class EmployeeLeaveController extends Controller
             'used_sl_this_yr' => $used_sl_this_yr,
             'used_vl_this_yr' => $used_vl_this_yr,
             'count_previous_vl_used' => $count_previous_vl_used,
-            'employee_leave_lists' => $employee_leave_lists
+            'employee_leave_lists' => $employee_leave_lists,
+            'used_mc' => $used_mc
         ));
     }  
 

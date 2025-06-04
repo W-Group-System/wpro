@@ -550,6 +550,11 @@
                                                     {{ $leave_name->leave->leave_type }}
                                                     @break
                                                 @endforeach
+                                        @elseif ($leave_id == '12')
+                                                @foreach ($leave as $leave_name)
+                                                    {{ $leave_name->leave->leave_type }}
+                                                    @break
+                                                @endforeach
                                         @endif
                                     </td>
                                     <td>
@@ -578,6 +583,8 @@
                                             {{ $leave->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '11')
                                             {{ $leave->pluck('earned_per_month')->sum() }}
+                                        @elseif ($leave_id == '12')
+                                            {{ $leave->pluck('earned_per_month')->sum() }}
                                         @endif
                                     </td>
                                     <td>
@@ -601,6 +608,8 @@
                                             {{$used_el}}
                                         @elseif ($leave_id == '11')
                                             {{$used_bl}}
+                                        @elseif ($leave_id == '12')
+                                            {{$used_mc}}
                                         @endif
                                     </td>
                                     <td>
@@ -744,6 +753,17 @@
                                                 $is_allowed_to_file_bl = false;
                                             }
                                             $bl_balance = $count_bl;
+                                            @endphp
+                                        @elseif ($leave_id == '12')
+                                            {{($leave->pluck('earned_per_month')->sum()) - $used_mc}}
+                                            @php
+                                            $count_mc = ($leave->pluck('earned_per_month')->sum()) - $used_mc;
+                                            if($count_mc > 0){
+                                                $is_allowed_to_file_mc = true;
+                                            }else{
+                                                $is_allowed_to_file_mc = false;
+                                            }
+                                            $mc_balance = $count_mc;
                                             @endphp
                                         @endif
                                     </td>
