@@ -29,6 +29,7 @@
                           $is_allowed_to_file_splvv = false;
                           $is_allowed_to_file_el = false;
                           $is_allowed_to_file_bl = false;
+                          $is_allowed_to_file_mc = false;
 
                           $vl_balance = 0;
                           $sl_balance = 0;
@@ -39,6 +40,7 @@
                           $splvv_balance = 0;
                           $el_balance = 0;
                           $bl_balance = 0;
+                          $mc_balance = 0;
 
                           $sl_balance_final = 0;
                           $vl_balance_final = 0;
