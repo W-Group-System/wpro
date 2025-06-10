@@ -152,6 +152,10 @@
             {
                 $('[name="leave_credit"]').val('60.00')
             }
+            else if (value == 11)
+            {
+                $('[name="leave_credit"]').val('3.00')
+            }
             else
             {
                 $('[name="leave_credit"]').val('')
