@@ -2097,7 +2097,9 @@ class EmployeeController extends Controller
             'header' => 'biometrics',
             'employees' => $employees,
             'companies' => $companies,
-            'locations' => $locations
+            'locations' => $locations,
+            'from' => $request->from,
+            'to' => $request->to
         ));
     }
 
