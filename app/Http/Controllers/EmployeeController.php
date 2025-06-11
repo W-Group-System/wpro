@@ -2090,7 +2090,7 @@ class EmployeeController extends Controller
         ->whereIn('company_id', $allowed_companies)
         ->get();
 
-        $location_array = ['PRI', 'PRI-BMO', 'FMTCC/MRDC', 'PBI', 'CCC', 'WFA', 'WHI-Carmona', 'WOI', 'WCC', 'WTCC', 'WGC', 'SPAI'];
+        $location_array = ['PRI', 'PRI-BMO', 'FMTCC/MRDC', 'PBI', 'CCC', 'WFA', 'WHI-Carmona', 'WOI', 'WCC', 'WTCC', 'WGC', 'SPAI', 'MRDC', 'FMTCC'];
         $locations = AttendanceLog::select('location')->whereIn('location', $location_array)->groupBy('location')->get();
 
         return view('employees.sync', array(
