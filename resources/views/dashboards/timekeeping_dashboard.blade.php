@@ -213,33 +213,27 @@
                                         @endif  
                                     </td>
                                     <td id="tdStatus{{ $item->id }}">
-                                        @if(count($item->approver) > 0)
-                                            @foreach($item->approver as $approver)
-                                                @if($item->status == 'Approved')
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
-                                                @else
-                                                    @if($item->level >= $approver->level)
-                                                    @if ($item->level == 0 && $item->status == 'Declined')
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                                    @else
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
-                                                    @endif
-                                                    @else
-                                                    @if ($item->status == 'Declined')
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
-                                                    @else
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
-                                                    @endif
-                                                    @endif<br>
+                                        @if($item->approver_by)
+                                            @if($item->status == 'Approved')
+                                                @if($item->approveBy)
+                                                    {{$item->approveBy->name}} -  <label class="badge badge-success mt-1">Approved</label>
                                                 @endif
-                                            @endforeach
-
-                                            @if($item->status == 'Pending' && $item->level == '1')
-                                                <br>
-                                                <button onclick="reset({{ $item->id }},'ob')" class="btn btn-sm btn-primary mt-1">Reset Approval</button>
+                                            @elseif($item->status == 'Pending')
+                                                @if($item->approveBy)
+                                                    {{$item->approveBy->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                                @endif
+                                            @elseif($item->status == 'Declined')
+                                                @if($item->approveBy)
+                                                    {{$item->approveBy->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                @endif
                                             @endif
-                                        @else
-                                        <label class="badge badge-danger mt-1">No Approver</label>
+                                        {{-- @else
+                                        <label class="badge badge-danger mt-1">No Approver</label> --}}
+                                        @endif
+
+                                        @if($item->status == 'Pending' && $item->level == '1')
+                                            <br>
+                                            <button onclick="reset({{ $item->id }},'ob')" class="btn btn-sm btn-primary mt-1">Reset Approval</button>
                                         @endif
                                     </td>
                                 </tr>
