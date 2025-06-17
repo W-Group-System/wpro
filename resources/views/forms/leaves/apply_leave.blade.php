@@ -57,6 +57,8 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_el && $leave_type->code == 'EL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_mc && $leave_type->code == 'MC')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
                       </select>
@@ -161,6 +163,7 @@
               splvv_balance : '<?php echo $splvv_balance; ?>',
               el_balance : '<?php echo $el_balance; ?>',
               bl_balance : '<?php echo $bl_balance; ?>',
+              mc_balance : '<?php echo $mc_balance; ?>',
           },
           methods: {
             validateLeave() {
@@ -246,6 +249,15 @@
                   }else{
                     this.isAllowedWithPay = true;
                   }
+              }
+              else if (this.leave_type == '12') {
+                if(Number(this.mc_balance) >= 0.5){
+                    this.leave_balances = this.mc_balance;
+                    this.isAllowedWithPay = false;
+                    amen = true;
+                }else{
+                this.isAllowedWithPay = true;
+                }
               }
               else { // BL
                     this.isAllowedWithPay = false;

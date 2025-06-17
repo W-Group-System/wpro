@@ -55,14 +55,13 @@ class EmployeeLeaveListController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         if ($request->type == 1)
         {
             $employee = Employee::where('user_id', $request->employee)->first();
             $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired);
             $leave_credits = compute_leave_credits($request->leave, $leave_entitlement, $request->date_hired, $request->date_regularization);
             $earned_per_month = earn_per_month($request->leave, $request->date_regularization);
-            
+            // dd($earned_per_month);
             $employee_leave_list = new EmployeeLeaveList;
             $employee_leave_list->user_id = $request->employee;
             $employee_leave_list->leave_id = $request->leave;
@@ -73,6 +72,10 @@ class EmployeeLeaveListController extends Controller
             if ($request->leave == 1)
             {
                 $employee_leave_list->earned_per_month = $earned_per_month;
+            }
+            else
+            {
+                $employee_leave_list->earned_per_month = $request->leave_credit;
             }
             $employee_leave_list->save();
         }
@@ -148,7 +151,7 @@ class EmployeeLeaveListController extends Controller
         $employees = Employee::with('employee_leave_list')
             ->where('status','Active')
             ->whereHas('employee_leave_list')
-            ->where('user_id', 470)
+            // ->where('user_id', 470)
             ->get();
         // dd($employees);
         $f_d = date('Y-m-01');
@@ -165,13 +168,15 @@ class EmployeeLeaveListController extends Controller
         foreach($employees as $employee)
         {
             $leave_credits = ($employee->employee_leave_list)->where('leave_id',1)->sortByDesc('id')->first();
-            // dd($leave_credits);
+            
             if($leave_credits != null)
             {
-                $check_if_exist_vl = EmployeeLeaveList::where(function($q) use($month,$year){
+                $check_if_exist_vl = EmployeeLeaveList::where('user_id', $employee->user_id)
+                    ->where(function($q) use($month,$year){
                         $q->whereMonth('earned_date',$month)
                         ->whereYear('earned_date',$year);
                     })
+                    ->whereNotNull('earned_date')
                     ->where('leave_id',1)
                     ->first();                
                 

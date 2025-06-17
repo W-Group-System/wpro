@@ -213,6 +213,7 @@
                                         @endif  
                                     </td>
                                     <td id="tdStatus{{ $item->id }}">
+<<<<<<< HEAD
                                         @if(count($item->approver) > 0)
                                             @foreach($item->approver as $approver)
                                                 @if($item->status == 'Approved')
@@ -231,15 +232,29 @@
                                                         {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-warning mt-1">Pending</label>
                                                     @endif
                                                     @endif<br>
+=======
+                                        @if($item->approver_by)
+                                            @if($item->status == 'Approved')
+                                                @if($item->approveBy)
+                                                    {{$item->approveBy->name}} -  <label class="badge badge-success mt-1">Approved</label>
                                                 @endif
-                                            @endforeach
-
-                                            @if($item->status == 'Pending' && $item->level == '1')
-                                                <br>
-                                                <button onclick="reset({{ $item->id }},'ob')" class="btn btn-sm btn-primary mt-1">Reset Approval</button>
+                                            @elseif($item->status == 'Pending')
+                                                @if($item->approveBy)
+                                                    {{$item->approveBy->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                                @endif
+                                            @elseif($item->status == 'Declined')
+                                                @if($item->approveBy)
+                                                    {{$item->approveBy->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+>>>>>>> 5b4c7359e4af14458ea959c1d85d311af1ea2fc1
+                                                @endif
                                             @endif
-                                        @else
-                                        <label class="badge badge-danger mt-1">No Approver</label>
+                                        {{-- @else
+                                        <label class="badge badge-danger mt-1">No Approver</label> --}}
+                                        @endif
+
+                                        @if($item->status == 'Pending' && $item->level == '1')
+                                            <br>
+                                            <button onclick="reset({{ $item->id }},'ob')" class="btn btn-sm btn-primary mt-1">Reset Approval</button>
                                         @endif
                                     </td>
                                 </tr>

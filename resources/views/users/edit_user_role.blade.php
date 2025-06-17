@@ -517,6 +517,19 @@
                                         @endif
 
                                         IVMS Attendance
+                                        <br>
+                                        
+                                        @if($user->user_privilege)
+                                            @if($user->user_privilege->upload == 'on')
+                                                <input type="checkbox" name="upload" id="upload{{$user->id}}" value="{{ $user->user_privilege->upload }}" checked>
+                                            @else
+                                                <input type="checkbox" name="upload" id="upload{{$user->id}}">
+                                            @endif
+                                        @else
+                                            <input type="checkbox" name="upload" id="upload{{$user->id}}">
+                                        @endif
+
+                                        Upload OB/OT/Leaves
                                     </div>
 
                                 </div>

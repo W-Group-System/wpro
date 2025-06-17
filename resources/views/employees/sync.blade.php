@@ -31,11 +31,11 @@
 								</div>
 								<div class='col-md-2'>
                                     From
-                                    <input type="date" class="form-control form-control-sm" id='from' name="from" required />
+                                    <input type="date" class="form-control form-control-sm" id='from' value="{{ $from }}" name="from" required />
 								</div>
 								<div class='col-md-2'>
                                     To
-                                    <input type="date" class="form-control form-control-sm" id='to' name="to" required />
+                                    <input type="date" class="form-control form-control-sm" id='to' value="{{ $to }}" name="to" required />
 								</div>
 								<div class='col-md-2'>
 									<button type="submit" class="form-control form-control-sm btn btn-primary mb-2 btn-sm">Sync BioTime</button>

@@ -199,6 +199,7 @@ class UserController extends Controller
                 $user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
                 $user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
                 $user_privilege->ivms_attendance = $request->ivms_attendance;
+                $user_privilege->upload = $request->upload;
 
                 $user_privilege->save();
                 Alert::success('Successfully Updated')->persistent('Dismiss');
@@ -245,6 +246,7 @@ class UserController extends Controller
                 $new_user_privilege->masterfiles_employee_leave_earned = $request->masterfiles_employee_leave_earned;
                 $new_user_privilege->masterfiles_employee_allowances = $request->masterfiles_employee_allowances;
                 $new_user_privilege->ivms_attendance = $request->ivms_attendance;
+                $new_user_privilege->upload = $request->upload;
                 
                 $new_user_privilege->save();
                 Alert::success('Successfully Updated')->persistent('Dismiss');

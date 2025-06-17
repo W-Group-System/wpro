@@ -724,12 +724,6 @@
             Daily Schedule
           </a>
         <li>
-        <li class="nav-item @if($header == 'upload') active @endif">
-          <a href="{{url('upload')}}" class="nav-link">
-            <i class="ti-upload menu-icon"></i>
-            Upload OB/OT/Leaves
-          </a>
-        <li>
         <li class="nav-item">
             <a href="{{url('perfect_attendance')}}" class="nav-link">
                 <i class="ti-calendar menu-icon"></i>
@@ -737,6 +731,14 @@
             </a>
         </li>
         @endif
+            @if (checkUserPrivilege('upload',auth()->user()->id) == 'yes')
+                <li class="nav-item @if($header == 'upload') active @endif">
+                <a href="{{url('upload')}}" class="nav-link">
+                    <i class="ti-upload menu-icon"></i>
+                    Upload OB/OT/Leaves
+                </a>
+                <li>
+            @endif
         @endif
         {{-- @if(auth()->user()->id == 471 || auth()->user()->id == 555)
         <li class="nav-item">
