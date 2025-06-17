@@ -216,19 +216,19 @@
                                         @if(count($item->approver) > 0)
                                             @foreach($item->approver as $approver)
                                                 @if($item->status == 'Approved')
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-success mt-1">Approved</label>
                                                 @else
                                                     @if($item->level >= $approver->level)
                                                     @if ($item->level == 0 && $item->status == 'Declined')
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                     @else
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                                        {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-success mt-1">Approved</label>
                                                     @endif
                                                     @else
                                                     @if ($item->status == 'Declined')
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                        {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                     @else
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                                        {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-warning mt-1">Pending</label>
                                                     @endif
                                                     @endif<br>
                                                 @endif
