@@ -302,15 +302,15 @@
                                             @foreach($item->approver as $approver)
                                                 @if($item->level >= $approver->level)
                                                 @if ($item->level == 0 && $item->status == 'Declined')
-                                                {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                 @else
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-success mt-1">Approved</label>
                                                 @endif
                                                 @else
                                                 @if ($item->status == 'Declined')
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                 @else
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-warning mt-1">Pending</label>
                                                 @endif
                                                 @endif<br>
                                             @endforeach
@@ -350,7 +350,7 @@
                                 @foreach ($overtimes as $item)
                                 <tr>
                                     <td>
-                                        <strong>{{$item->user->name}}</strong> <br>
+                                        <strong>{{$item->user->name ?? 'N/A'}}</strong> <br>
                                         {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
@@ -393,15 +393,15 @@
                                                 @else
                                                     @if($item->level >= $approver->level)
                                                     @if ($item->level == 0 && $item->status == 'Declined')
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                     @else
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                                        {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-success mt-1">Approved</label>
                                                     @endif
                                                     @else
                                                     @if ($item->status == 'Declined')
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                        {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                     @else
-                                                        {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                                        {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-warning mt-1">Pending</label>
                                                     @endif
                                                     @endif<br>
                                                 @endif
@@ -443,7 +443,7 @@
                                 @foreach ($dtrs as $item)
                                 <tr>
                                     <td>
-                                        <strong>{{$item->user->name}}</strong> <br>
+                                        <strong>{{$item->user->name ?? 'N/A'}}</strong> <br>
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
                                     
@@ -465,15 +465,15 @@
                                             @foreach($item->approver as $approver)
                                                 @if($item->level >= $approver->level)
                                                 @if ($item->level == 0 && $item->status == 'Declined')
-                                                {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                 @else
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-success mt-1">Approved</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-success mt-1">Approved</label>
                                                 @endif
                                                 @else
                                                 @if ($item->status == 'Declined')
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-danger mt-1">Declined</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-danger mt-1">Declined</label>
                                                 @else
-                                                    {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                                    {{$approver->approver_info->name ?? 'N/A'}} -  <label class="badge badge-warning mt-1">Pending</label>
                                                 @endif
                                                 @endif<br>
                                             @endforeach
