@@ -99,6 +99,14 @@
                               <th>RST OT AMOUNT</th>
                               <th>RST OT OVER 8</th>
                               <th>RST OT OVER 8 AMOUNT</th>
+                              <th>RST LH OT</th>
+                              <th>RST LH OT AMOUNT</th>
+                              <th>RST LH OT OVER 8</th>
+                              <th>RST LH OT OVER 8 AMOUNT</th>
+                              <th>RST LH OT ND</th>
+                              <th>RST LH OT ND AMOUNT</th>
+                              <th>RST LH OT ND OVER 8</th>
+                              <th>RST LH OT ND OVER 8 AMOUNT</th>
                               <th>OVERTIME TOTAL</th>
                               {{-- <th>PL</th>
                               <th>PL AMOUNT</th>
@@ -210,6 +218,14 @@
                             <td>{{$pay_reg->rst_ot_amount}}</td>
                             <td>{{$pay_reg->rst_ot_ge}}</td>
                             <td>{{$pay_reg->rst_ot_ge_amount}}</td>
+                            <td>{{$pay_reg->rst_lh_ot}}1</td>
+                            <td>{{$pay_reg->rst_lh_ot_amount}}2</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>6</td>
+                            <td>7</td>
+                            <td>8</td>
                             <td>{{$pay_reg->ot_total}}</td>
                             @foreach($salary_adjustments as $sadjustment)
                             @php
