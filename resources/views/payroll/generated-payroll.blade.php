@@ -218,14 +218,14 @@
                             <td>{{$pay_reg->rst_ot_amount}}</td>
                             <td>{{$pay_reg->rst_ot_ge}}</td>
                             <td>{{$pay_reg->rst_ot_ge_amount}}</td>
-                            <td>{{$pay_reg->rst_lh_ot}}1</td>
-                            <td>{{$pay_reg->rst_lh_ot_amount}}2</td>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>5</td>
-                            <td>6</td>
-                            <td>7</td>
-                            <td>8</td>
+                            <td>{{$pay_reg->rst_lh_ot}}</td>
+                            <td>{{$pay_reg->rst_lh_ot_amount}}</td>
+                            <td>{{$pay_reg->rst_lh_ge_ot}}</td>
+                            <td>{{$pay_reg->rst_lh_ge_ot_amount}}</td>
+                            <td>{{$pay_reg->rst_lh_nd}}</td>
+                            <td>{{$pay_reg->rst_lh_nd_amount}}</td>
+                            <td>{{$pay_reg->rst_lh_ge_nd}}</td>
+                            <td>{{$pay_reg->rst_lh_ge_nd_amount}}</td>
                             <td>{{$pay_reg->ot_total}}</td>
                             @foreach($salary_adjustments as $sadjustment)
                             @php
