@@ -911,7 +911,7 @@
                               @if($name->employee->work_description == "Non-Monthly")
                               {
                                 <td>{{$previous_basic_pay_rate}}</td>
-                                <td>{{$basic_pay}}</td>
+                                <td>{{ number_format($basic_pay, 2) }}</td>
                               }
                               @else
                               
