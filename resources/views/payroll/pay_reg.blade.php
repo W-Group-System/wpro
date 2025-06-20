@@ -343,14 +343,7 @@
                                 // $shift = str_replace(" ", '', $shift);
                                 $shift = explode("-",$shift);
                                 $start = strtotime($absent_dat->log_date." ".$shift[0]);
-                                // $end = strtotime($absent_dat->log_date." ".$shift[1]);
-                                if (!empty($some_value) && strpos($some_value, '-') !== false) {
-                                    $shift = explode('-', $some_value);
-                                    $end_time = $shift[1] ?? '17:00'; // fallback to default
-                                } else {
-                                    $end_time = '17:00';
-                                }
-                                $end = strtotime($absent_dat->log_date . ' ' . $end_time);
+                                $end = strtotime($absent_dat->log_date." ".$shift[1]);
                                 $hours_count = ($end - $start)/3600;
                                 
                                 // dd($hours_count);
