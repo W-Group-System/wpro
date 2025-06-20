@@ -1425,27 +1425,27 @@ function get_leave_entitlement($level, $date_hired)
         {
             $leave_entitlement =  10;
         }
-        elseif ($date_diff->y > 1 && $date_diff->y < 3)
+        elseif ($date_diff->y > 1 && $date_diff->y <= 3)
         {
             $leave_entitlement =  10;
         }
-        elseif($date_diff->y >= 3 && $date_diff->y < 5)
+        elseif($date_diff->y > 3 && $date_diff->y <= 5)
         {
             $leave_entitlement = 12;
         }
-        elseif($date_diff->y >= 5 && $date_diff->y < 10)
+        elseif($date_diff->y > 5 && $date_diff->y <= 10)
         {
             $leave_entitlement = 15;
         }
-        elseif($date_diff->y >= 10 && $date_diff->y < 15)
+        elseif($date_diff->y > 10 && $date_diff->y <= 15)
         {
             $leave_entitlement = 16;
         }
-        elseif($date_diff->y >= 15 && $date_diff->y < 20)
+        elseif($date_diff->y > 15 && $date_diff->y <= 20)
         {
             $leave_entitlement = 17;
         }
-        elseif($date_diff->y >= 20)
+        elseif($date_diff->y > 20)
         {
             $leave_entitlement = 18;
         }
@@ -1456,27 +1456,27 @@ function get_leave_entitlement($level, $date_hired)
         {
             $leave_entitlement =  12;
         }
-        elseif ($date_diff->y > 1 && $date_diff->y < 3)
+        elseif ($date_diff->y > 1 && $date_diff->y <= 3)
         {
             $leave_entitlement =  12;
         }
-        elseif($date_diff->y >= 3 && $date_diff->y < 5)
+        elseif($date_diff->y > 3 && $date_diff->y <= 5)
         {
             $leave_entitlement = 12;
         }
-        elseif($date_diff->y >= 5 && $date_diff->y <=10)
+        elseif($date_diff->y > 5 && $date_diff->y <=10)
         {
             $leave_entitlement = 15;
         }
-        elseif($date_diff->y >= 10 && $date_diff->y < 15)
+        elseif($date_diff->y > 10 && $date_diff->y <= 15)
         {
             $leave_entitlement = 16;
         }
-        elseif($date_diff->y >= 15 && $date_diff->y < 20)
+        elseif($date_diff->y > 15 && $date_diff->y <= 20)
         {
             $leave_entitlement = 17;
         }
-        elseif($date_diff->y >= 20)
+        elseif($date_diff->y > 20)
         {
             $leave_entitlement = 18;
         }
@@ -1487,27 +1487,27 @@ function get_leave_entitlement($level, $date_hired)
         {
             $leave_entitlement =  15;
         }
-        elseif ($date_diff->y > 1 && $date_diff->y < 3)
+        elseif ($date_diff->y > 1 && $date_diff->y <= 3)
         {
             $leave_entitlement =  15;
         }
-        elseif($date_diff->y >= 3 && $date_diff->y < 5)
+        elseif($date_diff->y > 3 && $date_diff->y <= 5)
         {
             $leave_entitlement = 15;
         }
-        elseif($date_diff->y >= 5 && $date_diff->y < 10)
+        elseif($date_diff->y > 5 && $date_diff->y <= 10)
         {
             $leave_entitlement = 17;
         }
-        elseif($date_diff->y >= 10 && $date_diff->y < 15)
+        elseif($date_diff->y > 10 && $date_diff->y <= 15)
         {
             $leave_entitlement = 18;
         }
-        elseif($date_diff->y >= 15 && $date_diff->y < 20)
+        elseif($date_diff->y > 15 && $date_diff->y <= 20)
         {
             $leave_entitlement = 19;
         }
-        elseif($date_diff->y >= 20)
+        elseif($date_diff->y > 20)
         {
             $leave_entitlement = 20;
         }
