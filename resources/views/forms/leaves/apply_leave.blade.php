@@ -190,7 +190,7 @@
               else if(this.leave_type == '3'){ // Maternity Leave
                   if(Number(this.ml_balance) >= 0.5){
                     this.leave_balances = this.ml_balance;
-                    this.isAllowedWithPay = false;
+                    // this.isAllowedWithPay = false;
                     amen = true;
                   }else{
                     this.isAllowedWithPay = true;

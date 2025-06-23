@@ -758,7 +758,7 @@ function checkUsedLeave($user_id,$leave_type){
                 $date_range = dateRangeHelper($leave->date_from,$leave->date_to);
                 if($date_range){
                     foreach($date_range as $date_r){
-                        if($leave->withpay == 1){
+                        if($leave->withpay == 1 || $leave->withpay == 0){
                             $count += 1;
                         }
                     }

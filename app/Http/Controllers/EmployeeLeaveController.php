@@ -264,7 +264,7 @@ class EmployeeLeaveController extends Controller
             //     Alert::error('Error. You have a file leave on that day')->persistent('Dismiss');
             //     return back();
             // }
-            if ($request->leave_type == 13)
+            if ($request->leave_type == 13 || $request->leave_type == 3)
             {
                 $new_leave = new EmployeeLeave;
                 $new_leave->user_id = Auth::user()->id;
