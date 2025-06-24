@@ -484,6 +484,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Hold Employee
     Route::get('hold-employee', 'HoldEmployeeController@index');
+    Route::post('delete-employee', 'HoldEmployeeController@destroy');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
