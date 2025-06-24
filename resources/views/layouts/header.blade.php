@@ -562,6 +562,7 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ url('/pay-instruction') }}">Payroll Instruction</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ url('/employee-allowance') }}">Employee Allowances</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ url('/salary-adjustment') }}">Salary Adjustment</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ url('/hold-employee') }}">Hold Employee</a></li>
                             </ul>
                         </div>
                     </li>

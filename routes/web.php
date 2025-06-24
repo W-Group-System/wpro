@@ -302,6 +302,8 @@ Route::group(['middleware' => 'auth'], function () {
     // Adjustments
     Route::get('salary-adjustment', 'AdjustmentController@index');
     Route::post('new-employee-adjustment', 'AdjustmentController@store');
+    Route::post('update-salary-adjustment/{id}', 'AdjustmentController@update');
+    Route::post('delete-salary-adjustment/{id}', 'AdjustmentController@destroy');
     Route::get('disable-adjustment/{id}', 'AdjustmentController@disable');
 
     // Loans
@@ -479,6 +481,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('refresh_leave', 'EmployeeLeaveListController@refreshLeave');
     Route::post('refresh_leave_credit', 'EmployeeLeaveListController@refreshLeaveCredit');
     Route::get('leave_report', 'EmployeeLeaveListController@leaveReport');
+
+    // Hold Employee
+    Route::get('hold-employee', 'HoldEmployeeController@index');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');

@@ -97,9 +97,18 @@ class AdjustmentController extends Controller
      * @param  \App\Adjustment  $adjustment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Adjustment $adjustment)
+    public function update(Request $request,$id)
     {
-        //
+        // dd($request->all(),$id);
+        $new_adjustment = SalaryAdjustment::findOrFail($id);
+        $new_adjustment->name = $request->name;
+        $new_adjustment->employee_id = $request->employee;
+        $new_adjustment->amount = $request->amount;
+        $new_adjustment->remarks = $request->remarks;
+        // $new_adjustment->created_by = auth()->user()->id;
+        $new_adjustment->save();
+        Alert::success('Successfully Updated')->persistent('Dismiss');
+        return back();
     }
 
     /**
@@ -108,8 +117,12 @@ class AdjustmentController extends Controller
      * @param  \App\Adjustment  $adjustment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Adjustment $adjustment)
+    public function destroy(Request $request,$id)
     {
-        //
+        $salary_adjustment = SalaryAdjustment::findOrFail($id);
+        $salary_adjustment->delete();
+
+        Alert::success('Successfully Deleted')->persistent('Dismiss');
+        return back();
     }
 }
