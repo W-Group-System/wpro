@@ -16,7 +16,7 @@
 										<select data-placeholder="Select Employee" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='employee[]' multiple required>
 											<option value="">-- Select Employee --</option>
 											@foreach($employees as $emp)
-											<option value="{{$emp->id}}" @if(in_array($emp->id,$employee)) selected @endif>{{$emp->employee_code .' - '.$emp->user_info->name}}</option>
+											<option value="{{$emp->user_id}}" @if(in_array($emp->id,$employee)) selected @endif>{{$emp->employee_code .' - '.$emp->user_info->name}}</option>
 											@endforeach
 										</select>
 									</div>
