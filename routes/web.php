@@ -497,5 +497,12 @@ Route::get('hik-logs', function(){
 });
 
 Route::get('/', function () {
-    return view('message');
+    if (request()->getHost() == 'hris.wsystem.online' || request()->getHost() == '175.18.72.49:2014')
+    {
+        return view('message');
+    }
+    else
+    {
+        return redirect('login');
+    }
 });
