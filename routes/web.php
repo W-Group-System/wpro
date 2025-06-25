@@ -34,7 +34,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', 'HomeController@index')->name('home');
     Route::post('/edit-prob/{id}','HomeController@edit_prob');
     Route::get('', 'HomeController@index');
-    Route::get('/', 'HomeController@index');
+    // Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@index')->name('home');
     //approvers
     Route::get('/dashboard-manager', 'HomeController@managerDashboard');
@@ -476,4 +476,8 @@ Route::get('leave-credit-acc','EmployeeEarnedLeaveController@addLeave');
 
 Route::get('hik-logs', function(){
     return HikAttLog2::orderBy('authDate')->get()->take(5);
+});
+
+Route::get('/', function () {
+    return view('message');
 });
