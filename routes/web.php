@@ -496,13 +496,13 @@ Route::get('hik-logs', function(){
     return HikAttLog2::orderBy('authDate')->get()->take(5);
 });
 
-Route::get('/', function () {
-    if (request()->getHost() == 'hris.wsystem.online' || request()->getHost() == '175.18.72.49:2014')
-    {
-        return view('message'); 
-    }
-    else
-    {
-        return redirect('login');
-    }
-});
+// Route::get('/', function () {
+//     if (request()->getHost() == 'hris.wsystem.online' || request()->getHost() == '175.18.72.49:2014')
+//     {
+//         return view('message'); 
+//     }
+//     else
+//     {
+//         return redirect('login');
+//     }
+// });
