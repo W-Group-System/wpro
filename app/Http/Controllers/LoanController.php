@@ -193,7 +193,8 @@ class LoanController extends Controller
             'employee',
             'pay' => function($query)use($request) {
                 $query->whereHas('pay_reg', function ($q)use($request) {
-                    $q->where('pay_period_to', '<=', $request->as_of); // Filter to only include pay records that have pay_reg
+                    $q->where('pay_period_from', '<=', $request->as_of); 
+                    // $q->where('pay_period_to', '<=', $request->as_of); // Filter to only include pay records that have pay_reg
                 });
             },
             'pay.pay_reg', // This still loads pay_reg, but only for filtered pay records

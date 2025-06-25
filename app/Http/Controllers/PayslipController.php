@@ -333,14 +333,6 @@ class PayslipController extends Controller
             DB::raw('SUM(rst_nd_over_eight) as total_rst_nd_over_eight'),
             DB::raw('SUM(rst_ot) as total_rst_ot'),
             DB::raw('SUM(rst_ot_over_eight) as total_rst_ot_over_eight'),
-            DB::raw('SUM(rst_lh_ot) as total_rst_lh_ot'),
-            DB::raw('SUM(rst_lh_ot_over_eight) as total_rst_lh_ot_over_eight'),
-            DB::raw('SUM(rst_lh_nd) as total_rst_lh_nd'),
-            DB::raw('SUM(rst_lh_nd_over_eight) as total_rst_lh_nd_over_eight'),
-            DB::raw('SUM(rst_sh_ot) as total_rst_sh_ot'),
-            DB::raw('SUM(rst_sh_ot_over_eight) as total_rst_sh_ot_over_eight'),
-            DB::raw('SUM(rst_sh_nd) as total_rst_sh_nd'),
-            DB::raw('SUM(rst_sh_nd_over_eight) as total_rst_sh_nd_over_eight'),
             DB::raw('SUM(abs) as total_abs'),
             DB::raw('SUM(late_min) as total_late_min'),
             DB::raw('SUM(undertime_min) as total_undertime_min')
@@ -368,7 +360,6 @@ class PayslipController extends Controller
                                 ->where('start_date', '>=', $cutoff)
                                 ->where('end_date', '<=', $cutoff)
                                 ->select('benefit_name')->groupBy('benefit_name')->get();
-                                        
                 }
                 // dd($instructions);
             }
