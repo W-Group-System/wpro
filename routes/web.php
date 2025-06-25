@@ -499,7 +499,7 @@ Route::get('hik-logs', function(){
 Route::get('/', function () {
     if (request()->getHost() == 'hris.wsystem.online' || request()->getHost() == '175.18.72.49:2014')
     {
-        return view('message');
+        return view('message'); 
     }
     else
     {
