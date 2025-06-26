@@ -510,7 +510,7 @@ class PayslipController extends Controller
             $pay_register->rst_ot_ge_amount = $request->total_rst_ot_over_eight[$key];
             // $pay_register->ot_total = $request->total_ot_pay[$key];
             $pay_register->ot_total = $request->total_ot_pay[$key] ?? 0;
-            $pay_register->salary_adjustment = $request->salary_adjustment[$key];
+            $pay_register->salary_adjustment = $request->salary_adjustment[$key] ?? 0;
             $pay_register->taxable_benefits_total = $request->total_taxable_benefits[$key];
             $pay_register->gross_taxable_income = $request->gross_taxable_income[$key];
             $pay_register->days_absent = $request->total_abs_count[$key];
