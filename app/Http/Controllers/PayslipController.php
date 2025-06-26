@@ -534,11 +534,11 @@ class PayslipController extends Controller
             $pay_register->deminimis = $request->de_minimis[$key] ?? 0;
             $pay_register->other_allowances_basic_pay = $request->other_allowances_basic_pay[$key] ?? 0;
             $pay_register->subliq = $request->subliq[$key] ?? 0;
-            $pay_register->nontaxable_benefits_total = $request->nontaxable_benefits_total[$key];
-            $pay_register->nontaxable_deductible_benefits_total = $request->nontaxable_deductible_benefits_total[$key];
-            $pay_register->gross_pay = $request->gross_pay[$key];
-            $pay_register->deductions_total = $request->deductions_total[$key];
-            $pay_register->netpay = $request->netpay[$key];
+            $pay_register->nontaxable_benefits_total = $request->nontaxable_benefits_total[$key] ?? 0;
+            $pay_register->nontaxable_deductible_benefits_total = $request->nontaxable_deductible_benefits_total[$key] ?? 0;
+            $pay_register->gross_pay = $request->gross_pay[$key] ?? 0;
+            $pay_register->deductions_total = $request->deductions_total[$key] ?? 0;
+            $pay_register->netpay = $request->netpay[$key] ?? 0;
             $pay_register->pay_period_from = $request->from;
             $pay_register->pay_period_to = $request->to;
             $pay_register->posting_date = $request->posting_date;
