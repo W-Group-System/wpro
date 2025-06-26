@@ -226,7 +226,7 @@
                             <td>{{$pay_reg->rst_lh_nd_amount}}</td>
                             <td>{{$pay_reg->rst_lh_ge_nd}}</td>
                             <td>{{$pay_reg->rst_lh_ge_nd_amount}}</td>
-                            <td>{{$pay_reg->ot_total}}</td>
+                            <td>{{$pay_reg->ot_total ?? 0}}</td>
                             @foreach($salary_adjustments as $sadjustment)
                             @php
                                  $adjustments = ($pay_reg->salary_adjustments_data)->where('name',$sadjustment->name)->sum('amount');
