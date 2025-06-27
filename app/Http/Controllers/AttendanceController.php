@@ -594,7 +594,7 @@ class AttendanceController extends Controller
             foreach ($dates as $date => $employee) {
                 AttendanceDetailedReport::create([
                     'company_id' => $employee['company_id'],
-                    'employee_no' => $employee['employee_no'],
+                    'employee_no' => $employee['employee_no'] ?? null,
                     'name' => $employee['name'],
                     'log_date' => $employee['log_date'],
                     'shift' => $employee['shift'],
