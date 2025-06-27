@@ -596,7 +596,7 @@ class AttendanceController extends Controller
                     'company_id' => $employee['company_id'],
                     'employee_no' => $employee['employee_no'] ?? null,
                     'name' => $employee['name'],
-                    'log_date' => $employee['log_date'],
+                    'log_date' => $employee['log_date'] ?? null,
                     'shift' => $employee['shift'],
                     'in' => $employee['in'] ?? null,
                     'out' => $employee['out'] ?? null,
