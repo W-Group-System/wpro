@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\PayRegs;
+use App\Payregs;
 use App\Company;
 use App\PayregAllowance;
 use App\PayregLoan;
