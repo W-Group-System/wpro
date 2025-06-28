@@ -1126,18 +1126,18 @@
                                                             {
                                                                 if ($rest == "RESTDAY")
                                                                 {
-                                                                    $lh_ot = 0;
+                                                                    // $lh_ot = 0;
                                                                     $lh_ot_ge = 0;
 
-                                                                    $rst_lh_ot = $approved_overtime_hrs;
+                                                                    // $rst_lh_ot = $approved_overtime_hrs;
                                                                     $rst_lh_ot_ge = $approved_overtime_hrs-8;
                                                                 }
                                                                 else
                                                                 {
-                                                                    $lh_ot = $approved_overtime_hrs;
+                                                                    // $lh_ot = $approved_overtime_hrs;
                                                                     $lh_ot_ge = $approved_overtime_hrs-8;
 
-                                                                    $rst_lh_ot = 0;
+                                                                    // $rst_lh_ot = 0;
                                                                     $rst_lh_ot_ge = 0;
                                                                 }
                                                             }
