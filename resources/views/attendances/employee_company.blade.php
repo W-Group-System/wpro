@@ -967,18 +967,21 @@
                                                   $work = $schedule_hours;
                                                 //   dd($schedule_hours);
                                                 $att = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
-                                                  if($rest == "RESTDAY")
-                                                  {
-                                                    if ($att->time_in && $att->time_out != null)
+                                                if($att)
+                                                {
+                                                    if($rest == "RESTDAY")
                                                     {
-                                                        $work_hrs = round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
-                                                        $work = $work_hrs;
+                                                      if ($att->time_in && $att->time_out != null)
+                                                      {
+                                                          $work_hrs = round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
+                                                          $work = $work_hrs;
+                                                      }
+                                                      else
+                                                      {
+                                                          $work = 0;
+                                                      }
                                                     }
-                                                    else
-                                                    {
-                                                        $work = 0;
-                                                    }
-                                                  }
+                                                }
                                                   if($abs == 1)
                                                   {
                                                     $work = 0;
