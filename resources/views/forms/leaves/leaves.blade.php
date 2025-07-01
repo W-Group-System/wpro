@@ -1171,7 +1171,7 @@
                       </td>
                       <td>
                         @if($employee_leave->leave_file)
-                          <a href="{{ asset('storage/' . urlencode($employee_leave->leave_file)) }}" target="_blank">{{ $employee_leave->leave_file }}</a>
+                          <a href="{{ Storage::url($employee_leave->leave_file) }}" target="_blank">{{ $employee_leave->leave_file }}</a>
                         @elseif($employee_leave->attachment)
                         <a href="{{ url($employee_leave->attachment) }}" target="_blank">{{ $employee_leave->attachment }}</a>
                         @else
