@@ -479,6 +479,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('refresh_leave', 'EmployeeLeaveListController@refreshLeave');
     Route::post('refresh_leave_credit', 'EmployeeLeaveListController@refreshLeaveCredit');
     Route::get('leave_report', 'EmployeeLeaveListController@leaveReport');
+
+    Route::get('hold-employee', 'HoldEmployeeController@index');
+    Route::post('delete-employee', 'HoldEmployeeController@destroy');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
