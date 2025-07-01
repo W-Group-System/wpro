@@ -20,13 +20,13 @@ class HoldEmployeeController extends Controller
     {
         $header = 'Hold Employee';
         $company_data = $request->company;
-        $employee_array = $request->employee;
+        $employee_array = $request->employee ? $request->employee : [];
         $cut_off_date = $request->cut_off_date;
 
         $employees = Employee::where('status','Active')->get();
         $companies = Company::whereNotIn('id',[1])->get();
         $cutoff = Payregs::select('cut_off_date')->groupBy('cut_off_date')->where('company_id', $company_data)->orderBy('cut_off_date', 'desc')->get()->pluck('cut_off_date')->toArray();
-
+    
         $cut_off_pay_reg = AttendanceDetailedReport::select('cut_off_date')
             ->where('company_id', $request->company)
             ->whereNotIn('cut_off_date', $cutoff)
@@ -37,7 +37,7 @@ class HoldEmployeeController extends Controller
 
         $attendance_detailed_reports = AttendanceDetailedReport::with('company','employee')->where('company_id', $company_data)
             ->select('cut_off_date','company_id','employee_no')
-            ->where('cut_off_date', $cut_off_pay_reg)
+            ->whereIn('cut_off_date', $cut_off_pay_reg)
             ->whereIn('employee_no', $employee_array)
             ->groupBy('cut_off_date','company_id','employee_no')
             ->get();
