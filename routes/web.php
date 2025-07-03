@@ -1,6 +1,7 @@
 <?php
-
-
+use App\HikAttLog2;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,7 +12,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-use App\HikAttLog2;
 
 Auth::routes();
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
@@ -465,8 +465,9 @@ Route::group(['middleware' => 'auth'], function () {
     // NOPA
     Route::get('nopa', 'EmployeeController@nopa');
 
-    // Weekly Attendance Report
+    // Attendance Report
     Route::get('weekly_attendance_report', 'WeeklyReportController@index');
+    Route::get('monthly_attendance_report', 'WeeklyReportController@monthly');
 
     // Extract Attendance
     Route::get('extract_attendance', 'AttendanceController@extractAttendance');

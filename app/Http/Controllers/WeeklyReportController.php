@@ -6,6 +6,7 @@ use App\Company;
 use App\DailySchedule;
 use App\Employee;
 use App\ScheduleData;
+use App\AttendanceLog;
 use DateTime;
 use Illuminate\Http\Request;
 
@@ -73,6 +74,87 @@ class WeeklyReportController extends Controller
         $schedules = ScheduleData::all();
         
         return view('weekly_attendance_report.index', compact('header', 'employees', 'week', 'daily_schedules', 'companies', 'company_data', 'date_array', 'schedules'));
+    }
+
+    public function monthly(Request $request)
+    {
+        $from = $request->input('from', now()->startOfMonth()->format('Y-m-d'));
+        $to = $request->input('to', now()->endOfMonth()->format('Y-m-d'));
+
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+
+        // Get company selection from request (array)
+        $company = (array) $request->input('companies', []);
+
+        // Get all companies the user is allowed to see
+        $companies = Company::whereHas('employee_has_company')
+            ->whereIn('id', $allowed_companies)
+            ->get();
+
+        // Get selected companies (if any)
+        $company_data = collect();
+        if (!empty($company)) {
+            $company_data = Company::whereIn('id', $company)->get();
+        }
+
+        // Fetch attendance logs within date range
+        $data = AttendanceLog::with('employee')
+            ->whereBetween('date', [$from, $to])
+            ->get();
+
+        // Fetch employees with necessary relations and filters
+        $employees = Employee::select(
+                'employee_number',
+                'user_id',
+                'first_name',
+                'last_name',
+                'middle_name',
+                'location',
+                'schedule_id',
+                'employee_code',
+                'company_id',
+                'work_description',
+                'original_date_hired'
+            )
+            ->with([
+                'company',
+                'user_info' => fn($q) => $q->where('status', 'Active'),
+                'leaves' => fn($q) => $q->whereBetween('date_from', [$from, $to]),
+                'approved_ots' => fn($q) => $q->whereBetween('ot_date', [$from, $to])->where('status', 'Approved'),
+                'attendances' => function ($query) use ($from, $to) {
+                    $query->where(function ($q) use ($from, $to) {
+                        $q->whereBetween('time_in', [$from . ' 00:00:00', $to . ' 23:59:59'])
+                        ->orWhereBetween('time_out', [$from . ' 00:00:00', $to . ' 23:59:59']);
+                    })
+                    ->orderBy('time_in', 'asc')
+                    ->orderBy('time_out', 'desc')
+                    ->orderBy('id', 'asc');
+                }
+            ])
+            ->where('status', 'Active')
+            ->when($company_data->isNotEmpty(), fn($q) => $q->whereIn('company_id', $company_data->pluck('id')))
+            ->get();
+        // dd($employees);
+        // Daily schedule (filter using date range, not collection)
+        $daily_schedules = DailySchedule::whereBetween('log_date', [$from, $to])->get();
+
+        // All schedule data
+        $schedules = ScheduleData::all();
+
+        // Return to view
+        return view('weekly_attendance_report.monthly', [
+            'header' => 'weekly_attendance_report',
+            'from' => $from,
+            'to' => $to,
+            'companies' => $companies,
+            'company_data' => $company_data,
+            'company' => $company,
+            'data' => $data,
+            'employees' => $employees,
+            'daily_schedules' => $daily_schedules,
+            'schedules' => $schedules,
+        ]);
+
     }
 
     /**
