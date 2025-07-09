@@ -86,20 +86,14 @@ class EarnedVacationLeave extends Command
         $employees = Employee::with('employee_leave_list')
             ->where('status','Active')
             ->whereHas('employee_leave_list')
-            // ->where('user_id', 470)
+            ->where('department_id','!=', 21)
             ->get();
-        // dd($employees);
+        
         $f_d = date('Y-m-01');
         $f_t = date('Y-m-t');
-        // dd($f_t);
-
-        // $datetime1_d = new DateTime($f_d);
-        // $datetime2_d = new DateTime($f_t);
-        // $interval_d = $datetime1_d->diff($datetime2_d);
-        // $days_d = $interval_d->format('%a')+1;
+        $day = "01";
         $year = date('Y');
         $month = date('m');
-        $day = "01";
         foreach($employees as $employee)
         {
             $leave_credits = ($employee->employee_leave_list)->where('leave_id',1)->sortByDesc('id')->first();
