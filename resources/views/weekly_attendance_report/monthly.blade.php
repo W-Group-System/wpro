@@ -57,7 +57,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <label><b>I. Tardiness</b></label>
+                                {{-- <label><b>I. Tardiness</b></label> 
                                 <table class="table table-hover table-bordered" id="tardiness">
                                     <thead>
                                         <tr>
@@ -71,110 +71,137 @@
                                     </thead>
                                     <tbody>
                                         @php
-                                            $dates = $data->pluck('date')->unique(); // Get unique dates from AttendanceLog
+                                            $tardy_employees = collect();
+                                            $row_number = 1;
                                         @endphp
 
-                                        @foreach($employees as $key => $employee)
+                                        @foreach($employees as $employee)
                                             @php
-                                                $count = 0;
+                                                $tardy_count = 0;
                                             @endphp
-
-                                            @foreach ($dates as $date_a)
+                                            @foreach($date_range as $date_a)
                                                 @php
-                                                    $employee_schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
-
-                                                    $final_time_in = $employee->attendances
-                                                        ->filter(function ($attendance) use ($date_a) {
-                                                            return date('Y-m-d', strtotime($attendance->time_in)) === $date_a;
+                                                    $schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
+                                                    $attendance = $employee->attendances
+                                                        ->filter(function ($att) use ($date_a) {
+                                                            return date('Y-m-d', strtotime($att->time_in)) === $date_a;
                                                         })
                                                         ->sortBy('time_in')
                                                         ->first();
 
-                                                    if ($employee_schedule && $final_time_in) {
-                                                        if (date('H:i', strtotime($final_time_in->time_in)) > $employee_schedule->time_in_to) {
-                                                            $count++;
+                                                    if ($schedule && $attendance) {
+                                                        if (date('H:i', strtotime($attendance->time_in)) > $schedule->time_in_to) {
+                                                            $tardy_count++;
                                                         }
                                                     }
                                                 @endphp
                                             @endforeach
 
-                                            @if($count > 0)
-                                                <tr>
-                                                    <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $employee->company->company_name ?? '' }}</td>
-                                                    <td>{{ $employee->employee_code }}</td>
-                                                    <td>{{ optional($employee->user_info)->name }}</td>
-                                                    <td>{{ $count }}</td>
-                                                    <td></td>
-                                                </tr>
+                                            @if($tardy_count > 0)
+                                                @php
+                                                    $tardy_employees->push([
+                                                        'row_number' => $row_number++,
+                                                        'company_name' => $employee->company->company_name ?? '',
+                                                        'employee_code' => $employee->employee_code,
+                                                        'name' => optional($employee->user_info)->name,
+                                                        'tardy_count' => $tardy_count,
+                                                        'remarks' => 'Excessive; for NOD issuance'
+                                                    ]);
+                                                @endphp
                                             @endif
                                         @endforeach
+
+                                        @foreach($tardy_employees as $tardy)
+                                            <tr>
+                                                <td>{{ $tardy['row_number'] }}</td>
+                                                <td>{{ $tardy['company_name'] }}</td>
+                                                <td>{{ $tardy['employee_code'] }}</td>
+                                                <td>{{ $tardy['name'] }}</td>
+                                                <td>{{ $tardy['tardy_count'] }}</td>
+                                                <td>{{ $tardy['remarks'] }}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
-                                </table>
+                                </table> --}}
                                 <hr>
                                 <label><b>II. Undertime</b></label>
                                 <table class="table table-hover table-bordered" id="undertime">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Employee ID</th>
                                             <th>Company</th>
+                                            <th>Employee ID</th>
                                             <th>Name</th>
                                             <th>No. of Days</th>
                                             <th>Remarks/ Recommendation</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($employees as $key=>$employee)
+                                        @php
+                                            $undertime_employees = collect();
+                                            $row_number = 1;
+                                        @endphp
+
+                                        @foreach($employees as $employee)
                                             @php
-                                                $count = 0;
+                                                $undertime_count = 0;
                                             @endphp
-                                            @foreach ($data as $date_a)
+                                            @foreach($date_range as $date_a)
                                                 @php
-                                                    $employee_schedule = employeeSchedule($employee->ScheduleData,$date_a,$employee->schedule_id,$employee->employee_code);
+                                                    $schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
                                                     
-                                                    $final_time_out = ($employee->attendances)
-                                                        ->filter(function ($attendance) use ($date_a) {
-                                                            return date('Y-m-d', strtotime($attendance->time_out)) === $date_a;
+                                                    $attendance = $employee->attendances
+                                                        ->filter(function ($att) use ($date_a) {
+                                                            return date('Y-m-d', strtotime($att->time_out)) === $date_a;
                                                         })
-                                                        ->sortByDesc('time_out')
+                                                        ->sortBy('time_out')
                                                         ->first();
                                                     
-                                                    if ($employee_schedule && $final_time_out)
-                                                    {
-                                                        if (date('H:i', strtotime($final_time_out->time_out)) < $employee_schedule->time_out_to)
-                                                        {
-                                                            $count++;
+                                                    if ($schedule && $attendance && !empty($attendance->time_out)) {
+                                                        if (date('H:i', strtotime($attendance->time_out)) < $schedule->time_out_to) {
+                                                            $undertime_count++;
                                                         }
                                                     }
-                                                    
                                                 @endphp
                                             @endforeach
 
-                                            @if($count > 0)
-                                                <tr>
-                                                    <td>{{ $key+1 }}</td>
-                                                    <td>{{ $employee->company->company_name }}</td>
-                                                    <td>{{ $employee->employee_code }}</td>
-                                                    <td>{{ $employee->user_info->name }}</td>
-                                                    <td>{{ $count }}</td>
-                                                    <td></td>
-                                                </tr>
+                                            @if($undertime_count > 0)
+                                                @php
+                                                    $undertime_employees->push([
+                                                        'row_number' => $row_number++,
+                                                        'company_name' => $employee->company->company_name ?? '',
+                                                        'employee_code' => $employee->employee_code,
+                                                        'name' => optional($employee->user_info)->name,
+                                                        'undertime_count' => $undertime_count,
+                                                        'remarks' => 'Excessive; for NOD issuance'
+                                                    ]);
+                                                @endphp
                                             @endif
+                                        @endforeach
+
+                                        @foreach($undertime_employees as $undertime)
+                                            <tr>
+                                                <td>{{ $undertime['row_number'] }}</td>
+                                                <td>{{ $undertime['company_name'] }}</td>
+                                                <td>{{ $undertime['employee_code'] }}</td>
+                                                <td>{{ $undertime['name'] }}</td>
+                                                <td>{{ $undertime['undertime_count'] }}</td>
+                                                <td>{{ $undertime['remarks'] }}</td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                                 <hr>
 
-                                <label style="margin-bottom: 20px;"><b>III. Leaves</b></label><br>
+                                {{-- <label style="margin-bottom: 20px;"><b>III. Leaves</b></label><br>
                                 <label>A. Leave without Pay</label>
                                 <table class="table table-hover table-bordered mb-2" id="leaves">
                                     <thead>
                                         <tr>
-                                            <th>Employee ID</th>
                                             <th>No.</th>
+                                            <th>Employee ID - Name</th>
                                             <th>Company</th>
-                                            <th>Name</th>
+                                            {{-- <th>Name</th> --}}
                                             <th>No. of LWOP days</th>
                                             <th>Reason</th>
                                             <th>Remarks/ Recommendation</th>
@@ -194,9 +221,9 @@
 
                                                         {{ $count }}
                                                     </td>
-                                                    <td>{{ $employee->employee_code }}</td>
+                                                    <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
-                                                    <td>{{ $employee->user_info->name }}</td>
+                                                    {{-- <td>{{ $employee->user_info->name }}</td> --}}
                                                     <td>
                                                         @php
                                                             $total_array = [];
@@ -223,9 +250,9 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Employee ID</th>
+                                            <th>Employee ID - Name</th>
                                             <th>Company</th>
-                                            <th>Name</th>
+                                            {{-- <th>Name</th> --}}
                                             <th>Leave Date(s)</th>
                                             <th>Leave Type</th>
                                             <th>Remarks/ Recommendation</th>
@@ -245,9 +272,9 @@
 
                                                         {{ $count }}
                                                     </td>
-                                                    <td>{{ $employee->employee_code }}</td>
+                                                    <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
-                                                    <td>{{ $employee->user_info->name }}</td>
+                                                    {{-- <td>{{ $employee->user_info->name }}</td> --}}
                                                     <td>
                                                         @foreach ($employee->leaves->where('withpay', 1)->sortBy('date_from') as $leaves)
                                                             {{ date('M d, Y', strtotime($leaves->date_from)) .' - '. date('M d, Y', strtotime($leaves->date_to)) }}  <br>
@@ -275,7 +302,7 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
-                                            <th>Employee ID</th>
+                                            <th>Employee ID - Name</th>
                                             <th>Company</th>
                                             <th>Regular Working Hours</th>
                                             <th>Overtime Hours Total</th>
@@ -288,7 +315,7 @@
                                             $count = 0;
                                         @endphp
                                         @foreach($employees as $key => $employee)
-                                            @if(count($employee->approved_ots) > 0)
+                                            @if(count($employee->approved_ots) > 1)
                                                 @php
                                                     $count++;
                                                 @endphp
@@ -297,61 +324,35 @@
                                                     <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
                                                     <td>
-                                                        @php
-                                                            $day_name = [];
-                                                            
-                                                            foreach ($employee->approved_ots as $overtime)
-                                                            {
-                                                                $day_name[] = date('l', strtotime($overtime->ot_date));
-                                                            }
-                                                            
-                                                            $employee_schedule = $employee->schedule_info->ScheduleData->whereIn('name', $day_name)->pluck('working_hours')->toArray();
+                                                        @php                                                 
+                                                            $employee_schedule = $employee->schedule_info->ScheduleData->sum('working_hours');
                                                         @endphp
-                                                        {{ implode("\n", $employee_schedule) }}
+                                                        {{ $employee_schedule }}
                                                     </td>
                                                     <td>
-                                                        @foreach ($employee->approved_ots as $overtime)
+                                                        {{-- @foreach ($employee->approved_ots as $overtime)
                                                             {{ date('M d, Y', strtotime($overtime->ot_date)).' - '. $overtime->ot_approved_hrs }} <br>
-                                                        @endforeach
+                                                        @endforeach --}}
+                                                       {{ $employee->approved_ots->sum('ot_approved_hrs') }}
                                                     </td>
-                                                    <td></td>
+                                                    <td>
+                                                        @php
+                                                            $total_ot_hours = $employee->approved_ots->sum('ot_approved_hrs');
+                                                            $total_schedule_hours = $employee->schedule_info->ScheduleData->sum('working_hours');
+
+                                                            $percent_overtime = $total_schedule_hours > 0 
+                                                                ? ($total_ot_hours / $total_schedule_hours) * 100 
+                                                                : 0;
+                                                        @endphp
+
+                                                        {{ number_format($percent_overtime, 2) }}%
+                                                    </td>
                                                     <td></td>
                                                 </tr>
                                             @endif
-                                            @if(count($daily_schedules->where('employee_code', $employee->employee_code)) > 0)
-                                            <tr>
-                                                <td>{{ $count++ }}</td>
-                                                <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
-                                                <td>{{ $employee->company->company_code }}</td>
-                                                <td>
-                                                    @php
-                                                        $reg_hrs = [];
-                                                        foreach($daily_schedules->where('employee_code', $employee->employee_code) as $daily_sched)
-                                                        {
-                                                            $reg_hrs[] = $daily_sched->working_hours;
-                                                        }
-                                                    @endphp
-
-                                                    {!! implode("<br>", array_unique($reg_hrs)) !!}
-                                                </td>
-                                                <td>
-                                                    @php
-                                                        $date_arr = [];
-                                                        foreach($daily_schedules->where('employee_code', $employee->employee_code) as $daily_sched)
-                                                        {
-                                                            $date_arr[] = date('M d, Y', strtotime($daily_sched->log_date));
-                                                        }
-                                                    @endphp
-
-                                                    {!! implode("<br>", array_unique($date_arr)) !!}
-                                                </td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            @endif
                                         @endforeach
                                     </tbody>
-                                </table>
+                                </table> --}}
                             </div>
                         </div> 
                     </form>
