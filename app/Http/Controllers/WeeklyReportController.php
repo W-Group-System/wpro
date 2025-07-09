@@ -6,7 +6,6 @@ use App\Company;
 use App\DailySchedule;
 use App\Employee;
 use App\ScheduleData;
-use App\AttendanceLog;
 use DateTime;
 use Illuminate\Http\Request;
 
@@ -156,6 +155,7 @@ class WeeklyReportController extends Controller
     //     ]);
 
     // }
+
     public function monthly(Request $request) 
     {
         $header = 'monthly_attendance_report';
@@ -169,17 +169,22 @@ class WeeklyReportController extends Controller
             ->get();
 
         // Empty by default
-        $data = collect();
         $employees = collect();
         $company_data = collect();
         $daily_schedules = collect();
+        $date_range = [];
 
         if ($from && $to && !empty($company)) {
+            // $period = \Carbon\CarbonPeriod::create($from, $to);
+            // foreach ($period as $date) {
+            //     $date_range[] = $date->format('Y-m-d');
+            // }
+            $start = strtotime($from);
+            $end = strtotime($to);
+            for ($i = $start; $i <= $end; $i += 86400) {
+                $date_range[] = date('Y-m-d', $i);
+            }
             $company_data = Company::whereIn('id', $company)->get();
-
-            $data = AttendanceLog::with('employee')
-                ->whereBetween('date', [$from, $to])
-                ->get();
 
             $employees = Employee::select(
                 'employee_number',
@@ -196,17 +201,19 @@ class WeeklyReportController extends Controller
             )
             ->with([
                 'company',
+                'ScheduleData',
                 'user_info' => fn($q) => $q->where('status', 'Active'),
-                'leaves' => fn($q) => $q->whereBetween('date_from', [$from, $to]),
-                'approved_ots' => fn($q) => $q->whereBetween('ot_date', [$from, $to])->where('status', 'Approved'),
-                'attendances' => function ($query) use ($from, $to) {
-                    $query->where(function ($q) use ($from, $to) {
-                        $q->whereBetween('time_in', [$from . ' 00:00:00', $to . ' 23:59:59'])
-                        ->orWhereBetween('time_out', [$from . ' 00:00:00', $to . ' 23:59:59']);
-                    })
-                    ->orderBy('time_in', 'asc')
-                    ->orderBy('time_out', 'desc')
-                    ->orderBy('id', 'asc');
+                'leaves' => fn($q) => $q->whereBetween('date_from', [$date_range]),
+                'approved_ots' => fn($q) => $q->whereBetween('ot_date', [$date_range])->where('status', 'Approved'),
+                'attendances' => function ($query) use ($date_range) {
+                    $query->select('id', 'employee_code', 'time_in', 'time_out')
+                        ->where(function ($q) use ($date_range) {
+                            $q->whereBetween('time_in', [$date_range." 00:00:01", $date_range." 23:59:59"])
+                            ->orWhereBetween('time_out', [$date_range." 00:00:01", $date_range." 23:59:59"]);
+                        })
+                        ->orderBy('time_in', 'asc')
+                        ->orderBy('time_out', 'desc')
+                        ->orderBy('id', 'asc');
                 }
             ])
             ->where('status', 'Active')
@@ -215,12 +222,11 @@ class WeeklyReportController extends Controller
 
             $daily_schedules = DailySchedule::whereBetween('log_date', [$from, $to])->get();
         }
-
+        // dd($daily_schedules);
         $schedules = ScheduleData::all();
 
         return view('weekly_attendance_report.monthly', compact(
-            'header', 'from', 'to', 'companies', 'company_data', 'company',
-            'data', 'employees', 'daily_schedules', 'schedules'
+            'header', 'from', 'to', 'companies', 'company_data', 'company', 'employees', 'daily_schedules','schedules', 'date_range'
         ));
     }
     /**
