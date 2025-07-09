@@ -59,6 +59,8 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_mc && $leave_type->code == 'MC')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_prev_vl && $leave_type->code == 'PVL')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
                       </select>
@@ -136,15 +138,15 @@
   </div>
 </div>
 @php
-    $total_vl_balance = 0;
-    if ($vl_balance_previous <= 0.5)
-    {
-        $total_vl_balance = $vl_balance;
-    }
-    else
-    {
-        $total_vl_balance = $vl_balance_previous;
-    }
+    // $total_vl_balance = 0;
+    // if ($vl_balance_previous <= 0.5)
+    // {
+    //     $total_vl_balance = $vl_balance;
+    // }
+    // else
+    // {
+    //     $total_vl_balance = $vl_balance_previous;
+    // }
 @endphp
 <script>
   var app = new Vue({
@@ -154,7 +156,7 @@
               leave_type : '',
               isAllowedWithPay : true,
               leave_balances : '',
-              vl_balance : '<?php echo $total_vl_balance; ?>',
+              vl_balance : '<?php echo $vl_balance; ?>',
               sl_balance : '<?php echo $sl_balance; ?>',
               ml_balance : '<?php echo $ml_balance; ?>',
               pl_balance : '<?php echo $pl_balance; ?>',
@@ -164,6 +166,7 @@
               el_balance : '<?php echo $el_balance; ?>',
               bl_balance : '<?php echo $bl_balance; ?>',
               mc_balance : '<?php echo $mc_balance; ?>',
+              pvl_balance : '<?php echo $pvl_balance; ?>',
           },
           methods: {
             validateLeave() {
@@ -253,6 +256,15 @@
               else if (this.leave_type == '12') {
                 if(Number(this.mc_balance) >= 0.5){
                     this.leave_balances = this.mc_balance;
+                    this.isAllowedWithPay = false;
+                    amen = true;
+                }else{
+                this.isAllowedWithPay = true;
+                }
+              }
+              else if (this.leave_type == '14') {
+                if(Number(this.pvl_balance) >= 0.5){
+                    this.leave_balances = this.pvl_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
                 }else{

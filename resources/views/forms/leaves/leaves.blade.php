@@ -30,6 +30,7 @@
                           $is_allowed_to_file_el = false;
                           $is_allowed_to_file_bl = false;
                           $is_allowed_to_file_mc = false;
+                          $is_allowed_to_file_prev_vl = false;
 
                           $vl_balance = 0;
                           $sl_balance = 0;
@@ -566,7 +567,7 @@
                                             {{ $leave->pluck('earned_per_month')->sum() }}
                                         @endif --}}
                                         @if ($leave_id == '1')
-                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                            {{ $leave->where('year', date('Y'))->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '2')
                                             {{ $leave->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '10')
@@ -621,7 +622,7 @@
                                                 $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
                                                 $total_months = (($date_diff->y) * 12) + ($date_diff->m);
 
-                                                $count_vl =  ($leave->pluck('earned_per_month')->sum()) - $used_vl_this_yr;
+                                                $count_vl =  ($leave->where('year', date('Y'))->pluck('earned_per_month')->sum()) - $used_vl_this_yr;
 
                                                 if($count_vl > 0){
                                                     if($total_months > 11){
@@ -866,99 +867,14 @@
                                         </td>
                                         <td>
                                             @php
-                                                $vl_balance_previous = 0;
-                                                // if($employee_status->date_regularized)
-                                                // {
-                                                //     if (date('Y', strtotime($employee_status->date_regularized)) == date('Y'))
-                                                //     {
-                                                //         $vl_balance_previous = 0;
-                                                //     }
-                                                //     else
-                                                //     {
-                                                //         if(date('m') == '04')
-                                                //         {
-                                                //             $vl_balance_previous = 0;
-                                                //         }
-                                                //         else
-                                                //         {
-                                                //             $vl_balance_previous = $vl_balance - $earned_vl;
-                                                //             if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                //             {
-                                                //                 $vl_balance_previous = 0;
-                                                //             }
-                                                //         }
-                                                //     }
-                                                // }
-                                                // else
-                                                // {
-                                                //     if(date('m') == '04')
-                                                //     {
-                                                //         $vl_balance_previous = 0;
-                                                //     }
-                                                //     else
-                                                //     {
-                                                //         $vl_balance_previous = $vl_balance - $earned_vl;
-                                                //         if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                //         {
-                                                //             $vl_balance_previous = 0;
-                                                //         }
-                                                //     }
-                                                // }
-                                                $emp_movement = $employee_status->employeeMovement->first();
-                                                if ($emp_movement)
+                                                $pvl_balance = $employee_leave_lists->where('year', date('Y', strtotime('-1 year')))->sum('earned_per_month') - $used_pvl;
+                                                if ($pvl_balance !== 0)
                                                 {
-                                                    $date_regularized = json_decode($emp_movement->new_values);
-                                                    if (isset($date_regularized->date_to))
-                                                    {
-                                                        if((date('m') == '04') || (date('Y', strtotime($date_regularized->date_to)) == date('Y')))
-                                                        {
-                                                            $vl_balance_previous = 0;
-                                                        }
-                                                        else
-                                                        {
-                                                            if(date('m') >= '04')
-                                                            {
-                                                                $vl_balance_previous = 0;
-                                                            }
-                                                            else
-                                                            {
-                                                                $vl_balance_previous = ($count_vl ?? 0) - $earned_vl;
-                                                                
-                                                                if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                                {
-                                                                    $vl_balance_previous = 0;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        $vl_balance_previous = ($count_vl ?? 0) - $earned_vl;
-                                                        if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                        {
-                                                            $vl_balance_previous = 0;
-                                                        }
-                                                    }
+                                                    $is_allowed_to_file_prev_vl = true;
                                                 }
-                                                else
-                                                {
-                                                    if((date('m') >= '04'))
-                                                    {
-                                                        $vl_balance_previous = 0;
-                                                    }
-                                                    else
-                                                    {
-                                                        $vl_balance_previous = ($count_vl ?? 0) - $earned_vl;
-                                                        
-                                                        if($vl_balance_previous <= 0.00 || $vl_balance_previous <= 0.000)
-                                                        {
-                                                            $vl_balance_previous = 0;
-                                                        }
-                                                    }
-                                                }
+                                                
                                             @endphp
-
-                                            {{round($vl_balance_previous, 10)}}
+                                            {{ number_format($pvl_balance, 2) }}
                                         </td>
                                     </tr>
                                     {{-- <tr>

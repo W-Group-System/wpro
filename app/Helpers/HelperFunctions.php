@@ -1571,3 +1571,14 @@ function earn_per_month($leave,$date_regularization="")
         return round($total_earned, 2);
     }
 }
+
+function checkUsedPvl($id, $leave_id)
+{
+    $used_pvl = EmployeeLeave::where('leave_type', $leave_id)
+        ->whereIn('status',['Pending','Approved'])
+        ->where('user_id', $id)
+        ->where('date_from', 'LIKE', "%".date('Y')."%")
+        ->count();
+    
+    return $used_pvl;
+}
