@@ -24,17 +24,18 @@
                 <label for="password">Password</label>
                 <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="********" name="password" required>
               </div>
-              <div class="d-flex mb-5 align-items-center">
+              <!-- <div class="d-flex mb-5 align-items-center">
                 <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
                   <input type="checkbox" checked="checked"/>
                   <div class="control__indicator"></div>
                 </label>
                 <br>
                 <span class="ml-auto"><a  href="{{ route('password.request') }}" style="text-decoration:none;" onclick='show()' class="forgot-pass">Forgot Password</a></span> 
-              </div>
-              <div class="mb-4 align-items-left">
+              </div> -->
+              <div class="mb-3 align-items-left">
                 <!-- <span class="ml-auto"><a  href="{{ route('password.request') }}" style="text-decoration:none;" onclick='show()' class="forgot-pass">Forgot Password?</a></span>  -->
-                <p class="ml-auto">If you've forgotten your credentials? Click submit a ticket.</p>
+                <!-- <p class="ml-auto">If you've forgotten your credentials? Click submit a ticket.</p> -->
+                <p class="ml-auto" style="display: inline-grid;">If you’ve forgotten your credentials, please click on <a href="{{ route('password.request') }}" onclick='show()' class="forgot-pass">Forgot Password</a></p> 
               </div>
               @if($errors->any())
                 <div class="form-group alert alert-danger alert-dismissable">
