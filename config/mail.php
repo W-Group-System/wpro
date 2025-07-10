@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => 'adminportal@premiummegastructures.com',
-        'name' => 'HRIS'
+        'address' => 'no-reply@wgroup.space',
+        'name' => 'W Pro'
     ],
     /*
     |--------------------------------------------------------------------------
