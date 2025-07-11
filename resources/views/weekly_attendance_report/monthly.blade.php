@@ -33,7 +33,7 @@
                                     <option value="">-- Select Companies --</option>
                                     @foreach($companies as $comp)
                                         <option value="{{ $comp->id }}" 
-                                            @if(is_array($company_data) && in_array($comp->id, $company_data)) selected @endif>
+                                            @if(in_array($comp->id, $company_data->pluck('id')->toArray())) selected @endif>
                                             {{ $comp->company_code }}
                                         </option>
                                     @endforeach
@@ -140,8 +140,9 @@
                                         @php
                                             $undertime_employees = collect();
                                             $row_number = 1;
+                                            $test_array = [];
                                         @endphp
-
+                                        {{-- A192924 --}}
                                         @foreach($employees as $employee)
                                             @php
                                                 $undertime_count = 0;
@@ -152,19 +153,44 @@
                                                     
                                                     $attendance = $employee->attendances
                                                         ->filter(function ($att) use ($date_a) {
-                                                            return date('Y-m-d', strtotime($att->time_out)) === $date_a;
+                                                            $date_in = date('Y-m-d', strtotime($att->time_in));
+                                                            $date_out = date('Y-m-d', strtotime($att->time_out));
+                                                            return $date_in == $date_a && $date_out == $date_a;
                                                         })
+                                                        // ->where('time_in', '>=', date('Y-m-d', strtotime($date_a)))
+                                                        // ->where('time_out',"<=",date('Y-m-d', strtotime($date_a)))
                                                         ->sortBy('time_out')
                                                         ->first();
                                                     
-                                                    if ($schedule && $attendance && !empty($attendance->time_out)) {
-                                                        if (date('H:i', strtotime($attendance->time_out)) < $schedule->time_out_to) {
-                                                            $undertime_count++;
+                                                    if ($schedule && !empty($attendance)) {
+                                                        if (date('H:i', strtotime($attendance->time_in)) < date('H:i', strtotime($schedule->time_in_from)))
+                                                        {
+                                                            $estimated_out = date('H:i', strtotime($schedule->time_out_from));
+                                                        }
+                                                        else
+                                                        {
+                                                            $hours = intval($schedule->working_hours);
+                                                            $minutes = ($schedule->working_hours-$hours)*60;
+                                                            $estimated_out = date('H:i', strtotime("+".$hours." hours",strtotime($attendance->time_in)));
+                                                            $estimated_out = date('H:i', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
+                                                        }
+                                                        if (date('H:i', strtotime($attendance->time_in)) > date('H:i', strtotime($schedule->time_in_to)))
+                                                        {
+                                                            $estimated_out = date('H:i', strtotime($schedule->time_out_to));
+                                                        }
+
+                                                        $if_has_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_a)),$schedule);
+                                                        if (empty($if_has_leave))
+                                                        {
+                                                            if (date('H:i', strtotime($attendance->time_out)) < $estimated_out) {
+                                                                $undertime_count++;
+                                                            }
+                                                            // $test_array[] = $date_a;
                                                         }
                                                     }
                                                 @endphp
                                             @endforeach
-
+                                            
                                             @if($undertime_count > 0)
                                                 @php
                                                     $undertime_employees->push([
@@ -178,7 +204,7 @@
                                                 @endphp
                                             @endif
                                         @endforeach
-
+                                        {{-- @dd($test_array) --}}
                                         @foreach($undertime_employees as $undertime)
                                             <tr>
                                                 <td>{{ $undertime['row_number'] }}</td>
@@ -352,7 +378,7 @@
                                             @endif
                                         @endforeach
                                     </tbody>
-                                </table> --}}
+                                </table>
                             </div>
                         </div> 
                     </form>

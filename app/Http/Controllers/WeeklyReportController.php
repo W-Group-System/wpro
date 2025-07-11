@@ -205,11 +205,11 @@ class WeeklyReportController extends Controller
                 'user_info' => fn($q) => $q->where('status', 'Active'),
                 'leaves' => fn($q) => $q->whereBetween('date_from', [$date_range]),
                 'approved_ots' => fn($q) => $q->whereBetween('ot_date', [$date_range])->where('status', 'Approved'),
-                'attendances' => function ($query) use ($date_range) {
+                'attendances' => function ($query) use ($from,$to) {
                     $query->select('id', 'employee_code', 'time_in', 'time_out')
-                        ->where(function ($q) use ($date_range) {
-                            $q->whereBetween('time_in', [$date_range." 00:00:01", $date_range." 23:59:59"])
-                            ->orWhereBetween('time_out', [$date_range." 00:00:01", $date_range." 23:59:59"]);
+                        ->where(function ($q) use ($from,$to) {
+                            $q->whereBetween('time_in', [$from." 00:00:01", $to." 23:59:59"])
+                            ->orWhereBetween('time_out', [$from." 00:00:01", $to." 23:59:59"]);
                         })
                         ->orderBy('time_in', 'asc')
                         ->orderBy('time_out', 'desc')
