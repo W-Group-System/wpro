@@ -746,7 +746,9 @@ function checkUsedServiceIncentiveLeave($user_id){
 function checkUsedLeave($user_id,$leave_type){
     $employee_leave = EmployeeLeave::where('user_id',$user_id)
                                     ->where('leave_type',$leave_type)
-                                    ->where('status','Approved')
+                                    ->whereIn('status',['Approved','Pending'])
+                                    ->where('date_from', 'LIKE', '%'.date('Y').'%')
+                                    ->where('created_at', 'LIKE', '%'.date('Y').'%')
                                     ->get();
 
     $count = 0;
