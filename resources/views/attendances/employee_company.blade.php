@@ -747,7 +747,16 @@
                                                                 $late = ($schedule_hours/2)-$work;
                                                                 if($work < $schedule_hours/2)
                                                                 {
-                                                                    $late = (double) number_format(($schedule_hours/2 - $work),2) *60;
+                                                                    $default_halfday_hrs = 4;
+                                                                    if ($schedule_hours <= $default_halfday_hrs)
+                                                                    {
+                                                                        $late = 0;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $late = (double) number_format(($schedule_hours/2 - $work),2) *60;
+                                                                    }
+                                                                    
                                                                     $undertime_hrs = 0;
                                                                 } 
                                                             }
