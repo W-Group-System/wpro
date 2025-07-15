@@ -127,7 +127,7 @@ class LoanController extends Controller
     {
         $loans = LoanType::get();
 
-        $pay_regs_instruction = PayregInstruction::select('instruction_name')->where('amount', '<', 0)->groupBy('instruction_name')->get();
+        $pay_regs_instruction = PayregInstruction::select('instruction_name')->where('amount', '>', 0)->groupBy('instruction_name')->get();
         
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $companies = Company::whereHas('employee_has_company')
