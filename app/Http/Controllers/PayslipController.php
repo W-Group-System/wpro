@@ -1045,7 +1045,7 @@ class PayslipController extends Controller
             $generated_timekeepings = AttendanceDetailedReport::with(['employee.approved_obs', 'employee.approved_leaves_with_pay', 'employee.approved_leaves'])
                 ->where('company_id', $request->company)
                 ->whereBetween('log_date', [$from_date, $to_date])
-                ->where('employee_no', 'A285018')
+                // ->where('employee_no', 'A285018')
                 ->get();
                 // foreach ($generated_timekeepings as $timekeeping) {
                 //     $employee = $timekeeping->employee;
