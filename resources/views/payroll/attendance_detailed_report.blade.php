@@ -270,10 +270,32 @@
                           <td class="dt-type-numeric">{{ $timekeeping->rst_sh_nd }}</td>
                           <td class="dt-type-numeric">{{ $timekeeping->rst_sh_nd_over_eight }}</td>
                           <td>
-                            @if (!empty($timekeeping->OB))
+                            {{-- @if (!empty($timekeeping->OB))
                                 {{ $timekeeping->OB }}
                             @elseif (!empty($timekeeping->LWP))
                                 {{ $timekeeping->LWP }}
+                            @endif --}}
+
+                            @php
+                                $approved_ob = $timekeeping->employee->approved_obs()->whereDate("date_from", $timekeeping->log_date)->first();
+                                $leave = $timekeeping->employee->approved_leaves_with_pay()->whereDate("date_from", $timekeeping->log_date)->first();
+                                // $lwop = $timekeeping->employee->approved_leaves()->whereDate("date_from", $timekeeping->log_date)->first();
+                            @endphp
+
+                            @if($approved_ob)
+                                @if(date('Y-m-d', strtotime($approved_ob->date_from)) == date('Y-m-d', strtotime($timekeeping->log_date)))
+                                {{ 'OB' }}
+                                @endif
+                            @endif  
+                            
+                            @if($leave)
+                                @if(date('Y-m-d', strtotime($leave->date_from)) == date('Y-m-d', strtotime($timekeeping->log_date)))
+                                    @if($leave->leave_type == 13)
+                                    {{ $leave->leave->leave_type }}
+                                    @else
+                                    {{ $leave->leave->leave_type.' With Pay' }}
+                                    @endif
+                                @endif
                             @endif
                         </td> 
                       </tr>

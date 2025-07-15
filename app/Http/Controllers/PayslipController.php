@@ -1045,45 +1045,46 @@ class PayslipController extends Controller
             $generated_timekeepings = AttendanceDetailedReport::with(['employee.approved_obs', 'employee.approved_leaves_with_pay', 'employee.approved_leaves'])
                 ->where('company_id', $request->company)
                 ->whereBetween('log_date', [$from_date, $to_date])
+                ->where('employee_no', 'A285018')
                 ->get();
-                foreach ($generated_timekeepings as $timekeeping) {
-                    $employee = $timekeeping->employee;
-                    if ($employee) {
-                        $approved_obs = $employee->approved_obs;
-                        $approved_leaves_with_pay = $employee->approved_leaves_with_pay;
-                        $approved_leaves_without_pay = $employee->approved_leaves;
-                        $timekeeping->leaves = "";
-                        $timekeeping->OB = "";
+                // foreach ($generated_timekeepings as $timekeeping) {
+                //     $employee = $timekeeping->employee;
+                //     if ($employee) {
+                //         $approved_obs = $employee->approved_obs;
+                //         $approved_leaves_with_pay = $employee->approved_leaves_with_pay;
+                //         $approved_leaves_without_pay = $employee->approved_leaves;
+                //         $timekeeping->leaves = "";
+                //         $timekeeping->OB = "";
             
-                        if ($approved_obs) {
-                            $approved_ob = $approved_obs->where('date_from', '<=', $timekeeping->log_date)
-                                                        ->where('date_to', '>=', $timekeeping->log_date)
-                                                        ->first();
+                //         if ($approved_obs) {
+                //             $approved_ob = $approved_obs->where('date_from', '<=', $timekeeping->log_date)
+                //                                         ->where('date_to', '>=', $timekeeping->log_date)
+                //                                         ->first();
             
-                            if ($approved_ob) {
-                                $timekeeping->OB = "OB";
-                            }
-                        }
+                //             if ($approved_ob) {
+                //                 $timekeeping->OB = "OB";
+                //             }
+                //         }
 
-                        if ($approved_leaves_with_pay) {
-                            $approved_leave_with_pay = $approved_leaves_with_pay->where('date_from', '<=', $timekeeping->log_date)
-                                                        ->where('date_to', '>=', $timekeeping->log_date)
-                                                        ->first();
-                            if ($approved_leave_with_pay) {
-                                $timekeeping->LWP = $approved_leave_with_pay->leave->leave_type . " With Pay";
-                            }
-                        }
-                        elseif($approved_leaves_without_pay) {
-                            $approved_leave_without_pay = $approved_leaves_without_pay->where('date_from', '<=', $timekeeping->log_date)
-                            ->where('date_to', '>=', $timekeeping->log_date)
-                            ->first();
-                            if ($approved_leave_without_pay) {
-                                $timekeeping->LWP = $approved_leave_without_pay->leave->leave_type . " Without Pay";
-                            }
-                        }
-                    }
+                //         if ($approved_leaves_with_pay) {
+                //             $approved_leave_with_pay = $approved_leaves_with_pay->where('date_from', '<=', $timekeeping->log_date)
+                //                                         ->where('date_to', '>=', $timekeeping->log_date)
+                //                                         ->first();
+                //             if ($approved_leave_with_pay) {
+                //                 $timekeeping->LWP = $approved_leave_with_pay->leave->leave_type . " With Pay";
+                //             }
+                //         }
+                //         elseif($approved_leaves_without_pay) {
+                //             $approved_leave_without_pay = $approved_leaves_without_pay->where('date_from', '<=', $timekeeping->log_date)
+                //             ->where('date_to', '>=', $timekeeping->log_date)
+                //             ->first();
+                //             if ($approved_leave_without_pay) {
+                //                 $timekeeping->LWP = $approved_leave_without_pay->leave->leave_type . " Without Pay";
+                //             }
+                //         }
+                //     }
                     
-                }
+                // }
         }
 
         $schedules = ScheduleData::all();
