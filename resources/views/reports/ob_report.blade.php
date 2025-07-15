@@ -83,7 +83,7 @@
                                         <td>{{$item->employee->employee_code}}</td>
                                         <td>{{$item->user->name}}</td>
                                         
-                                        <td>{{$item->created_by_info->name}}</td>
+                                        <td>{{$item->created_by_info->name ?? 'N/A'}}</td>
                                         <td>{{date('d/m/Y h:i A', strtotime($item->created_at))}}</td>
                                         <td>{{ date('d/m/Y ', strtotime($item->applied_date)) }}</td>
                                         <td>{{ date('d/m/Y h:i A', strtotime($item->date_from)) }} - {{ date('d/m/Y h:i A', strtotime($item->date_to)) }}  </td>
