@@ -48,16 +48,21 @@
                             </div>
                         </div>
                         <div class="row mt-3 mb-3">
-                            <div class="col-md-3" style="margin-top: 5px;">
+                            <div class="col-md-4" style="margin-top: 5px;">
                                 <h3 id="reportTitle">{{date('M d, Y',strtotime($from))}} - {{date('M d, Y',strtotime($to))}}</h3> 
                             </div>
-                            <div class="col-md-9">
-                                <a href="{{ url('/attendance-report?from=' . $from . '&to=' . $to . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a>
+                            <div class="col-md-8">
+                                <!-- <a href="{{ url('/attendance-report?from=' . $from . '&to=' . $to . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a> -->
+                                 <a href="{{ route('monthly_attendance_report.pdf', ['from' => $from, 'to' => $to, 'companies' => request()->input('companies')]) }}"
+                                    target="_blank"
+                                    class="btn btn-danger btn-sm">
+                                        <i class="fa fa-file-pdf"></i> Export as PDF
+                                    </a>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                {{-- <label><b>I. Tardiness</b></label> 
+                                <label><b>I. Tardiness</b></label> 
                                 <table class="table table-hover table-bordered" id="tardiness">
                                     <thead>
                                         <tr>
@@ -122,7 +127,7 @@
                                             </tr>
                                         @endforeach
                                     </tbody>
-                                </table> --}}
+                                </table>
                                 <hr>
                                 <label><b>II. Undertime</b></label>
                                 <table class="table table-hover table-bordered" id="undertime">
@@ -142,7 +147,7 @@
                                             $row_number = 1;
                                             $test_array = [];
                                         @endphp
-                                        {{-- A192924 --}}
+                                      
                                         @foreach($employees as $employee)
                                             @php
                                                 $undertime_count = 0;
@@ -204,7 +209,7 @@
                                                 @endphp
                                             @endif
                                         @endforeach
-                                        {{-- @dd($test_array) --}}
+                                       
                                         @foreach($undertime_employees as $undertime)
                                             <tr>
                                                 <td>{{ $undertime['row_number'] }}</td>
@@ -219,7 +224,7 @@
                                 </table>
                                 <hr>
 
-                                {{-- <label style="margin-bottom: 20px;"><b>III. Leaves</b></label><br>
+                                <label style="margin-bottom: 20px;"><b>III. Leaves</b></label><br>
                                 <label>A. Leave without Pay</label>
                                 <table class="table table-hover table-bordered mb-2" id="leaves">
                                     <thead>
@@ -227,9 +232,9 @@
                                             <th>No.</th>
                                             <th>Employee ID - Name</th>
                                             <th>Company</th>
-                                            {{-- <th>Name</th> --}}
+                                            <!-- <th>Name</th> -->
                                             <th>No. of LWOP days</th>
-                                            <th>Reason</th>
+                                            <!-- <th>Reason</th> -->
                                             <th>Remarks/ Recommendation</th>
                                         </tr>
                                     </thead>
@@ -249,7 +254,7 @@
                                                     </td>
                                                     <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
-                                                    {{-- <td>{{ $employee->user_info->name }}</td> --}}
+                                                    <!-- <td>{{ $employee->user_info->name }}</td>  -->
                                                     <td>
                                                         @php
                                                             $total_array = [];
@@ -259,8 +264,6 @@
                                                             }
                                                         @endphp
                                                         {{ collect($total_array)->sum() }}
-                                                    </td>
-                                                    <td>
                                                     </td>
                                                     <td>
                                                         No leave Credits balance
@@ -278,7 +281,7 @@
                                             <th>No.</th>
                                             <th>Employee ID - Name</th>
                                             <th>Company</th>
-                                            {{-- <th>Name</th> --}}
+                                            <!-- <th>Name</th> -->
                                             <th>Leave Date(s)</th>
                                             <th>Leave Type</th>
                                             <th>Remarks/ Recommendation</th>
@@ -300,7 +303,7 @@
                                                     </td>
                                                     <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
-                                                    {{-- <td>{{ $employee->user_info->name }}</td> --}}
+                                                    <!-- <td>{{ $employee->user_info->name }}</td> -->
                                                     <td>
                                                         @foreach ($employee->leaves->where('withpay', 1)->sortBy('date_from') as $leaves)
                                                             {{ date('M d, Y', strtotime($leaves->date_from)) .' - '. date('M d, Y', strtotime($leaves->date_to)) }}  <br>
@@ -321,7 +324,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <hr>
+                                <hr> 
 
                                 <label><b>IV. Overtime</b></label>
                                 <table class="table table-hover table-bordered" id="overtime">
@@ -333,7 +336,7 @@
                                             <th>Regular Working Hours</th>
                                             <th>Overtime Hours Total</th>
                                             <th>% of Overtime</th>
-                                            <th>Remarks/ Recommendation</th>
+                                            <!-- <th>Remarks/ Recommendation</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -341,25 +344,34 @@
                                             $count = 0;
                                         @endphp
                                         @foreach($employees as $key => $employee)
-                                            @if(count($employee->approved_ots) > 1)
+                                            @if(count($employee->approved_ots) > 0)
                                                 @php
                                                     $count++;
+                                                    $total_work_hours = 0;
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $count }}</td>
                                                     <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
-                                                    <td>
-                                                        @php                                                 
-                                                            $employee_schedule = $employee->schedule_info->ScheduleData->sum('working_hours');
+                                                    @foreach($date_range as $date_a)
+                                                        @php    
+                                                            $sched = employeeSchedule(
+                                                                $employee->ScheduleData,
+                                                                $date_a,
+                                                                $employee->schedule_id,
+                                                                $employee->employee_code
+                                                            );
+                                                            if ($sched) {
+                                                                $total_work_hours += floatval($sched->working_hours) - 1;
+                                                            }
                                                         @endphp
-                                                        {{ $employee_schedule }}
-                                                    </td>
+                                                    @endforeach
+                                                    <td>{{ number_format($total_work_hours, 2) }} hrs</td>
                                                     <td>
                                                         {{-- @foreach ($employee->approved_ots as $overtime)
                                                             {{ date('M d, Y', strtotime($overtime->ot_date)).' - '. $overtime->ot_approved_hrs }} <br>
                                                         @endforeach --}}
-                                                       {{ $employee->approved_ots->sum('ot_approved_hrs') }}
+                                                       {{ $employee->approved_ots->sum('ot_approved_hrs') }} hrs
                                                     </td>
                                                     <td>
                                                         @php
@@ -373,7 +385,7 @@
 
                                                         {{ number_format($percent_overtime, 2) }}%
                                                     </td>
-                                                    <td></td>
+                                                    <!-- <td></td> -->
                                                 </tr>
                                             @endif
                                         @endforeach
