@@ -712,7 +712,7 @@
                                                     ])->flatMap(function($emp) use ($non_instruction) {
                                                         return $emp->pay_instructions->where('instruction_name', $non_instruction->instruction_name);
                                                     })->sum('amount');
-
+                                                    
                                                     // Add to Non-Taxable Income
                                                     $value["nontaxable_".$i] += $monthly_amount;
                                                 @endphp

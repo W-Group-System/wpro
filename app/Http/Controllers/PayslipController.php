@@ -230,7 +230,7 @@ class PayslipController extends Controller
                 ->whereIn('payreg_id', $emp_data->pluck('id')->toArray())
                 ->groupBy('instruction_name')
                 ->get();
-
+            
             $non_instructions_data = PayregInstruction::whereIn('payreg_id', $emp_data->pluck('id')->toArray())->get();
         }
 

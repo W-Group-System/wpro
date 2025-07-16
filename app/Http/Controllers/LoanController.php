@@ -149,10 +149,15 @@ class LoanController extends Controller
             $company_array = $company;
         }
         
-        $pay_register_ids = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
-        ->whereIn('company_id', $company_array)
-        ->pluck('id')
-        ->toArray();
+        // $pay_register_ids = Payregs::whereBetween('pay_period_from', [$request->from, $request->to])
+        // ->whereIn('company_id', $company_array)
+        // ->pluck('id')
+        // ->toArray();
+
+        $pay_register_ids = Payregs::whereBetween('cut_off_date', [$request->from, $request->to])
+                            ->whereIn('company_id', $company_array)
+                            ->pluck('id')
+                            ->toArray();
 
         $loan_all = PayregLoan::whereIn('payreg_id',$pay_register_ids)->whereIn('loan_type_id',$loanType)->get();
         $pay_regs = PayregInstruction::whereIn('payreg_id',$pay_register_ids)->whereIn('instruction_name',$loanType)->get();
