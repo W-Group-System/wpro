@@ -303,6 +303,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('salary-adjustment', 'AdjustmentController@index');
     Route::post('new-employee-adjustment', 'AdjustmentController@store');
     Route::get('disable-adjustment/{id}', 'AdjustmentController@disable');
+    Route::post('update-salary-adjustment/{id}', 'AdjustmentController@update');
+    Route::post('delete-salary-adjustment/{id}', 'AdjustmentController@destroy');
 
     // Loans
     Route::get('loans', 'LoanController@index');
