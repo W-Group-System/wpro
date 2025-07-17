@@ -970,6 +970,7 @@
                                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                                                 if($check_if_holiday)
                                                 {
+                                                    $restnd_ge=0;
                                                     $restday_ot= 0;
                                                     $restday_ot_ge= 0;
                                                     // dd($check_if_holiday);
@@ -1010,8 +1011,27 @@
                                                     {
                                                         if($check_if_holiday == "Special Holiday")
                                                         {
-                                                            $sh_ot = 8;
-                                                           
+                                                            if ($rest == "RESTDAY") 
+                                                            {
+                                                                $rst_sh_ot=8;
+                                                                $rst_sh_ot_ge = $approved_overtime_hrs-8;
+
+                                                                if($approved_overtime_hrs <= 8)
+                                                                {
+                                                                    $rst_sh_ot = $approved_overtime_hrs;
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                $sh_ot = 8;
+                                                                $sh_ot_ge = $approved_overtime_hrs-8;
+                                                                if($approved_overtime_hrs <= 8)
+                                                                {
+                                                                    $sh_ot = $approved_overtime_hrs;
+                                                                }
+                                                            }
+
                                                             $sh_ot_nd =  night_difference_per_company($time_start,$time_end);
                                                             if($sh_ot_nd >=4.5 )
                                                             {
@@ -1020,39 +1040,6 @@
                                                             if($sh_ot_nd > $sh_ot)
                                                             {
                                                                 $sh_ot_nd = $sh_ot;
-                                                            }
-                                                            if($approved_overtime_hrs <= 8)
-                                                            {
-                                                                if ($rest == "RESTDAY") 
-                                                                {
-                                                                    $sh_ot = 0;
-                                                                    $rst_sh_ot = $approved_overtime_hrs;
-                                                                }
-                                                                else
-                                                                {
-                                                                    $rst_sh_ot = 0;
-                                                                    $sh_ot = $approved_overtime_hrs;
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                if ($rest == "RESTDAY")
-                                                                {
-
-                                                                    $sh_ot_ge = 0;
-                                                                    $sh_ot=0;
-
-                                                                    $rst_sh_ot = $approved_overtime_hrs;
-                                                                    $rst_sh_ot_ge = $approved_overtime_hrs-8;
-                                                                }
-                                                                else
-                                                                {
-                                                                    $sh_ot_ge = $approved_overtime_hrs-8;
-                                                                    $sh_ot = $approved_overtime_hrs;
-
-                                                                    $rst_sh_ot=0;
-                                                                    $rst_sh_ot_ge = 0;
-                                                                }
                                                             }
 
                                                             if($employee_schedule)
@@ -1080,28 +1067,25 @@
                                                                             $sh_ot_nd = $sh_ot_nd-1;
                                                                         }
                                                                     }
-                                                                    $sh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
-                                                                    if($rest=="RESTDAY")
+
+                                                                    if($rest == "RESTDAY")
                                                                     {
-                                                                        $rst_sh_nd_ge = $sh_ot_nd_ge;
+                                                                        $rst_sh_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
+                                                                        $rst_sh_nd_ge = $rst_sh_nd_ge;
                                                                         if($rst_sh_nd_ge <0)
                                                                         {
                                                                             $rst_sh_nd_ge=0;
                                                                         }
-
-                                                                        $sh_ot_nd_ge =0;
                                                                     }
                                                                     else
                                                                     {
+                                                                        $sh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
                                                                         $sh_ot_nd_ge = $sh_ot_nd_ge;
                                                                         if($sh_ot_nd_ge <0)
                                                                         {
                                                                             $sh_ot_nd_ge=0;
                                                                         }
-                                                                        
-                                                                        $rst_sh_nd_ge=0;
                                                                     }
-                                                                    
                                                                    
                                                                 }
                                                                 else {
@@ -1118,41 +1102,28 @@
                                                             }
                                                            
                                                         }
-                                                        else {
-                                                            $lh_ot = 8;
-                                                            if($approved_overtime_hrs <= 8)
+                                                        else 
+                                                        {
+                                                            if ($rest == "RESTDAY")
                                                             {
-                                                                if ($rest == "RESTDAY")
+                                                                $rst_lh_ot = 8;
+                                                                $rst_lh_ot_ge = $approved_overtime_hrs-8;
+                                                                
+                                                                if($approved_overtime_hrs <= 8)
                                                                 {
-                                                                    $lh_ot = 0;
                                                                     $rst_lh_ot = $approved_overtime_hrs;
                                                                 }
-                                                                else
-                                                                {
-                                                                    $lh_ot = $approved_overtime_hrs;
-                                                                    $rst_lh_ot = 0;
-                                                                }
-                                                               
                                                             }
                                                             else
                                                             {
-                                                                if ($rest == "RESTDAY")
+                                                                $lh_ot = 8;
+                                                                $lh_ot_ge = $approved_overtime_hrs-8;
+                                                                if($approved_overtime_hrs <= 8)
                                                                 {
-                                                                    // $lh_ot = 0;
-                                                                    $lh_ot_ge = 0;
-
-                                                                    // $rst_lh_ot = $approved_overtime_hrs;
-                                                                    $rst_lh_ot_ge = $approved_overtime_hrs-8;
-                                                                }
-                                                                else
-                                                                {
-                                                                    // $lh_ot = $approved_overtime_hrs;
-                                                                    $lh_ot_ge = $approved_overtime_hrs-8;
-
-                                                                    // $rst_lh_ot = 0;
-                                                                    $rst_lh_ot_ge = 0;
+                                                                    $lh_ot = $approved_overtime_hrs;
                                                                 }
                                                             }
+
                                                             if($employee_schedule)
                                                             {
                                                                 $time_start_string = strtotime($time_start);
