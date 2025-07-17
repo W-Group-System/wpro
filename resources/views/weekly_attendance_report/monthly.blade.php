@@ -94,7 +94,12 @@
                                                         ->sortBy('time_in')
                                                         ->first();
 
-                                                    if ($schedule && $attendance) {
+                                                    $emp_leaves = $employee->approved_leaves_halfday
+                                                        ->filter(fn($leave) => $date_a >= date('Y-m-d', strtotime($leave->date_from)) && $date_a <= date('Y-m-d', strtotime($leave->date_to)))
+                                                        ->sortBy('date_from')
+                                                        ->first();   
+                                                        
+                                                    if ($schedule && $attendance && !$emp_leaves) {
                                                         if (date('H:i', strtotime($attendance->time_in)) > $schedule->time_in_to) {
                                                             $tardy_count++;
                                                         }
@@ -129,6 +134,7 @@
                                     </tbody>
                                 </table>
                                 <hr>
+                                
                                 <label><b>II. Undertime</b></label>
                                 <table class="table table-hover table-bordered" id="undertime">
                                     <thead>
@@ -232,9 +238,7 @@
                                             <th>No.</th>
                                             <th>Employee ID - Name</th>
                                             <th>Company</th>
-                                            <!-- <th>Name</th> -->
                                             <th>No. of LWOP days</th>
-                                            <!-- <th>Reason</th> -->
                                             <th>Remarks/ Recommendation</th>
                                         </tr>
                                     </thead>
@@ -254,7 +258,6 @@
                                                     </td>
                                                     <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
-                                                    <!-- <td>{{ $employee->user_info->name }}</td>  -->
                                                     <td>
                                                         @php
                                                             $total_array = [];
@@ -281,7 +284,6 @@
                                             <th>No.</th>
                                             <th>Employee ID - Name</th>
                                             <th>Company</th>
-                                            <!-- <th>Name</th> -->
                                             <th>Leave Date(s)</th>
                                             <th>Leave Type</th>
                                             <th>Remarks/ Recommendation</th>
@@ -303,7 +305,6 @@
                                                     </td>
                                                     <td>{{ $employee->employee_code.' - '.$employee->user_info->name }}</td>
                                                     <td>{{ $employee->company->company_code }}</td>
-                                                    <!-- <td>{{ $employee->user_info->name }}</td> -->
                                                     <td>
                                                         @foreach ($employee->leaves->where('withpay', 1)->sortBy('date_from') as $leaves)
                                                             {{ date('M d, Y', strtotime($leaves->date_from)) .' - '. date('M d, Y', strtotime($leaves->date_to)) }}  <br>
@@ -336,7 +337,6 @@
                                             <th>Regular Working Hours</th>
                                             <th>Overtime Hours Total</th>
                                             <th>% of Overtime</th>
-                                            <!-- <th>Remarks/ Recommendation</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -385,12 +385,11 @@
 
                                                         {{ number_format($percent_overtime, 2) }}%
                                                     </td>
-                                                    <!-- <td></td> -->
                                                 </tr>
                                             @endif
                                         @endforeach
                                     </tbody>
-                                </table>
+                                </table>                                                                       
                             </div>
                         </div> 
                     </form>
