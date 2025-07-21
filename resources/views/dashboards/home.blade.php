@@ -151,9 +151,9 @@
                                                 $used_vl = usedSlVlThisYear($emp->user_id,1,$emp->original_date_hired,$emp->ScheduleData);
                                                 $vl_balance = floatval($total_vl_credits) - floatval($used_vl);
 
-                                                $sl_balance = $employee_leave_list->where('user_id', $emp->user_id)->where('leave_id', 2)->sum('earned_per_month');
+                                                $total_sl_credits = $employee_leave_list->where('user_id', $emp->user_id)->where('leave_id', 2)->sum('earned_per_month');
                                                 $used_sl = usedSlVlThisYear($emp->user_id,2,$emp->original_date_hired,$emp->ScheduleData);
-                                                $sl_balance = floatval($total_vl_credits) - floatval($used_sl);
+                                                $sl_balance = floatval($total_sl_credits) - floatval($used_sl);
                                             @endphp
                                             VL = {{number_format($vl_balance,2)}}
                                             <br>
