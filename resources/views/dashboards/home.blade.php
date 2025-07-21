@@ -147,33 +147,17 @@
                                     </td> 
                                         <td>
                                             @php
-                                                $vl_balance = 0;
-                                                $sl_balance = 0;
-                                                
-                                                $vl_leave = ($emp->employee_leave_credits)->where('leave_type', 1)->first();
+                                                $total_vl_credits = $employee_leave_list->where('user_id', $emp->user_id)->where('leave_id', 1)->sum('earned_per_month');
+                                                $used_vl = usedSlVlThisYear($emp->user_id,1,$emp->original_date_hired,$emp->ScheduleData);
+                                                $vl_balance = floatval($total_vl_credits) - floatval($used_vl);
 
-                                                if(!empty($vl_leave))
-                                                {
-                                                    $earned_vl = checkEarnedLeave($emp->user_id,1,$emp->original_date_hired);
-                                                    $used_vl = checkUsedSLVLSILLeave($emp->user_id,1,$emp->original_date_hired,$emp->ScheduleData);
-                                                    $vl_beginning_balance =  $vl_leave->count;
-    
-                                                    $vl_balance = ($vl_beginning_balance + $earned_vl) - $used_vl;
-                                                }
-
-                                                $sl_leave = ($emp->employee_leave_credits)->where('leave_type', 2)->first();
-                                                if (!empty($sl_leave))
-                                                {
-                                                    $earned_sl = checkEarnedLeave($emp->user_id,2,$emp->original_date_hired);
-                                                    $used_sl = checkUsedSLVLSILLeave($emp->user_id,2,$emp->original_date_hired,$emp->ScheduleData);
-
-                                                    $sl_beginning_balance = $sl_leave->count;
-                                                    $sl_balance = ($sl_beginning_balance + $earned_sl) - $used_sl;
-                                                }
+                                                $sl_balance = $employee_leave_list->where('user_id', $emp->user_id)->where('leave_id', 2)->sum('earned_per_month');
+                                                $used_sl = usedSlVlThisYear($emp->user_id,2,$emp->original_date_hired,$emp->ScheduleData);
+                                                $sl_balance = floatval($total_vl_credits) - floatval($used_sl);
                                             @endphp
-                                            VL = {{$vl_balance}}
+                                            VL = {{number_format($vl_balance,2)}}
                                             <br>
-                                            SL = {{$sl_balance}}
+                                            SL = {{number_format($sl_balance,2)}}
                                         </td>
                                     </tr>
                                     @endforeach

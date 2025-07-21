@@ -16,6 +16,7 @@ use App\EmployeeWfh;
 use App\EmployeeOb;
 use App\EmployeeDtr;
 use App\EmployeeLeaveCredit;
+use App\EmployeeLeaveList;
 use App\Leave;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -105,6 +106,7 @@ class HomeController extends Controller
 
         $classifications = Classification::get();
         $leaveTypes = Leave::all();
+        $employee_leave_list = EmployeeLeaveList::get();
         return view('dashboards.home',
         array(
             'header' => '',
@@ -123,6 +125,7 @@ class HomeController extends Controller
             'classifications' =>$classifications,
             'leaveTypes' => $leaveTypes,
             'documents' => $documents,
+            'employee_leave_list' => $employee_leave_list
         ));
     }
 
