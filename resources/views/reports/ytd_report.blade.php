@@ -67,7 +67,7 @@
                                         <td colspan='5'>{{$emp->emp_code}} - {{$emp->first_name}} {{$emp->last_name}}</td>
                                     </tr> --}}
                                     <tr>
-                                        <td colspan='14' class='text-center'><b>Annual Payroll Summary</b></td>
+                                        <td colspan='14' class='text-center'><b>Annual Payroll Summary - {{ $from_date }}</b></td>
                                     </tr>
                                     <tr>
                                     
@@ -504,7 +504,7 @@
                                          <td colspan='5'>{{$emp->emp_code}} - {{$emp->first_name}} {{$emp->last_name}}</td>
                                      </tr> --}}
                                      <tr>
-                                         <td colspan='14' class='text-center'><b>Annual Payroll Summary</b></td>
+                                         <td colspan='14' class='text-center'><b>Annual Payroll Summary - {{ $from_date }}</b></td>
                                      </tr>
                                      <tr>
                                          {{-- <td colspan='14' class='text-center'>{{$empD->company->company_name}} - <b>{{$from_date}}</b></td> --}}
