@@ -673,9 +673,9 @@
                     @if (checkUserPrivilege('reports_overtime',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/overtime-report') }}">Overtime Reports</a></li>
                     @endif
-                    @if (checkUserPrivilege('reports_wfh',auth()->user()->id) == 'yes')
+                    {{-- @if (checkUserPrivilege('reports_wfh',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/wfh-report') }}">WFH Reports</a></li>
-                    @endif
+                    @endif --}}
                     @if (checkUserPrivilege('reports_ob',auth()->user()->id) == 'yes')
                     <li class="nav-item"> <a class="nav-link" href="{{ url('/ob-report') }}">OB Reports</a></li>
                     @endif
