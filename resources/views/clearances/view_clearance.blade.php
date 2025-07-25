@@ -13,8 +13,8 @@
                 <p class="text-muted mb-0">{{$resignEmployee->employee->position}}</p>
               </div>
         
-              <a href="https://clearance.wsystem.online{{$resignEmployee->resignation_letter}}" target='_blank'><button class="btn btn-success btn-sm mt-3 mb-4">Resignation Letter</button></a>
-              <a href="https://clearance.wsystem.online{{$resignEmployee->acceptance_letter}}"  target='_blank'><button type="button" class="btn btn-danger btn-sm mt-3 mb-4">Acceptance Letter</button></a>
+              <a href="https://clearance.wgroup.space{{$resignEmployee->resignation_letter}}" target='_blank'><button class="btn btn-success btn-sm mt-3 mb-4">Resignation Letter</button></a>
+              <a href="https://clearance.wgroup.space{{$resignEmployee->acceptance_letter}}"  target='_blank'><button type="button" class="btn btn-danger btn-sm mt-3 mb-4">Acceptance Letter</button></a>
       
               <div class="border-top pt-3">
                 <div class="row">
