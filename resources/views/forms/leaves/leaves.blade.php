@@ -637,7 +637,7 @@
                                                 $vl_balance = $count_vl;
                                             @endphp
                                             @if($vl_balance > 0)
-                                            {{ $vl_balance }}
+                                            {{ number_format($vl_balance,2) }}
                                             @else
                                             0
                                             @endif
@@ -662,7 +662,7 @@
                                                 $sl_balance = $count_sl;
                                             @endphp
                                             @if($sl_balance > 0)
-                                            {{ $sl_balance}}
+                                            {{ number_format($sl_balance,2) }}
                                             @else
                                             0
                                             @endif
