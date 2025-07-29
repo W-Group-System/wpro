@@ -512,7 +512,8 @@ class AttendanceController extends Controller
     }
     public function getlastIdHK($company)
     {
-        $attendance = AttendanceLog::Where('ip_address',$company)->orderBy('last_id','desc')->first();
+        // $attendance = AttendanceLog::Where('ip_address',$company)->orderBy('last_id','desc')->first();
+        $attendance = AttendanceLog::Where('ip_address',$company)->whereNotNull('last_id')->orderBy('id','desc')->first();
         // $id = $attendance->last_id;
         if($attendance != null)
         {
