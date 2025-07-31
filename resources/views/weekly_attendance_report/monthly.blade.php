@@ -133,8 +133,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <hr>
-                                
+                                <hr>                                
                                 <label><b>II. Undertime</b></label>
                                 <table class="table table-hover table-bordered" id="undertime">
                                     <thead>
@@ -190,13 +189,22 @@
                                                             $estimated_out = date('H:i', strtotime($schedule->time_out_to));
                                                         }
 
-                                                        $if_has_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_a)),$schedule);
-                                                        if (empty($if_has_leave))
-                                                        {
+                                                        $if_has_leave = employeeHasLeave(
+                                                            $employee->approved_leaves,
+                                                            date('Y-m-d', strtotime($date_a)),
+                                                            $schedule
+                                                        );
+
+                                                        $if_has_ob = employeeHasOB(
+                                                            $employee->approved_obs,
+                                                            date('Y-m-d', strtotime($date_a)),
+                                                            $schedule
+                                                        );
+
+                                                        if (empty($if_has_leave) && empty($if_has_ob)) {
                                                             if (date('H:i', strtotime($attendance->time_out)) < $estimated_out) {
                                                                 $undertime_count++;
                                                             }
-                                                            // $test_array[] = $date_a;
                                                         }
                                                     }
                                                 @endphp
@@ -229,7 +237,6 @@
                                     </tbody>
                                 </table>
                                 <hr>
-
                                 <label style="margin-bottom: 20px;"><b>III. Leaves</b></label><br>
                                 <label>A. Leave without Pay</label>
                                 <table class="table table-hover table-bordered mb-2" id="leaves">
@@ -389,7 +396,7 @@
                                             @endif
                                         @endforeach
                                     </tbody>
-                                </table>                                                                       
+                                </table>          
                             </div>
                         </div> 
                     </form>
