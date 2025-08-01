@@ -166,8 +166,8 @@ class UploadController extends Controller
                     }
                     else if ($request->type == "DTR") {
                         // $dateTime = Date::excelToDateTimeObject($row['date_time'])->format('Y-m-d H:i:s');
-                        $dateTime = date('Y-m-d H:i:s',strtotime($row[1]));
-                        
+                        // $dateTime = date('Y-m-d H:i:s',strtotime($row[1]));
+                        $dateTime = date('Y-m-d H:i:s',strtotime($row[2]));
                         $attendanceLogs = AttendanceLog::where('emp_code', $row[0])->where('datetime', $dateTime)->first();
                         
                         if (empty($attendanceLogs)) {
