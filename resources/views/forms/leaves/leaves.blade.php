@@ -968,6 +968,10 @@
                                     data-target="#edit_leave{{ $employee_leave->id }}" data-toggle="modal" title='Edit'>
                                 <i class="ti-pencil-alt"></i>
                             </button>
+                            <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon uploadLeaveButton"
+                                    data-target="#upload_leave{{ $employee_leave->id }}" data-toggle="modal" title='Upload'>
+                                <i class="ti-upload"></i>
+                            </button>
                             @if(isset($cut_off_date))
                                 @if($employee_leave->date_from >= $cut_off->cut_off_date)            
                                 <button title='Cancel' id="cancel{{ $employee_leave->id }}" onclick="cancel({{ $employee_leave->id }})"
@@ -1002,10 +1006,10 @@
                                     data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
                                 <i class="ti-eye"></i>
                             </button>
-                            <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon uploadLeaveButton"
+                            {{-- <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon uploadLeaveButton"
                                     data-target="#upload_leave{{ $employee_leave->id }}" data-toggle="modal" title='Upload'>
                                 <i class="ti-upload"></i>
-                            </button>
+                            </button> --}}
 
                             @if(!in_array($employee_leave->date_from, $attendance_report) || !in_array($employee_leave->date_to, $attendance_report))
                             
