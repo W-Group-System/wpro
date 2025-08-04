@@ -1118,7 +1118,8 @@
                     $(".halfDayStatus").hide(200);
                 }
             });
-
+        
+            $(".edithalfDayStatus").hide();
             $("#editViewleaveHalfday").change(function(){
                 if($(this).is(':checked')){
                 $(".edithalfDayStatus").show(300);

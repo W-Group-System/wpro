@@ -1162,6 +1162,41 @@
           });
       });
     @endforeach
+
+    $("#editLeaveType").on('change', function() {
+        if ($(this).val() == 1)
+        {
+            var threeDays = "<?php echo(date('Y-m-d', strtotime('+3 weekdays'))) ?>"
+            
+            $("[name='date_from']").prop('min', threeDays)
+            $("[name='date_to']").prop('min', threeDays)
+
+            $("[name='date_from']").removeAttr('max');
+            $("[name='date_to']").removeAttr('max');
+        }
+        else if($(this).val() == 2)
+        {
+            var formattedDate = "<?php echo date('Y-m-d', strtotime($last_logs)); ?>";
+            
+            $("[name='date_from']").attr({
+                // 'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
+                'min': formattedDate,
+                'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
+            });
+            // console.log({{!date('Y-m-d', strtotime($last_logs))}});
+            $("[name='date_to']").attr({
+                // 'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
+                'min': formattedDate,
+                'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
+            });
+        }
+        else
+        {
+            $("[name='date_from']").removeAttr('min max')
+            $("[name='date_to']").removeAttr('min max')
+        }
+        
+    })
   });
 
   function cancel(id) {

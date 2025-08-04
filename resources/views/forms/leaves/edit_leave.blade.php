@@ -29,7 +29,7 @@
                 <div class="form-group row">
                   <label for="leave_type" class="col-sm-2 col-form-label">Leave Type</label>
                     <div class="col-sm-4">
-                      <select v-on:change="validateLeave" v-model="leave_type" class="form-control"  id="leave_type" style='width:100%;' name='leave_type' required>
+                      <select v-on:change="validateLeave" v-model="leave_type" class="form-control leave"  id="editLeaveType" style='width:100%;' name='leave_type' required>
                         @foreach ($leave_types as $leave_type)
                           @if($leave_type->code == 'VL')
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
@@ -55,7 +55,7 @@
                     </div>
                     <div class='col-sm-5'>
                       <div class='row'>
-                        <div class='col-md-6'>
+                        {{-- <div class='col-md-6'>
                           <label class="form-check-label ">
                             <input type="hidden" v-model="leave_balances" name="leave_balances" :value="leave_balances">
                             <div>
@@ -69,6 +69,15 @@
                             </label>
                             </div>
                         </label>
+                        </div> --}}
+                        <div class='col-md-6'>
+                          <input type="hidden" v-model="leave_balances" name="leave_balances" :value="leave_balances">
+                          <div>
+                            <label class="form-check-label ">
+                              <input type="checkbox" hidden name="withpay" class="form-check-input" :disabled="isAllowedWithPay" id='checkboxwithpay' onclick="return false;" v-model="with_pay">
+                              Leave Credit : <span id='edit_leave_credit_total'></span>
+                          </label>
+                          </div>
                         </div>
                         <div class='col-md-6'>
                           <label class="form-check-label ">
@@ -152,6 +161,7 @@
   var app = new Vue({
           el: '#app' + '<?php echo $leave->id; ?>',
           data : {
+              with_pay : '',
               leave_balances : '',
               leave_type : '<?php echo $leave->leave_type; ?>',
               isAllowedWithPay : true,
@@ -169,10 +179,12 @@
           methods: {
             validateLeave() {
               this.leave_balances = '';
+              var amen = "";
               if(this.leave_type == '1'){ // Vacation Leave
                   if(Number(this.vl_balance) > 0){
                     this.leave_balances = this.vl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
@@ -181,6 +193,7 @@
                   if(Number(this.sl_balance) > 0){
                     this.leave_balances = this.sl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
@@ -189,6 +202,7 @@
                   if(Number(this.ml_balance) > 0){
                     this.leave_balances = this.ml_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
@@ -197,6 +211,7 @@
                   if(Number(this.pl_balance) > 0){
                     this.leave_balances = this.pl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
@@ -205,6 +220,7 @@
                   if(Number(this.spl_balance) > 0){
                     this.leave_balances = this.spl_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
@@ -213,6 +229,7 @@
                   if(Number(this.splw_balance) > 0){
                     this.leave_balances = this.splw_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
@@ -221,10 +238,13 @@
                   if(Number(this.splvv_balance) > 0){
                     this.leave_balances = this.splvv_balance;
                     this.isAllowedWithPay = false;
+                    amen = true;
                   }else{
                     this.isAllowedWithPay = true;
                   }
               }
+              document.getElementById('checkboxwithpay').checked = amen;
+              document.getElementById("edit_leave_credit_total").innerHTML = this.leave_balances;
             }
           },
   });
