@@ -45,7 +45,7 @@
                                                     </button>
                                                 </td> --}}
                                                 <td>{{ $employee_leave_list->user->employee->employee_code . ' - ' .$employee_leave_list->user->name }}</td>
-                                                <td>{{ get_leave_entitlement($employee_leave_list->user->employee->level, $employee_leave_list->user->employee->original_date_hired) }}</td>
+                                                <td>{{ get_leave_entitlement($employee_leave_list->user->employee->level, $employee_leave_list->user->employee->original_date_hired, $employee_leave_list->user->employee->company_id) }}</td>
                                                 <td>{{ $employee_leave_list->leave->leave_type }}</td>
                                                 <td>{{ $employee_leave_list->total_leaves }}</td>
                                                 <td>{{ $employee_leave_list->earned_per_month }}</td>

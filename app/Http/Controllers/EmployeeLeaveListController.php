@@ -55,10 +55,11 @@ class EmployeeLeaveListController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         if ($request->type == 1)
         {
             $employee = Employee::where('user_id', $request->employee)->first();
-            $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired);
+            $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired, $employee->company_id);
             $leave_credits = compute_leave_credits($request->leave, $leave_entitlement, $request->date_hired, $request->date_regularization);
             $earned_per_month = earn_per_month($request->leave, $request->date_regularization);
             // dd($earned_per_month);
@@ -217,7 +218,7 @@ class EmployeeLeaveListController extends Controller
             $obj->lastname = $employee->last_name;
             $obj->name = $employee->last_name .', '.$employee->first_name;
             $obj->leave_type = 'Sick Leave';
-            $obj->leave_entitlement =  get_leave_entitlement($employee->level, $employee->original_date_hired);
+            $obj->leave_entitlement =  get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
             $obj->used_leave = $used_sl_this_yr;
             $obj->total_earned_sl = $total_earned_sl;
             $sl_leave_array[] = $obj;
@@ -227,7 +228,7 @@ class EmployeeLeaveListController extends Controller
             $obj_vl->lastname = $employee->last_name;
             $obj_vl->name = $employee->last_name .', '.$employee->first_name;
             $obj_vl->leave_type = 'Vacation Leave';
-            $obj_vl->leave_entitlement =  get_leave_entitlement($employee->level, $employee->original_date_hired);
+            $obj_vl->leave_entitlement =  get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
             $obj_vl->used_leave = $used_vl_this_yr;
             $obj_vl->total_earned_vl = $total_earned_vl;
             $vl_leave_array[] = $obj_vl;
@@ -242,7 +243,7 @@ class EmployeeLeaveListController extends Controller
     {
         // dd($request->all());
         $employee = Employee::where('user_id', $request->employee)->first();
-        $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired);
+        $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired, $employee->company_id);
         $leave_credits = compute_leave_credits($request->leave, $leave_entitlement, $request->date_hired, $request->date_regularization);
         
         return $leave_credits;
