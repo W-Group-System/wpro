@@ -55,7 +55,7 @@
                         </div>
                         <div class="col-md-6" id="leaveCredit" hidden>
                             Leave Credit
-                            <input type="text" name="leave_credit" class="form-control" readonly>
+                            <input type="text" name="leave_credit" class="form-control" readonly required>
                         </div>
                         <div class="col-md-6" id="addLeave" hidden>
                             Add Leave Balance

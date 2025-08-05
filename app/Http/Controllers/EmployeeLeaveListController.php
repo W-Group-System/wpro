@@ -55,7 +55,7 @@ class EmployeeLeaveListController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         if ($request->type == 1)
         {
             $employee = Employee::where('user_id', $request->employee)->first();
