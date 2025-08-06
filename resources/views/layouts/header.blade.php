@@ -651,6 +651,9 @@
                     <li class="nav-item">
                         <a class="nav-link @if($header == 'employee_leaves_list') active @endif" href="{{ url('/employee_leaves_list') }}">Employee Leaves List</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link @if($header == 'unpost_company') active @endif" href="{{ url('/unpost_company') }}">Unpost Company</a>
+                    </li>
                 </ul>
             </div>
         </li>

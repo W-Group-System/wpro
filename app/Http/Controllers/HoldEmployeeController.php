@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AttendanceDetailedReport;
 use App\Company;
 use App\Employee;
+use App\Payreg;
 use App\Payregs;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -122,6 +123,52 @@ class HoldEmployeeController extends Controller
             Alert::warning('You are not selecting employee')->persistent('Dismiss');
         }
         
+        return back();
+    }
+
+    public function unpostCompany(Request $request)
+    {
+        // dd($request->all());
+        $header = 'unpost_company';
+        $company_data = $request->companies;
+        $cut_off_date = $request->cut_off_date;
+
+        $companies = Company::where('id','!=',1)->get();
+        
+        if ($companies)
+        {
+            $cutoff_date = Payreg::select('cut_off_date')->where('company_id', $company_data)->groupBy('cut_off_date')->get()->pluck('cut_off_date');
+            $atd_cutoff_date = AttendanceDetailedReport::select('cut_off_date','company_id')->where('company_id', $company_data)->whereNotIn('cut_off_date', $cutoff_date)->groupBy('cut_off_date','company_id')->get();
+
+            $attendance_detailed_reports = AttendanceDetailedReport::with('company')->select('cut_off_date','company_id')->where('company_id', $company_data)->where('cut_off_date', $cut_off_date)->groupBy('cut_off_date','company_id')->get();
+        }
+
+        return view('unpost_company.unpost_company',
+            array(
+                'header' => $header,
+                'companies' => $companies,
+                'attendance_detailed_reports' => $attendance_detailed_reports,
+                'atd_cutoff_date' => $atd_cutoff_date,
+                'company_data' => $company_data,
+                'cut_off_date' => $cut_off_date
+            )
+        );
+    }
+
+    public function unpostPerCompany(Request $request)
+    {
+        $attendance_detailed_reports =  AttendanceDetailedReport::where('company_id', $request->company_id)->where('cut_off_date', $request->cut_off_date)->get();
+        if(count($attendance_detailed_reports) > 0)
+        {
+            AttendanceDetailedReport::where('company_id', $request->company_id)->where('cut_off_date', $request->cut_off_date)->delete();
+
+            Alert::success('Successfully Unposted')->persistent('Dismiss');
+        }
+        else
+        {
+            Alert::error('Not Found')->persistent('Dismiss');
+        }
+
         return back();
     }
 }
