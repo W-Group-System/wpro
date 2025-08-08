@@ -8,6 +8,8 @@ use App\Employee;
 use App\ScheduleData;
 use PDF;
 use DateTime;
+use App\Exports\MonthlyAttendanceReportExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 class WeeklyReportController extends Controller
@@ -295,6 +297,62 @@ class WeeklyReportController extends Controller
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="monthly_attendance_report.pdf"');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $from = $request->input('from', now()->startOfMonth()->format('Y-m-d'));
+        $to = $request->input('to', now()->endOfMonth()->format('Y-m-d'));
+        $company = (array) $request->input('companies', []);
+
+        $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+        $companies = Company::whereHas('employee_has_company')
+            ->whereIn('id', $allowed_companies)
+            ->get();
+
+        $employees = collect();
+        $company_data = collect();
+        $daily_schedules = collect();
+        $date_range = [];
+
+        if ($from && $to && !empty($company)) {
+            $period = \Carbon\CarbonPeriod::create($from, $to);
+            foreach ($period as $date) {
+                $date_range[] = $date->format('Y-m-d');
+            }
+
+            $company_data = Company::whereIn('id', $company)->get();
+
+            $employees = Employee::with([
+                'company',
+                'ScheduleData',
+                'user_info' => fn($q) => $q->where('status', 'Active'),
+                'leaves' => fn($q) => $q->whereBetween('date_from', [$from, $to]),
+                'approved_ots' => fn($q) => $q->whereBetween('ot_date', [$from, $to])->where('status', 'Approved'),
+                'attendances' => function ($query) use ($from, $to) {
+                    $query->where(function ($q) use ($from, $to) {
+                        $q->whereBetween('time_in', [$from . ' 00:00:01', $to . ' 23:59:59'])
+                        ->orWhereBetween('time_out', [$from . ' 00:00:01', $to . ' 23:59:59']);
+                    })
+                    ->orderBy('time_in', 'asc')
+                    ->orderBy('time_out', 'desc')
+                    ->orderBy('id', 'asc');
+                }
+            ])
+            ->where('status', 'Active')
+            ->whereIn('company_id', $company)
+            ->get();
+
+            $daily_schedules = DailySchedule::whereBetween('log_date', [$from, $to])->get();
+        }
+
+        $schedules = ScheduleData::all();
+        $header = 'monthly_attendance_report';
+
+        return Excel::download(
+            new MonthlyAttendanceReportExport($header, $from, $to, $companies, $company_data, $company, $employees, $daily_schedules, $schedules, $date_range),
+            'monthly_attendance_report.xlsx'
+        );
     }
     /**
      * Show the form for creating a new resource.
