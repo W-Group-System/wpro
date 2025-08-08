@@ -469,6 +469,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('weekly_attendance_report', 'WeeklyReportController@index');
     Route::get('monthly_attendance_report', 'WeeklyReportController@monthly');
     Route::get('/monthly_attendance_report/pdf','WeeklyReportController@exportPdf')->name('monthly_attendance_report.pdf');
+    Route::get('/monthly_attendance_report/excel','WeeklyReportController@exportExcel')->name('monthly_attendance_report.excel');
 
     // Extract Attendance
     Route::get('extract_attendance', 'AttendanceController@extractAttendance');

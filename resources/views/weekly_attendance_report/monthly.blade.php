@@ -53,11 +53,8 @@
                             </div>
                             <div class="col-md-8">
                                 <!-- <a href="{{ url('/attendance-report?from=' . $from . '&to=' . $to . '&type=pdf') }}" target="_blank" class='btn btn-success btn-sm'><i class="fa fa-print btn-icon-append"></i>&nbsp;Print</a> -->
-                                 <a href="{{ route('monthly_attendance_report.pdf', ['from' => $from, 'to' => $to, 'companies' => request()->input('companies')]) }}"
-                                    target="_blank"
-                                    class="btn btn-danger btn-sm">
-                                        <i class="fa fa-file-pdf"></i> Export as PDF
-                                    </a>
+                                <a href="{{ route('monthly_attendance_report.excel', ['from' => $from, 'to' => $to, 'companies' => request()->input('companies')]) }}" target="_blank" class="btn btn-primary btn-sm"><i class="fa fa-file-pdf"></i> Export as Excel</a>
+                                <a href="{{ route('monthly_attendance_report.pdf', ['from' => $from, 'to' => $to, 'companies' => request()->input('companies')]) }}" target="_blank" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> Export as PDF</a>
                             </div>
                         </div>
                         <div class="row">
