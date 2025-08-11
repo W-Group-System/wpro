@@ -2086,9 +2086,7 @@ class EmployeeController extends Controller
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $companies = Company::get();
         
-        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code')->where('status','Active')
-        ->whereIn('company_id', $allowed_companies)
-        ->get();
+        $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code')->whereIn('company_id', $allowed_companies)->get();
 
         $location_array = ['PRI', 'PRI-BMO', 'FMTCC/MRDC', 'PBI', 'CCC', 'WFA', 'WHI-Carmona', 'WOI', 'WCC', 'WTCC', 'WGC', 'SPAI', 'MRDC', 'FMTCC'];
         $locations = AttendanceLog::select('location')->whereIn('location', $location_array)->groupBy('location')->get();
