@@ -1006,10 +1006,10 @@
                                     data-target="#view_leave{{ $employee_leave->id }}" data-toggle="modal" title='View'>
                                 <i class="ti-eye"></i>
                             </button>
-                            {{-- <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon uploadLeaveButton"
+                            <button type="button" id="upload{{ $employee_leave->id }}" class="btn btn-success btn-rounded btn-icon uploadLeaveButton"
                                     data-target="#upload_leave{{ $employee_leave->id }}" data-toggle="modal" title='Upload'>
                                 <i class="ti-upload"></i>
-                            </button> --}}
+                            </button>
 
                             @if(!in_array($employee_leave->date_from, $attendance_report) || !in_array($employee_leave->date_to, $attendance_report))
                             
