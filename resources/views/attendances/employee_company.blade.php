@@ -1014,21 +1014,26 @@
                                                             if ($rest == "RESTDAY") 
                                                             {
                                                                 $rst_sh_ot=8;
-                                                                $rst_sh_ot_ge = $approved_overtime_hrs-8;
-
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $rst_sh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $rst_sh_ot_ge = $approved_overtime_hrs-8;
                                                                 }
 
                                                             }
                                                             else
                                                             {
                                                                 $sh_ot = 8;
-                                                                $sh_ot_ge = $approved_overtime_hrs-8;
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $sh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $sh_ot_ge = $approved_overtime_hrs-8;
                                                                 }
                                                             }
 
@@ -1107,20 +1112,26 @@
                                                             if ($rest == "RESTDAY")
                                                             {
                                                                 $rst_lh_ot = 8;
-                                                                $rst_lh_ot_ge = $approved_overtime_hrs-8;
                                                                 
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $rst_lh_ot = $approved_overtime_hrs;
                                                                 }
+                                                                else
+                                                                {
+                                                                    $rst_lh_ot_ge = $approved_overtime_hrs-8;
+                                                                }
                                                             }
                                                             else
                                                             {
                                                                 $lh_ot = 8;
-                                                                $lh_ot_ge = $approved_overtime_hrs-8;
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $lh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $lh_ot_ge = $approved_overtime_hrs-8;
                                                                 }
                                                             }
 
