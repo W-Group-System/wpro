@@ -501,6 +501,11 @@ Route::get('hik-logs', function(){
     return HikAttLog2::orderBy('authDate')->get()->take(5);
 });
 
+Route::get('timekeeping-per-company','TimekeepingDashboardController@timekeeping');
+Route::prefix('timekeeping-per-company')->group(function() {
+    Route::post('update','TimekeepingDashboardController@updateTimekeeping')->name('update.timekeeping');
+});
+
 // Route::get('/', function () {
 //     if (request()->getHost() == 'hris.wsystem.online' || request()->getHost() == '175.18.72.49:2014')
 //     {

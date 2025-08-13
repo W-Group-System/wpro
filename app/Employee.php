@@ -213,6 +213,10 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(EmployeeLeaveList::class,'user_id','user_id');
     }
+    public function timekeeping_logs()
+    {
+        return $this->hasMany(Timekeeping::class,'emp_code','employee_number');
+    }
     // public function daily_schedules()
     // {
     //     return $this->hasMany(DailySchedule::class,'employee_code','employee_code');
