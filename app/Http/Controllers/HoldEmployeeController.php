@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\AttendanceDetailedReport;
 use App\Company;
 use App\Employee;
-use App\Payreg;
 use App\Payregs;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -137,7 +136,7 @@ class HoldEmployeeController extends Controller
         
         if ($companies)
         {
-            $cutoff_date = Payreg::select('cut_off_date')->where('company_id', $company_data)->groupBy('cut_off_date')->get()->pluck('cut_off_date');
+            $cutoff_date = Payregs::select('cut_off_date')->where('company_id', $company_data)->groupBy('cut_off_date')->get()->pluck('cut_off_date');
             $atd_cutoff_date = AttendanceDetailedReport::select('cut_off_date','company_id')->where('company_id', $company_data)->whereNotIn('cut_off_date', $cutoff_date)->groupBy('cut_off_date','company_id')->get();
 
             $attendance_detailed_reports = AttendanceDetailedReport::with('company')->select('cut_off_date','company_id')->where('company_id', $company_data)->where('cut_off_date', $cut_off_date)->groupBy('cut_off_date','company_id')->get();
