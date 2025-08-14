@@ -181,7 +181,7 @@
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
                                         
-                                        @if(date('Y-m-d', strtotime($item->date_from)) >= $getLastCutOffDate->cut_off_date)
+                                        @if($item->date_from >= $getLastCutOffDate->cut_off_date)
                                         <div class="buttons">
                                             @if ($item->status == 'Pending')
                                                 <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#ob-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
