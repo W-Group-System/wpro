@@ -1194,6 +1194,34 @@
                                                             }
                                                         }
                                                     }
+                                                    else 
+                                                    {
+                                                        if ($emp->work_description == 'Non-Monthly')
+                                                        {
+                                                            if ($employee_schedule)
+                                                            {
+                                                                $time_start_string = strtotime($time_start);
+                                                                $time_end_string = strtotime($time_end);
+                                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+    
+                                                                $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                if($time_end_string>$schedule_out)
+                                                                {
+                                                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                    $sh_ot_use = $sh_ot_nd;
+                                                                    if($sh_ot_nd >=4.5 )
+                                                                    {   
+                                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                                        if($schedule_hours > 8)
+                                                                        {
+                                                                            $sh_ot_nd = $sh_ot_nd-1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                     }
                                                   
                                                 }
