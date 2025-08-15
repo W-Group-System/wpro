@@ -40,6 +40,8 @@ class LeaveController extends Controller
     }
     public function leave_report(Request $request)
     {   
+        ini_set('memory_limit','-1');
+        
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
 
         $companies = Company::whereHas('employee_has_company')
@@ -63,7 +65,7 @@ class LeaveController extends Controller
             {
                 $employee_leaves = $employee_leaves->where('status',$status);
             }
-          
+            // dd($employee_leaves);
         }
         
         return view('reports.leave_report', array(
