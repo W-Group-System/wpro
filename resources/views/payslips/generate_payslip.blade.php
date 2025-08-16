@@ -257,7 +257,7 @@
                     @endif
                     @if($payroll->rst_sh_ot_amount > 0)
                     <tr>
-                        <td style=""> - RD OT GE</td>
+                        <td style=""> - RD SH OT</td>
                         <td style="">{{number_format($payroll->rst_sh_ot,2)}}</td>
                         <td style="text-align: right;">{{number_format($payroll->rst_sh_ot_amount ,2)}}</td>
                     </tr>
