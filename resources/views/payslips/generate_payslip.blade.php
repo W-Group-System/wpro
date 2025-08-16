@@ -276,13 +276,13 @@
                         <td style="text-align: right;">{{number_format($payroll->sh_ge_amount ,2)}}</td>
                     </tr>
                     @endif
-                    @if($payroll->sh_nd_ge_amount > 0)
+                    <!-- @if($payroll->sh_nd_ge_amount > 0)
                     <tr>
                         <td style=""> - SH GE</td>
                         <td style="">{{number_format($payroll->sh_ge,2)}}</td>
                         <td style="text-align: right;">{{number_format($payroll->sh_ge_amount ,2)}}</td>
                     </tr>
-                    @endif
+                    @endif -->
                     <!-- @if($payroll->sh_ot_amount > 0)
                     <tr>
                         <td style=""> - SH OT</td>
