@@ -283,7 +283,7 @@
                         <td style="text-align: right;">{{number_format($payroll->sh_nd_ge_amount ,2)}}</td>
                     </tr>
                     @endif
-                    @if($payroll->sh_ot_amount > 0)
+                    <!-- @if($payroll->sh_ot_amount > 0)
                     <tr>
                         <td style=""> - SH OT</td>
                         <td style="">{{number_format($payroll->sh_ot,2)}}</td>
@@ -296,7 +296,7 @@
                         <td style="">{{number_format($payroll->sh_ot_ge,2)}}</td>
                         <td style="text-align: right;">{{number_format($payroll->sh_ot_ge_amount ,2)}}</td>
                     </tr>
-                    @endif
+                    @endif -->
                     @foreach($payroll->salary_adjustments_data as $adjustments)
                     <tr>
                         <td style=""  colspan='2'>{{$adjustments->name}}</td>
