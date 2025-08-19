@@ -436,7 +436,7 @@
                               $total_rst_lh_ot_over_eight = $pay_rate*12/313/8*3.38*$name->total_rst_lh_ot_over_eight;
                               $total_rst_lh_nd = $pay_rate*12/313/8*0.26*$name->total_rst_lh_nd;
                               $total_rst_lh_nd_over_eight = $pay_rate*12/313/8*0.34*$name->total_rst_lh_nd_over_eight;
-                              $total_rst_sh_ot = $pay_rate*12/313/8*2.6*$name->total_rst_sh_ot;
+                              $total_rst_sh_ot = $pay_rate*12/313/8*1.5*$name->total_rst_sh_ot;
                               $total_rst_sh_ot_over_eight = $pay_rate*12/313/8*3.38*$name->total_rst_sh_ot_over_eight;
                               $total_rst_sh_nd = $pay_rate*12/313/8*0.26*$name->total_rst_sh_nd;
                               $total_rst_sh_nd_over_eight = $pay_rate*12/313/8*0.34*$name->total_rst_sh_nd_over_eight;
