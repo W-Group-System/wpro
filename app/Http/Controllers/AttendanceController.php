@@ -414,7 +414,8 @@ class AttendanceController extends Controller
        {
             
             $attendance = new AttendanceLog;
-            $attendance->emp_code = $req['id'];
+            // $attendance->emp_code = $req['id'];
+            $attendance->emp_code = mb_convert_encoding($req['id'], 'UTF-8', 'UTF-8');
             $attendance->date = date('Y-m-d',strtotime($req['timestamp']));
             $attendance->datetime = date('Y-m-d H:i:s',strtotime($req['timestamp']));
             $attendance->type = $req['type'];
