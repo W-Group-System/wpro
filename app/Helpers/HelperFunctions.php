@@ -1670,7 +1670,7 @@ function earn_per_month($leave,$date_regularization="")
         $date_regular = new DateTime($date_regularization);
         $end_date = new DateTime(date('Y').'-12-31');
         $count_days = $end_date->diff($date_regular);
-dd($date_regular);
+
         $days = $count_days->days;
         $total_earned = (int)$days / 365;
 
