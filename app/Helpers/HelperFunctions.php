@@ -1657,11 +1657,11 @@ function earn_per_month($leave,$date_regularization="")
     if ($leave_type->code == 'VL')
     {
         $date_regular = new DateTime($date_regularization);
-        $end_date = new DateTime(date('Y').'-12-31');
+        $end_date = new DateTime(date('Y-m-t'));
         $count_days = $end_date->diff($date_regular);
 
-        $days = $count_days->days;
-        $total_earned = (int)$days / 365;
+        $days = $count_days->days+1;
+        $total_earned = (int)$days / 365 * 12;
 
         return round($total_earned, 2);
     }
@@ -1670,7 +1670,7 @@ function earn_per_month($leave,$date_regularization="")
         $date_regular = new DateTime($date_regularization);
         $end_date = new DateTime(date('Y').'-12-31');
         $count_days = $end_date->diff($date_regular);
-
+dd($date_regular);
         $days = $count_days->days;
         $total_earned = (int)$days / 365;
 
