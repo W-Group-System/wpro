@@ -1632,7 +1632,7 @@ function compute_leave_credits($leave,$leave_entitlement,$date_hired,$date_regul
         $end_date = new DateTime(date('Y').'-12-31');
         $count_days = $end_date->diff($date_regular);
 
-        $days = $count_days->days;
+        $days = $count_days->days+1;
         $total_vl_credits = (int)$days / 365 * (int)$leave_entitlement;
 
         return round($total_vl_credits,2);
@@ -1642,8 +1642,8 @@ function compute_leave_credits($leave,$leave_entitlement,$date_hired,$date_regul
         $date_regular = new DateTime($date_regularization);
         $end_date = new DateTime(date('Y').'-12-31');
         $count_days = $end_date->diff($date_regular);
-
-        $days = $count_days->days;
+        $days = $count_days->days+1;
+        
         $total_vl_credits = (int)$days / 365 * (int)$leave_entitlement;
 
         return round($total_vl_credits,2);
