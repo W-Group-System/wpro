@@ -74,7 +74,7 @@
                           <input type="hidden" v-model="leave_balances" name="leave_balances" :value="leave_balances">
                           <div>
                             <label class="form-check-label ">
-                              <input type="checkbox" hidden name="withpay" class="form-check-input" :disabled="isAllowedWithPay" id='checkboxwithpay' onclick="return false;" v-model="with_pay">
+                              <input type="checkbox" hidden name="withpay" class="form-check-input" :disabled="isAllowedWithPay" id='editcheckboxwithpay' onclick="return false;" v-model="with_pay">
                               Leave Credit : <span id='edit_leave_credit_total'></span>
                           </label>
                           </div>
@@ -243,7 +243,8 @@
                     this.isAllowedWithPay = true;
                   }
               }
-              document.getElementById('checkboxwithpay').checked = amen;
+
+              document.getElementById('editcheckboxwithpay').checked = amen;
               document.getElementById("edit_leave_credit_total").innerHTML = this.leave_balances;
             }
           },
