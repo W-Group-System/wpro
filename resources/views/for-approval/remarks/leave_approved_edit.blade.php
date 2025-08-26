@@ -15,11 +15,12 @@
                           <div class="col-sm-4">
                             <select v-on:change="validateLeave" v-model="leave_type" class="form-control"  id="leave_type" style='width:100%;' name='leave_type' required>
                               @foreach ($leave_types as $leave_type)
-                                @if($leave_type->code == 'VL')
+                                {{-- @if($leave_type->code == 'VL')
                                   <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
                                 @elseif($leave_type->code == 'SL')
                                   <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
-                                @endif
+                                @endif --}}
+                                    <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
                               @endforeach                  
                             </select>
                           </div>
