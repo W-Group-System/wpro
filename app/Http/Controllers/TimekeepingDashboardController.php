@@ -53,7 +53,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }
@@ -84,7 +84,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }
@@ -112,7 +112,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }
@@ -145,7 +145,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }

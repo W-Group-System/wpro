@@ -78,13 +78,21 @@
                           Date From 
                         </div>
                         <div class='col-md-4'>
+                            @if($leave->status == 'Pending')
                           <input type="date" name='date_from' class="form-control" value="{{$leave->date_from}}" required>
+                          @else
+                          <input type="text" name="date_from" class="form-control" value="{{ $leave->date_from }}" readonly>
+                          @endif
                         </div>
                         <div class='col-md-2'>
                           Date To 
                         </div>
                         <div class='col-md-4'>
+                            @if($leave->status == 'Pending')
                           <input type="date" name='date_to' class="form-control" value="{{$leave->date_to}}" required>
+                          @else
+                          <input type="text" name="date_to" class="form-control" value="{{ $leave->date_from }}" readonly>
+                          @endif
                         </div>
                       </div>
                 </div>
