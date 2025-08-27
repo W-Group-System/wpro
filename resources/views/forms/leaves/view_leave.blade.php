@@ -36,7 +36,7 @@
                 
                 <div class='col-sm-5'>
                   <div class='row'>
-                    <div class='col-md-6'>
+                    {{-- <div class='col-md-6'>
                       <label class="form-check-label ">
                           @if($leave->withpay == 1)
                               <input type="checkbox" name="withpay" class="form-check-input" disabled value="1" checked>  
@@ -45,7 +45,7 @@
                           @endif
                         With Pay
                     </label>
-                    </div>
+                    </div> --}}
                     <div class='col-md-6'>
                       <label class="form-check-label ">
                         @if($leave->halfday == 1)
