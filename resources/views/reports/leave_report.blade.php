@@ -129,8 +129,7 @@
 												@endif
 												<br>
 												@if($form_approval->leave_file)
-													{{-- <a href="{{url('storage/'.$form_approval->leave_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a> --}}
-													<a href="{{ Storage::url('app/public'.$form_approval->leave_file) }}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
+													<a href="{{url('storage/'.$form_approval->leave_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
 												@endif
 										  </td>
 										  </tr>
