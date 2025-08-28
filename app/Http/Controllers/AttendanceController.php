@@ -591,6 +591,8 @@ class AttendanceController extends Controller
 
     public function storeAttendance(Request $request)
     {        
+        ini_set('memory_limit', '-1');
+        
         $employees = $request->input('employees'); // Get all employee data
         // dd($request->all());
         foreach ($employees as $employee_code => $dates) {
