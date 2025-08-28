@@ -325,6 +325,7 @@
                                                             $if_leave = '';
                                                             $if_attendance_holiday = '';
                                                             $if_restday = '';
+                                                            $count_days_before = '';
                                                             $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                                                             // dd($check_if_holiday);
                                                             $if_attendance_holiday_status = '';
@@ -336,7 +337,17 @@
                                                                     $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                
-                                                                    $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r."-1 day")),$employee_schedule);
+                                                                    $check_sched_yesterday_if_restday = employeeSchedule($schedules,date('Y-m-d',strtotime($date_r."-1 day")),$emp->schedule_id, $emp->employee_code);
+                                                                    if ($check_sched_yesterday_if_restday)
+                                                                    {
+                                                                        $count_days_before = "-1 day";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $count_days_before = "-3 days";
+                                                                    }
+
+                                                                    $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r.$count_days_before)),$employee_schedule);
                                                                     // dd($if_attendance_holiday);
                                                                     if($check_leave){
                                                                         $if_attendance_holiday_status = 'With-Pay';
