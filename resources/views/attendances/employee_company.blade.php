@@ -465,11 +465,19 @@
                                                                     {
                                                                         $abs = 1;
                                                                     }
-                                                                    if($previous_abs == 1)
-                                                                    {
-                                                                        $abs = 1;
+                                                                    // if($previous_abs == 1)
+                                                                    // {
+                                                                    //     $abs = 1;
+                                                                    // }
+                                                                    // $previous_abs = $abs;
+                                                                    if ($check_if_holiday != "Special Holiday") {
+                                                                        if ($previous_abs == 1) {
+                                                                            $abs = 1;
+                                                                        }
                                                                     }
-                                                                    $previous_abs = $abs;
+                                                                    if ($check_if_holiday != "Special Holiday") {
+                                                                        $previous_abs = $abs;
+                                                                    }
                                                                     
                                                             }else{
                                                               
