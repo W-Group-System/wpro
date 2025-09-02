@@ -442,7 +442,7 @@
                               $total_rst_sh_ot = $pay_rate*12/313/8*1.5*$name->total_rst_sh_ot;
                               $total_rst_sh_nd = $pay_rate*12/313/8*0.26*$name->total_rst_sh_nd;
                               $total_rst_sh_nd_over_eight = $pay_rate*12/313/8*0.34*$name->total_rst_sh_nd_over_eight;
-                              $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd+$total_sh_nd_amount+$total_sh_nd_over_eight+$total_sh_ot+$total_sh_ot_over_eight+$total_rst_sh_ot;
+                              $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd+$total_sh_nd_amount+$total_sh_nd_over_eight+$total_sh_ot+$total_sh_ot_over_eight+$total_rst_sh_ot+total_rst_sh_ot_over_eight;
                               // if($name->employee->employee_code == "A3177924")
                               // {
                               //   $salary_adjustment = 2070.28;
