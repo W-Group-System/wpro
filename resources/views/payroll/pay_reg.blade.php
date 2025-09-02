@@ -431,18 +431,16 @@
                               $total_rst_nd_over_eight = $name->total_rst_nd_over_eight*$hourly_rate*.169;
                               $total_rst_ot = $name->total_rst_ot*$hourly_rate*1.3;
                               $total_rst_ot_over_eight = $name->total_rst_ot_over_eight*$hourly_rate*1.69;
+                              $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd+$total_sh_nd_amount+$total_sh_nd_over_eight+$total_sh_ot+$total_sh_ot_over_eight+total_rst_sh_ot_over_eight;
                               $total_rst_lh_ot = $pay_rate*12/313/8*2.6*$name->total_rst_lh_ot;
                               $total_rst_lh_ot_over_eight = $pay_rate*12/313/8*3.38*$name->total_rst_lh_ot_over_eight;
                               $total_rst_lh_nd = $pay_rate*12/313/8*0.26*$name->total_rst_lh_nd;
                               $total_rst_lh_nd_over_eight = $pay_rate*12/313/8*0.34*$name->total_rst_lh_nd_over_eight;
-
-                              // $total_rst_sh_ot = $pay_rate*12/313/8*2.6*$name->total_rst_sh_ot;
+                              $total_rst_sh_ot = $pay_rate*12/313/8*2.6*$name->total_rst_sh_ot;
                               // $total_rst_sh_ot_over_eight = $pay_rate*12/313/8*3.38*$name->total_rst_sh_ot_over_eight;
                               $total_rst_sh_ot_over_eight = $pay_rate*12/313/8*1.95*$name->total_rst_sh_ot_over_eight;
-                              $total_rst_sh_ot = $pay_rate*12/313/8*1.5*$name->total_rst_sh_ot;
                               $total_rst_sh_nd = $pay_rate*12/313/8*0.26*$name->total_rst_sh_nd;
                               $total_rst_sh_nd_over_eight = $pay_rate*12/313/8*0.34*$name->total_rst_sh_nd_over_eight;
-                              $total_ot_pay = $total_lh_ot+$total_lh_ot_over_eight+$total_reg_ot+$total_reg_ot_nd+$total_rst_ot+$total_rst_ot_over_eight+$total_rst_nd+$total_rst_nd_over_eight+$total_lh_nd_amount+$total_lh_nd_over_eight+$total_reg_nd+$total_sh_nd_amount+$total_sh_nd_over_eight+$total_sh_ot+$total_sh_ot_over_eight+$total_rst_sh_ot+total_rst_sh_ot_over_eight;
                               // if($name->employee->employee_code == "A3177924")
                               // {
                               //   $salary_adjustment = 2070.28;
@@ -777,7 +775,7 @@
                               <td>{{ number_format($total_rst_lh_nd_over_eight,2) }} <input type="hidden" name="total_rst_lh_nd_over_eight[{{ $key+1 }}]" value="{{ $total_rst_lh_nd_over_eight }}"> </td>
                               <td>{{ number_format($name->total_rst_sh_ot, 2) }} <input type="hidden" name="name_total_rst_sh_ot[{{ $key+1 }}]" value="{{ $name->total_rst_sh_ot }}"></td>
                               <td>{{ number_format($total_rst_sh_ot,2) }} <input type="hidden" name="total_rst_sh_ot[{{ $key+1 }}]" value="{{ $total_rst_sh_ot }}"> </td>
-                              <td>{{ number_format($name->total_rst_sh_ot_over_eight, 2) }} <input type="hidden" name="name_total_rst_sh_ot_over_eight[{{ $key+1 }}]" value="{{ $name->total_rst_sh_ot_over_eight }}"></td>
+                              <td>{{ number_format($name->total_rst_sh_ot_over_eight,2) }} <input type="hidden" name="name_total_rst_sh_ot_over_eight[{{ $key+1 }}]" value="{{ $name->total_rst_sh_ot_over_eight }}"></td>
                               <td>{{ number_format($total_rst_sh_ot_over_eight,2) }} <input type="hidden" name="total_rst_sh_ot_over_eight[{{ $key+1 }}]" value="{{ $total_rst_sh_ot_over_eight }}"> </td>
                               <td>{{ number_format($name->total_rst_sh_nd, 2) }} <input type="hidden" name="name_total_rst_sh_nd[{{ $key+1 }}]" value="{{ $name->total_rst_sh_nd }}"></td>
                               <td>{{ number_format($total_rst_sh_nd, 2) }} <input type="hidden" name="total_rst_sh_nd[{{ $key+1 }}]" value="{{ $total_rst_sh_nd }}"> </td>
