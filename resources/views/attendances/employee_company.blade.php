@@ -1199,14 +1199,22 @@
                                                                     }
                                                                 }
                                                                 else {
-                                                                    $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
-                                                                    if($lh_ot_nd >=4.5 )
-                                                                    {   
-                                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
-                                                                        if($schedule_hours > 8)
-                                                                        {
-                                                                        $lh_ot_nd = $lh_ot_nd-1;
+                                                                    $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime('+1 day', strtotime(strtotime($date_r)))),$emp->location);
+                                                                    if ($check_if_holiday)
+                                                                    {
+                                                                        $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
+                                                                        if($lh_ot_nd >=4.5 )
+                                                                        {   
+                                                                            $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                                            if($schedule_hours > 8)
+                                                                            {
+                                                                            $lh_ot_nd = $lh_ot_nd-1;
+                                                                            }
                                                                         }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $lh_ot_nd = 2;
                                                                     }
                                                                 }
                                                              
