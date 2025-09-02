@@ -325,6 +325,7 @@
                                                             $if_leave = '';
                                                             $if_attendance_holiday = '';
                                                             $if_restday = '';
+                                                            $count_days_before = '';
                                                             $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                                                             // dd($check_if_holiday);
                                                             $if_attendance_holiday_status = '';
@@ -336,7 +337,17 @@
                                                                     $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                 $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
                                                                
-                                                                    $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r."-1 day")),$employee_schedule);
+                                                                    $check_sched_yesterday_if_restday = employeeSchedule($schedules,date('Y-m-d',strtotime($date_r."-1 day")),$emp->schedule_id, $emp->employee_code);
+                                                                    if ($check_sched_yesterday_if_restday)
+                                                                    {
+                                                                        $count_days_before = "-1 day";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $count_days_before = "-3 days";
+                                                                    }
+
+                                                                    $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r.$count_days_before)),$employee_schedule);
                                                                     // dd($if_attendance_holiday);
                                                                     if($check_leave){
                                                                         $if_attendance_holiday_status = 'With-Pay';
@@ -454,11 +465,19 @@
                                                                     {
                                                                         $abs = 1;
                                                                     }
-                                                                    if($previous_abs == 1)
-                                                                    {
-                                                                        $abs = 1;
+                                                                    // if($previous_abs == 1)
+                                                                    // {
+                                                                    //     $abs = 1;
+                                                                    // }
+                                                                    // $previous_abs = $abs;
+                                                                    if ($check_if_holiday != "Special Holiday") {
+                                                                        if ($previous_abs == 1) {
+                                                                            $abs = 1;
+                                                                        }
                                                                     }
-                                                                    $previous_abs = $abs;
+                                                                    if ($check_if_holiday != "Special Holiday") {
+                                                                        $previous_abs = $abs;
+                                                                    }
                                                                     
                                                             }else{
                                                               
@@ -979,18 +998,18 @@
                                                 $att = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
                                                   if($rest == "RESTDAY")
                                                   {
-                                                    if($att)
-                                                    {
-                                                        if ($att->time_in && $att->time_out != null)
-                                                        {
-                                                            $work_hrs = round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
-                                                            $work = $work_hrs;
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        $work = 0;
-                                                    }
+                                                    // if($att)
+                                                    // {
+                                                    //     if ($att->time_in && $att->time_out != null)
+                                                    //     {
+                                                    //         $work_hrs = round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
+                                                    //         $work = $work_hrs;
+                                                    //     }
+                                                    // }
+                                                    // else
+                                                    // {
+                                                    // }
+                                                    $work = 0;
                                                   }
                                                   if($abs == 1)
                                                   {
@@ -1014,21 +1033,26 @@
                                                             if ($rest == "RESTDAY") 
                                                             {
                                                                 $rst_sh_ot=8;
-                                                                $rst_sh_ot_ge = $approved_overtime_hrs-8;
-
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $rst_sh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $rst_sh_ot_ge = $approved_overtime_hrs-8;
                                                                 }
 
                                                             }
                                                             else
                                                             {
                                                                 $sh_ot = 8;
-                                                                $sh_ot_ge = $approved_overtime_hrs-8;
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $sh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $sh_ot_ge = $approved_overtime_hrs-8;
                                                                 }
                                                             }
 
@@ -1107,20 +1131,26 @@
                                                             if ($rest == "RESTDAY")
                                                             {
                                                                 $rst_lh_ot = 8;
-                                                                $rst_lh_ot_ge = $approved_overtime_hrs-8;
                                                                 
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $rst_lh_ot = $approved_overtime_hrs;
                                                                 }
+                                                                else
+                                                                {
+                                                                    $rst_lh_ot_ge = $approved_overtime_hrs-8;
+                                                                }
                                                             }
                                                             else
                                                             {
                                                                 $lh_ot = 8;
-                                                                $lh_ot_ge = $approved_overtime_hrs-8;
                                                                 if($approved_overtime_hrs <= 8)
                                                                 {
                                                                     $lh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $lh_ot_ge = $approved_overtime_hrs-8;
                                                                 }
                                                             }
 
@@ -1180,6 +1210,34 @@
                                                                     }
                                                                 }
                                                              
+                                                            }
+                                                        }
+                                                    }
+                                                    else 
+                                                    {
+                                                        if ($emp->work_description == 'Non-Monthly')
+                                                        {
+                                                            if ($employee_schedule)
+                                                            {
+                                                                $time_start_string = strtotime($time_start);
+                                                                $time_end_string = strtotime($time_end);
+                                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+    
+                                                                $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                if($time_end_string>$schedule_out)
+                                                                {
+                                                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                    $sh_ot_use = $sh_ot_nd;
+                                                                    if($sh_ot_nd >=4.5 )
+                                                                    {   
+                                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                                        if($schedule_hours > 8)
+                                                                        {
+                                                                            $sh_ot_nd = $sh_ot_nd-1;
+                                                                        }
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     }

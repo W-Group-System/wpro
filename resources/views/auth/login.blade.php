@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- @dd(phpinfo()) --}}
 <div class="content">
   <div class="container">
     <div class="row">

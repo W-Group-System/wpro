@@ -110,6 +110,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('for-leave','FormApprovalController@form_leave_approval');
     Route::post('approve-leave/{id}','FormApprovalController@approveLeave');
     Route::post('decline-leave/{id}','FormApprovalController@declineLeave');
+    Route::post('change-status-leave/{id}', 'FormApprovalController@changeStatusLeave');
+    Route::post('change-status-ob/{id}', 'FormApprovalController@changeStatusOb');
+    Route::post('change-status-ot/{id}', 'FormApprovalController@changeStatusOt');
 
     Route::get('for-overtime','FormApprovalController@form_overtime_approval');
     Route::post('approve-ot-hrs/{employee_overtime}','FormApprovalController@approveOvertime');
@@ -499,6 +502,11 @@ Route::get('leave-credit-acc','EmployeeEarnedLeaveController@addLeave');
 
 Route::get('hik-logs', function(){
     return HikAttLog2::orderBy('authDate')->get()->take(5);
+});
+
+Route::get('timekeeping-per-company','TimekeepingDashboardController@timekeeping');
+Route::prefix('timekeeping-per-company')->group(function() {
+    Route::post('update','TimekeepingDashboardController@updateTimekeeping')->name('update.timekeeping');
 });
 
 // Route::get('/', function () {

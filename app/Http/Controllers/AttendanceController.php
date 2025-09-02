@@ -414,9 +414,11 @@ class AttendanceController extends Controller
        {
             
             $attendance = new AttendanceLog;
-            $attendance->emp_code = $req['id'];
-            $attendance->date = date('Y-m-d',strtotime($req['timestamp']));
-            $attendance->datetime = $req['timestamp'];
+            // $attendance->emp_code = $req['id'];
+            $attendance->emp_code = mb_convert_encoding($req['id'], 'UTF-8', 'UTF-8');
+            $attendance->date = date('Y') . date('-m-d', strtotime($req['timestamp']));
+            // $attendance->datetime = date('Y-m-d H:i:s',strtotime($req['timestamp']));
+            $attendance->datetime = date('Y') . date('-m-d H:i:s', strtotime($req['timestamp']));
             $attendance->type = $req['type'];
             $attendance->location = $request->location;
             $attendance->ip_address = $request->ip_address;
@@ -589,6 +591,8 @@ class AttendanceController extends Controller
 
     public function storeAttendance(Request $request)
     {        
+        ini_set('memory_limit', '-1');
+        
         $employees = $request->input('employees'); // Get all employee data
         // dd($request->all());
         foreach ($employees as $employee_code => $dates) {

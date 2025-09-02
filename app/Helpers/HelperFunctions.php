@@ -1421,7 +1421,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     $date_diff = $date_now->diff($date_hired);
     
     $leave_entitlement = 0;
-    $plant_company = [5,6,7,11,12];
+    $plant_company = [5,6,11,12];
     if ($rank_level->name == 'RANK&FILE')
     {
         if (in_array($company, $plant_company))
@@ -1494,37 +1494,6 @@ function get_leave_entitlement($level, $date_hired, $company)
         {
             if ($date_diff->y <= 1)
             {
-                $leave_entitlement =  5;
-            }
-            elseif ($date_diff->y > 1 && $date_diff->y <= 3)
-            {
-                $leave_entitlement =  5;
-            }
-            elseif($date_diff->y > 3 && $date_diff->y <= 5)
-            {
-                $leave_entitlement = 6;
-            }
-            elseif($date_diff->y > 5 && $date_diff->y <= 10)
-            {
-                $leave_entitlement = 7;
-            }
-            elseif($date_diff->y > 10 && $date_diff->y <= 15)
-            {
-                $leave_entitlement = 8;
-            }
-            elseif($date_diff->y > 15 && $date_diff->y <= 20)
-            {
-                $leave_entitlement = 9;
-            }
-            elseif($date_diff->y > 20)
-            {
-                $leave_entitlement = 10;
-            }
-        }
-        else
-        {
-            if ($date_diff->y <= 1)
-            {
                 $leave_entitlement =  8;
             }
             elseif ($date_diff->y > 1 && $date_diff->y <= 3)
@@ -1550,6 +1519,37 @@ function get_leave_entitlement($level, $date_hired, $company)
             elseif($date_diff->y > 20)
             {
                 $leave_entitlement = 13;
+            }
+        }
+        else
+        {
+            if ($date_diff->y <= 1)
+            {
+                $leave_entitlement =  12;
+            }
+            elseif ($date_diff->y > 1 && $date_diff->y <= 3)
+            {
+                $leave_entitlement =  12;
+            }
+            elseif($date_diff->y > 3 && $date_diff->y <= 5)
+            {
+                $leave_entitlement = 12;
+            }
+            elseif($date_diff->y > 5 && $date_diff->y <=10)
+            {
+                $leave_entitlement = 15;
+            }
+            elseif($date_diff->y > 10 && $date_diff->y <= 15)
+            {
+                $leave_entitlement = 16;
+            }
+            elseif($date_diff->y > 15 && $date_diff->y <= 20)
+            {
+                $leave_entitlement = 17;
+            }
+            elseif($date_diff->y > 20)
+            {
+                $leave_entitlement = 18;
             }
         }
     }
@@ -1632,7 +1632,7 @@ function compute_leave_credits($leave,$leave_entitlement,$date_hired,$date_regul
         $end_date = new DateTime(date('Y').'-12-31');
         $count_days = $end_date->diff($date_regular);
 
-        $days = $count_days->days;
+        $days = $count_days->days+1;
         $total_vl_credits = (int)$days / 365 * (int)$leave_entitlement;
 
         return round($total_vl_credits,2);
@@ -1642,8 +1642,8 @@ function compute_leave_credits($leave,$leave_entitlement,$date_hired,$date_regul
         $date_regular = new DateTime($date_regularization);
         $end_date = new DateTime(date('Y').'-12-31');
         $count_days = $end_date->diff($date_regular);
-
-        $days = $count_days->days;
+        $days = $count_days->days+1;
+        
         $total_vl_credits = (int)$days / 365 * (int)$leave_entitlement;
 
         return round($total_vl_credits,2);
@@ -1657,11 +1657,11 @@ function earn_per_month($leave,$date_regularization="")
     if ($leave_type->code == 'VL')
     {
         $date_regular = new DateTime($date_regularization);
-        $end_date = new DateTime(date('Y').'-12-31');
+        $end_date = new DateTime(date('Y-m-t'));
         $count_days = $end_date->diff($date_regular);
 
-        $days = $count_days->days;
-        $total_earned = (int)$days / 365;
+        $days = $count_days->days+1;
+        $total_earned = (int)$days / 365 * 12;
 
         return round($total_earned, 2);
     }

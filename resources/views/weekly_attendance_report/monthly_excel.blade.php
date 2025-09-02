@@ -47,6 +47,19 @@
                         @endphp
                         @foreach($date_range as $date_a)
                             @php
+                                // $schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
+                                // $attendance = $employee->attendances
+                                //     ->filter(function ($att) use ($date_a) {
+                                //         return date('Y-m-d', strtotime($att->time_in)) === $date_a;
+                                //     })
+                                //     ->sortBy('time_in')
+                                //     ->first();
+
+                                // if ($schedule && $attendance) {
+                                //     if (date('H:i', strtotime($attendance->time_in)) > $schedule->time_in_to) {
+                                //         $tardy_count++;
+                                //     }
+                                // }
                                 $schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
                                 $attendance = $employee->attendances
                                     ->filter(function ($att) use ($date_a) {
@@ -55,7 +68,12 @@
                                     ->sortBy('time_in')
                                     ->first();
 
-                                if ($schedule && $attendance) {
+                                $emp_leaves = $employee->approved_leaves_halfday
+                                    ->filter(fn($leave) => $date_a >= date('Y-m-d', strtotime($leave->date_from)) && $date_a <= date('Y-m-d', strtotime($leave->date_to)))
+                                    ->sortBy('date_from')
+                                    ->first();   
+                                    
+                                if ($schedule && $attendance && !$emp_leaves) {
                                     if (date('H:i', strtotime($attendance->time_in)) > $schedule->time_in_to) {
                                         $tardy_count++;
                                     }
@@ -115,8 +133,46 @@
                         @endphp
                         @foreach($date_range as $date_a)
                             @php
-                                $schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
+                                // $schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
                                 
+                                // $attendance = $employee->attendances
+                                //     ->filter(function ($att) use ($date_a) {
+                                //         $date_in = date('Y-m-d', strtotime($att->time_in));
+                                //         $date_out = date('Y-m-d', strtotime($att->time_out));
+                                //         return $date_in == $date_a && $date_out == $date_a;
+                                //     })
+                                //     // ->where('time_in', '>=', date('Y-m-d', strtotime($date_a)))
+                                //     // ->where('time_out',"<=",date('Y-m-d', strtotime($date_a)))
+                                //     ->sortBy('time_out')
+                                //     ->first();
+                                
+                                // if ($schedule && !empty($attendance)) {
+                                //     if (date('H:i', strtotime($attendance->time_in)) < date('H:i', strtotime($schedule->time_in_from)))
+                                //     {
+                                //         $estimated_out = date('H:i', strtotime($schedule->time_out_from));
+                                //     }
+                                //     else
+                                //     {
+                                //         $hours = intval($schedule->working_hours);
+                                //         $minutes = ($schedule->working_hours-$hours)*60;
+                                //         $estimated_out = date('H:i', strtotime("+".$hours." hours",strtotime($attendance->time_in)));
+                                //         $estimated_out = date('H:i', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
+                                //     }
+                                //     if (date('H:i', strtotime($attendance->time_in)) > date('H:i', strtotime($schedule->time_in_to)))
+                                //     {
+                                //         $estimated_out = date('H:i', strtotime($schedule->time_out_to));
+                                //     }
+
+                                //     $if_has_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_a)),$schedule);
+                                //     if (empty($if_has_leave))
+                                //     {
+                                //         if (date('H:i', strtotime($attendance->time_out)) < $estimated_out) {
+                                //             $undertime_count++;
+                                //         }
+                                //         // $test_array[] = $date_a;
+                                //     }
+                                // }
+                                $schedule = employeeSchedule($employee->ScheduleData, $date_a, $employee->schedule_id, $employee->employee_code);
                                 $attendance = $employee->attendances
                                     ->filter(function ($att) use ($date_a) {
                                         $date_in = date('Y-m-d', strtotime($att->time_in));
@@ -145,13 +201,22 @@
                                         $estimated_out = date('H:i', strtotime($schedule->time_out_to));
                                     }
 
-                                    $if_has_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_a)),$schedule);
-                                    if (empty($if_has_leave))
-                                    {
+                                    $if_has_leave = employeeHasLeave(
+                                        $employee->approved_leaves,
+                                        date('Y-m-d', strtotime($date_a)),
+                                        $schedule
+                                    );
+
+                                    $if_has_ob = employeeHasOB(
+                                        $employee->approved_obs,
+                                        date('Y-m-d', strtotime($date_a)),
+                                        $schedule
+                                    );
+
+                                    if (empty($if_has_leave) && empty($if_has_ob)) {
                                         if (date('H:i', strtotime($attendance->time_out)) < $estimated_out) {
                                             $undertime_count++;
                                         }
-                                        // $test_array[] = $date_a;
                                     }
                                 }
                             @endphp

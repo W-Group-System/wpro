@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AttendanceDetailedReport;
 use App\Company;
+use App\Department;
 use Illuminate\Http\Request;
 use App\Employee;
 use App\EmployeeLeave;
@@ -12,6 +13,7 @@ use App\EmployeeWfh;
 use App\EmployeeOvertime;
 use App\EmployeeDtr;
 use App\Leave;
+use App\Timekeeping;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TimekeepingDashboardController extends Controller
@@ -51,7 +53,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }
@@ -82,7 +84,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }
@@ -110,7 +112,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }
@@ -143,7 +145,7 @@ class TimekeepingDashboardController extends Controller
                                 })
                                 ->where(function ($query) use ($status) {
                                     if ($status == 'All') {
-                                        $query->whereIn('status', ['Approved', 'Pending']);
+                                        $query->whereIn('status', ['Approved', 'Pending', 'Declined', 'Cancelled']);
                                     } else {
                                         $query->where('status', $status);
                                     }
@@ -264,6 +266,71 @@ class TimekeepingDashboardController extends Controller
         $request->mail_2 = null;
         $request->save();
         Alert::success('Successfully reset')->persistent('Dismiss');
+        return back();
+    }
+
+    public function timekeeping(Request $request)
+    {
+        $from_date = date('Y-m-d', strtotime($request->date_from));
+        $to_date = date('Y-m-d', strtotime($request->date_to));
+        $company_data = $request->company;
+        $department_data = $request->department;
+        $employee_data = $request->employee;
+
+        $companies = Company::where('id','!=',1)->get();
+        $departments = Department::get();
+        $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
+            ->with(['schedule_info',
+                'timekeeping_logs' => function($query)use($from_date,$to_date) {
+                    $query->whereBetween('datetime', [$from_date." 00:00:01", $to_date." 23:59:59"])
+                        ->orderBy('datetime','asc');
+                }
+            ])
+            ->where('company_id', $request->company)
+            ->when($department_data, function($query)use($department_data) {
+                $query->where('department_id', $department_data);
+            })
+            ->when($employee_data, function($query)use($employee_data) {
+                $query->where('id', $employee_data);
+            })
+            ->where('status','Active')
+            ->orderBy('last_name','asc')
+            ->get();
+        
+        $attendance_controller = new AttendanceController;
+        $date_range =  $attendance_controller->dateRange($from_date, $to_date);
+        
+        return view('timekeeping',
+            array(
+                'companies' => $companies,
+                'departments'=> $departments,
+                'employees' => $employees,
+                'date_range' => $date_range,
+                'from_date' => $from_date,
+                'to_date' => $to_date,
+                'company_data' => $company_data,
+                'department_data' => $department_data,
+                'employee_data' => $employee_data
+            )
+        );
+    }
+
+    public function updateTimekeeping(Request $request)
+    {
+        // dd($request->all());
+        $timekeeping_timein = Timekeeping::findOrFail($request->attendance_logs_in);
+        $timekeeping_timeout = Timekeeping::findOrFail($request->attendance_logs_out);
+        // dd($timekeeping_timein, $timekeeping_timeout, $request->all());
+        if ($request->has('attendance_logs_in') && $request->has('attendance_logs_out'))
+        {
+            $timekeeping_timein->datetime = date('Y-m-d',strtotime($timekeeping_timein->datetime)).' '.date('H:i:s', strtotime($request->employee_time_in));
+            $timekeeping_timein->save();
+
+            $timekeeping_timeout->datetime = date('Y-m-d',strtotime($timekeeping_timeout->datetime)).' '.date('H:i:s', strtotime($request->employee_time_out));
+            $timekeeping_timeout->save();
+        }
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
 }

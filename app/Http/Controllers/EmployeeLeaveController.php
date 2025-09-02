@@ -202,6 +202,7 @@ class EmployeeLeaveController extends Controller
                     $q->whereBetween('date_from', [$request->date_from, $request->date_to])
                         ->orWhereBetween('date_to',[$request->date_from, $request->date_to]);
                 })
+                ->where('leave_type', $request->leave_type)
                 ->where('user_id', auth()->user()->id)
                 ->whereIn('status', ['Pending', 'Approved'])
                 ->first();

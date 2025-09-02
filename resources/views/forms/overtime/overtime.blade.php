@@ -183,7 +183,9 @@
                                 @elseif($overtime->status == 'Approved')
                                     {{$overtime->approvedBy->name}} - <label class="badge badge-success mt-1">Approved</label>
                                 @else
-                                    {{$overtime->approvedBy->name}} - <label class="badge badge-warning mt-1">Pending</label>
+                                    @foreach ($overtime->approver as $approver)
+                                    {{$approver->approver_info->name}} -  <label class="badge badge-warning mt-1">Pending</label>
+                                    @endforeach
                                 @endif
                             @else 
                                 @if(count($overtime->approver) > 0)

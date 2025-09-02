@@ -41,6 +41,8 @@
                                         <select id="status" class="form-control form-control-sm" name="status">
                                             <option value="Approved" {{ $status == 'Approved' ? 'selected' : '' }}>Approved</option>
                                             <option value="Pending" {{ $status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="Cancelled" {{ $status == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                            <option value="Declined" {{ $status == 'Declined' ? 'selected' : '' }}>Declined</option>
                                             <option value="All" {{ $status == 'All' ? 'selected' : '' }}>All</option>
                                           </select>
                                         {{-- <input type="text" value='{{$status}}' class="form-control form-control-sm" id='status' name="status" required /> --}}
@@ -97,6 +99,10 @@
                                                 <button type="button" id="edit{{ $item->id }}" class="btn btn-info btn-sm"
                                                     data-target="#edit_leave-{{ $item->id }}" data-toggle="modal" title='Edit'>
                                                     <i class="ti-pencil-alt"></i>
+                                                </button>
+                                                @elseif($item->status == 'Declined' || $item->status == 'Cancelled')
+                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#changeStatusLeave{{ $item->id }}">
+                                                    <i class="ti-check btn-icon-prepend"></i>
                                                 </button>
                                                 @endif
                                             </div>
@@ -196,6 +202,10 @@
                                                 </button>
                                                 <button type="button" id="edit{{ $item->id }}" class="btn btn-info btn-sm" data-target="#edit_ob-{{ $item->id }}" data-toggle="modal" title='Edit'>
                                                     <i class="ti-pencil-alt"></i>
+                                                </button>
+                                            @elseif($item->status == 'Cancelled' || $item->status == 'Declined')
+                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#changeStatusOb{{ $item->id }}">
+                                                    <i class="ti-check btn-icon-prepend"></i>
                                                 </button>
                                             @endif
                                         </div>
@@ -369,6 +379,10 @@
                                                 </button>
                                                 <button type="button" class="btn btn-info btn-sm" id="{{ $item->id }}" data-target="#edit_time-{{ $item->id }}" data-toggle="modal" title="Edit">
                                                     <i class="ti-pencil-alt btn-icon-prepend"></i>                                                    
+                                                </button>
+                                            @elseif($item->status == 'Declined' || $item->status == 'Cancelled')
+                                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#changeStatusOt{{ $item->id }}">
+                                                    <i class="ti-check btn-icon-prepend"></i>
                                                 </button>
                                             @endif
                                         </div>
@@ -613,16 +627,19 @@
   @include('for-approval.remarks.leave_approved_remarks')
   @include('for-approval.remarks.leave_declined_remarks')
   @include('for-approval.remarks.leave_approved_edit')
+  @include('dashboards.change_status_leave')
 @endforeach
 
 @foreach ($obs as $ob)
   @include('for-approval.remarks.ob_approved_remarks')
   @include('for-approval.remarks.ob_declined_remarks')
   @include('for-approval.remarks.edit_ob')
+  @include('dashboards.change_status_ob')
 @endforeach
 
 @foreach ($overtimes as $overtime)
   @include('for-approval.remarks.overtime_approved_remarks')
   @include('for-approval.remarks.overtime_declined_remarks')
   @include('for-approval.remarks.overtime_edit_time')
+    @include('dashboards.change_status_ot')
 @endforeach 

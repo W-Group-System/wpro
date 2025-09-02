@@ -909,4 +909,34 @@ class FormApprovalController extends Controller
             return 'error';
         }
     }
+
+    public function changeStatusLeave(Request $request,$id)
+    {
+        $employee_leaves = EmployeeLeave::findOrFail($id);
+        $employee_leaves->status = $request->status;
+        $employee_leaves->save();
+        
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function changeStatusOT(Request $request,$id)
+    {
+        $employee_leaves = EmployeeOvertime::findOrFail($id);
+        $employee_leaves->status = $request->status;
+        $employee_leaves->save();
+        
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function changeStatusOb(Request $request,$id)
+    {
+        $employee_leaves = EmployeeOb::findOrFail($id);
+        $employee_leaves->status = $request->status;
+        $employee_leaves->save();
+        
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
 }
