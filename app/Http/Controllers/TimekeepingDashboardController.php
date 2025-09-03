@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AttendanceDetailedReport;
 use App\Company;
 use App\Department;
+use App\DtrCorrection;
 use Illuminate\Http\Request;
 use App\Employee;
 use App\EmployeeLeave;
@@ -290,9 +291,9 @@ class TimekeepingDashboardController extends Controller
             ->when($department_data, function($query)use($department_data) {
                 $query->where('department_id', $department_data);
             })
-            ->when($employee_data, function($query)use($employee_data) {
-                $query->where('id', $employee_data);
-            })
+            // ->when($employee_data, function($query)use($employee_data) {
+            //     $query->where('id', $employee_data);
+            // })
             ->where('status','Active')
             ->orderBy('last_name','asc')
             ->get();
@@ -315,22 +316,91 @@ class TimekeepingDashboardController extends Controller
         );
     }
 
-    public function updateTimekeeping(Request $request)
+    public function updateTimekeeping(Request $request,$id)
     {
-        // dd($request->all());
-        $timekeeping_timein = Timekeeping::findOrFail($request->attendance_logs_in);
-        $timekeeping_timeout = Timekeeping::findOrFail($request->attendance_logs_out);
-        // dd($timekeeping_timein, $timekeeping_timeout, $request->all());
-        if ($request->has('attendance_logs_in') && $request->has('attendance_logs_out'))
+        // dd($request->all(),$id);
+        $dtr_correction = DtrCorrection::with('employee')->findOrFail($id);
+        $dtr_correction->status = $request->status;
+        $dtr_correction->save();
+        // dd($dtr_correction);
+        if ($request->status == "Approved")
         {
-            $timekeeping_timein->datetime = date('Y-m-d',strtotime($timekeeping_timein->datetime)).' '.date('H:i:s', strtotime($request->employee_time_in));
-            $timekeeping_timein->save();
+            $timekeeping = new Timekeeping;
+            $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+            $timekeeping->date = $dtr_correction->date;
+            $timekeeping->datetime = $dtr_correction->time_in;
+            $timekeeping->save();
 
-            $timekeeping_timeout->datetime = date('Y-m-d',strtotime($timekeeping_timeout->datetime)).' '.date('H:i:s', strtotime($request->employee_time_out));
-            $timekeeping_timeout->save();
+            $timekeeping = new Timekeeping;
+            $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+            $timekeeping->date = $dtr_correction->date;
+            $timekeeping->datetime = $dtr_correction->time_out;
+            $timekeeping->save();
         }
+        
+        // if ($request->has('attendance_logs_in') && $request->has('attendance_logs_out'))
+        // {
+        //     $timekeeping_timein = Timekeeping::findOrFail($request->attendance_logs_in);
+        //     $timekeeping_timeout = Timekeeping::findOrFail($request->attendance_logs_out);
+
+        //     $timekeeping_timein->datetime = $datetime_in;
+        //     $timekeeping_timein->save();
+
+        //     $timekeeping_timeout->datetime = $datetime_out;
+        //     $timekeeping_timeout->save();
+        // }
+        // else
+        // {
+        //     $timekeeping = new Timekeeping;
+        //     $timekeeping->emp_code = $employee->employee_number;
+        //     $timekeeping->date = $request->date;
+        //     $timekeeping->datetime = date('Y-m-d H:i:s', strtotime($datetime_in));
+        //     $timekeeping->save();
+
+        //     $timekeeping = new Timekeeping;
+        //     $timekeeping->emp_code = $employee->employee_number;
+        //     $timekeeping->date = $request->date;
+        //     $timekeeping->datetime = date('Y-m-d H:i:s', strtotime($datetime_out));
+        //     $timekeeping->save();
+        // }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
+    }
+
+    public function forApproval(Request $request)
+    {
+        // dd($request->all());
+        $dtr_correction = new DtrCorrection;
+        $dtr_correction->employee_id = $request->employee_id;
+        $dtr_correction->date = $request->date;
+        $dtr_correction->time_in = $request->date.' '.$request->employee_time_in;
+        $dtr_correction->time_out = $request->date.' '.$request->employee_time_out;
+        $dtr_correction->remarks = $request->remarks;
+        $dtr_correction->status = 'Pending';
+        // $dtr_correction->employee_id = $request->employee_id;
+        if ($request->has('incident_report'))
+        {
+            $file = $request->file('incident_report');
+            $name = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('incident_report'),$name);
+            $file_name = '/incident_report/'.$name;
+            $dtr_correction->file = $file_name;
+        }
+        $dtr_correction->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
+    }
+
+    public function forApprovalView()
+    {
+        $dtr_corrections = DtrCorrection::with('employee')->get();
+
+        return view('for_approval_dtr',
+            array(
+                'dtr_corrections' => $dtr_corrections
+            )
+        );
     }
 }

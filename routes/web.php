@@ -506,8 +506,11 @@ Route::get('hik-logs', function(){
 
 Route::get('timekeeping-per-company','TimekeepingDashboardController@timekeeping');
 Route::prefix('timekeeping-per-company')->group(function() {
-    Route::post('update','TimekeepingDashboardController@updateTimekeeping')->name('update.timekeeping');
+    Route::post('update/{id}', 'TimekeepingDashboardController@updateTimekeeping')->name('update.timekeeping');
+    Route::post('for-approval','TimekeepingDashboardController@forApproval')->name('for_approval.timekeeping');
 });
+
+Route::get('for_approval','TimekeepingDashboardController@forApprovalView');
 
 // Route::get('/', function () {
 //     if (request()->getHost() == 'hris.wsystem.online' || request()->getHost() == '175.18.72.49:2014')
