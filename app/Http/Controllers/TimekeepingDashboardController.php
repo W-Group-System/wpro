@@ -15,6 +15,7 @@ use App\EmployeeOvertime;
 use App\EmployeeDtr;
 use App\Leave;
 use App\Timekeeping;
+use App\TimekeepingPosted;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class TimekeepingDashboardController extends Controller
@@ -283,14 +284,15 @@ class TimekeepingDashboardController extends Controller
         $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
             ->with(['schedule_info',
                 'timekeeping_logs' => function($query)use($from_date,$to_date) {
-                    $query->whereBetween('datetime', [$from_date." 00:00:01", $to_date." 23:59:59"])
+                    $query->whereBetween('datetime', [$from_date." 00:00:00", $to_date." 23:59:59"])
                         ->orderBy('datetime','asc');
                 }
             ])
             ->where('company_id', $request->company)
-            ->when($department_data, function($query)use($department_data) {
-                $query->where('department_id', $department_data);
-            })
+            ->where('department_id', $request->department)
+            // ->when($department_data, function($query)use($department_data) {
+            //     $query->where('department_id', $department_data);
+            // })
             // ->when($employee_data, function($query)use($employee_data) {
             //     $query->where('id', $employee_data);
             // })
@@ -300,7 +302,7 @@ class TimekeepingDashboardController extends Controller
         
         $attendance_controller = new AttendanceController;
         $date_range =  $attendance_controller->dateRange($from_date, $to_date);
-        
+
         return view('timekeeping',
             array(
                 'companies' => $companies,
@@ -402,5 +404,30 @@ class TimekeepingDashboardController extends Controller
                 'dtr_corrections' => $dtr_corrections
             )
         );
+    }
+
+    public function postDtr(Request $request)
+    {
+        foreach($request->employees as $employee_code => $employee)
+        {
+            foreach($employee as $date => $attendance)
+            {
+                $timekeeping = new TimekeepingPosted;
+                $timekeeping->company_id = $attendance['company_id'] ?? null;
+                $timekeeping->department_id = $attendance['department_id'] ?? null;
+                $timekeeping->employee_no = $attendance['employee_no'] ?? null;
+                $timekeeping->name = $attendance['name'] ?? null;
+                $timekeeping->cut_off_date = $attendance['cutoff'] ?? null;
+                $timekeeping->log_date = $attendance['log_date'] ?? null;
+                $timekeeping->shift = $attendance['shift'] ?? null;
+                $timekeeping->in = $attendance['in'] ?? null;
+                $timekeeping->out = $attendance['out'] ?? null;
+                $timekeeping->abs = $attendance['abs'] ?? null;
+                $timekeeping->save();
+            }
+        }
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return redirect('timekeeping-per-company');
     }
 }

@@ -508,6 +508,7 @@ Route::get('timekeeping-per-company','TimekeepingDashboardController@timekeeping
 Route::prefix('timekeeping-per-company')->group(function() {
     Route::post('update/{id}', 'TimekeepingDashboardController@updateTimekeeping')->name('update.timekeeping');
     Route::post('for-approval','TimekeepingDashboardController@forApproval')->name('for_approval.timekeeping');
+    Route::post('post_dtr', 'TimekeepingDashboardController@postDtr');
 });
 
 Route::get('for_approval','TimekeepingDashboardController@forApprovalView');
