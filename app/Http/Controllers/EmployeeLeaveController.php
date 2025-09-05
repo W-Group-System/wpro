@@ -312,6 +312,7 @@ class EmployeeLeaveController extends Controller
 
     public function edit_leave(Request $request, $id)
     {
+        // dd($request->all());
         $employee = Employee::where('user_id',Auth::user()->id)->first();
         $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
         if($request->withpay == 'on'){
@@ -329,7 +330,7 @@ class EmployeeLeaveController extends Controller
                 $new_leave->date_from = $request->date_from;
                 $new_leave->date_to = $request->date_to;
                 $new_leave->reason = $request->reason;
-                $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
+                $new_leave->withpay = $request->leave_type == 13 ? 0 : 1;
                 $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
                 $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : ""; 
 
@@ -360,7 +361,7 @@ class EmployeeLeaveController extends Controller
             $new_leave->date_from = $request->date_from;
             $new_leave->date_to = $request->date_to;
             $new_leave->reason = $request->reason;
-            $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
+            $new_leave->withpay = $request->leave_type == 13 ? 0 : 1;
             $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
             $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : ""; 
 
