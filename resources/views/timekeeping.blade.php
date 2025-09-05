@@ -50,10 +50,10 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <input type="date" name="date_from" class="form-control" min="{{ $cut_off_date->cut_off_date }}" value="{{ $from_date != "1970-01-01" ? $from_date : null }}">
+                    <input type="date" name="date_from" class="form-control" value="{{ $from_date != "1970-01-01" ? $from_date : null }}">
                 </div>
                 <div class="col-md-2">
-                    <input type="date"  name="date_to" class="form-control" min="{{ $cut_off_date->cut_off_date }}" value="{{ $to_date != "1970-01-01" ? $to_date : null }}">
+                    <input type="date"  name="date_to" class="form-control" value="{{ $to_date != "1970-01-01" ? $to_date : null }}">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary">
