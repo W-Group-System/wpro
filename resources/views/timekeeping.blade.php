@@ -88,7 +88,7 @@
                             <table class="table table-bordered mt-5 myTable">
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        {{-- <th></th> --}}
                                         <th>COMPANY</th>
                                         <th>DEPARTMENT</th>
                                         <th>SCHEDULE</th>
@@ -150,9 +150,9 @@
                                                 $total_issues = $total_issues+=1;
                                             @endphp
                                             <tr>
-                                                <td>
+                                                {{-- <td>
                                                     <input type="checkbox" name="" id="">
-                                                </td>
+                                                </td> --}}
                                                 <td>{{ $employee->company->company_code }}</td>
                                                 <td>{{ $employee->department->name }}</td>
                                                 <td>
@@ -250,7 +250,7 @@
                                 <table class="table table-bordered mt-5 myTable">
                                     <thead>
                                         <tr>
-                                            <th></th>
+                                            {{-- <th></th> --}}
                                             <th>COMPANY</th>
                                             <th>DEPARTMENT</th>
                                             <th>SCHEDULE</th>
@@ -327,9 +327,9 @@
                                                     <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
                                                     <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
 
-                                                    <td>
+                                                    {{-- <td>
                                                         <input type="checkbox" name="" id="">
-                                                    </td>
+                                                    </td> --}}
                                                     <td>
                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
                                                         {{ $employee->company->company_code }}
