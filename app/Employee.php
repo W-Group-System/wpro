@@ -217,6 +217,10 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(Timekeeping::class,'emp_code','employee_number');
     }
+    public function dtr_correction()
+    {
+        return $this->hasMany(DtrCorrection::class,'employee_id');
+    }
     // public function daily_schedules()
     // {
     //     return $this->hasMany(DailySchedule::class,'employee_code','employee_code');
