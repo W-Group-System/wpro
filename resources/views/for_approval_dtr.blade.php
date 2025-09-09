@@ -62,7 +62,7 @@
                                     <td>
                                         @if($dtr_correction->status == 'Pending')
                                         <span class="badge bg-warning">
-                                        @elseif($dtr_correction->status == 'Cancelled') 
+                                        @elseif($dtr_correction->status == 'Returned') 
                                         <span class="badge bg-danger">
                                         @elseif($dtr_correction->status == 'Approved') 
                                         <span class="badge bg-success">
@@ -71,7 +71,9 @@
                                         </span>
                                     </td>
                                     <td>
+                                        @if($dtr_correction->status != "Approved")
                                         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#edit{{ $dtr_correction->id }}"><i class="bi bi-pencil-square h3 text-dark"></i></a>
+                                        @endif
                                     </td>
                                 </tr>
 

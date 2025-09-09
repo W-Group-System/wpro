@@ -16,7 +16,7 @@
                             <select data-placeholder="Select action" name="status" class="form-select select2">
                                 <option value=""></option>
                                 <option value="Approved" @if($dtr_correction->status == "Approved") selected @endif>Approved</option>
-                                <option value="Cancelled" @if($dtr_correction->status == "Cancelled") selected @endif>Cancelled</option>
+                                {{-- <option value="Cancelled" @if($dtr_correction->status == "Cancelled") selected @endif>Cancelled</option> --}}
                                 <option value="Returned" @if($dtr_correction->status == "Returned") selected @endif>Returned</option>
                             </select>
                         </div>
