@@ -428,6 +428,6 @@ class TimekeepingDashboardController extends Controller
         }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
-        return redirect('timekeeping-per-company');
+        return back();
     }
 }

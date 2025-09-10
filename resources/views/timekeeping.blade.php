@@ -74,7 +74,7 @@
                 <a class="nav-link" href="#pills-for-approval" data-bs-toggle="tab" >Pending Approval <span class="badge text-bg-warning" id="totalPendingApproval">0</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="#pills-for-posting" data-bs-toggle="tab" >For Posting <span class="badge text-bg-success" id="totalForPosting">0</span></a>
+                <a class="nav-link" href="#pills-for-posting" data-bs-toggle="tab" >For Posting <span class="badge text-bg-success" id="totalForPosting">0</span></a>
             </li>
         </ul>
 
@@ -265,7 +265,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- @dd($employees[25]) --}}
                                     @php
                                         $total_pending_approval = 0;
                                     @endphp
@@ -328,9 +327,6 @@
                                                 <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
                                                 <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
 
-                                                {{-- <td>
-                                                    <input type="checkbox" name="" id="">
-                                                </td> --}}
                                                 <td>
                                                     <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
                                                     {{ $employee->company->company_code }}
@@ -358,24 +354,22 @@
                                                     {{ $employee->last_name.', '.$employee->first_name }}
                                                 </td>
                                                 <td>{{ $date_r }}</td>
-                                                <td @if(empty($time_in) && $rest == "") class="bg-danger" @endif>
-                                                    @if($time_in)
-                                                        {{ date('h:i A', strtotime($time_in->datetime)) }}
-                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}">
-                                                    @else 
+                                                <td>
+                                                    @if($if_has_pending_approval->time_in)
+                                                        {{ date('h:i A', strtotime($if_has_pending_approval->time_in)) }}
+                                                    {{-- @else 
                                                     @php
                                                         $abs = 1;
-                                                    @endphp
+                                                    @endphp --}}
                                                     @endif
                                                 </td>
-                                                <td  @if(empty($time_out) && $rest == "") class="bg-danger" @endif>
-                                                    @if($time_out)
-                                                        {{ date('h:i A', strtotime($time_out->datetime)) }}
-                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}">
-                                                    @else
+                                                <td>
+                                                    @if($if_has_pending_approval->time_out)
+                                                        {{ date('h:i A', strtotime($if_has_pending_approval->time_out)) }}
+                                                    {{-- @else
                                                     @php
                                                         $abs = 1;
-                                                    @endphp
+                                                    @endphp --}}
                                                     @endif
                                                 </td>
                                                 <td>
@@ -410,14 +404,8 @@
                                                     {{ number_format($total_late,0) }}
 
                                                     <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
-                                                </td>
-                                                {{-- <td>
-                                                    <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#edit{{ $employee->id }}{{ $date_r }}"><i class="bi bi-pencil-square h3 text-dark"></i></a>
-                                                </td> --}}
                                             </tr>
                                             @endif
-
-                                            {{-- @include('edit_timekeeping') --}}
                                         @endforeach
                                     @endforeach
                                 </tbody>
@@ -443,7 +431,6 @@
                                 <table class="table table-bordered mt-5 myTable">
                                     <thead>
                                         <tr>
-                                            {{-- <th></th> --}}
                                             <th>COMPANY</th>
                                             <th>DEPARTMENT</th>
                                             <th>SCHEDULE</th>
@@ -454,7 +441,7 @@
                                             <th>TIME OUT</th>
                                             <th>TOTAL HRS</th>
                                             <th>TOTAL LATE</th>
-                                            {{-- <th>ACTION</th> --}}
+                                            <th>ACTION</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -508,105 +495,103 @@
                                                     $abs = 0;
                                                 @endphp
                                                 @endif
-            
-                                                @if($abs == 0)
-                                                @php
-                                                    $total_for_posting = $total_for_posting+=1;
-                                                @endphp
+                                                @if(count(($employee->timekeeping_posted)->where('log_date',$date_r)) == 0)
+                                                    @if($abs == 0)
+                                                    @php
+                                                        $total_for_posting = $total_for_posting+=1;
+                                                    @endphp
 
-                                                <tr>
-                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
-                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
-                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
-                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
+                                                    <tr>
+                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
+                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
+                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
+                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
 
-                                                    {{-- <td>
-                                                        <input type="checkbox" name="" id="">
-                                                    </td> --}}
-                                                    <td>
-                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
-                                                        {{ $employee->company->company_code }}
-                                                    </td>
-                                                    <td>{{ $employee->department->name }}</td>
-                                                    <td>
-                                                        @if($employee_schedule)
-                                                            <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                                            @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                                                <small>(Flexi)</small>
+                                                        <td>
+                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
+                                                            {{ $employee->company->company_code }}
+                                                        </td>
+                                                        <td>{{ $employee->department->name }}</td>
+                                                        <td>
+                                                            @if($employee_schedule)
+                                                                <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                                @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                                    <small>(Flexi)</small>
+                                                                @endif
+                                                            @else
+                                                                @php
+                                                                    $rest = "RESTDAY"
+                                                                @endphp
+                                                                {{ $rest }}
                                                             @endif
-                                                        @else
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
+                                                            {{ $employee->employee_code }}
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
+                                                            {{ $employee->last_name.', '.$employee->first_name }}
+                                                        </td>
+                                                        <td>{{ $date_r }}</td>
+                                                        <td @if(empty($time_in) && $rest == "") class="bg-danger" @endif>
+                                                            @if($time_in)
+                                                                {{ date('h:i A', strtotime($time_in->datetime)) }}
+                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}">
+                                                            @else 
                                                             @php
-                                                                $rest = "RESTDAY"
+                                                                $abs = 1;
                                                             @endphp
-                                                            {{ $rest }}
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
-                                                        {{ $employee->employee_code }}
-                                                    </td>
-                                                    <td>
-                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
-                                                        {{ $employee->last_name.', '.$employee->first_name }}
-                                                    </td>
-                                                    <td>{{ $date_r }}</td>
-                                                    <td @if(empty($time_in) && $rest == "") class="bg-danger" @endif>
-                                                        @if($time_in)
-                                                            {{ date('h:i A', strtotime($time_in->datetime)) }}
-                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}">
-                                                        @else 
-                                                        @php
-                                                            $abs = 1;
-                                                        @endphp
-                                                        @endif
-                                                    </td>
-                                                    <td  @if(empty($time_out) && $rest == "") class="bg-danger" @endif>
-                                                        @if($time_out)
-                                                            {{ date('h:i A', strtotime($time_out->datetime)) }}
-                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}">
-                                                        @else
-                                                        @php
-                                                            $abs = 1;
-                                                        @endphp
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @php
-                                                            if ($time_in && $time_out)
-                                                            {
-                                                                $start_time = strtotime($time_in->datetime);
-                                                                $end_time = strtotime($time_out->datetime);
-                                                                $reg_hrs = ($end_time - $start_time) / 3600;
-                                                                $total_reg_hrs = $reg_hrs - 1;
-                                                            }
-                                                        @endphp
-                                                        {{ number_format($total_reg_hrs,2) }}
-
-                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
-                                                    </td>
-                                                    <td @if($total_late > 0) class="bg-danger" @endif>
-                                                        @php
-                                                            if ($employee_schedule)
-                                                            {
-                                                                if ($time_in)
+                                                            @endif
+                                                        </td>
+                                                        <td  @if(empty($time_out) && $rest == "") class="bg-danger" @endif>
+                                                            @if($time_out)
+                                                                {{ date('h:i A', strtotime($time_out->datetime)) }}
+                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}">
+                                                            @else
+                                                            @php
+                                                                $abs = 1;
+                                                            @endphp
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @php
+                                                                if ($time_in && $time_out)
                                                                 {
-                                                                    if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                    $start_time = strtotime($time_in->datetime);
+                                                                    $end_time = strtotime($time_out->datetime);
+                                                                    $reg_hrs = ($end_time - $start_time) / 3600;
+                                                                    $total_reg_hrs = $reg_hrs - 1;
+                                                                }
+                                                            @endphp
+                                                            {{ number_format($total_reg_hrs,2) }}
+
+                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
+                                                        </td>
+                                                        <td @if($total_late > 0) class="bg-danger" @endif>
+                                                            @php
+                                                                if ($employee_schedule)
+                                                                {
+                                                                    if ($time_in)
                                                                     {
-                                                                        $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                        $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-                                                                        $total_late = abs($late_time_in_to - $late_time_in) / 60;
+                                                                        if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                        {
+                                                                            $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
+                                                                            $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
+                                                                            $total_late = abs($late_time_in_to - $late_time_in) / 60;
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                        @endphp
-                                                        {{ number_format($total_late,0) }}
+                                                            @endphp
+                                                            {{ number_format($total_late,0) }}
 
-                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
-                                                    </td>
-                                                    {{-- <td>
-                                                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#edit{{ $employee->id }}{{ $date_r }}"><i class="bi bi-pencil-square h3 text-dark"></i></a>
-                                                    </td> --}}
-                                                </tr>
+                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
+                                                        </td>
+                                                        <td>
+                                                            {{-- <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#edit{{ $employee->id }}{{ $date_r }}"><i class="bi bi-pencil-square h3 text-dark"></i></a> --}}
+                                                        </td>
+                                                    </tr>
+                                                    @endif
                                                 @endif
 
                                                 {{-- @include('edit_timekeeping') --}}

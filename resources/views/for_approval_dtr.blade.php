@@ -71,7 +71,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        @if($dtr_correction->status != "Approved")
+                                        @if($dtr_correction->status == "Pending")
                                         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#edit{{ $dtr_correction->id }}"><i class="bi bi-pencil-square h3 text-dark"></i></a>
                                         @endif
                                     </td>
