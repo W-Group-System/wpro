@@ -82,7 +82,9 @@
                               <th>LH ND GE</th>
                               <th>LH ND GE AMOUNT</th>
                               <th>LH OT</th>
-                              <th>LH OT Amount</th>
+                              <th>LH OT AMOUNT</th>
+                              <th>SH OT</th>
+                              <th>SH OT AMOUNT</th>
                               <th>LH OT OVER 8</th>
                               <th>LH OT OVER 8 AMOUNT</th>
                               <th>REG ND</th>
@@ -202,6 +204,8 @@
                             <td>{{$pay_reg->lh_nd_ge_amount}}</td>
                             <td>{{$pay_reg->lh_ot}}</td>
                             <td>{{$pay_reg->lh_ot_amount}}</td>
+                            <td>{{$pay_reg->sh_ot}}</td>
+                            <td>{{$pay_reg->sh_ot_amount}}</td>
                             <td>{{$pay_reg->lh_ot_ge}}</td>
                             <td>{{$pay_reg->lh_ot_ge_amount}}</td>
                             <td>{{$pay_reg->reg_nd}}</td>
