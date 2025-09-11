@@ -40,7 +40,7 @@ class ExitClearanceController extends Controller
         {
             $status = "Pending";
         }
-        $for_clearances = ExitClearanceSignatory::with('clearance.department')->where('employee_id',auth()->user()->employee->id)->get();
+        $for_clearances = ExitClearanceSignatory::with('clearance.department')->where('employee_id',auth()->user()->employee->id)->where('deleted_at', null)->get();
         // dd($for_clearances);
         return view('clearances.for_clearance',array(
             'for_clearances'=>$for_clearances,

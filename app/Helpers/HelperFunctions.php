@@ -1179,7 +1179,8 @@ function for_clearance()
     $for_clearances = ExitClearanceSignatory::with('clearance')
     ->where('employee_id',auth()->user()->employee->id)
     ->where('status','Pending')
-->count();
+    ->where('deleted_at', null)
+    ->count();
 
     return $for_clearances;
 }
