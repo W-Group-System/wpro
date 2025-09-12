@@ -68,10 +68,10 @@
 
         <ul class="nav nav-tabs mt-5">
             <li class="nav-item">
-                <a class="nav-link active" href="#pills-issues" data-bs-toggle="tab" >Issues <span class="badge text-bg-danger" id="totalIssues">0</span></a>
+                <a class="nav-link" href="#pills-issues" data-bs-toggle="tab" >Issues <span class="badge text-bg-danger" id="totalIssues">0</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#pills-for-approval" data-bs-toggle="tab" >Pending Approval <span class="badge text-bg-warning" id="totalPendingApproval">0</span></a>
+                <a class="nav-link active" href="#pills-for-approval" data-bs-toggle="tab" >Pending Approval <span class="badge text-bg-warning" id="totalPendingApproval">0</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#pills-for-posting" data-bs-toggle="tab" >For Posting <span class="badge text-bg-success" id="totalForPosting">0</span></a>
@@ -79,7 +79,7 @@
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
+            <div class="tab-pane fade" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
                 <div class="row mt-5">
                     <div class="d-flex align-items-center">
                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -147,9 +147,9 @@
                                                     $abs = 1;
                                                 @endphp
                                                 @endif
-                                                {{-- @dd($total_late) --}}
+                                                
                                                 @if(!$if_has_pending_approval)
-                                                    @if($abs > 0)
+                                                    @if($abs > 0 || $total_late > 0)
                                                     @php
                                                         $total_issues = $total_issues+=1;
                                                     @endphp
@@ -197,8 +197,8 @@
                                                             @php
                                                                 if ($time_in && $time_out)
                                                                 {
-                                                                    $start_time = strtotime($time_in->time_in_from);
-                                                                    $end_time = strtotime($time_out->time_out_from);
+                                                                    $start_time = strtotime($time_in->datetime);
+                                                                    $end_time = strtotime($time_out->datetime);
                                                                     $reg_hrs = ($end_time - $start_time) / 3600;
                                                                     $total_reg_hrs = $reg_hrs - 1;
                                                                 }
@@ -238,7 +238,7 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="pills-for-approval" role="tabpanel" aria-labelledby="pills-for-posting-tab">
+            <div class="tab-pane fade show active" id="pills-for-approval" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                 <div class="row">
                     <div class="d-flex align-items-center">
                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -272,7 +272,7 @@
                                         @foreach ($date_range as $date_r)
                                             @php
                                                 $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
-                                                $if_has_pending_approval = ($employee->dtr_correction)->where('employee_id', $employee->id)->where('date', $date_r)->first();
+                                                $if_has_pending_approval = ($employee->dtr_correction)->where('employee_id', $employee->id)->where('date', $date_r)->where('status','Pending')->first();
                                                 $time_in = ($employee->timekeeping_logs)->where('date', $date_r)->sortBy('id')->first();
                                                 $time_out = ($employee->timekeeping_logs)->where('date', $date_r)->sortByDesc('id')->first();
                                                 $total_reg_hrs = 0;
@@ -316,7 +316,7 @@
                                             @endphp
                                             @endif
         
-                                            @if($if_has_pending_approval && (!$time_in || !$time_out))
+                                            @if($if_has_pending_approval)
                                             @php
                                                 $total_pending_approval = $total_pending_approval+=1;
                                             @endphp
@@ -441,7 +441,6 @@
                                             <th>TIME OUT</th>
                                             <th>TOTAL HRS</th>
                                             <th>TOTAL LATE</th>
-                                            <th>ACTION</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -496,7 +495,7 @@
                                                 @endphp
                                                 @endif
                                                 @if(count(($employee->timekeeping_posted)->where('log_date',$date_r)) == 0)
-                                                    @if($abs == 0)
+                                                    @if($abs == 0 && $total_late == 0)
                                                     @php
                                                         $total_for_posting = $total_for_posting+=1;
                                                     @endphp
@@ -586,9 +585,6 @@
                                                             {{ number_format($total_late,0) }}
 
                                                             <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
-                                                        </td>
-                                                        <td>
-                                                            {{-- <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#edit{{ $employee->id }}{{ $date_r }}"><i class="bi bi-pencil-square h3 text-dark"></i></a> --}}
                                                         </td>
                                                     </tr>
                                                     @endif

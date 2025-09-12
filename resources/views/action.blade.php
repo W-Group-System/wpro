@@ -7,6 +7,9 @@
             <form method="post" action="{{ route('update.timekeeping',['id' => $dtr_correction->id]) }}" enctype="multipart/form-data">
                 @csrf
                 
+                <input type="hidden" name="date" value="{{ $dtr_correction->date }}">
+                <input type="hidden" name="emp_id" value="{{ $dtr_correction->employee_id }}">
+
                 <div class="modal-body">
                     <div class="row g-3 align-items-center">
                         <div class="col-md-3">

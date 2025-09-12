@@ -327,17 +327,33 @@ class TimekeepingDashboardController extends Controller
         // dd($dtr_correction);
         if ($request->status == "Approved")
         {
-            $timekeeping = new Timekeeping;
-            $timekeeping->emp_code = $dtr_correction->employee->employee_number;
-            $timekeeping->date = $dtr_correction->date;
-            $timekeeping->datetime = $dtr_correction->time_in;
-            $timekeeping->save();
+            $employees = Employee::where('id', $request->emp_id)->first();
+            $timekeeping_in = Timekeeping::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','asc')->first();
+            $timekeeping_out = Timekeeping::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','desc')->first();
+            // dd($timekeeping_in, $timekeeping_out);
+            if ($timekeeping_in && $timekeeping_out)
+            {
+                $timekeeping_in->datetime = $dtr_correction->time_in;
+                $timekeeping_in->save();
 
-            $timekeeping = new Timekeeping;
-            $timekeeping->emp_code = $dtr_correction->employee->employee_number;
-            $timekeeping->date = $dtr_correction->date;
-            $timekeeping->datetime = $dtr_correction->time_out;
-            $timekeeping->save();
+                $timekeeping_out->datetime = $dtr_correction->time_out;
+                $timekeeping_out->save();
+            }
+            else
+            {
+                $timekeeping = new Timekeeping;
+                $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+                $timekeeping->date = $dtr_correction->date;
+                $timekeeping->datetime = $dtr_correction->time_in;
+                $timekeeping->save();
+    
+                $timekeeping = new Timekeeping;
+                $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+                $timekeeping->date = $dtr_correction->date;
+                $timekeeping->datetime = $dtr_correction->time_out;
+                $timekeeping->save();
+            }
+
         }
         
         // if ($request->has('attendance_logs_in') && $request->has('attendance_logs_out'))

@@ -393,6 +393,7 @@ class EmployeeLeaveController extends Controller
 
     public function hr_edit_leave(Request $request, $id)
     {
+        // dd($request->all());
         $employee = Employee::where('user_id',Auth::user()->id)->first();
         $new_leave = EmployeeLeave::findOrFail($id);
         $new_leave->leave_type = $request->leave_type;
