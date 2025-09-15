@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <h5 class="modal-title">New Data</h5>
             </div>
-            <form method="post" action="{{ route('for_approval.timekeeping') }}" enctype="multipart/form-data">
+            <form method="post" action="{{ route('for_approval.timekeeping') }}" enctype="multipart/form-data" onsubmit="show()">
                 @csrf
                 
                 <input type="hidden" name="employee_id" value="{{ $employee->id }}">
@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-secondary">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-success">Update</button>
                 </div>
             </form>

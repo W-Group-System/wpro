@@ -26,10 +26,25 @@
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
 </head>
 
+<style>
+    .loader {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url("{{ asset('login_css/images/loader.gif') }}") 50% 50% no-repeat white;
+        opacity: .8;
+        background-size: 120px 120px;
+    }
+</style>
+
 <body>
+    <div id="loader" style="display:none;" class="loader"></div>
     <div class="container-fluid p-4">
         <h2>TIMEKEEPING MONITORING</h2>
-        <form method="get">
+        <form method="get" onsubmit="show()">
             <div class="row mt-4">
                 <div class="col-md-2">
                     <select class="form-select select2" name="company" data-placeholder="Select company" required>
@@ -68,10 +83,10 @@
 
         <ul class="nav nav-tabs mt-5">
             <li class="nav-item">
-                <a class="nav-link" href="#pills-issues" data-bs-toggle="tab" >Issues <span class="badge text-bg-danger" id="totalIssues">0</span></a>
+                <a class="nav-link active" href="#pills-issues" data-bs-toggle="tab" >Issues <span class="badge text-bg-danger" id="totalIssues">0</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="#pills-for-approval" data-bs-toggle="tab" >Pending Approval <span class="badge text-bg-warning" id="totalPendingApproval">0</span></a>
+                <a class="nav-link" href="#pills-for-approval" data-bs-toggle="tab" >Pending Approval <span class="badge text-bg-warning" id="totalPendingApproval">0</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#pills-for-posting" data-bs-toggle="tab" >For Posting <span class="badge text-bg-success" id="totalForPosting">0</span></a>
@@ -79,7 +94,7 @@
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
+            <div class="tab-pane fade show active" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
                 <div class="row mt-5">
                     <div class="d-flex align-items-center">
                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -148,7 +163,7 @@
                                                 @endphp
                                                 @endif
                                                 
-                                                @if(!$if_has_pending_approval)
+                                                @if((!$if_has_pending_approval) || ($if_has_pending_approval->status == "Returned"))
                                                     @if($abs > 0 || $total_late > 0)
                                                     @php
                                                         $total_issues = $total_issues+=1;
@@ -238,7 +253,7 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade show active" id="pills-for-approval" role="tabpanel" aria-labelledby="pills-for-posting-tab">
+            <div class="tab-pane fade" id="pills-for-approval" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                 <div class="row">
                     <div class="d-flex align-items-center">
                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -622,6 +637,9 @@
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js">
     </script> --}}
     <script>
+        function show() {
+            document.getElementById("loader").style.display = "block";
+        }
         var total_issues = "<?php echo($total_issues) ?>"
         var total_for_posting = "<?php echo($total_for_posting) ?>"
         var total_pending_approval = "<?php echo($total_pending_approval) ?>"
