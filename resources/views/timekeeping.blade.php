@@ -163,15 +163,15 @@
                                                 @endphp
                                                 @endif
                                                 
-                                                @if((!$if_has_pending_approval) || ($if_has_pending_approval->status == "Returned"))
+                                                @if(!$if_has_pending_approval || ($if_has_pending_approval->status == "Returned"))
                                                     @if($abs > 0 || $total_late > 0)
                                                     @php
                                                         $total_issues = $total_issues+=1;
                                                     @endphp
                                                     <tr>
-                                                        {{-- <td>
+                                                        <td>
                                                             <input type="checkbox" name="" id="">
-                                                        </td> --}}
+                                                        </td>
                                                         <td>{{ $employee->company->company_code }}</td>
                                                         <td>{{ $employee->department->name }}</td>
                                                         <td>
