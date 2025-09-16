@@ -106,7 +106,7 @@
                             <table class="table table-bordered mt-5 myTable">
                                 <thead>
                                     <tr>
-                                        {{-- <th></th> --}}
+                                        <th></th>
                                         <th>COMPANY</th>
                                         <th>DEPARTMENT</th>
                                         <th>SCHEDULE</th>
