@@ -130,8 +130,8 @@
                                                 @php
                                                     $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
                                                     $if_has_pending_approval = ($employee->dtr_correction)->where('employee_id', $employee->id)->where('date', $date_r)->first();
-                                                    $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('id')->first();
-                                                    $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('id')->first();
+                                                    $time_in = ($employee->timekeeping_logs)->where('date', $date_r)->sortBy('id')->first();
+                                                    $time_out = ($employee->timekeeping_logs)->where('date', $date_r)->sortByDesc('id')->first();
                                                     $total_reg_hrs = 0;
                                                     $total_late = 0;
                                                     $rest = "";
@@ -288,8 +288,8 @@
                                             @php
                                                 $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
                                                 $if_has_pending_approval = ($employee->dtr_correction)->where('employee_id', $employee->id)->where('date', $date_r)->where('status','Pending')->first();
-                                                $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('id')->first();
-                                                $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('id')->first();
+                                                $time_in = ($employee->timekeeping_logs)->where('date', $date_r)->sortBy('id')->first();
+                                                $time_out = ($employee->timekeeping_logs)->where('date', $date_r)->sortByDesc('id')->first();
                                                 $total_reg_hrs = 0;
                                                 $total_late = 0;
                                                 $rest = "";
@@ -467,8 +467,8 @@
                                             @foreach ($date_range as $date_r)
                                                 @php
                                                     $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
-                                                    $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('id')->first();
-                                                    $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('id')->first();
+                                                    $time_in = ($employee->timekeeping_logs)->where('date', $date_r)->sortBy('id')->first();
+                                                    $time_out = ($employee->timekeeping_logs)->where('date', $date_r)->sortByDesc('id')->first();
                                                     $total_reg_hrs = 0;
                                                     $total_late = 0;
                                                     $rest = "";
