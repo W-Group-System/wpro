@@ -239,7 +239,7 @@
                                                             {{ number_format($total_late,0) }}
                                                         </td>
                                                         <td>
-                                                            {{-- <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#new{{ $employee->id }}{{ $date_r }}"><i class="bi bi-pencil-square h3 text-dark"></i></a> --}}
+                                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#new{{ $employee->id }}{{ $date_r }}"><i class="bi bi-pencil-square h3 text-dark"></i></a>
                                                         </td>
                                                     </tr>
                                                     @endif
