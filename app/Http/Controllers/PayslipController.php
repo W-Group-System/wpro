@@ -506,7 +506,7 @@ class PayslipController extends Controller
             $pay_register->rst_nd_ge_amount = $request->total_rst_nd_over_eight[$key];
             $pay_register->rst_ot = $request->name_total_rst_ot[$key];
             $pay_register->rst_ot_amount = $request->total_rst_ot[$key];
-            $pay_register->total_rst_sh_ot_over_eight = $request->total_rst_sh_ot_over_eight[$key];
+            // $pay_register->total_rst_sh_ot_over_eight = $request->total_rst_sh_ot_over_eight[$key];
             $pay_register->rst_ot_ge = $request->name_total_rst_ot_over_eight[$key];
             $pay_register->rst_ot_ge_amount = $request->total_rst_ot_over_eight[$key];
             $pay_register->ot_total = $request->total_ot_pay[$key] ?? 0;
