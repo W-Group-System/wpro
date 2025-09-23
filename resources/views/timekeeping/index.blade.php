@@ -450,7 +450,7 @@
                                                         @php
                                                             $total_for_posting = 0;
                                                         @endphp
-                                                        @foreach ($employees->where('employee_code','A2109925') as $employee)
+                                                        @foreach ($employees as $employee)
                                                             @foreach ($date_range as $date_r)
                                                                 @php
                                                                     $total_reg_hrs = 0;
