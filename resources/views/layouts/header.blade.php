@@ -469,7 +469,14 @@
                     </li>
                     {{-- @endif --}}
                     @endif
-
+                    {{-- @if(auth()->user()->id == 470)
+                    <li class="nav-item @if ($header == 'timekeeping-official') active @endif ">
+                        <a class="nav-link" href="{{ url('/timekeeping-official') }}" onclick='show()'>
+                            <i class="icon-clock menu-icon"></i>
+                            <span class="menu-title">Timekeeping</span>
+                        </a>
+                    </li>
+                    @endif --}}
                     @if (checkUserPrivilege('employees_view',auth()->user()->id) == 'yes')
                     <li class="nav-item @if ($header == 'employees') active @endif ">
                         <a class="nav-link" href="{{ url('/employees') }}" onclick='show()'>

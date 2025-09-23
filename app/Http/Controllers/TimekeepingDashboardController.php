@@ -452,4 +452,48 @@ class TimekeepingDashboardController extends Controller
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
+
+    public function timekeepingOfficial(Request $request)
+    {
+        $header = 'timekeeping-official';
+        $from_date = $request->date_from;
+        $to_date = $request->date_to;
+        $company_data = $request->company;
+        $department_data = $request->department;
+
+        $companies = Company::where('id','!=',1)->get();
+        $departments = Department::get();
+        $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
+            ->with(['schedule_info',
+                'attendance_logs',
+                // 'attendance_logs' => function($query)use($from_date,$to_date) {
+                //     $query->where(function($q)use($from_date,$to_date) {
+                //         $q->whereBetween('datetime', [$from_date." 00:00:01", $to_date." 23:59:59"]);
+                //     })
+                //     ->orderBy('datetime','asc');
+                // }
+            ])
+            ->where('company_id', $request->company)
+            ->where('department_id', $request->department)
+            ->where('status','Active')
+            ->orderBy('last_name','asc')
+            ->get();
+        
+        $attendance_controller = new AttendanceController;
+        $date_range =  $attendance_controller->dateRange($from_date, $to_date);
+
+        return view('timekeeping.index',
+            array(
+                'header' => $header,
+                'companies' => $companies,
+                'departments'=> $departments,
+                'employees' => $employees,
+                'date_range' => $date_range,
+                'from_date' => $from_date,
+                'to_date' => $to_date,
+                'company_data' => $company_data,
+                'department_data' => $department_data,
+            )
+        );
+    }
 }

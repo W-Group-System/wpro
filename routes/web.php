@@ -488,11 +488,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('refresh_leave_credit', 'EmployeeLeaveListController@refreshLeaveCredit');
     Route::get('leave_report', 'EmployeeLeaveListController@leaveReport');
 
+    // HOLD EMPLOYEE
     Route::get('hold-employee', 'HoldEmployeeController@index');
     Route::post('delete-employee', 'HoldEmployeeController@destroy');
 
+    // UNPOST COMPANY
     Route::get('unpost_company','HoldEmployeeController@unpostCompany');
     Route::post('unpost_per_company','HoldEmployeeController@unpostPerCompany');
+
+    // TIMEKEEPING OFFICIAL
+    Route::get('timekeeping-official','TimekeepingDashboardController@timekeepingOfficial');
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
