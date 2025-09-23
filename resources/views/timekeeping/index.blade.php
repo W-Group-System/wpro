@@ -450,7 +450,7 @@
                                                         @php
                                                             $total_for_posting = 0;
                                                         @endphp
-                                                        @foreach ($employees as $employee)
+                                                        @foreach ($employees->where('employee_code','A2109925') as $employee)
                                                             @foreach ($date_range as $date_r)
                                                                 @php
                                                                     $total_reg_hrs = 0;
@@ -489,6 +489,10 @@
                                                                         {
                                                                             $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
                                                                         }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
                                                                     }
                                                                 @endphp
                                                                 @if(empty($employee_schedule))
@@ -542,7 +546,7 @@
                                                                         </td>
                                                                         <td>{{ $employee->department->name }}</td>
                                                                         <td>
-                                                                            @if($employee_schedule)
+                                                                            @if($employee_schedule != null)
                                                                                 <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
                                                                                 @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
                                                                                     <small>(Flexi)</small>
