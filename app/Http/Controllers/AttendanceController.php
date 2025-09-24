@@ -415,11 +415,11 @@ class AttendanceController extends Controller
             
             $attendance = new AttendanceLog;
             // $attendance->emp_code = $req['id'];
-            if (filter_var($req['id'], FILTER_VALIDATE_INT) !== false)
+            if (ctype_digit((string) $req['id'])) 
             {
-                $attendance->emp_code = $req['id'];
-            }
-            else
+                $attendance->emp_code = (int) $req['id'];
+            } 
+            else 
             {
                 $attendance->emp_code = null;
             }
