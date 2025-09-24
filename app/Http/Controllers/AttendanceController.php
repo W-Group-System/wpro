@@ -415,7 +415,7 @@ class AttendanceController extends Controller
             
             $attendance = new AttendanceLog;
             // $attendance->emp_code = $req['id'];
-            if (preg_match('/[^a-zA-Z0-9]/', $req['id']))
+            if (preg_match('/[^a-zA-Z0-9]/u', $req['id']))
             {
                 $attendance->emp_code = null;
             }
