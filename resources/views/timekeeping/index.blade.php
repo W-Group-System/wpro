@@ -111,7 +111,6 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {{-- @dd($employees[25]) --}}
                                                     @php
                                                         $total_issues = 0;
                                                     @endphp
@@ -129,25 +128,30 @@
                                                                     $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('datetime')->first();
                                                                     $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
                                                                 @endphp
-
                                                                 @if(empty($employee_schedule))
-                                                                @php
-                                                                    $rest = "RESTDAY"
-                                                                @endphp
+                                                                    @php
+                                                                        $rest = "RESTDAY"
+                                                                    @endphp
                                                                 @else
-                                                                @php
-                                                                    if ($time_in)
-                                                                    {
-                                                                        if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
-                                                                        {
-                                                                            $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                            $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-                                                                            $total_late = abs($late_time_in_to - $late_time_in) / 60;
-                                                                        }
-                                                                    }
-                                                                @endphp
+                                                                    @if($employee_schedule->time_in_from == null)
+                                                                        @php
+                                                                            $rest = "RESTDAY"
+                                                                        @endphp
+                                                                    @else
+                                                                        @php
+                                                                            if ($time_in && $time_out)
+                                                                            {
+                                                                                if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                                {
+                                                                                    $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
+                                                                                    $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
+                                                                                    $total_late = abs($late_time_in_to - $late_time_in) / 60;
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                    @endif
                                                                 @endif
-
+                                                                
                                                                 @if(empty($time_in) && empty($time_out) && ($rest == ""))
                                                                 @php
                                                                     $abs = 1;
@@ -164,15 +168,22 @@
                                                                         <td>{{ $employee->department->name }}</td>
                                                                         <td>
                                                                             @if($employee_schedule)
-                                                                                <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                                                                @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                                                                    <small>(Flexi)</small>
+                                                                                @if($employee_schedule->time_in_from != null)
+                                                                                    <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                                                    @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                                                        <small>(Flexi)</small>
+                                                                                    @endif
+                                                                                @else
+                                                                                @php
+                                                                                    $rest = "RESTDAY"
+                                                                                @endphp
+                                                                                <small>{{ $rest }}</small>
                                                                                 @endif
                                                                             @else
                                                                                 @php
                                                                                     $rest = "RESTDAY"
                                                                                 @endphp
-                                                                                {{ $rest }}
+                                                                                <small>{{ $rest }}</small>
                                                                             @endif
                                                                         </td>
                                                                         <td>{{ $employee->employee_code }}</td>
@@ -227,7 +238,6 @@
                                                                             {{ number_format($total_late,0) }}
                                                                         </td>
                                                                         <td>
-                                                                            {{-- <a href="javascript:void(0)" data-toggle="modal" data-bs-target="#new{{ $employee->id }}{{ $date_r }}"><i class="bi bi-pencil-square h3 text-dark"></i></a> --}}
                                                                         </td>
                                                                     </tr>
                                                                     @endif
@@ -252,7 +262,6 @@
                                             <table class="table table-bordered mt-5 timekeepingTable">
                                                 <thead>
                                                     <tr>
-                                                        {{-- <th></th> --}}
                                                         <th>COMPANY</th>
                                                         <th>DEPARTMENT</th>
                                                         <th>SCHEDULE</th>
@@ -263,7 +272,6 @@
                                                         <th>TIME OUT</th>
                                                         <th>TOTAL HRS</th>
                                                         <th>TOTAL LATE</th>
-                                                        {{-- <th>ACTION</th> --}}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -337,9 +345,16 @@
                                                                 <td>{{ $employee->department->name }}</td>
                                                                 <td>
                                                                     @if($employee_schedule)
-                                                                        <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                                                        @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                                                            <small>(Flexi)</small>
+                                                                        @if($employee_schedule->time_in_from != null)
+                                                                            <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                                            @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                                                <small>(Flexi)</small>
+                                                                            @endif
+                                                                        @else
+                                                                        @php
+                                                                            $rest = "RESTDAY"
+                                                                        @endphp
+                                                                        <small>{{ $rest }}</small>
                                                                         @endif
                                                                     @else
                                                                         @php
@@ -360,19 +375,11 @@
                                                                 <td>
                                                                     @if($if_has_pending_approval->time_in)
                                                                         {{ date('h:i A', strtotime($if_has_pending_approval->time_in)) }}
-                                                                    {{-- @else 
-                                                                    @php
-                                                                        $abs = 1;
-                                                                    @endphp --}}
                                                                     @endif
                                                                 </td>
                                                                 <td>
                                                                     @if($if_has_pending_approval->time_out)
                                                                         {{ date('h:i A', strtotime($if_has_pending_approval->time_out)) }}
-                                                                    {{-- @else
-                                                                    @php
-                                                                        $abs = 1;
-                                                                    @endphp --}}
                                                                     @endif
                                                                 </td>
                                                                 <td>
@@ -431,7 +438,7 @@
                             
                                         <div class="col-md-12">
                                             <div class="table-responsive">
-                                                <table class="table table-bordered mt-5 timekeepingTable" style="width: 100%;">
+                                                <table class="table table-bordered mt-5 timekeepingTable">
                                                     <thead>
                                                         <tr>
                                                             <th>COMPANY</th>
@@ -462,7 +469,7 @@
                                                                     $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
                                                                     // $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('datetime')->first();
                                                                     // $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
-
+                                                                
                                                                     $convertedTimein = date('Y-m-d 00:00:00',strtotime($date_r));
                                                                     $convertedTimeout = date('Y-m-d 00:00:00',strtotime($date_r));
                                                                     if($employee_schedule)
@@ -474,25 +481,25 @@
 
                                                                         if ($employee_schedule->time_out_to)
                                                                         {
-                                                                            $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+6 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
+                                                                            $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+4 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
                                                                         }
                                                                     }
-                                                                    
+                                                                    // dd($convertedTimeout);
                                                                     $time_in = ($employee->attendance_logs)->whereBetween('datetime',[$convertedTimein,$date_r." 23:59:59"])->sortBy('datetime')->first();
+                                                                    $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
                                                                     if ($employee_schedule)
                                                                     {
-                                                                        if (date('A', strtotime($employee_schedule->time_out_to)) == "AM")
-                                                                        {
-                                                                            $time_out = ($employee->attendance_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
-                                                                        }
-                                                                        else
+                                                                        if ($employee_schedule->time_in_from == null)
                                                                         {
                                                                             $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
                                                                         }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
+                                                                        else
+                                                                        {
+                                                                            if (date('A', strtotime($employee_schedule->time_out_to)) == "AM")
+                                                                            {
+                                                                                $time_out = ($employee->attendance_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
+                                                                            }
+                                                                        }
                                                                     }
                                                                 @endphp
                                                                 @if(empty($employee_schedule))
@@ -514,7 +521,7 @@
                                                                 @endif
 
                                                                 @if($employee_schedule)
-                                                                    @if($time_in && $time_out)
+                                                                    @if(($time_in && $time_out) || ($employee_schedule->time_in_from == null))
                                                                     @php
                                                                         $abs = 0;
                                                                     @endphp
@@ -528,6 +535,7 @@
                                                                     $abs = 0;
                                                                 @endphp
                                                                 @endif
+                                                                
                                                                 @if(count(($employee->timekeeping_posted)->where('log_date',$date_r)) == 0)
                                                                     @if($abs == 0)
                                                                     @php
@@ -547,13 +555,20 @@
                                                                         <td>{{ $employee->department->name }}</td>
                                                                         <td>
                                                                             @if($employee_schedule != null)
-                                                                                <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                                                                @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                                                                    <small>(Flexi)</small>
+                                                                                @if($employee_schedule->time_in_from)
+                                                                                    <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                                                    @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                                                        <small>(Flexi)</small>
+                                                                                    @endif
+                                                                                @else
+                                                                                    @php
+                                                                                        $rest = "RESTDAY";
+                                                                                    @endphp
+                                                                                    <small>{{ $rest }}</small>
                                                                                 @endif
                                                                             @else
                                                                                 @php
-                                                                                    $rest = "RESTDAY"
+                                                                                    $rest = "RESTDAY";
                                                                                 @endphp
                                                                                 <small>{{ $rest }}</small>
                                                                             @endif
@@ -595,9 +610,9 @@
                                                                                     $end_time = strtotime($time_out->datetime);
                                                                                     $reg_hrs = ($end_time - $start_time) / 3600;
 
-                                                                                    if ($reg_hrs > 8.00)
+                                                                                    if ($reg_hrs > 9.5)
                                                                                     {
-                                                                                        $total_reg_hrs = $reg_hrs - 1;
+                                                                                        $total_reg_hrs = 9.5;
                                                                                     }
                                                                                     else
                                                                                     {
@@ -658,13 +673,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
 <script>
+    var total_issues = "<?php echo($total_issues) ?>"
+    var total_for_posting = "<?php echo($total_for_posting) ?>"
+    var total_pending_approval = "<?php echo($total_pending_approval) ?>"
+
+    document.getElementById('totalIssues').innerText = total_issues
+    document.getElementById('totalForPosting').innerText = total_for_posting
+    document.getElementById('totalPendingApproval').innerText = total_pending_approval
+
     $(document).ready(function() {
         $(".timekeepingTable").DataTable({
-            // pagelenth:25,
+            pagelength:15,
             fixedColumns: {
                 leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
             },
-            paginate:false,
+            paginate:true,
             dom: 'Bfrtip',
             // buttons: [
             //     'copy', 'excel'

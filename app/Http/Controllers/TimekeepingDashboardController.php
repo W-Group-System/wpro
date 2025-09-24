@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AttendanceDetailedReport;
+use App\AttendanceLog;
 use App\Company;
 use App\Department;
 use App\DtrCorrection;
@@ -284,7 +285,7 @@ class TimekeepingDashboardController extends Controller
         $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
             ->with(['schedule_info',
                 'timekeeping_logs' => function($query)use($from_date,$to_date) {
-                    $query->whereBetween('datetime', [$from_date." 00:00:00", $to_date." 23:59:59"])
+                    $query->whereBetween('datetime', [$from_date." 00:00:00", date('Y-m-d 23:59:59', strtotime($to_date. "+1 day"))])
                         ->orderBy('datetime','asc');
                 }
             ])
@@ -464,21 +465,18 @@ class TimekeepingDashboardController extends Controller
         $companies = Company::where('id','!=',1)->get();
         $departments = Department::get();
         $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
-            ->with(['schedule_info',
-                'attendance_logs',
-                // 'attendance_logs' => function($query)use($from_date,$to_date) {
-                //     $query->where(function($q)use($from_date,$to_date) {
-                //         $q->whereBetween('datetime', [$from_date." 00:00:01", $to_date." 23:59:59"]);
-                //     })
-                //     ->orderBy('datetime','asc');
-                // }
+            ->with(['schedule_info', 
+                'attendance_logs' => function($q)use($from_date,$to_date) {
+                    $q->whereBetween('datetime', [$from_date.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])->orderBy('datetime','asc');
+                }
             ])
             ->where('company_id', $request->company)
             ->where('department_id', $request->department)
             ->where('status','Active')
+            // ->where('employee_code','A2109625')
             ->orderBy('last_name','asc')
             ->get();
-        
+
         $attendance_controller = new AttendanceController;
         $date_range =  $attendance_controller->dateRange($from_date, $to_date);
 

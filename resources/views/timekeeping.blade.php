@@ -164,7 +164,7 @@
                                                 @endif
                                                 
                                                 @if(!$if_has_pending_approval || ($if_has_pending_approval->status == "Returned"))
-                                                    @if($abs > 0 || $total_late > 0)
+                                                    @if($abs > 0)
                                                     @php
                                                         $total_issues = $total_issues+=1;
                                                     @endphp
@@ -466,14 +466,48 @@
                                         @foreach ($employees as $employee)
                                             @foreach ($date_range as $date_r)
                                                 @php
-                                                    $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
-                                                    $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('id')->first();
-                                                    $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('id')->first();
                                                     $total_reg_hrs = 0;
                                                     $total_late = 0;
-                                                    $rest = "";
-            
                                                     $abs = 0;
+
+                                                    $rest = "";
+
+                                                    $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);d
+                                                    dd($employee_schedule);
+                                                    // $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('id')->first();
+                                                    // $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('id')->first();
+
+                                                    $convertedTimein = date('Y-m-d 00:00:00',strtotime($date_r));
+                                                    $convertedTimeout = date('Y-m-d 00:00:00',strtotime($date_r));
+                                                    if($employee_schedule)
+                                                    {
+                                                        if($employee_schedule->time_in_from)
+                                                        {
+                                                            $convertedTimein = date('Y-m-d H:i:s',strtotime('-6 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                        }
+
+                                                        if ($employee_schedule->time_out_to)
+                                                        {
+                                                            $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+4 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
+                                                        }
+                                                    }
+                                                    // dd($convertedTimeout);
+                                                    $time_in = ($employee->timekeeping_logs)->whereBetween('datetime',[$convertedTimein,$date_r." 23:59:59"])->sortBy('datetime')->first();
+                                                    $time_out = ($employee->timekeeping_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
+                                                    if ($employee_schedule)
+                                                    {
+                                                        if ($employee_schedule->time_in_from == null)
+                                                        {
+                                                            $time_out = ($employee->timekeeping_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
+                                                        }
+                                                        else
+                                                        {
+                                                            if (date('A', strtotime($employee_schedule->time_out_to)) == "AM")
+                                                            {
+                                                                $time_out = ($employee->timekeeping_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
+                                                            }
+                                                        }
+                                                    }
                                                 @endphp
                                                 
                                                 @if(empty($employee_schedule))
@@ -509,8 +543,9 @@
                                                     $abs = 0;
                                                 @endphp
                                                 @endif
+
                                                 @if(count(($employee->timekeeping_posted)->where('log_date',$date_r)) == 0)
-                                                    @if($abs == 0 && $total_late == 0)
+                                                    @if($abs == 0)
                                                     @php
                                                         $total_for_posting = $total_for_posting+=1;
                                                     @endphp
@@ -575,7 +610,23 @@
                                                                     $start_time = strtotime($time_in->datetime);
                                                                     $end_time = strtotime($time_out->datetime);
                                                                     $reg_hrs = ($end_time - $start_time) / 3600;
-                                                                    $total_reg_hrs = $reg_hrs - 1;
+                                                                    
+                                                                    if ($reg_hrs > 9.5)
+                                                                    {
+                                                                        // $total_reg_hrs = $reg_hrs - 1;
+                                                                        $total_reg_hrs = 9.5;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if ($reg_hrs > 8)
+                                                                        {
+                                                                            $total_reg_hrs = $reg_hrs - 1;
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $total_reg_hrs = $reg_hrs;
+                                                                        }
+                                                                    }
                                                                 }
                                                             @endphp
                                                             {{ number_format($total_reg_hrs,2) }}
