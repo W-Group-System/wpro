@@ -466,10 +466,11 @@ class EmployeeLeaveController extends Controller
 
         $file = $request->file('leave_file');
         $fileName = time().'_'.$file->getClientOriginalName();
-        $filePath = $file->storeAs('leaves', $fileName, 'public');
+        // $filePath = $file->storeAs('leaves', $fileName, 'public');
+        $file->move(public_path('storage/leaves'),$fileName);
 
         $attachment = EmployeeLeave::findOrFail($id);
-        $attachment->leave_file = $filePath;
+        $attachment->leave_file = '/leaves/'.$fileName;
         $attachment->save();
 
         return response()->json(['success' => 'File uploaded successfully']);
