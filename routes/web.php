@@ -1,5 +1,6 @@
 <?php
 use App\HikAttLog2;
+use App\Http\Controllers\PayslipController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 /*
@@ -245,6 +246,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('generated-timekeeping', 'PayslipController@generatedAttendances');
     Route::post('pay-reg', 'PayslipController@import');
     Route::post('upload-attendance', 'PayslipController@upload_attendance');
+    Route::get('/attendance/export', [PayslipController::class, 'exportAttendance'])->name('attendance.export');
 
      //Tax
      Route::get('tax', 'TaxController@tax');
