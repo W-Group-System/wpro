@@ -573,7 +573,7 @@
                                     <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;">
                                         @csrf
 
-                                        <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button>
+                                        {{-- <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button> --}}
 
                                         <div class="d-flex align-items-center">
                                             <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
