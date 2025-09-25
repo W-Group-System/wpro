@@ -52,7 +52,7 @@
                     'company' => $company,
                     'from' => $from_date,
                     'to' => $to_date,
-                ]) }}" class="btn btn-success">
+                ]) }}" class="btn btn-success" onclick="downloadExcel(event)">
                   Export Excel
                 </a>
               </div>
@@ -489,6 +489,44 @@
       order: [] 
     });
   });
+  
+  function downloadExcel(event) {
+    event.preventDefault();
+
+    Swal.fire({
+      title: 'Please wait...',
+      text: 'Generating Excel file',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    let url = event.currentTarget.href;
+
+    fetch(url, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network error');
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      let link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      // ✅ You can also dynamically name file if server provides `Content-Disposition`
+      link.download = "Attendance Detailed Report.xlsx";
+      link.click();
+
+      Swal.close(); // ✅ Close once the blob is ready
+    })
+    .catch(() => {
+      Swal.close();
+      Swal.fire('Error', 'Something went wrong while exporting!', 'error');
+    });
+  }
 </script>
 
 <style>
