@@ -13,6 +13,7 @@
             <div class=row>
               <div class='col-md-3'>
                 <div class="form-group">
+                  <label>Company</label>
                   <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company' required>
                     <option value="">-- Select Employee --</option>
                     @foreach($companies as $comp)
@@ -22,23 +23,38 @@
                 </div>
               </div>
               <div class='col-md-3'>
-                <div class="form-group row">
+                <div class="form-group">
+                  <label>From</label>
+                  <input type="date" value='{{$from_date}}' class="form-control" name="from" max='{{date('Y-m-d')}}' onchange='get_min(this.value);' required/>
+                </div>
+                <!-- <div class="form-group row">
                   <label class="col-sm-4 col-form-label text-right">From</label>
                   <div class="col-sm-8">
                     <input type="date" value='{{$from_date}}' class="form-control" name="from" max='{{date('Y-m-d')}}' onchange='get_min(this.value);' required/>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class='col-md-3'>
-                <div class="form-group row">
+                <div class="form-group">
+                  <label>To</label>
+                  <input type="date" value='{{$to_date}}'  class="form-control"  id='to' name="to" required/>
+                </div>
+                <!-- <div class="form-group row">
                   <label class="col-sm-4 col-form-label text-right">To</label>
                   <div class="col-sm-8">
                     <input type="date" value='{{$to_date}}'  class="form-control"  id='to' name="to" required/>
                   </div>
-                </div>
+                </div> -->
               </div>
-              <div class='col-md-3'>
-                <button type="submit" class="btn btn-primary mb-2">Submit</button>
+              <div class='col-md-3 b-attendance'>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="{{ route('attendance.export', [
+                    'company' => $company,
+                    'from' => $from_date,
+                    'to' => $to_date,
+                ]) }}" class="btn btn-success">
+                  Export Excel
+                </a>
               </div>
             </div>
           </form>
@@ -462,10 +478,10 @@
     new DataTable('.table-detailed', {
       // pagelenth:25,
       paginate:false,
-      dom: 'Bfrtip',
-      buttons: [
-          'copy', 'excel'
-      ],
+      // dom: 'Bfrtip',
+      // buttons: [
+      //     'copy', 'excel'
+      // ],
       columnDefs: [{
         "defaultContent": "-",
         "targets": "_all"
@@ -476,20 +492,24 @@
 </script>
 
 <style>
-div.dt-search {
+  div.dt-search {
     float: right;
-}
+  }
 
-div.dt-info {
+  div.dt-info {
     float: left;
     margin-top: 0.8em;
-}
+  }
 
-div.dt-paging {
+  div.dt-paging {
     float: right;
     margin-top: 0.5em;
-}
+  }
+  .b-attendance
+  {
+    position: relative;
+    margin-top: 1.8em;
+  }
 </style>
 
 @endsection
-
