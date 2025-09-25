@@ -75,13 +75,13 @@
                         @endif --}}
                         <ul class="nav nav-tabs mt-5">
                             <li class="nav-item">
-                                <a class="nav-link" href="#pills-issues" data-toggle="tab" >Issues <span class="badge bg-danger" id="totalIssues">0</span></a>
+                                <a class="nav-link" href="#pills-issues" data-toggle="tab" >Issues <span class="badge badge-danger" id="totalIssues">0</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#pills-for-approval" data-toggle="tab" >Pending Approval <span class="badge bg-warning" id="totalPendingApproval">0</span></a>
+                                <a class="nav-link" href="#pills-for-approval" data-toggle="tab" >Pending Approval <span class="badge badge-warning" id="totalPendingApproval">0</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge bg-success" id="totalForPosting">0</span></a>
+                                <a class="nav-link active" href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge badge-success" id="totalForPosting">0</span></a>
                             </li>
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
@@ -105,9 +105,34 @@
                                                         <th>DATE LOGS</th>
                                                         <th>TIME IN</th>
                                                         <th>TIME OUT</th>
-                                                        <th>TOTAL HRS</th>
-                                                        <th>TOTAL LATE</th>
-                                                        <th>ACTION</th>
+                                                        <th>REG HRS (HRS)</th>
+                                                        <th>LATE (MIN)</th>
+                                                        <th>UNDERTIME(min)</th>
+                                                        <th>LV W/ PAY</th>
+                                                        <th>REG OT</th>
+                                                        <th>REG ND</th>
+                                                        <th>REG OT ND</th>
+                                                        <th>RST OT</th>
+                                                        <th>RST OT > 8</th>
+                                                        <th>RST ND</th>
+                                                        <th>RST ND > 8</th>
+                                                        <th>LH OT</th>
+                                                        <th>LH OT > 8</th>
+                                                        <th>LH ND</th>
+                                                        <th>LH ND > 8</th>
+                                                        <th>SH OT</th>
+                                                        <th>SH OT > 8</th>
+                                                        <th>SH ND</th>
+                                                        <th>SH ND > 8</th>
+                                                        <th>RST LH OT</th>
+                                                        <th>RST LH OT > 8</th>
+                                                        <th>RST LH ND</th>
+                                                        <th>RST LH ND > 8</th>
+                                                        <th>RST SH OT</th>
+                                                        <th>RST SH OT > 8</th>
+                                                        <th>RST SH ND</th>
+                                                        <th>RST SH ND > 8</th>
+                                                        <th>Remarks</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -116,132 +141,251 @@
                                                     @endphp
                                                     @foreach ($employees as $employee)
                                                         @foreach ($date_range as $date_r)
-                                                                @php
-                                                                    $total_reg_hrs = 0;
-                                                                    $total_late = 0;
+                                                            @php
+                                                                $total_reg_hrs = 0;
+                                                                $late = 0;
+                                                                $abs = 0;
+                                                                $undertime = 0;
+                                                                $leave = 0;
+                                                                $overtime = 0;
+
+                                                                $rest = "";
+
+                                                                $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
+                                                            
+                                                                $convertedTimein = date('Y-m-d 00:00:00',strtotime($date_r));
+                                                                $convertedTimeout = date('Y-m-d 00:00:00',strtotime($date_r));
+                                                                if($employee_schedule)
+                                                                {
+                                                                    if($employee_schedule->time_in_from)
+                                                                    {
+                                                                        $convertedTimein = date('Y-m-d H:i:s',strtotime('-6 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                                    }
+
+                                                                    if ($employee_schedule->time_out_to)
+                                                                    {
+                                                                        $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+4 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
+                                                                    }
+                                                                }
+                                                                // dd($convertedTimeout);
+                                                                $time_in = ($employee->attendance_logs)->whereBetween('datetime',[$convertedTimein,$date_r." 23:59:59"])->sortBy('datetime')->first();
+                                                                $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
+                                                                if ($employee_schedule)
+                                                                {
+                                                                    if ($employee_schedule->time_in_from == null)
+                                                                    {
+                                                                        $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (date('A', strtotime($employee_schedule->time_out_to)) == "AM")
+                                                                        {
+                                                                            $time_out = ($employee->attendance_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                // Time in & Time out
+                                                                if ($time_in && $time_out)
+                                                                {
                                                                     $abs = 0;
-
-                                                                    $rest = "";
-
-                                                                    $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
-                                                                    $if_has_pending_approval = ($employee->dtr_correction)->where('employee_id', $employee->id)->where('date', $date_r)->first();
-                                                                    $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('datetime')->first();
-                                                                    $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
-                                                                @endphp
-                                                                @if(empty($employee_schedule))
-                                                                    @php
-                                                                        $rest = "RESTDAY"
-                                                                    @endphp
-                                                                @else
-                                                                    @if($employee_schedule->time_in_from == null)
-                                                                        @php
-                                                                            $rest = "RESTDAY"
-                                                                        @endphp
-                                                                    @else
-                                                                        @php
-                                                                            if ($time_in && $time_out)
-                                                                            {
-                                                                                if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
-                                                                                {
-                                                                                    $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                                    $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-                                                                                    $total_late = abs($late_time_in_to - $late_time_in) / 60;
-                                                                                }
-                                                                            }
-                                                                        @endphp
-                                                                    @endif
-                                                                @endif
-                                                                
-                                                                @if(empty($time_in) && empty($time_out) && ($rest == ""))
-                                                                @php
+                                                                }
+                                                                else
+                                                                {
                                                                     $abs = 1;
+                                                                }
+
+                                                                // Display Restday
+                                                                if (empty($employee_schedule))
+                                                                {
+                                                                    $abs = 0;
+                                                                }
+                                                                else 
+                                                                {
+                                                                    if ($employee_schedule->time_in_from == null)
+                                                                    {
+                                                                        $abs = 0;
+                                                                    }
+                                                                }
+
+                                                                // Reg hrs
+                                                                if ($time_in && $time_out)
+                                                                {
+                                                                    $start_time = strtotime($time_in->datetime);
+                                                                    $end_time = strtotime($time_out->datetime);
+                                                                    $reg_hrs = ($end_time - $start_time) / 3600;
+
+                                                                    if ($reg_hrs > 9.5)
+                                                                    {
+                                                                        $total_reg_hrs = 9.5;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $total_reg_hrs = $reg_hrs;
+                                                                    }
+                                                                }
+
+                                                                // Late
+                                                                if ($employee_schedule)
+                                                                {
+                                                                    if ($time_in)
+                                                                    {
+                                                                        $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
+                                                                        $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
+
+                                                                        if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                        {
+                                                                            $total_late = ($late_time_in - $late_time_in_to) / 60;
+                                                                            $late = $total_late;
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                // Undertime
+                                                                if ($employee_schedule)
+                                                                {
+                                                                    if ($time_out)
+                                                                    {
+                                                                        $out = strtotime(date('H:i', strtotime($time_out->datetime)));
+                                                                        $schedule_out = strtotime(date('H:i', strtotime($employee_schedule->time_out_to)));
+                                                                        if ((date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_to) && (date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_from))
+                                                                        {
+                                                                            $total_undertime = ($schedule_out - $out) / 60;
+
+                                                                            $undertime = $total_undertime;
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                // Leave w/ pay
+                                                                $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                if ($check_leave)
+                                                                {
+                                                                    $leave = 1;
+                                                                    $abs = 0;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $leave = 0;
+                                                                }
+
+                                                                // REG OT
+                                                                $emp_has_ot = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
+                                                                if ($emp_has_ot)
+                                                                {
+                                                                    if ($emp_has_ot < 8)
+                                                                    {
+                                                                        $overtime = $emp_has_ot;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $overtime = intval($emp_has_ot) - 1;
+                                                                    }
+                                                                }
+                                                            @endphp
+                                                            
+                                                            @if(count(($employee->timekeeping_posted)->where('log_date',$date_r)) == 0)
+                                                                @if($abs > 0 || $overtime > 0)
+                                                                @php
+                                                                    $total_issues = $total_issues+=1;
                                                                 @endphp
-                                                                @endif
-                                                                
-                                                                @if(!$if_has_pending_approval || ($if_has_pending_approval->status == "Returned"))
-                                                                    @if($abs > 0)
-                                                                    @php
-                                                                        $total_issues = $total_issues+=1;
-                                                                    @endphp
-                                                                    <tr>
-                                                                        <td>{{ $employee->company->company_code }}</td>
-                                                                        <td>{{ $employee->department->name }}</td>
-                                                                        <td>
-                                                                            @if($employee_schedule)
-                                                                                @if($employee_schedule->time_in_from != null)
-                                                                                    <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                                                                    @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                                                                        <small>(Flexi)</small>
-                                                                                    @endif
-                                                                                @else
-                                                                                @php
-                                                                                    $rest = "RESTDAY"
-                                                                                @endphp
-                                                                                <small>{{ $rest }}</small>
+
+                                                                <tr>
+                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
+                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
+                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
+                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
+
+                                                                    <td>
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
+                                                                        {{ $employee->company->company_code }}
+                                                                    </td>
+                                                                    <td>{{ $employee->department->name }}</td>
+                                                                    <td>
+                                                                        @if($employee_schedule != null)
+                                                                            @if($employee_schedule->time_in_from)
+                                                                                <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                                                @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                                                    <small>(Flexi)</small>
                                                                                 @endif
                                                                             @else
                                                                                 @php
-                                                                                    $rest = "RESTDAY"
+                                                                                    $rest = "RESTDAY";
                                                                                 @endphp
                                                                                 <small>{{ $rest }}</small>
                                                                             @endif
-                                                                        </td>
-                                                                        <td>{{ $employee->employee_code }}</td>
-                                                                        <td>{{ $employee->last_name.', '.$employee->first_name }}</td>
-                                                                        <td>{{ $date_r }}</td>
-                                                                        <td @if(empty($time_in) && $rest == "") class="bg-danger" @endif>
-                                                                            @if($time_in)
-                                                                                {{ date('h:i A', strtotime($time_in->datetime)) }}
-                                                                            @else 
+                                                                        @else
                                                                             @php
-                                                                                $abs = 1;
+                                                                                $rest = "RESTDAY";
                                                                             @endphp
-                                                                            @endif
-                                                                        </td>
-                                                                        <td  @if(empty($time_out) && $rest == "") class="bg-danger" @endif>
-                                                                            @if($time_out)
-                                                                                {{ date('h:i A', strtotime($time_out->datetime)) }}
-                                                                            @else
-                                                                            @php
-                                                                                $abs = 1;
-                                                                            @endphp
-                                                                            @endif
-                                                                        </td>
-                                                                        <td>
-                                                                            @php
-                                                                                if ($time_in && $time_out)
-                                                                                {
-                                                                                    $start_time = strtotime($time_in->datetime);
-                                                                                    $end_time = strtotime($time_out->datetime);
-                                                                                    $reg_hrs = ($end_time - $start_time) / 3600;
-                                                                                    $total_reg_hrs = $reg_hrs - 1;
-                                                                                }
-                                                                            @endphp
-                                                                            {{ number_format($total_reg_hrs,2) }}
-                                                                        </td>
-                                                                        <td @if($total_late > 0 ) class="bg-danger" @endif>
-                                                                            @php
-                                                                                
-                                                                                if ($employee_schedule)
-                                                                                {
-                                                                                    if ($time_in)
-                                                                                    {
-                                                                                        if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
-                                                                                        {
-                                                                                            $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                                            $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-                                                                                            $total_late = abs($late_time_in_to - $late_time_in) / 60;
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            @endphp
-                                                                            {{ number_format($total_late,0) }}
-                                                                        </td>
-                                                                        <td>
-                                                                        </td>
-                                                                    </tr>
-                                                                    @endif
+                                                                            <small>{{ $rest }}</small>
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
+                                                                        {{ $employee->employee_code }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
+                                                                        {{ $employee->last_name.', '.$employee->first_name }}
+                                                                    </td>
+                                                                    <td>{{ $date_r }}</td>
+                                                                    <td @if(empty($time_in) && $rest == "" && $leave == 0) class="bg-danger" @endif>
+                                                                        @if($time_in)
+                                                                            {{ date('h:i A', strtotime($time_in->datetime)) }}
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}">
+                                                                        @endif
+                                                                    </td>
+                                                                    <td  @if(empty($time_out) && $rest == "" && $leave == 0) class="bg-danger" @endif>
+                                                                        @if($time_out)
+                                                                            {{ date('h:i A', strtotime($time_out->datetime)) }}
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}">
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ number_format($total_reg_hrs,2) }}
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
+                                                                    </td>
+                                                                    <td @if($late > 0) class="bg-danger" @endif>
+                                                                        {{ number_format($late,0) }}
+
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
+                                                                    </td>
+                                                                    <td @if($undertime > 0) class="bg-danger" @endif>
+                                                                        {{ number_format($undertime,2) }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ number_format($leave,2) }}
+                                                                    </td>
+                                                                    <td @if($overtime > 0) class="bg-warning" @endif>
+                                                                        {{ number_format($overtime,2) }}
+                                                                    </td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                    <td>0.00</td>
+                                                                </tr>
                                                                 @endif
+                                                            @endif
                                                         @endforeach
                                                     @endforeach
                                                 </tbody>
@@ -426,7 +570,7 @@
                             </div>
                             <div class="tab-pane fade show active" id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                                 <div class="row">
-                                    <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3">
+                                    <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;">
                                         @csrf
 
                                         <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button>
@@ -449,8 +593,34 @@
                                                             <th>DATE LOGS</th>
                                                             <th>TIME IN</th>
                                                             <th>TIME OUT</th>
-                                                            <th>TOTAL HRS</th>
-                                                            <th>TOTAL LATE</th>
+                                                            <th>REG HRS (HRS)</th>
+                                                            <th>LATE (MIN)</th>
+                                                            <th>UNDERTIME(min)</th>
+                                                            <th>LV W/ PAY</th>
+                                                            <th>REG OT</th>
+                                                            <th>REG ND</th>
+                                                            <th>REG OT ND</th>
+                                                            <th>RST OT</th>
+                                                            <th>RST OT > 8</th>
+                                                            <th>RST ND</th>
+                                                            <th>RST ND > 8</th>
+                                                            <th>LH OT</th>
+                                                            <th>LH OT > 8</th>
+                                                            <th>LH ND</th>
+                                                            <th>LH ND > 8</th>
+                                                            <th>SH OT</th>
+                                                            <th>SH OT > 8</th>
+                                                            <th>SH ND</th>
+                                                            <th>SH ND > 8</th>
+                                                            <th>RST LH OT</th>
+                                                            <th>RST LH OT > 8</th>
+                                                            <th>RST LH ND</th>
+                                                            <th>RST LH ND > 8</th>
+                                                            <th>RST SH OT</th>
+                                                            <th>RST SH OT > 8</th>
+                                                            <th>RST SH ND</th>
+                                                            <th>RST SH ND > 8</th>
+                                                            <th>Remarks</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -461,14 +631,15 @@
                                                             @foreach ($date_range as $date_r)
                                                                 @php
                                                                     $total_reg_hrs = 0;
-                                                                    $total_late = 0;
+                                                                    $late = 0;
                                                                     $abs = 0;
+                                                                    $undertime = 0;
+                                                                    $leave = 0;
+                                                                    $overtime = 0;
 
                                                                     $rest = "";
 
                                                                     $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
-                                                                    // $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('datetime')->first();
-                                                                    // $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
                                                                 
                                                                     $convertedTimein = date('Y-m-d 00:00:00',strtotime($date_r));
                                                                     $convertedTimeout = date('Y-m-d 00:00:00',strtotime($date_r));
@@ -501,43 +672,108 @@
                                                                             }
                                                                         }
                                                                     }
-                                                                @endphp
-                                                                @if(empty($employee_schedule))
-                                                                @php
-                                                                    $rest = "RESTDAY"
-                                                                @endphp
-                                                                @else
-                                                                @php
+
+                                                                    // Time in & Time out
                                                                     if ($time_in && $time_out)
                                                                     {
-                                                                        if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                        $abs = 0;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $abs = 1;
+                                                                    }
+
+                                                                    // Display Restday
+                                                                    if (empty($employee_schedule))
+                                                                    {
+                                                                        $abs = 0;
+                                                                    }
+                                                                    else 
+                                                                    {
+                                                                        if ($employee_schedule->time_in_from == null)
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
+                                                                    }
+
+                                                                    // Reg hrs
+                                                                    if ($time_in && $time_out)
+                                                                    {
+                                                                        $start_time = strtotime($time_in->datetime);
+                                                                        $end_time = strtotime($time_out->datetime);
+                                                                        $reg_hrs = ($end_time - $start_time) / 3600;
+
+                                                                        if ($reg_hrs > 9.5)
+                                                                        {
+                                                                            $total_reg_hrs = 9.5;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $total_reg_hrs = $reg_hrs;
+                                                                        }
+                                                                    }
+
+                                                                    // Late
+                                                                    if ($employee_schedule)
+                                                                    {
+                                                                        if ($time_in)
                                                                         {
                                                                             $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
                                                                             $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-                                                                            $total_late = abs($late_time_in_to - $late_time_in) / 60;
+
+                                                                            if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                            {
+                                                                                $total_late = ($late_time_in - $late_time_in_to) / 60;
+                                                                                $late = $total_late;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    // Undertime
+                                                                    if ($employee_schedule)
+                                                                    {
+                                                                        if ($time_out)
+                                                                        {
+                                                                            $out = strtotime(date('H:i', strtotime($time_out->datetime)));
+                                                                            $schedule_out = strtotime(date('H:i', strtotime($employee_schedule->time_out_to)));
+                                                                            if ((date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_to) && (date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_from))
+                                                                            {
+                                                                                $total_undertime = ($schedule_out - $out) / 60;
+
+                                                                                $undertime = $total_undertime;
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    // Leave w/ pay
+                                                                    $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                    if ($check_leave)
+                                                                    {
+                                                                        $leave = 1;
+                                                                        $abs = 0;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $leave = 0;
+                                                                    }
+
+                                                                    // REG OT
+                                                                    $emp_has_ot = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
+                                                                    if ($emp_has_ot)
+                                                                    {
+                                                                        if ($emp_has_ot < 8)
+                                                                        {
+                                                                            $overtime = $emp_has_ot;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $overtime = intval($emp_has_ot) - 1;
                                                                         }
                                                                     }
                                                                 @endphp
-                                                                @endif
-
-                                                                @if($employee_schedule)
-                                                                    @if(($time_in && $time_out) || ($employee_schedule->time_in_from == null))
-                                                                    @php
-                                                                        $abs = 0;
-                                                                    @endphp
-                                                                    @else
-                                                                    @php
-                                                                        $abs = 1;
-                                                                    @endphp 
-                                                                    @endif
-                                                                @else
-                                                                @php
-                                                                    $abs = 0;
-                                                                @endphp
-                                                                @endif
                                                                 
                                                                 @if(count(($employee->timekeeping_posted)->where('log_date',$date_r)) == 0)
-                                                                    @if($abs == 0)
+                                                                    @if($abs == 0 && $overtime == 0)
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -582,72 +818,62 @@
                                                                             {{ $employee->last_name.', '.$employee->first_name }}
                                                                         </td>
                                                                         <td>{{ $date_r }}</td>
-                                                                        <td @if(empty($time_in) && $rest == "") class="bg-danger" @endif>
+                                                                        <td @if(empty($time_in) && $rest == "" && $leave == 0) class="bg-danger" @endif>
                                                                             @if($time_in)
                                                                                 {{ date('h:i A', strtotime($time_in->datetime)) }}
                                                                                 <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}">
-                                                                            @else 
-                                                                            @php
-                                                                                $abs = 1;
-                                                                            @endphp
                                                                             @endif
                                                                         </td>
-                                                                        <td  @if(empty($time_out) && $rest == "") class="bg-danger" @endif>
+                                                                        <td  @if(empty($time_out) && $rest == "" && $leave == 0) class="bg-danger" @endif>
                                                                             @if($time_out)
                                                                                 {{ date('h:i A', strtotime($time_out->datetime)) }}
                                                                                 <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}">
-                                                                            @else
-                                                                            @php
-                                                                                $abs = 1;
-                                                                            @endphp
                                                                             @endif
                                                                         </td>
                                                                         <td>
-                                                                            @php
-                                                                                if ($time_in && $time_out)
-                                                                                {
-                                                                                    $start_time = strtotime($time_in->datetime);
-                                                                                    $end_time = strtotime($time_out->datetime);
-                                                                                    $reg_hrs = ($end_time - $start_time) / 3600;
-
-                                                                                    if ($reg_hrs > 9.5)
-                                                                                    {
-                                                                                        $total_reg_hrs = 9.5;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        $total_reg_hrs = $reg_hrs;
-                                                                                    }
-                                                                                }
-                                                                            @endphp
                                                                             {{ number_format($total_reg_hrs,2) }}
-
                                                                             <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
                                                                         </td>
-                                                                        <td @if($total_late > 0) class="bg-danger" @endif>
-                                                                            @php
-                                                                                if ($employee_schedule)
-                                                                                {
-                                                                                    if ($time_in)
-                                                                                    {
-                                                                                        if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
-                                                                                        {
-                                                                                            $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                                            $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-                                                                                            $total_late = abs($late_time_in_to - $late_time_in) / 60;
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            @endphp
-                                                                            {{ number_format($total_late,0) }}
+                                                                        <td @if($late > 0) class="bg-danger" @endif>
+                                                                            {{ number_format($late,0) }}
 
                                                                             <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
                                                                         </td>
+                                                                        <td @if($undertime > 0) class="bg-danger" @endif>
+                                                                            {{ number_format($undertime,2) }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ number_format($leave,2) }}
+                                                                        </td>
+                                                                        <td @if($overtime > 0) class="bg-warning" @endif>
+                                                                            {{ number_format($overtime,2) }}
+                                                                        </td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
                                                                     </tr>
                                                                     @endif
                                                                 @endif
-
-                                                                {{-- @include('edit_timekeeping') --}}
                                                             @endforeach
                                                         @endforeach
                                                     </tbody>
@@ -683,11 +909,11 @@
 
     $(document).ready(function() {
         $(".timekeepingTable").DataTable({
-            pagelength:15,
+            // pagelength:15,
             fixedColumns: {
                 leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
             },
-            paginate:true,
+            paginate:false,
             dom: 'Bfrtip',
             // buttons: [
             //     'copy', 'excel'
