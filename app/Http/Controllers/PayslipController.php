@@ -268,7 +268,7 @@ class PayslipController extends Controller
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
         $company = isset($request->company) ? $request->company : "";
-        $department = isset($request->department) ? $request->department : [];
+        // $department = isset($request->department) ? $request->department : [];
         $cut_off = [];
         $from = $request->from;
         $to = $request->to;
@@ -288,8 +288,8 @@ class PayslipController extends Controller
             {
                 $dates = AttendanceDetailedReport::select(DB::raw('DAY(log_date) as log_date'))->groupBy('log_date')->where('cut_off_date', $cutoff)->where('company_id', $request->company)->get(); 
                 
-                $cut_off_pay_reg = Payregs::select('cut_off_date')->where('company_id',$request->company)->where('department_id',$request->department)->groupBy('cut_off_date')->pluck('cut_off_date')->toArray();
-                $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date','department_id')->groupBy('company_id','cut_off_date','department_id')->orderBy('cut_off_date','desc')->whereNotIn('cut_off_date',$cut_off_pay_reg)->where('company_id',$request->company)->where('department_id',$request->department)->get();
+                $cut_off_pay_reg = Payregs::select('cut_off_date')->where('company_id',$request->company)->groupBy('cut_off_date')->pluck('cut_off_date')->toArray();
+                $cut_off = AttendanceDetailedReport::select('company_id','cut_off_date')->groupBy('company_id','cut_off_date')->orderBy('cut_off_date','desc')->whereNotIn('cut_off_date',$cut_off_pay_reg)->where('company_id',$request->company)->get();
                 
                 // $names = AttendanceDetailedReport::with(['employee.salary','employee.loan','employee.allowances','employee.pay_instructions'])
                 if($request->cut_off)
@@ -319,7 +319,7 @@ class PayslipController extends Controller
                     ->whereHas('employee', function ($query) {
                         $query->where('status', 'Active');
                     })
-                    ->select('company_id', 'department_id', 'employee_no', 'name', 'cut_off_date',
+                    ->select('company_id', 'employee_no', 'name', 'cut_off_date',
                     DB::raw('COUNT(CASE WHEN shift NOT LIKE "%REST%" THEN 1 END) as shift_count'),
                     DB::raw('SUM(abs) as total_abs'),
                     DB::raw('SUM(lv_w_pay) as total_lv_w_pay'),
@@ -353,7 +353,7 @@ class PayslipController extends Controller
                     ->where('company_id', $request->company)
                     ->where('cut_off_date', $cutoff)
                     // ->whereIn('department_id', $department)   
-                    ->groupBy('company_id', 'department_id', 'employee_no', 'name','cut_off_date')
+                    ->groupBy('company_id', 'employee_no', 'name','cut_off_date')
                     ->get();
                     // ->where('employee_no','A3170823')
                     // ->whereDoesntHave('employee.salary')
@@ -385,9 +385,9 @@ class PayslipController extends Controller
             ->whereIn('id', $allowed_companies)
             ->get();
 
-        $departments = Department::whereHas('employee_has_department')
-            ->where('status', 1)
-            ->get();
+        // $departments = Department::whereHas('employee_has_department')
+        //     ->where('status', 1)
+        //     ->get();
 
       
         return view('payroll.pay_reg',
@@ -398,8 +398,8 @@ class PayslipController extends Controller
             'to' => $to,
             'companies' => $companies,
             'company' => $company,
-            'departments' => $departments,
-            'department' => $department,
+            // 'departments' => $departments,
+            // 'department' => $department,
             'cutoff' => $cutoff,
             'names' => $names,
             'sss' => $sss,
@@ -556,7 +556,7 @@ class PayslipController extends Controller
             $pay_register->posted_by = auth()->user()->id;
             $pay_register->cut_off_date = $request->cut_off;
             $pay_register->company_id = $request->company;
-            $pay_register->department_id = $request->department;
+            // $pay_register->department_id = $request->department;
             $pay_register->save();
 
             $salary_adjustements = SalaryAdjustment::where('employee_id',$employee_data->id)->where('pay_reg_id',null)->get();
