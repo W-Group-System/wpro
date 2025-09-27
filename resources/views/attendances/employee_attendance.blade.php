@@ -447,6 +447,9 @@
                                             if($employee_schedule->time_in_from)
                                             {
                                                 $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+
+                                                $lunch_start = strtotime(date('Y-m-d 12:00:00', $time_start_ts));
+                                                $lunch_end   = strtotime(date('Y-m-d 13:00:00', $time_start_ts));
                                                 // dd($schedule_hours);
                                                 if($schedule_hours > 8)
                                                 {
@@ -461,7 +464,14 @@
                                                     }
                                                    
                                                     
+                                                } else {
+                                                    // Case if: Schedule <= 8 hours but spans lunch
+                                                    if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
+                                                        $schedule_hours = $schedule_hours - 1;
+                                                        $work = $work - 1;
+                                                    }
                                                 }
+
 
                                               
                                                 if($schedule_hours > $work)
