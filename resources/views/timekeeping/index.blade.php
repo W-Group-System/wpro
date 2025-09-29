@@ -650,26 +650,34 @@
                                                                             $convertedTimein = date('Y-m-d H:i:s',strtotime('-6 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
                                                                         }
 
-                                                                        if ($employee_schedule->time_out_to)
+                                                                        if ($employee_schedule->time_out_to < $employee_schedule->time_in_from)
                                                                         {
-                                                                            $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+4 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
+                                                                            $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+8 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $convertedTimeout = date('Y-m-d H:i:s', strtotime('+8 hours', strtotime($date_r." ".$employee_schedule->time_out_to)));
                                                                         }
                                                                     }
                                                                     // dd($convertedTimeout);
                                                                     $time_in = ($employee->attendance_logs)->whereBetween('datetime',[$convertedTimein,$date_r." 23:59:59"])->sortBy('datetime')->first();
-                                                                    $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
-                                                                    if ($employee_schedule)
+                                                                    $time_out = ($employee->attendance_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
+                                                                    if (empty($time_out))
                                                                     {
-                                                                        if ($employee_schedule->time_in_from == null)
+                                                                        $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
+                                                                    }
+
+                                                                    // Schedule
+                                                                    if($employee_schedule)
+                                                                    {
+                                                                        $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                                        $schedule_out_from = strtotime($date_r." ".$employee_schedule->time_out_from);
+                                                                        $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                                        $schedule_in_from = strtotime($date_r." ".$employee_schedule->time_in_frpm);
+                                                                        if(($schedule_out) < ($schedule_in))
                                                                         {
-                                                                            $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            if (date('A', strtotime($employee_schedule->time_out_to)) == "AM")
-                                                                            {
-                                                                                $time_out = ($employee->attendance_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
-                                                                            }
+                                                                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                                            $schedule_out_from = strtotime($date_r." ".$employee_schedule->time_out_from)+86400;
                                                                         }
                                                                     }
 
@@ -716,17 +724,28 @@
                                                                     // Late
                                                                     if ($employee_schedule)
                                                                     {
-                                                                        if ($time_in)
+                                                                        if ($employee_schedule->time_in_from == null)
                                                                         {
-                                                                            $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                            $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-
-                                                                            if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                            $late = 0;
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            if ($time_in)
                                                                             {
-                                                                                $total_late = ($late_time_in - $late_time_in_to) / 60;
-                                                                                $late = $total_late;
+                                                                                $late_time_in = strtotime($date_r.' '.$time_in->datetime);
+                                                                                $late_time_in_to = $schedule_in_from;
+    
+                                                                                if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                                {
+                                                                                    $total_late = ($late_time_in - $late_time_in_to) / 60;
+                                                                                    $late = $total_late;
+                                                                                }
                                                                             }
                                                                         }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $late = 0;
                                                                     }
 
                                                                     // Undertime
@@ -734,12 +753,12 @@
                                                                     {
                                                                         if ($time_out)
                                                                         {
-                                                                            $out = strtotime(date('H:i', strtotime($time_out->datetime)));
-                                                                            $schedule_out = strtotime(date('H:i', strtotime($employee_schedule->time_out_to)));
-                                                                            if ((date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_to) && (date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_from))
+                                                                            $out = strtotime($time_out->datetime);
+                                                                            $schedule_out_to = $schedule_out;
+                                                                            $schedule_out_from = $schedule_out_from;
+                                                                            if(($out < $schedule_out_to) && ($out < $schedule_out_from))
                                                                             {
-                                                                                $total_undertime = ($schedule_out - $out) / 60;
-
+                                                                                $total_undertime = ($schedule_out_to - $out) / 60;
                                                                                 $undertime = $total_undertime;
                                                                             }
                                                                         }

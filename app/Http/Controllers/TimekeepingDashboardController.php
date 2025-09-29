@@ -457,7 +457,7 @@ class TimekeepingDashboardController extends Controller
     public function timekeepingOfficial(Request $request)
     {
         $header = 'timekeeping-official';
-        $from_date = $request->date_from;
+        $from_date = $request->date_from;   
         $to_date = $request->date_to;
         $company_data = $request->company;
         $department_data = $request->department;
@@ -473,7 +473,7 @@ class TimekeepingDashboardController extends Controller
             ->where('company_id', $request->company)
             ->where('department_id', $request->department)
             ->where('status','Active')
-            // ->where('employee_code','A3176324')
+            ->whereIn('employee_code',['A3176324','A189423','A2109925'])
             ->orderBy('last_name','asc')
             ->get();
 
