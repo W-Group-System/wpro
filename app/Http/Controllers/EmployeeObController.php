@@ -125,16 +125,12 @@ class EmployeeObController extends Controller
             'obfile' => 'required|mimes:pdf,xlsx,csv|max:2048',
         ]);
 
-        $originalFileName = $request->file('obfile')->getClientOriginalName();
-        
-        $fileName = pathinfo($originalFileName, PATHINFO_FILENAME) . '_' . time() . '.' . $request->file('obfile')->extension();  
-        
-        $filePath = $request->file('obfile')->storeAs('public/ob_files', $fileName);
-        
-        $fileUrl = '/storage/ob_files/' . $fileName;
-        
+        $file = $request->file('obfile');
+        $originalFileName = time().'-'.$file->getClientOriginalName();
+        $file->move(public_path('storage/ob_files'),$originalFileName);
+        $fileUrl = '/storage/ob_files/' . $originalFileName;
+
         $new_ob->ob_file = $fileUrl;
-        
         $new_ob->save();
 
         session()->flash('success', 'Successfully Updated');
