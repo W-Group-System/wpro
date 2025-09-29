@@ -28,29 +28,40 @@
                                 <table class="table table-hover table-bordered" id="tablewithSearch">
                                     <thead>
                                         <tr>
-                                            {{-- <th>Action</th> --}}
+                                            <th>Action</th>
                                             <th>Employee</th>
                                             <th>Leave Entitlement</th>
-                                            <th>Type of Leave</th>
-                                            <th>Leave Credits</th>
-                                            <th>Total Leaves</th>
+                                            {{-- <th>Leave Credits</th>
+                                            <th>Total Leaves</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($employee_leave_lists as $employee_leave_list)
+                                        {{-- @foreach ($employee_leave_lists as $employee_leave_list)
                                             <tr>
-                                                {{-- <td>
-                                                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#edit{{ $employee_leave_list->id }}" >
-                                                        <i class="ti-pencil-alt"></i>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#viewDetails{{ $employee_leave_list->id }}" >
+                                                        <i class="ti-eye"></i>
+                                                        View Details
                                                     </button>
-                                                </td> --}}
+                                                </td>
                                                 <td>{{ $employee_leave_list->user->employee->employee_code . ' - ' .$employee_leave_list->user->name }}</td>
                                                 <td>{{ get_leave_entitlement($employee_leave_list->user->employee->level, $employee_leave_list->user->employee->original_date_hired, $employee_leave_list->user->employee->company_id) }}</td>
                                                 <td>{{ $employee_leave_list->leave->leave_type }}</td>
                                                 <td>{{ $employee_leave_list->total_leaves }}</td>
                                                 <td>{{ $employee_leave_list->earned_per_month }}</td>
                                             </tr>
-    
+                                        @endforeach --}}
+                                        @foreach ($employee_leave_lists as $emp)
+                                            <tr>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#viewDetails{{ $emp->id }}" >
+                                                        <i class="ti-eye"></i>
+                                                        View Details
+                                                    </button>
+                                                </td>
+                                                <td>{{ $emp->user_info->name }}</td>
+                                                <td>{{ get_leave_entitlement($emp->level, $emp->original_date_hired, $emp->company_id) }}</td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -64,9 +75,9 @@
 </div>
 
 @include('employee_leave_list.new_employee_leave_list')
-{{-- @foreach ($employee_leave_lists as $employee_leave_list)
-@include('employee_leave_list.edit_employee_leave_list')    
-@endforeach --}}
+@foreach ($employee_leave_lists as $emp)
+@include('employee_leave_list.details')
+@endforeach
 <script>
     $(document).ready(function() {
         $('#tablewithSearch').DataTable({

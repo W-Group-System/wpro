@@ -96,6 +96,9 @@ class EarnedVacationLeave extends Command
         $month = date('m');
         foreach($employees as $employee)
         {
+            $leave_entitlement = get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
+            $total_earned_month = intval($leave_entitlement) / 12;
+
             $leave_credits = ($employee->employee_leave_list)->where('leave_id',1)->sortByDesc('id')->first();
             // dd($leave_credits);
             if($leave_credits != null)
@@ -117,7 +120,8 @@ class EarnedVacationLeave extends Command
                     $earned_leave->month = $month;
                     $earned_leave->year = $year;
                     $earned_leave->earned_date = date('Y-m-d');
-                    $earned_leave->earned_per_month = $leave_credits->earned_per_month;
+                    // $earned_leave->earned_per_month = $leave_credits->earned_per_month;
+                    $earned_leave->earned_per_month = number_format($total_earned_month, 3);
                     $earned_leave->save();
                 }
             }
