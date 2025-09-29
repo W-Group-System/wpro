@@ -732,10 +732,9 @@
                                                                         {
                                                                             if ($time_in)
                                                                             {
-                                                                                $late_time_in = strtotime($date_r.' '.$time_in->datetime);
-                                                                                $late_time_in_to = $schedule_in_from;
-    
-                                                                                if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                                $late_time_in = strtotime($time_in->datetime);
+                                                                                $late_time_in_to = $schedule_in;
+                                                                                if ($late_time_in > $late_time_in_to)
                                                                                 {
                                                                                     $total_late = ($late_time_in - $late_time_in_to) / 60;
                                                                                     $late = $total_late;
