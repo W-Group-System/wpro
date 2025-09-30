@@ -161,6 +161,7 @@ class UploadController extends Controller
                             $leaves->approved_date = $approved_date;
                             $leaves->status = $row[10];
                             $leaves->created_by = auth()->user()->id;
+                            $leaves->created_at = date('Y-m-d', strtotime($row[2]));
                             $leaves->save();
                         }
                     }
