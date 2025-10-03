@@ -39,7 +39,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-2">
+                                {{-- <div class="col-md-2">
                                     <select data-placeholder="Select department" style="width: 100%;" class="form-control js-example-basic-single" name="department" required>
                                         <option></option>
                                         @foreach ($departments as $department)
@@ -48,7 +48,7 @@
                                         </option>
                                         @endforeach
                                     </select>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-2">
                                     <input type="date" name="date_from" class="form-control" value="{{ $from_date }}">
                                 </div>
