@@ -22,11 +22,16 @@ class EmployeeLeaveListController extends Controller
     public function index()
     {
         $header = 'employee_leaves_list';
-
-        $employee_leave_lists = EmployeeLeaveList::whereHas('user.employee', function($q) {
-                $q->where('status','Active');
-            })
-            ->with('leave','user')
+        // $employee_leave_lists = EmployeeLeaveList::select('leave_id','user_id')
+        //     ->whereHas('user.employee', function($q) {
+        //         $q->where('status','Active');
+        //     })
+        //     ->with('leave','user')
+        //     ->groupBy('leave_id','user_id')
+        //     ->get();
+        $employee_leave_lists = Employee::with('employee_leave_list.leave','user_info')
+            ->whereHas('employee_leave_list')
+            ->where('status','Active')
             ->get();
         
         // Dropdown
@@ -34,7 +39,15 @@ class EmployeeLeaveListController extends Controller
         $leaves = Leave::get();
         $levels = Level::get();
 
-        return view('employee_leave_list.index', compact('header', 'employee_leave_lists', 'employees', 'leaves', 'levels'));
+        return view('employee_leave_list.index', 
+            array(
+                'employee_leave_lists' => $employee_leave_lists,
+                'employees' => $employees,
+                'leaves' => $leaves,
+                'levels' => $levels,
+                'header' => $header,
+            )
+        );
     }
 
     /**
@@ -154,20 +167,14 @@ class EmployeeLeaveListController extends Controller
             ->whereHas('employee_leave_list')
             // ->where('user_id', 470)
             ->get();
-        // dd($employees);
-        $f_d = date('Y-m-01');
-        $f_t = date('Y-m-t');
-        // dd($f_t);
 
-        // $datetime1_d = new DateTime($f_d);
-        // $datetime2_d = new DateTime($f_t);
-        // $interval_d = $datetime1_d->diff($datetime2_d);
-        // $days_d = $interval_d->format('%a')+1;
         $year = date('Y');
         $month = date('m');
-        $day = "01";
         foreach($employees as $employee)
         {
+            $leave_entitlement = get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
+            $total_earned_month = intval($leave_entitlement) / 12;
+
             $leave_credits = ($employee->employee_leave_list)->where('leave_id',1)->sortByDesc('id')->first();
             
             if($leave_credits != null)
@@ -189,11 +196,14 @@ class EmployeeLeaveListController extends Controller
                     $earned_leave->month = $month;
                     $earned_leave->year = $year;
                     $earned_leave->earned_date = date('Y-m-d');
-                    $earned_leave->earned_per_month = $leave_credits->earned_per_month;
+                    // $earned_leave->earned_per_month = $leave_credits->earned_per_month;
+                    $earned_leave->earned_per_month = number_format($total_earned_month, 3);
                     $earned_leave->save();
                 }
             }
         }
+
+        return "success";
     }
 
     public function leaveReport(Request $request)
