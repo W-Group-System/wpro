@@ -425,7 +425,7 @@
                     <li class="nav-item @if ($header == 'for-approval') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#for-approval" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-check menu-icon"></i>
-                            <span class="menu-title">For Approval <span class="badge badge-warning">{{ pending_leave_count(auth()->user()->id)+pending_overtime_count(auth()->user()->id)+pending_ob_count(auth()->user()->id)}}</span></span>
+                            <span class="menu-title">For Approval <span class="badge badge-warning">{{ pending_leave_count(auth()->user()->id)+pending_overtime_count(auth()->user()->id)+pending_ob_count(auth()->user()->id)+pending_employee_count(auth()->user()->id)}}</span></span>
                             <i class="menu-arrow"></i>
                         </a>
                         <div class="collapse @if ($header == 'for-approval') show @endif" id="for-approval">
@@ -435,6 +435,9 @@
                                 {{-- <li class="nav-item "><a class="nav-link " href="{{ url('/for-work-from-home') }}">Work From Home <span class="badge badge-warning">{{ session('pending_wfh_count') }}</span></a></li> --}}
                                 <li class="nav-item "><a class="nav-link " href="{{ url('/for-official-business') }}">Official Business <span class="badge badge-warning">{{ pending_ob_count(auth()->user()->id) }}</span></a></li>
                                 {{-- <li class="nav-item "><a class="nav-link " href="{{ url('/for-dtr-correction') }}">DTR Correction <span class="badge badge-warning">{{ session('pending_dtr_count') }}</span></a></li> --}}
+                                @if(Auth::id() == 17)
+                                <li class="nav-item "><a class="nav-link " href="{{ url('/for-employee') }}">New Employee <span class="badge badge-warning">{{ pending_employee_count(auth()->user()->id) }}</span></a></li>
+                                @endif
                             </ul>
                         </div>
                     </li>

@@ -350,7 +350,9 @@ class EmployeeController extends Controller
             $password = strtolower($request->first_name) . '.'. strtolower($request->last_name);
             $stripped_password = str_replace(' ', '', $password);
             $user->password = bcrypt($stripped_password);
-            $user->status = "Active";
+            // $user->status = "Active";
+            $user->status = "Pending";
+            $user->created_by = auth()->user()->id;
             $user->save();
 
             $employee_code = $this->generate_emp_code('Employee', $company->company_code, date('Y',strtotime($request->date_hired)), $company->id);
@@ -377,7 +379,8 @@ class EmployeeController extends Controller
             $employee->birth_date = $request->birthdate;
             $employee->birth_place = $request->birthplace;
             $employee->marital_status = $request->marital_status;
-            $employee->status = "Active";
+            // $employee->status = "Active";
+            $employee->status = "Pending";
             $employee->present_address = $request->present_address;
             $employee->permanent_address = ($request->permanent_address == '') ? $request->present_address : $request->permanent_address;
             $employee->personal_number = $request->personal_number;
@@ -402,6 +405,25 @@ class EmployeeController extends Controller
             $employee->tax_application = $request->tax_application;
 
             $employee->is_new_employee = 1;
+
+            if($request->hasFile('job_offer'))
+            {
+                $attachment = $request->file('job_offer');
+                $original_name = $attachment->getClientOriginalName();
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path().'/images/offer/', $name);
+                $file_name = '/images/offer/'.$name;
+                $employee->job_offer = $file_name;
+            }
+
+            if ($request->hasFile('contract')) {
+                $attachment = $request->file('contract');
+                $original_name = $attachment->getClientOriginalName();
+                $name = time() . '_' . $original_name;
+                $attachment->move(public_path('images/contract'), $name);
+                $file_path = 'images/contract/' . $name;
+                $employee->contract = $file_path; 
+            }
 
             if($request->hasFile('file'))
             {

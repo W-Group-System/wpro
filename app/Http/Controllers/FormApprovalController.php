@@ -7,6 +7,8 @@ use App\EmployeeOvertime;
 use App\EmployeeOb;
 use App\EmployeeDtr;
 use App\EmployeeApprover;
+use App\Employee;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -939,4 +941,161 @@ class FormApprovalController extends Controller
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
+
+    // Employee
+    public function form_employee_approval(Request $request)
+    { 
+
+        $today = date('Y-m-d');
+        $from_date = isset($request->from) ? $request->from : date('Y-m-d',(strtotime ( '-1 month' , strtotime ( $today) ) ));
+        $to_date = isset($request->to) ? $request->to : date('Y-m-d');
+ 
+        $filter_status = isset($request->status) ? $request->status : 'Pending';
+        $approver_id = auth()->user()->id;
+        $employees = Employee::where('status', 'Pending')
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->orderBy('created_at','DESC')
+                                ->get();
+                                
+        $for_approval = Employee::where('status','Pending')
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->count();
+
+        $approved = Employee::where('status','Approved')
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->count();
+        $declined = Employee::where('status','Declined')
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->count();
+        
+        session(['pending_employee_count'=>$for_approval]);
+
+        return view('for-approval.employee-approval',
+        array(
+            'header' => 'for-approval',
+            'employees' => $employees,
+            'for_approval' => $for_approval,
+            'approved' => $approved,
+            'declined' => $declined,
+            'approver_id' => $approver_id,
+            'from' => $from_date,
+            'to' => $to_date,
+            'status' => $filter_status,
+        ));
+
+    }
+
+    public function approveEmployee(Request $request,$id){
+
+        $new_employee = Employee::where('id', $id)
+                                            ->first();
+        // dd($new_employee);
+        if($new_employee){
+            Employee::where('id', $id)->update([
+                        'status' => 'Active',
+                    ]);
+                    
+            User::where('id', $new_employee->user_id)->update([
+                'approved_date'     => now(), 
+                'status'            => 'Active',
+                'approval_remarks'  => $request->approval_remarks,
+            ]);
+
+            Alert::success('New Employee has been approved.')->persistent('Dismiss');
+            return back();
+        }
+    }
+
+    public function declineEmployee(Request $request,$id){
+        $new_employee = Employee::where('id', $id)
+                                            ->first();
+        // dd($new_employee);
+        if($new_employee){
+            Employee::where('id', $id)->update([
+                        'status' => 'Declined',
+                    ]);
+
+            User::where('id', $new_employee->user_id)->update([
+                'disapproved_date'     => now(), 
+                'status'            => 'Declined',
+                'approval_remarks'  => $request->approval_remarks,
+            ]);
+
+            Alert::success('New Employee has been disapproved.')->persistent('Dismiss');
+            return back();
+        }
+    }
+
+    public function approveEmployeeAll(Request $request)
+    {
+        \Log::info('Incoming Approve Request', $request->all());
+
+        $ids = json_decode($request->ids, true); // [1,2,3]
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['error' => 'No IDs provided'], 400);
+        }
+
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $employee = Employee::find($id);
+
+            if ($employee) {
+                \Log::info("Updating employee ID: $id");
+
+                $employee->update(['status' => 'Active']);
+                $count++;
+
+                if ($employee->user_id) {
+                    \Log::info("Updating user ID: {$employee->user_id}");
+
+                    User::where('id', $employee->user_id)->update([
+                        'approved_date' => now(),
+                        'status' => 'Active',
+                        'approval_remarks' => $request->approval_remarks,
+                    ]);
+                    $count++;
+                }
+            }
+        }
+
+        return response()->json($count);
+    }
+
+
+
+    public function disapproveEmployeeAll(Request $request)
+    {
+        $ids = json_decode($request->ids, true); // [1,2,3]
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['error' => 'No IDs provided'], 400);
+        }
+
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $employee = Employee::find($id);
+
+            if ($employee) {
+                $employee->update(['status' => 'Declined']); // or 'Disapproved'
+                $count++;
+
+                User::where('id', $employee->user_id)->update([
+                    'status' => 'Declined',
+                    'approval_remarks' => 'Disapproved by admin', // or use request data
+                ]);
+                $count++;
+            }
+        }
+
+        return response()->json($count);
+    }
+
+
 }

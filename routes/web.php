@@ -1,6 +1,7 @@
 <?php
 use App\HikAttLog2;
 use App\Http\Controllers\PayslipController;
+use App\Http\Controllers\FormApprovalController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 /*
@@ -134,6 +135,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('decline-dtr/{id}','FormApprovalController@declineDtr');
     Route::post('approve-dtr-all','FormApprovalController@approveDtrAll');
     Route::post('disapprove-dtr-all','FormApprovalController@disapproveDtrAll');
+
+    Route::get('for-employee','FormApprovalController@form_employee_approval');
+    Route::post('approve-employee/{id}','FormApprovalController@approveEmployee');
+    Route::post('decline-employee/{id}','FormApprovalController@declineEmployee');
+
+    Route::post('/approve-employee-all', [FormApprovalController::class, 'approveEmployeeAll']);
+    Route::post('/disapprove-employee-all', [FormApprovalController::class, 'disapproveEmployeeAll']);
 
     //employees
     Route::get('employees', 'EmployeeController@view');
