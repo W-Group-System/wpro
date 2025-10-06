@@ -752,25 +752,47 @@
                                                                     {
                                                                         if ($time_out)
                                                                         {
-                                                                            $out = strtotime(date('H:i', strtotime($time_out->datetime)));
-                                                                            $schedule_out_to = strtotime(date('H:i', $schedule_out));
-                                                                            $schedule_out_from = strtotime(date('H:i',$schedule_out_from));
-                                                                            // if(($out < $schedule_out_to) && ($out < $schedule_out_from))
+                                                                            $out = date('Y-m-d H:i:s', strtotime($time_out->datetime));
+                                                                            $in = date('Y-m-d H:i:s', strtotime($time_in->datetime));
+                                                                                                                                                
+                                                                            $estimated_out = "";
+                                                                            if (date('H:i', strtotime($in)) > $employee_schedule['time_in_to'])
+                                                                            {
+                                                                                $estimated_out = $employee_schedule['time_out_to'];
+                                                                            }
+                                                                            elseif(date('H:i', strtotime($in)) < $employee_schedule['time_in_from'])
+                                                                            {
+                                                                                $estimated_out = $employee_schedule['time_out_from'];
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $hours = intval($employee_schedule['working_hours']);
+                                                                                $minutes = ($employee_schedule['working_hours']-$hours)*60;
+                                                                                $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($time_in->datetime)));
+                                                                                $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
+                                                                            }
+                                                                            
+                                                                            $out_timestamp = strtotime(date('H:i', strtotime($out)));
+                                                                            $estimated_out_timestamp = strtotime(date('H:i',strtotime($estimated_out)));
+                                                                            if (date('H:i', strtotime($out)) < date('H:i', strtotime($estimated_out)))
+                                                                            {
+                                                                                $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
+                                                                                $undertime = $total_undertime;
+                                                                            }
+                                                                            // dd($estimated_out);
+                                                                            // $schedule_out_to = strtotime(date('H:i', $schedule_out));
+                                                                            // $schedule_out_from = strtotime(date('H:i',$schedule_out_from));
+                                                                            
+                                                                            // if ($schedule_out_from > $out)
+                                                                            // {
+                                                                            //     $total_undertime = ($schedule_out_from - $out) / 60;
+                                                                            //     $undertime = $total_undertime;
+                                                                            // }
+                                                                            // else if($out > $schedule_out_to)
                                                                             // {
                                                                             //     $total_undertime = ($schedule_out_to - $out) / 60;
                                                                             //     $undertime = $total_undertime;
                                                                             // }
-                                                                            
-                                                                            if ($schedule_out_from > $out)
-                                                                            {
-                                                                                $total_undertime = ($schedule_out_from - $out) / 60;
-                                                                                $undertime = $total_undertime;
-                                                                            }
-                                                                            else if($out > $schedule_out_to)
-                                                                            {
-                                                                                $total_undertime = ($schedule_out_to - $out) / 60;
-                                                                                $undertime = $total_undertime;
-                                                                            }
                                                                         }
                                                                     }
 
