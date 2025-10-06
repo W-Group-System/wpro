@@ -472,9 +472,12 @@ class TimekeepingDashboardController extends Controller
             ])
             ->where('company_id', $request->company)
             // ->where('department_id', $request->department)
+            ->when($department_data, function($q)use($department_data) {
+                $q->where('department_id', $department_data);
+            })
             ->where('status','Active')
             // ->whereIn('employee_code',['A3176324','A189423','A2109925'])
-            ->where('employee_code','A381815')
+            // ->where('employee_code','A3173123')
             ->orderBy('last_name','asc')
             ->get();
 
