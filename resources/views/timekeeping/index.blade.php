@@ -39,8 +39,8 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                {{-- <div class="col-md-2">
-                                    <select data-placeholder="Select department" style="width: 100%;" class="form-control js-example-basic-single" name="department" required>
+                                <div class="col-md-2">
+                                    <select data-placeholder="Select department" style="width: 100%;" class="form-control js-example-basic-single" name="department">
                                         <option></option>
                                         @foreach ($departments as $department)
                                         <option value="{{ $department->id }}" @if($department_data == $department->id)
@@ -48,7 +48,7 @@
                                         </option>
                                         @endforeach
                                     </select>
-                                </div> --}}
+                                </div>
                                 <div class="col-md-2">
                                     <input type="date" name="date_from" class="form-control" value="{{ $from_date }}">
                                 </div>
@@ -761,12 +761,12 @@
                                                                             //     $undertime = $total_undertime;
                                                                             // }
                                                                             
-                                                                            if ($out < $schedule_out_from)
+                                                                            if ($schedule_out_from > $out)
                                                                             {
                                                                                 $total_undertime = ($schedule_out_from - $out) / 60;
                                                                                 $undertime = $total_undertime;
                                                                             }
-                                                                            else if($out < $schedule_out_to)
+                                                                            else if($out > $schedule_out_to)
                                                                             {
                                                                                 $total_undertime = ($schedule_out_to - $out) / 60;
                                                                                 $undertime = $total_undertime;
