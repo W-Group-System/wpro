@@ -121,15 +121,15 @@ class EmployeeLeaveController extends Controller
         {
             $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
         }
-        if ($attendance_logs)
-        {
-            $last_time = date('H:i:s', strtotime($attendance_logs->datetime));
-            if ($last_time <= '16:00:00')
-            {
-                $last_logs = date('Y-m-d', strtotime('-4 weekdays'));
-            }
-        }
-        
+        // if ($attendance_logs)
+        // {
+        //     $last_time = date('H:i:s', strtotime($attendance_logs->datetime));
+        //     if ($last_time <= '16:00:00')
+        //     {
+        //         $last_logs = date('Y-m-d', strtotime('-3 weekdays'));
+        //     }
+        // }
+        // dd($last_logs);
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->pluck('log_date')
             ->toArray();
