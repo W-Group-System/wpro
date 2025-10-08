@@ -6,7 +6,9 @@ use App\AttendanceDetailedReport;
 use App\AttendanceLog;
 use App\Company;
 use App\Department;
+use App\DtrApprover;
 use App\DtrCorrection;
+use App\DtrCorrectionApprover;
 use Illuminate\Http\Request;
 use App\Employee;
 use App\EmployeeLeave;
@@ -272,122 +274,84 @@ class TimekeepingDashboardController extends Controller
         return back();
     }
 
-    public function timekeeping(Request $request)
-    {
-        $from_date = date('Y-m-d', strtotime($request->date_from));
-        $to_date = date('Y-m-d', strtotime($request->date_to));
-        $company_data = $request->company;
-        $department_data = $request->department;
-        $employee_data = $request->employee;
-
-        $companies = Company::where('id','!=',1)->get();
-        $departments = Department::get();
-        $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
-            ->with(['schedule_info',
-                'timekeeping_logs' => function($query)use($from_date,$to_date) {
-                    $query->whereBetween('datetime', [$from_date." 00:00:00", date('Y-m-d 23:59:59', strtotime($to_date. "+1 day"))])
-                        ->orderBy('datetime','asc');
-                }
-            ])
-            ->where('company_id', $request->company)
-            ->where('department_id', $request->department)
-            ->where('status','Active')
-            ->orderBy('last_name','asc')
-            ->get();
-        // $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
-        //     ->with(['schedule_info',
-        //         'attendance_logs' => function($query)use($from_date,$to_date) {
-        //             $query->whereBetween('datetime', [$from_date." 00:00:00", $to_date." 23:59:59"])
-        //                 ->orderBy('datetime','asc');
-        //         }
-        //     ])
-        //     ->where('company_id', $request->company)
-        //     ->where('department_id', $request->department)
-        //     ->where('status','Active')
-        //     ->orderBy('last_name','asc')
-        //     ->get();
-        
-        $attendance_controller = new AttendanceController;
-        $date_range =  $attendance_controller->dateRange($from_date, $to_date);
-
-        return view('timekeeping',
-            array(
-                'companies' => $companies,
-                'departments'=> $departments,
-                'employees' => $employees,
-                'date_range' => $date_range,
-                'from_date' => $from_date,
-                'to_date' => $to_date,
-                'company_data' => $company_data,
-                'department_data' => $department_data,
-                'employee_data' => $employee_data
-            )
-        );
-    }
-
     public function updateTimekeeping(Request $request,$id)
     {
         // dd($request->all(),$id);
-        $dtr_correction = DtrCorrection::with('employee')->findOrFail($id);
-        $dtr_correction->status = $request->status;
-        $dtr_correction->save();
-        // dd($dtr_correction);
+        $dtr_correction_approvers = DtrCorrectionApprover::where('dtr_correction_id', $id)->orderBy('id','asc')->get();
+        // dd($dtr_correction_approvers);
         if ($request->status == "Approved")
         {
-            $employees = Employee::where('id', $request->emp_id)->first();
-            $timekeeping_in = Timekeeping::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','asc')->first();
-            $timekeeping_out = Timekeeping::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','desc')->first();
-            // dd($timekeeping_in, $timekeeping_out);
-            if ($timekeeping_in && $timekeeping_out)
+            if (count($dtr_correction_approvers->where('status','Waiting')->sortBy('id')) > 0)
             {
-                $timekeeping_in->datetime = $dtr_correction->time_in;
-                $timekeeping_in->save();
+                foreach($dtr_correction_approvers as $key=>$approver)
+                {
+                    if ($key == 0)
+                    {
+                        $approver->status = "Approved";
+                    }
+                    else
+                    {
+                        $approver->status = "Pending";
+                    }
 
-                $timekeeping_out->datetime = $dtr_correction->time_out;
-                $timekeeping_out->save();
+                    $approver->save();
+                }
             }
             else
             {
-                $timekeeping = new Timekeeping;
-                $timekeeping->emp_code = $dtr_correction->employee->employee_number;
-                $timekeeping->date = $dtr_correction->date;
-                $timekeeping->datetime = $dtr_correction->time_in;
-                $timekeeping->save();
+                $dtr_correction_approvers = $dtr_correction_approvers->where('status','Pending')->last();
+                $dtr_correction_approvers->status = $request->status;
+                $dtr_correction_approvers->save();
+                
+                $dtr_correction = DtrCorrection::findOrFail($id);
+                $dtr_correction->status = $request->status;
+                $dtr_correction->save();
+
+                $employees = Employee::findOrFail($request->emp_id);
+                $timekeeping_in = AttendanceLog::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','asc')->first();
+                $timekeeping_out = AttendanceLog::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','desc')->first();
+                
+                if ($timekeeping_in && $timekeeping_out)
+                {
+                    $timekeeping_in->datetime = $dtr_correction->time_in;
+                    $timekeeping_in->save();
     
-                $timekeeping = new Timekeeping;
-                $timekeeping->emp_code = $dtr_correction->employee->employee_number;
-                $timekeeping->date = $dtr_correction->date;
-                $timekeeping->datetime = $dtr_correction->time_out;
-                $timekeeping->save();
+                    $timekeeping_out->datetime = $dtr_correction->time_out;
+                    $timekeeping_out->save();
+                }
+                else
+                {
+                    $timekeeping = new AttendanceLog;
+                    $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+                    $timekeeping->date = $dtr_correction->date;
+                    $timekeeping->datetime = $dtr_correction->time_in;
+                    $timekeeping->save();
+        
+                    $timekeeping = new AttendanceLog;
+                    $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+                    $timekeeping->date = $dtr_correction->date;
+                    $timekeeping->datetime = $dtr_correction->time_out;
+                    $timekeeping->save();
+                }
             }
 
         }
-        
-        // if ($request->has('attendance_logs_in') && $request->has('attendance_logs_out'))
-        // {
-        //     $timekeeping_timein = Timekeeping::findOrFail($request->attendance_logs_in);
-        //     $timekeeping_timeout = Timekeeping::findOrFail($request->attendance_logs_out);
+        else 
+        {
+            foreach($dtr_correction_approvers as $key => $dtr_correction_approver)
+            {
+                if ($key == 0)
+                {
+                    $dtr_correction_approver->status = "Cancelled";
+                }
 
-        //     $timekeeping_timein->datetime = $datetime_in;
-        //     $timekeeping_timein->save();
+                $dtr_correction_approver->save();
+            }
 
-        //     $timekeeping_timeout->datetime = $datetime_out;
-        //     $timekeeping_timeout->save();
-        // }
-        // else
-        // {
-        //     $timekeeping = new Timekeeping;
-        //     $timekeeping->emp_code = $employee->employee_number;
-        //     $timekeeping->date = $request->date;
-        //     $timekeeping->datetime = date('Y-m-d H:i:s', strtotime($datetime_in));
-        //     $timekeeping->save();
-
-        //     $timekeeping = new Timekeeping;
-        //     $timekeeping->emp_code = $employee->employee_number;
-        //     $timekeeping->date = $request->date;
-        //     $timekeeping->datetime = date('Y-m-d H:i:s', strtotime($datetime_out));
-        //     $timekeeping->save();
-        // }
+            $dtr_correction = DtrCorrection::with('employee')->findOrFail($id);
+            $dtr_correction->status = $request->status;
+            $dtr_correction->save();
+        }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
@@ -395,15 +359,13 @@ class TimekeepingDashboardController extends Controller
 
     public function forApproval(Request $request)
     {
-        // dd($request->all());
         $dtr_correction = new DtrCorrection;
         $dtr_correction->employee_id = $request->employee_id;
         $dtr_correction->date = $request->date;
-        $dtr_correction->time_in = $request->date.' '.$request->employee_time_in;
-        $dtr_correction->time_out = $request->date.' '.$request->employee_time_out;
+        $dtr_correction->time_in = date('Y-m-d H:i:s', strtotime($request->employee_time_in));
+        $dtr_correction->time_out = date('Y-m-d H:i:s', strtotime($request->employee_time_out));
         $dtr_correction->remarks = $request->remarks;
         $dtr_correction->status = 'Pending';
-        // $dtr_correction->employee_id = $request->employee_id;
         if ($request->has('incident_report'))
         {
             $file = $request->file('incident_report');
@@ -414,17 +376,36 @@ class TimekeepingDashboardController extends Controller
         }
         $dtr_correction->save();
 
+        $approvers = DtrApprover::orderBy('level','asc')->get();
+        foreach($approvers as $key=>$approver)
+        {
+            $dtr_correction_approver = new DtrCorrectionApprover;
+            $dtr_correction_approver->dtr_correction_id = $dtr_correction->id;
+            $dtr_correction_approver->user_id = $approver->user_id;
+            if($key == 0)
+            {
+                $dtr_correction_approver->status = "Pending";
+            }
+            else 
+            {
+                $dtr_correction_approver->status = "Waiting";
+            }
+            $dtr_correction_approver->save();
+        }
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
 
     public function forApprovalView()
     {
-        $dtr_corrections = DtrCorrection::with('employee')->get();
+        $dtr_corrections = DtrCorrection::with('employee.user_info', 'dtr_correction_approver.user')->get();
+        $headers = 'for_approval';
 
         return view('for_approval_dtr',
             array(
-                'dtr_corrections' => $dtr_corrections
+                'dtr_corrections' => $dtr_corrections,
+                'header' => $headers
             )
         );
     }
@@ -477,7 +458,7 @@ class TimekeepingDashboardController extends Controller
             })
             ->where('status','Active')
             // ->whereIn('employee_code',['A3176324','A189423','A2109925'])
-            // ->where('employee_code','A3173123')
+            ->where('employee_code','A3176624')
             ->orderBy('last_name','asc')
             ->get();
 

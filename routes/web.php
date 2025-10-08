@@ -500,6 +500,15 @@ Route::group(['middleware' => 'auth'], function () {
 
     // TIMEKEEPING OFFICIAL
     Route::get('timekeeping-official','TimekeepingDashboardController@timekeepingOfficial');
+    Route::prefix('timekeeping-official')->group(function() {
+        Route::post('update/{id}', 'TimekeepingDashboardController@updateTimekeeping')->name('update.timekeeping');
+        Route::post('for-approval','TimekeepingDashboardController@forApproval')->name('for_approval.timekeeping');
+        Route::post('post_dtr', 'TimekeepingDashboardController@postDtr');
+    });
+
+    // FOR APPROVAL
+    Route::get('for_approval','TimekeepingDashboardController@forApprovalView');
+
 });
 Route::post('new-employee', 'EmployeeController@new');
 Route::post('upload-employee', 'EmployeeController@upload');
@@ -510,23 +519,3 @@ Route::get('leave-credit-acc','EmployeeEarnedLeaveController@addLeave');
 Route::get('hik-logs', function(){
     return HikAttLog2::orderBy('authDate')->get()->take(5);
 });
-
-Route::get('timekeeping-per-company','TimekeepingDashboardController@timekeeping');
-Route::prefix('timekeeping-per-company')->group(function() {
-    Route::post('update/{id}', 'TimekeepingDashboardController@updateTimekeeping')->name('update.timekeeping');
-    Route::post('for-approval','TimekeepingDashboardController@forApproval')->name('for_approval.timekeeping');
-    Route::post('post_dtr', 'TimekeepingDashboardController@postDtr');
-});
-
-Route::get('for_approval','TimekeepingDashboardController@forApprovalView');
-
-// Route::get('/', function () {
-//     if (request()->getHost() == 'hris.wsystem.online' || request()->getHost() == '175.18.72.49:2014')
-//     {
-//         return view('message'); 
-//     }
-//     else
-//     {
-//         return redirect('login');
-//     }
-// });
