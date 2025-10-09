@@ -108,8 +108,13 @@
           if (this.applied_date) {
             const obDate = new Date(this.applied_date);
             obDate.setDate(obDate.getDate() + 1);
+
+            const year = obDate.getFullYear()
+            const month = String(obDate.getMonth() + 1).padStart(2, '0');
+            const day = String(obDate.getDate()).padStart(2, '0');
+
             this.min_date = this.applied_date + ' 00:00:00';
-            this.ob_max_date = this.applied_date + ' 23:00:00';
+            this.ob_max_date = `${year+'-'+month+'-'+day}` + ' 23:00:00';
             this.max_date = obDate.toISOString().split('T')[0] + ' 23:00:00';
           }
         }
