@@ -156,26 +156,34 @@
                                                                         $convertedTimein = date('Y-m-d H:i:s',strtotime('-6 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
                                                                     }
 
-                                                                    if ($employee_schedule->time_out_to)
+                                                                    if ($employee_schedule->time_out_to < $employee_schedule->time_in_from)
                                                                     {
-                                                                        $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+4 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
+                                                                        $convertedTimeout = date('Y-m-d H:i:s', strtotime('+1 day', strtotime('+8 hours', strtotime($date_r." ".$employee_schedule->time_out_to))));
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $convertedTimeout = date('Y-m-d H:i:s', strtotime('+8 hours', strtotime($date_r." ".$employee_schedule->time_out_to)));
                                                                     }
                                                                 }
                                                                 // dd($convertedTimeout);
                                                                 $time_in = ($employee->attendance_logs)->whereBetween('datetime',[$convertedTimein,$date_r." 23:59:59"])->sortBy('datetime')->first();
-                                                                $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
-                                                                if ($employee_schedule)
+                                                                $time_out = ($employee->attendance_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
+                                                                if (empty($time_out))
                                                                 {
-                                                                    if ($employee_schedule->time_in_from == null)
+                                                                    $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
+                                                                }
+
+                                                                // Schedule
+                                                                if($employee_schedule)
+                                                                {
+                                                                    $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                                    $schedule_out_from = strtotime($date_r." ".$employee_schedule->time_out_from);
+                                                                    $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                                    $schedule_in_from = strtotime($date_r." ".$employee_schedule->time_in_frpm);
+                                                                    if(($schedule_out) < ($schedule_in))
                                                                     {
-                                                                        $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        if (date('A', strtotime($employee_schedule->time_out_to)) == "AM")
-                                                                        {
-                                                                            $time_out = ($employee->attendance_logs)->whereBetween('datetime',[$date_r." 23:59:59",$convertedTimeout])->sortByDesc('datetime')->first();
-                                                                        }
+                                                                        $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                                        $schedule_out_from = strtotime($date_r." ".$employee_schedule->time_out_from)+86400;
                                                                     }
                                                                 }
 
@@ -222,17 +230,27 @@
                                                                 // Late
                                                                 if ($employee_schedule)
                                                                 {
-                                                                    if ($time_in)
+                                                                    if ($employee_schedule->time_in_from == null)
                                                                     {
-                                                                        $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                        $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-
-                                                                        if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
+                                                                        $late = 0;
+                                                                    }
+                                                                    else 
+                                                                    {
+                                                                        if ($time_in)
                                                                         {
-                                                                            $total_late = ($late_time_in - $late_time_in_to) / 60;
-                                                                            $late = $total_late;
+                                                                            $in = strtotime(date('H:i',strtotime($time_in->datetime)));
+                                                                            $schedule_in = strtotime(date('H:i',$schedule_in));
+                                                                            if ($in > $schedule_in)
+                                                                            {
+                                                                                $total_late = ($in - $schedule_in) / 60;
+                                                                                $late = $total_late;
+                                                                            }
                                                                         }
                                                                     }
+                                                                }
+                                                                else
+                                                                {
+                                                                    $late = 0;
                                                                 }
 
                                                                 // Undertime
@@ -240,14 +258,47 @@
                                                                 {
                                                                     if ($time_out)
                                                                     {
-                                                                        $out = strtotime(date('H:i', strtotime($time_out->datetime)));
-                                                                        $schedule_out = strtotime(date('H:i', strtotime($employee_schedule->time_out_to)));
-                                                                        if ((date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_to) && (date('H:i', strtotime($time_out->datetime)) < $employee_schedule->time_out_from))
+                                                                        $out = date('Y-m-d H:i:s', strtotime($time_out->datetime));
+                                                                        $in = date('Y-m-d H:i:s', strtotime($time_in->datetime));
+                                                                                                                                            
+                                                                        $estimated_out = "";
+                                                                        if (date('H:i', strtotime($in)) > $employee_schedule['time_in_to'])
                                                                         {
-                                                                            $total_undertime = ($schedule_out - $out) / 60;
-
+                                                                            $estimated_out = $employee_schedule['time_out_to'];
+                                                                        }
+                                                                        elseif(date('H:i', strtotime($in)) < $employee_schedule['time_in_from'])
+                                                                        {
+                                                                            $estimated_out = $employee_schedule['time_out_from'];
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $hours = intval($employee_schedule['working_hours']);
+                                                                            $minutes = ($employee_schedule['working_hours']-$hours)*60;
+                                                                            $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($time_in->datetime)));
+                                                                            $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
+                                                                        }
+                                                                        
+                                                                        $out_timestamp = strtotime(date('H:i', strtotime($out)));
+                                                                        $estimated_out_timestamp = strtotime(date('H:i',strtotime($estimated_out)));
+                                                                        if (date('H:i', strtotime($out)) < date('H:i', strtotime($estimated_out)))
+                                                                        {
+                                                                            $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
                                                                             $undertime = $total_undertime;
                                                                         }
+                                                                        // dd($estimated_out);
+                                                                        // $schedule_out_to = strtotime(date('H:i', $schedule_out));
+                                                                        // $schedule_out_from = strtotime(date('H:i',$schedule_out_from));
+                                                                        
+                                                                        // if ($schedule_out_from > $out)
+                                                                        // {
+                                                                        //     $total_undertime = ($schedule_out_from - $out) / 60;
+                                                                        //     $undertime = $total_undertime;
+                                                                        // }
+                                                                        // else if($out > $schedule_out_to)
+                                                                        // {
+                                                                        //     $total_undertime = ($schedule_out_to - $out) / 60;
+                                                                        //     $undertime = $total_undertime;
+                                                                        // }
                                                                     }
                                                                 }
 
@@ -277,13 +328,14 @@
                                                                     }
                                                                 }
                                                             @endphp
-                                                            
+
                                                             @php
                                                                 $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Pending'));
+                                                                $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
                                                             @endphp
                                                             @if($pending_dtr == 0)
-                                                                @if(($abs > 0) || ($overtime > 0))
+                                                                @if(($abs > 0) || ($overtime > 0) || ($revert > 0))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -589,6 +641,7 @@
                                                 <table class="table table-bordered mt-5 timekeepingTable">
                                                     <thead>
                                                         <tr>
+                                                            <th>ACTIONS</th>
                                                             <th>COMPANY</th>
                                                             <th>DEPARTMENT</th>
                                                             <th>SCHEDULE</th>
@@ -829,30 +882,51 @@
                                                                 
                                                                 @php
                                                                     $approved_dtr = count(($employee->timekeeping_posted)->where('date',$date_r)->where('status','Approved'));
+                                                                    $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
                                                                 @endphp
 
-                                                                @if(($abs == 0 && $overtime == 0) || ($approved_dtr > 0))
-                                                                @php
-                                                                    $total_for_posting = $total_for_posting+=1;
-                                                                @endphp
+                                                                @if($revert == 0)
+                                                                    @if(($abs == 0 && $overtime == 0) || ($approved_dtr > 0))
+                                                                    @php
+                                                                        $total_for_posting = $total_for_posting+=1;
+                                                                    @endphp
 
-                                                                <tr>
-                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
-                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
-                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
-                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
+                                                                    <tr>
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
 
-                                                                    <td>
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
-                                                                        {{ $employee->company->company_code }}
-                                                                    </td>
-                                                                    <td>{{ $employee->department->name }}</td>
-                                                                    <td>
-                                                                        @if($employee_schedule != null)
-                                                                            @if($employee_schedule->time_in_from)
-                                                                                <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                                                                @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                                                                    <small>(Flexi)</small>
+                                                                        <td>
+                                                                            <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm">
+                                                                                @csrf
+
+                                                                                <input type="hidden" name="date" value="{{ $date_r }}">
+                                                                                <input type="hidden" name="employee" value="{{ $employee->id }}">
+
+                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction()">
+                                                                                    <i class="ti-back-left"></i>
+                                                                                    Revert
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
+                                                                            {{ $employee->company->company_code }}
+                                                                        </td>
+                                                                        <td>{{ $employee->department->name }}</td>
+                                                                        <td>
+                                                                            @if($employee_schedule != null)
+                                                                                @if($employee_schedule->time_in_from)
+                                                                                    <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                                                    @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                                                        <small>(Flexi)</small>
+                                                                                    @endif
+                                                                                @else
+                                                                                    @php
+                                                                                        $rest = "RESTDAY";
+                                                                                    @endphp
+                                                                                    <small>{{ $rest }}</small>
                                                                                 @endif
                                                                             @else
                                                                                 @php
@@ -860,78 +934,72 @@
                                                                                 @endphp
                                                                                 <small>{{ $rest }}</small>
                                                                             @endif
-                                                                        @else
-                                                                            @php
-                                                                                $rest = "RESTDAY";
-                                                                            @endphp
-                                                                            <small>{{ $rest }}</small>
-                                                                        @endif
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
-                                                                        {{ $employee->employee_code }}
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
-                                                                        {{ $employee->last_name.', '.$employee->first_name }}
-                                                                    </td>
-                                                                    <td>{{ $date_r }}</td>
-                                                                    <td @if(empty($time_in) && $rest == "" && $leave == 0) class="bg-danger" @endif>
-                                                                        @if($time_in)
-                                                                            {{ date('h:i A', strtotime($time_in->datetime)) }}
-                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}">
-                                                                        @endif
-                                                                    </td>
-                                                                    <td  @if(empty($time_out) && $rest == "" && $leave == 0) class="bg-danger" @endif>
-                                                                        @if($time_out)
-                                                                            {{ date('h:i A', strtotime($time_out->datetime)) }}
-                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}">
-                                                                        @endif
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ number_format($total_reg_hrs,2) }}
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
-                                                                    </td>
-                                                                    <td @if($late > 0) class="bg-danger" @endif>
-                                                                        {{ number_format($late,0) }}
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
+                                                                            {{ $employee->employee_code }}
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
+                                                                            {{ $employee->last_name.', '.$employee->first_name }}
+                                                                        </td>
+                                                                        <td>{{ $date_r }}</td>
+                                                                        <td @if(empty($time_in) && $rest == "" && $leave == 0) class="bg-danger" @endif>
+                                                                            @if($time_in)
+                                                                                {{ date('h:i A', strtotime($time_in->datetime)) }}
+                                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}">
+                                                                            @endif
+                                                                        </td>
+                                                                        <td  @if(empty($time_out) && $rest == "" && $leave == 0) class="bg-danger" @endif>
+                                                                            @if($time_out)
+                                                                                {{ date('h:i A', strtotime($time_out->datetime)) }}
+                                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}">
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ number_format($total_reg_hrs,2) }}
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
+                                                                        </td>
+                                                                        <td @if($late > 0) class="bg-danger" @endif>
+                                                                            {{ number_format($late,0) }}
 
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
-                                                                    </td>
-                                                                    <td @if($undertime > 0) class="bg-danger" @endif>
-                                                                        {{ number_format($undertime,2) }}
-                                                                    </td>
-                                                                    <td>
-                                                                        {{ number_format($leave,2) }}
-                                                                    </td>
-                                                                    <td @if($overtime > 0) class="bg-warning" @endif>
-                                                                        {{ number_format($overtime,2) }}
-                                                                    </td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                    <td>0.00</td>
-                                                                </tr>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
+                                                                        </td>
+                                                                        <td @if($undertime > 0) class="bg-danger" @endif>
+                                                                            {{ number_format($undertime,2) }}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{ number_format($leave,2) }}
+                                                                        </td>
+                                                                        <td @if($overtime > 0) class="bg-warning" @endif>
+                                                                            {{ number_format($overtime,2) }}
+                                                                        </td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                        <td>0.00</td>
+                                                                    </tr>
+                                                                    @endif
                                                                 @endif
-                                                                {{-- @endif --}}
                                                             @endforeach
                                                         @endforeach
                                                     </tbody>
@@ -971,6 +1039,23 @@
     document.getElementById('totalIssues').innerText = total_issues
     document.getElementById('totalForPosting').innerText = total_for_posting
     document.getElementById('totalPendingApproval').innerText = total_pending_approval
+
+    function revertFunction()
+    {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, revert it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('revertForm').submit()
+            }
+        });
+    }
 
     $(document).ready(function() {
         $(".timekeepingTable").DataTable({

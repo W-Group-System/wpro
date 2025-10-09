@@ -229,6 +229,10 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(AttendanceLog::class,'emp_code','employee_number');
     }
+    public function dtr_status()
+    {
+        return $this->hasMany(DtrStatus::class);
+    }
     // public function daily_schedules()
     // {
     //     return $this->hasMany(DailySchedule::class,'employee_code','employee_code');

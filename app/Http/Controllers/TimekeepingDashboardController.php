@@ -9,6 +9,8 @@ use App\Department;
 use App\DtrApprover;
 use App\DtrCorrection;
 use App\DtrCorrectionApprover;
+use App\DtrRevert;
+use App\DtrStatus;
 use Illuminate\Http\Request;
 use App\Employee;
 use App\EmployeeLeave;
@@ -299,6 +301,12 @@ class TimekeepingDashboardController extends Controller
             }
             else
             {
+                $dtr_status = DtrStatus::where('date', $request->date)->where('employee_id', $request->emp_id)->first();
+                if ($dtr_status)
+                {
+                    $dtr_status->status = 'For posting';
+                    $dtr_status->save();
+                }
                 $dtr_correction_approvers = $dtr_correction_approvers->where('status','Pending')->last();
                 $dtr_correction_approvers->status = $request->status;
                 $dtr_correction_approvers->save();
@@ -452,13 +460,10 @@ class TimekeepingDashboardController extends Controller
                 }
             ])
             ->where('company_id', $request->company)
-            // ->where('department_id', $request->department)
             ->when($department_data, function($q)use($department_data) {
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->whereIn('employee_code',['A3176324','A189423','A2109925'])
-            ->where('employee_code','A3176624')
             ->orderBy('last_name','asc')
             ->get();
 
@@ -478,5 +483,19 @@ class TimekeepingDashboardController extends Controller
                 'department_data' => $department_data,
             )
         );
+    }
+
+    public function dtrStatus(Request $request)
+    {
+        // dd($request->all());
+        $dtr_status = new DtrStatus;
+        $dtr_status->employee_id = $request->employee;
+        $dtr_status->date = $request->date;
+        $dtr_status->status = 'Revert';
+        $dtr_status->action_by = auth()->user()->id;
+        $dtr_status->save();
+
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
     }
 }
