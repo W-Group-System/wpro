@@ -941,6 +941,7 @@
                                                                 $restnd =  round(night_difference_per_company($time_start,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($time_start)))));
                                                                 $restnd_ge = night_difference_per_company($time_start,$time_end);
                                                                 $restnd_ge = $restnd_ge - $restnd;
+                                                                $restnd_ge = floatval($restnd_ge) - 1;
                                                                 $restnd = $restnd-1;
                                                                 if($restnd <0)
                                                                 {
