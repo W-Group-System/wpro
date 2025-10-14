@@ -468,7 +468,7 @@ class TimekeepingDashboardController extends Controller
             // ->where('employee_code','A189423')
             // ->where('employee_code','A3186925')
             // ->where('employee_code','A3189725')
-            ->where('employee_code','A3176924')
+            // ->where('employee_code','A3176924')
             // ->where('employee_code','A3186825')
             // ->whereIn('employee_code',['A2112625','A3176324','A189423',])
             ->orderBy('last_name','asc')
