@@ -401,6 +401,13 @@ class TimekeepingDashboardController extends Controller
             $dtr_correction_approver->save();
         }
 
+        $dtr_status = DtrStatus::where('employee_id', $request->employee_id)->where('date', $request->date)->first();
+        if ($dtr_status)
+        {
+            $dtr_status->status = 'Pending';
+            $dtr_status->save();
+        }
+
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
     }
@@ -470,6 +477,7 @@ class TimekeepingDashboardController extends Controller
             // ->where('employee_code','A3189725')
             // ->where('employee_code','A3176924')
             // ->where('employee_code','A3186825')
+            // ->where('employee_code','A3179024')
             // ->whereIn('employee_code',['A2112625','A3176324','A189423',])
             ->orderBy('last_name','asc')
             ->get();

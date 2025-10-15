@@ -68,17 +68,17 @@
 
                         <ul class="nav nav-tabs mt-5">
                             <li class="nav-item">
-                                <a class="nav-link" href="#pills-issues" data-toggle="tab" >Issues <span class="badge badge-danger" id="totalIssues">0</span></a>
+                                <a class="nav-link active" href="#pills-issues" data-toggle="tab" >Issues <span class="badge badge-danger" id="totalIssues">0</span></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#pills-for-approval" data-toggle="tab" >Pending Approval <span class="badge badge-warning" id="totalPendingApproval">0</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge badge-success" id="totalForPosting">0</span></a>
+                                <a class="nav-link " href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge badge-success" id="totalForPosting">0</span></a>
                             </li>
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
+                            <div class="tab-pane fade show active" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
                                 <div class="row mt-5">
                                     <div class="d-flex align-items-center">
                                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -732,11 +732,13 @@
                                                             
                                                             @php
                                                                 $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
+                                                                $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r));
+                                                                $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
                                                             @endphp
 
-                                                            @if($revert == 0)
-                                                                @if(($abs == 0) || ($approved_dtr > 0))
+                                                            @if(($pending_dtr == 0) || ($cancelled_dtr > 0) || ($revert > 0))
+                                                                @if(($abs > 0) || ($late > 0) || ($undertime > 0) || ($revert > 0))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -748,17 +750,10 @@
                                                                     <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
 
                                                                     <td>
-                                                                        <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm">
-                                                                            @csrf
-
-                                                                            <input type="hidden" name="date" value="{{ $date_r }}">
-                                                                            <input type="hidden" name="employee" value="{{ $employee->id }}">
-
-                                                                            <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction()">
-                                                                                <i class="ti-back-left"></i>
-                                                                                Revert
-                                                                            </button>
-                                                                        </form>
+                                                                        <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#edit{{$employee->id}}{{ $date_r }}">
+                                                                            <i class="ti-pencil"></i>
+                                                                            Edit
+                                                                        </button>
                                                                     </td>
                                                                     <td>
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
@@ -894,7 +889,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="pills-for-approval" role="tabpanel" aria-labelledby="pills-for-posting-tab">
+                            <div class="tab-pane fade " id="pills-for-approval" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                                 <div class="row">
                                     <div class="d-flex align-items-center">
                                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -1068,7 +1063,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade show active" id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
+                            <div class="tab-pane fade " id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                                 <div class="row">
                                     <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;">
                                         @csrf
@@ -1730,8 +1725,8 @@
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
                                                                 @endphp
 
-                                                                @if(($revert == 0) && ($overtime == 0))
-                                                                    @if(($abs == 0) || ($approved_dtr > 0))
+                                                                @if(($revert == 0))
+                                                                    @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -1743,13 +1738,14 @@
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
 
                                                                         <td>
-                                                                            <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm">
+                                                                            <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm{{$employee->id.'_'.$date_r}}">
                                                                                 @csrf
 
                                                                                 <input type="hidden" name="date" value="{{ $date_r }}">
                                                                                 <input type="hidden" name="employee" value="{{ $employee->id }}">
+                                                                                <input type="hidden" name="status" value="Revert">
 
-                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction()">
+                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id.'_'.$date_r }}')">
                                                                                     <i class="ti-back-left"></i>
                                                                                     Revert
                                                                                 </button>
@@ -1921,7 +1917,7 @@
     document.getElementById('totalForPosting').innerText = total_for_posting
     document.getElementById('totalPendingApproval').innerText = total_pending_approval
 
-    function revertFunction()
+    function revertFunction(date_r)
     {
         Swal.fire({
             title: "Are you sure?",
@@ -1933,7 +1929,7 @@
             confirmButtonText: "Yes, revert it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('revertForm').submit()
+                document.getElementById('revertForm'+date_r).submit()
             }
         });
     }

@@ -7,11 +7,6 @@
             <form method="post" action="{{ url('timekeeping-official/for-approval') }}" onsubmit="show()" enctype="multipart/form-data">
                 @csrf
                 
-                {{-- @if($time_in && $time_out)
-                <input type="hidden" name="attendance_logs_in" value="{{ $time_in->id }}">
-                <input type="hidden" name="attendance_logs_out" value="{{ $time_out->id }}">
-                @endif --}}
-
                 <input type="hidden" name="employee_id" value="{{ $employee->id }}">
                 <input type="hidden" name="date" value="{{ $date_r }}">
                 
@@ -39,13 +34,13 @@
                             <label for="employeeCode" class="col-form-label">Time IN</label>
                         </div>
                         <div class="col-md-9">
-                            <input type="datetime-local" name="employee_time_in" class="form-control" required>
+                            <input type="datetime-local" name="employee_time_in" class="form-control" min="{{ date('Y-m-d\T00:00', strtotime($date_r)) }}" max="{{ date('Y-m-d\T23:59', strtotime($date_r)) }}" required>
                         </div>
                         <div class="col-md-3 mb-2">
                             <label for="employeeCode" class="col-form-label">Time OUT</label>
                         </div>
                         <div class="col-md-9">
-                            <input type="datetime-local" name="employee_time_out" class="form-control" required>
+                            <input type="datetime-local" name="employee_time_out" class="form-control" min="{{ date('Y-m-d\T00:00', strtotime($date_r)) }}" max="{{ date('Y-m-d\T23:59', strtotime($date_r."+1 day")) }}" required>
                         </div>
                         <div class="col-md-3 mb-2">
                             <label for="employeeCode" class="col-form-label">Remarks</label>
