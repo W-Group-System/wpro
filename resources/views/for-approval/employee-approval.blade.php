@@ -9,7 +9,7 @@
               <div class="media">                
                 <div class="media-body">
                   <h4 class="mb-4">For Approval</h4>
-                  <a href="/for-official-business?status=Pending" class="h2 card-text text-white">{{$for_approval}}</a>
+                  <a href="/for-employee?status=Pending" class="h2 card-text text-white">{{$for_approval}}</a>
                 </div>
               </div>
             </div>
@@ -21,7 +21,7 @@
               <div class="media">                
                 <div class="media-body">
                   <h4 class="mb-4">Approved</h4>
-                  <a href="/for-official-business?status=Approved" class="h2 card-text text-white">{{$approved}}</a>
+                  <a href="/for-employee?status=Approved" class="h2 card-text text-white">{{$approved}}</a>
                 </div>
               </div>
             </div>
@@ -33,7 +33,7 @@
               <div class="media">                
                 <div class="media-body">
                   <h4 class="mb-4">Declined / Rejected</h4>
-                  <a href="/for-official-business?status=Declined" class="h2 card-text text-white">{{$declined}}</a>
+                  <a href="/for-employee?status=Declined" class="h2 card-text text-white">{{$declined}}</a>
                 </div>
               </div>
             </div>
@@ -65,7 +65,7 @@
                       <label class="text-right">Status</label>
                       <select data-placeholder="Select Status" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='status' required>
                         <option value="">-- Select Status --</option>
-                        <option value="Approved" @if ('Approved' == $status) selected @endif>Approved</option>
+                        <option value="Active" @if ('Active' == $status) selected @endif>Approved</option>
                         <option value="Pending" @if ('Pending' == $status) selected @endif>Pending</option>
                         <!-- <option value="Cancelled" @if ('Cancelled' == $status) selected @endif>Cancelled</option> -->
                         <option value="Declined" @if ('Declined' == $status) selected @endif>Declined</option>
@@ -230,21 +230,21 @@
         const approveUrl = "{{ url('/approve-employee-all') }}";
         const disapproveUrl = "{{ url('/disapprove-employee-all') }}";
 
-        // ✅ Approve all
-        $('#approveAllBtn').on('click', function () {
+
+        $('#approveAllBtn').on('click', function() {
             Swal.fire({
                 title: "Are you sure?",
-                text: "You want to approve these employees?",
+                text: "You want to approved these employees?",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: "Yes, approve them!"
+                confirmButtonText: "Yes, approved them!"
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById("loader").style.display = "block";
 
                     const selectedItems = [];
                     $('.checkbox-item:checked').each(function () {
-                        selectedItems.push($(this).data('id'));
+                        selectedItems.push($(this).data('id')); // ✅ FIXED: send flat array
                     });
 
                     $.ajax({
@@ -260,20 +260,20 @@
                         dataType: 'json',
                         success: function (response) {
                             document.getElementById("loader").style.display = "none";
-                            Swal.fire("Success!", `Approved ${response} records.`, "success")
+                            Swal.fire("Success!", `Approved Employees records.`, "success")
                                 .then(() => location.reload());
                         },
                         error: function (error) {
                             document.getElementById("loader").style.display = "none";
                             console.error(error);
-                            Swal.fire("Error", "Approval failed.", "error");
+                            Swal.fire("Error", "Approved failed.", "error");
                         }
                     });
                 }
             });
         });
 
-        // ✅ Disapprove all
+        
         $('#disApproveAllBtn').on('click', function () {
             Swal.fire({
                 title: "Are you sure?",
@@ -303,7 +303,7 @@
                         dataType: 'json',
                         success: function (response) {
                             document.getElementById("loader").style.display = "none";
-                            Swal.fire("Success!", `Disapproved ${response} records.`, "success")
+                            Swal.fire("Success!", `Disapproved Employees records.`, "success")
                                 .then(() => location.reload());
                         },
                         error: function (error) {

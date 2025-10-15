@@ -564,8 +564,6 @@
                                                         if($emp->employee_code == "A340612") //frosie
                                                         {
                                                             $schedule_hours =  $schedule_hours-1;
-                                                            
-                                                            
                                                         }
                                                        
                                                     

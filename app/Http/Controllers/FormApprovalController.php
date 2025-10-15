@@ -950,9 +950,10 @@ class FormApprovalController extends Controller
         $from_date = isset($request->from) ? $request->from : date('Y-m-d',(strtotime ( '-1 month' , strtotime ( $today) ) ));
         $to_date = isset($request->to) ? $request->to : date('Y-m-d');
  
-        $filter_status = isset($request->status) ? $request->status : 'Pending';
+        // $filter_status = isset($request->status) ? $request->status : 'Pending';
+        $filter_status = $request->status;
         $approver_id = auth()->user()->id;
-        $employees = Employee::where('status', 'Pending')
+        $employees = Employee::where('status', $request->status)
                                 ->whereDate('created_at','>=',$from_date)
                                 ->whereDate('created_at','<=',$to_date)
                                 ->orderBy('created_at','DESC')
@@ -963,10 +964,11 @@ class FormApprovalController extends Controller
                                 ->whereDate('created_at','<=',$to_date)
                                 ->count();
 
-        $approved = Employee::where('status','Approved')
+        $approved = Employee::where('status','Active')
                                 ->whereDate('created_at','>=',$from_date)
                                 ->whereDate('created_at','<=',$to_date)
                                 ->count();
+        // dd($approved);
         $declined = Employee::where('status','Declined')
                                 ->whereDate('created_at','>=',$from_date)
                                 ->whereDate('created_at','<=',$to_date)
@@ -1032,8 +1034,6 @@ class FormApprovalController extends Controller
 
     public function approveEmployeeAll(Request $request)
     {
-        \Log::info('Incoming Approve Request', $request->all());
-
         $ids = json_decode($request->ids, true); // [1,2,3]
 
         if (!is_array($ids) || empty($ids)) {
@@ -1046,28 +1046,21 @@ class FormApprovalController extends Controller
             $employee = Employee::find($id);
 
             if ($employee) {
-                \Log::info("Updating employee ID: $id");
-
-                $employee->update(['status' => 'Active']);
+                Employee::where('id', $id)->update([
+                        'status' => 'Active',
+                    ]);
                 $count++;
 
-                if ($employee->user_id) {
-                    \Log::info("Updating user ID: {$employee->user_id}");
-
-                    User::where('id', $employee->user_id)->update([
-                        'approved_date' => now(),
-                        'status' => 'Active',
-                        'approval_remarks' => $request->approval_remarks,
-                    ]);
-                    $count++;
-                }
+                User::where('id', $employee->user_id)->update([
+                    'status' => 'Active',
+                    'approval_remarks' => 'Approved by admin', // or use request data
+                ]);
+                $count++;
             }
         }
 
         return response()->json($count);
     }
-
-
 
     public function disapproveEmployeeAll(Request $request)
     {
@@ -1083,7 +1076,9 @@ class FormApprovalController extends Controller
             $employee = Employee::find($id);
 
             if ($employee) {
-                $employee->update(['status' => 'Declined']); // or 'Disapproved'
+                Employee::where('id', $id)->update([
+                        'status' => 'Declined',
+                    ]);
                 $count++;
 
                 User::where('id', $employee->user_id)->update([
