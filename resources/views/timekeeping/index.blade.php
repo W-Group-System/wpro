@@ -50,10 +50,10 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="date" name="date_from" class="form-control" value="{{ $from_date }}">
+                                    <input type="date" name="date_from" class="form-control" value="{{ $from_date }}" required>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="date" name="date_to" class="form-control" value="{{ $to_date }}">
+                                    <input type="date" name="date_to" class="form-control" value="{{ $to_date }}" required>
                                 </div>
                                 <div class="col-md-2">
                                     <button type="submit" class="btn btn-primary">
