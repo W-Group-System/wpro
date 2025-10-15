@@ -233,6 +233,11 @@ class Employee extends Model implements Auditable
     public function user()
     {
         return $this->belongsTo(User::class,'user_id','id');
+    }        
+    public function dtr_status()
+    {
+        return $this->hasMany(DtrStatus::class);
+
     }
     // public function daily_schedules()
     // {

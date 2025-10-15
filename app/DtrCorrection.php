@@ -10,4 +10,8 @@ class DtrCorrection extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+    public function dtr_correction_approver()
+    {
+        return $this->hasMany(DtrCorrectionApprover::class);
+    }
 }

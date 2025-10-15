@@ -844,7 +844,7 @@
                                     <td><strong>{{ number_format($subtotal_abs,2) }}</strong></td>
                                     <td><strong>{{ number_format($subtotal_leave_w_pay,2) }}</strong></td>
                                     <td><strong>{{ number_format($subtotal_reg_hrs,2) }}</strong></td>
-                                    <td><strong>{{ number_format($subtotal_late,2) }}</strong></td>
+                                    <td><strong>{{ number_format($subtotal_late) }}</strong></td>
                                     <td><strong>{{ number_format($subtotal_undertime,2) }}</strong></td>
                                     <td><strong>{{ number_format($subtotal_overtimes,2)}}</strong></td>
                                     <td><strong>{{ number_format($subtotal_nd,2)}}</strong></td>
