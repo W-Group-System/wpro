@@ -511,7 +511,7 @@ class TimekeepingDashboardController extends Controller
         $dtr_status->action_by = auth()->user()->id;
         $dtr_status->save();
 
-        Alert::success('Successfully Saved')->persistent('Dismiss');
+        Alert::success('Successfully Revert')->persistent('Dismiss');
         return back();
     }
 }
