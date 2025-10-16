@@ -290,7 +290,7 @@
                                                                         }
                                                                         else
                                                                         {
-                                                                            $total_reg_hrs = $reg_hrs;
+                                                                            $total_reg_hrs = $working_hrs;
                                                                         }
                                                                     }
                                                                 }
@@ -1289,7 +1289,7 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                $total_reg_hrs = $reg_hrs;
+                                                                                $total_reg_hrs = $working_hrs;
                                                                             }
                                                                         }
                                                                     }
