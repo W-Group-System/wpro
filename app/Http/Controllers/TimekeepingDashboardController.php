@@ -427,22 +427,55 @@ class TimekeepingDashboardController extends Controller
 
     public function postDtr(Request $request)
     {
+        // dd($request->all());
         foreach($request->employees as $employee_code => $employee)
         {
             foreach($employee as $date => $attendance)
             {
-                $timekeeping = new TimekeepingPosted;
-                $timekeeping->company_id = $attendance['company_id'] ?? null;
-                $timekeeping->department_id = $attendance['department_id'] ?? null;
-                $timekeeping->employee_no = $attendance['employee_no'] ?? null;
-                $timekeeping->name = $attendance['name'] ?? null;
-                $timekeeping->cut_off_date = $attendance['cutoff'] ?? null;
-                $timekeeping->log_date = $attendance['log_date'] ?? null;
-                $timekeeping->shift = $attendance['shift'] ?? null;
-                $timekeeping->in = $attendance['in'] ?? null;
-                $timekeeping->out = $attendance['out'] ?? null;
-                $timekeeping->abs = $attendance['abs'] ?? null;
-                $timekeeping->save();
+                if (isset($attendance['selected']))
+                {
+                    $timekeeping = new AttendanceDetailedReport;
+                    $timekeeping->cut_off_date = $attendance['cutoff'] ?? null;
+                    $timekeeping->log_date = $attendance['log_date'] ?? null;
+                    $timekeeping->department_id = $attendance['department_id'] ?? null;
+                    $timekeeping->shift = $attendance['shift'] ?? null;
+                    $timekeeping->company_id = $attendance['company_id'] ?? null;
+                    $timekeeping->employee_no = $attendance['employee_no'] ?? null;
+                    $timekeeping->in = $attendance['in'] ?? null;
+                    $timekeeping->log_date = $attendance['log_date'] ?? null;
+                    $timekeeping->shift = $attendance['shift'] ?? null;
+                    $timekeeping->in = $attendance['in'] ?? null;
+                    $timekeeping->out = $attendance['out'] ?? null;
+                    $timekeeping->abs = $attendance['abs'] ?? null;
+                    $timekeeping->reg_hrs = $attendance['reg_hrs'] ?? null;
+                    $timekeeping->late_min = $attendance['late_min'] ?? null;
+                    $timekeeping->undertime_min = $attendance['undertime_min'] ?? null;
+                    $timekeeping->lv_w_pay = $attendance['lv_w_pay'] ?? null;
+                    $timekeeping->reg_ot = $attendance['reg_ot'] ?? null;
+                    $timekeeping->reg_nd = $attendance['reg_nd'] ?? null;
+                    $timekeeping->reg_ot_nd = $attendance['reg_ot_nd'] ?? null;
+                    $timekeeping->rst_ot = $attendance['rst_ot'] ?? null;
+                    $timekeeping->rst_ot_over_eight = $attendance['rst_ot_over_eight'] ?? null;
+                    $timekeeping->rst_nd = $attendance['rst_nd'] ?? null;
+                    $timekeeping->rst_nd_over_eight = $attendance['rst_nd_over_eight'] ?? null;
+                    $timekeeping->lh_ot = $attendance['lh_ot'] ?? null;
+                    $timekeeping->lh_ot_over_eight = $attendance['lh_ot_over_eight'] ?? null;
+                    $timekeeping->lh_nd = $attendance['lh_nd'] ?? null;
+                    $timekeeping->lh_nd_over_eight = $attendance['lh_nd_over_eight'] ?? null;
+                    $timekeeping->sh_ot = $attendance['sh_ot'] ?? null;
+                    $timekeeping->sh_ot_over_eight = $attendance['sh_ot_over_eight'] ?? null;
+                    $timekeeping->sh_nd = $attendance['sh_nd'] ?? null;
+                    $timekeeping->sh_nd_over_eight = $attendance['sh_nd_over_eight'] ?? null;
+                    $timekeeping->rst_lh_ot = $attendance['rst_lh_ot'] ?? null;
+                    $timekeeping->rst_lh_ot_over_eight = $attendance['rst_lh_ot_over_eight'] ?? null;
+                    $timekeeping->rst_lh_nd = $attendance['rst_lh_nd'] ?? null;
+                    $timekeeping->rst_lh_nd_over_eight = $attendance['rst_lh_nd_over_eight'] ?? null;
+                    $timekeeping->rst_sh_ot = $attendance['rst_sh_ot'] ?? null;
+                    $timekeeping->rst_sh_ot_over_eight = $attendance['rst_sh_ot_over_eight'] ?? null;
+                    $timekeeping->rst_sh_nd = $attendance['rst_sh_nd'] ?? null;
+                    $timekeeping->rst_sh_nd_over_eight = $attendance['rst_sh_nd_over_eight'] ?? null;
+                    $timekeeping->save();
+                }
             }
         }
 

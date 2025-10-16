@@ -1094,10 +1094,10 @@
                             </div>
                             <div class="tab-pane fade " id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                                 <div class="row">
-                                    {{-- <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;"> --}}
+                                    <form action="{{ url('timekeeping-official/post_dtr') }}" method="post" class="my-3" style="width: 100%;" onsubmit="show()">
                                         @csrf
 
-                                        {{-- <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button> --}}
+                                        <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button>
 
                                         <div class="d-flex align-items-center ml-2">
                                             <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -1109,6 +1109,7 @@
                                                 <table class="table table-bordered mt-5 timekeepingTable">
                                                     <thead>
                                                         <tr>
+                                                            <th></th>
                                                             <th>ACTIONS</th>
                                                             <th>COMPANY</th>
                                                             <th>DEPARTMENT</th>
@@ -1118,6 +1119,7 @@
                                                             <th>DATE LOGS</th>
                                                             <th>TIME IN</th>
                                                             <th>TIME OUT</th>
+                                                            <th>ABSENT</th>
                                                             <th>REG HRS (HRS)</th>
                                                             <th>LATE (MIN)</th>
                                                             <th>UNDERTIME(min)</th>
@@ -1761,25 +1763,31 @@
                                                                 @php
                                                                     $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
+                                                                    $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                                 @endphp
 
-                                                                @if(($revert == 0))
+                                                                @if(($revert == 0) && ($posted_dtr == 0))
                                                                     @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
 
                                                                     <tr>
-                                                                        {{-- <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}"> --}}
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
 
-                                                                        @php
-                                                                            $date_formatted = str_replace('-', '', $date_r);
-                                                                        @endphp
+                                                                        
                                                                         <td>
-                                                                            <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm{{$employee->id.'_'.$date_formatted}}">
+                                                                            {{-- <input type="hidden" class="hidden-selected" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]"> --}}
+                                                                            <input type="checkbox" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]" class="selectEmployee form-control">
+                                                                        </td>
+                                                                        <td>
+                                                                            {{-- @php
+                                                                                $date_formatted = str_replace('-', '', $date_r);
+                                                                            @endphp --}}
+                                                                            {{-- <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm{{$employee->id.'_'.$date_formatted}}">
                                                                                 @csrf
 
                                                                                 <input type="hidden" name="date" value="{{ $date_r }}">
@@ -1790,13 +1798,20 @@
                                                                                     <i class="ti-back-left"></i>
                                                                                     Revert
                                                                                 </button>
-                                                                            </form>
+                                                                            </form> --}}
+                                                                            <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id }}', '{{ $date_r }}')">
+                                                                                <i class="ti-back-left"></i>
+                                                                                Revert
+                                                                            </button>
                                                                         </td>
                                                                         <td>
                                                                             <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
                                                                             {{ $employee->company->company_code }}
                                                                         </td>
-                                                                        <td>{{ $employee->department->name }}</td>
+                                                                        <td>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department]" value="{{ $employee->department->name }}">
+                                                                            {{ $employee->department->name }}
+                                                                        </td>
                                                                         <td>
                                                                             @if($employee_schedule != null)
                                                                                 @if($employee_schedule->time_in_from)
@@ -1829,14 +1844,22 @@
                                                                         <td @if(empty($final_time_in) && $rest == "" && $leave == 0 && $abs > 0) class="bg-danger" @endif @if($if_has_ob) class="bg-info" @endif>
                                                                             @if($final_time_in)
                                                                                 {{ date('h:i A', strtotime($final_time_in)) }}
-                                                                                {{-- <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($time_in->datetime)) }}"> --}}
+                                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="{{ date('h:i A', strtotime($final_time_in)) }}">
+                                                                            @else
+                                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][in]" value="0.00">
                                                                             @endif
                                                                         </td>
                                                                         <td  @if(empty($final_time_out) && $rest == "" && $leave == 0 && $abs > 0) class="bg-danger" @endif @if($if_has_ob) class="bg-info" @endif>
                                                                             @if($final_time_out)
                                                                                 {{ date('h:i A', strtotime($final_time_out)) }}
-                                                                                {{-- <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}"> --}}
+                                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($final_time_out)) }}">
+                                                                            @else 
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="0.00">
                                                                             @endif
+                                                                        </td>
+                                                                        <td @if($abs > 0) class="bg-danger" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][abs]" value="{{ $abs }}">
+                                                                            {{ number_format($abs, 2) }}
                                                                         </td>
                                                                         <td>
                                                                             {{ number_format($total_reg_hrs,2) }}
@@ -1845,76 +1868,129 @@
                                                                         <td @if($late > 0) class="bg-danger" @endif>
                                                                             {{ number_format($late,0) }}
 
-                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][late_min]" value="{{ number_format($abs,2) }}">
                                                                         </td>
                                                                         <td @if($undertime > 0) class="bg-danger" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][undertime_min]" value="{{ number_format($undertime,2) }}">
                                                                             {{ number_format($undertime,2) }}
                                                                         </td>
                                                                         <td>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][lv_w_pay]" value="{{ number_format($leave,2) }}">
                                                                             {{ number_format($leave,2) }}
                                                                         </td>
                                                                         <td @if($overtime > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_ot]" value="{{ number_format($overtime,2) }}">
                                                                             {{ number_format($overtime,2) }}
                                                                         </td>
                                                                         <td @if($night_diff > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_nd]" value="{{ number_format($night_diff,2) }}">
                                                                             {{ number_format($night_diff,2) }}
                                                                         </td>
                                                                         <td @if($night_diff_ot > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_ot_nd]" value="{{ number_format($night_diff_ot,2) }}">
                                                                             {{ number_format($night_diff_ot,2) }}
                                                                         </td>
                                                                         <td @if($restday_ot > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_ot]" value="{{ number_format($restday_ot,2) }}">
                                                                             {{ number_format($restday_ot,2) }}
                                                                         </td>
                                                                         <td @if($restday_ot_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_ot_over_eight]" value="{{ number_format($restday_ot_ge,2) }}">
                                                                             {{ number_format($restday_ot_ge,2) }}
                                                                         </td>
                                                                         <td @if($restnd > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_nd]" value="{{ number_format($restnd,2) }}">
                                                                             {{ number_format($restnd, 2) }}
                                                                         </td>
                                                                         <td @if($restnd_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_nd_over_eight]" value="{{ number_format($restnd_ge,2) }}">
                                                                             {{ number_format($restnd_ge, 2) }}
                                                                         </td>
                                                                         <td @if($lh_ot > 0) class="bg-warning" @endif> 
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][lh_ot]" value="{{ number_format($lh_ot,2) }}">
                                                                             {{ number_format($lh_ot,2) }}
                                                                         </td>
                                                                         <td  @if($lh_ot_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][lh_ot_over_eight]" value="{{ number_format($lh_ot_ge,2) }}">
                                                                             {{ number_format($lh_ot_ge,2) }}
                                                                         </td>
                                                                         <td @if($lh_nd > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][lh_nd]" value="{{ number_format($lh_nd,2) }}">
                                                                             {{ number_format($lh_nd,2) }}
                                                                         </td>
                                                                         <td @if($lh_nd_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][lh_nd_over_eight]" value="{{ number_format($lh_nd_ge,2) }}">
                                                                             {{ number_format($lh_nd_ge,2) }}
                                                                         </td>
                                                                         <td @if($sh_ot > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][sh_ot]" value="{{ number_format($sh_ot,2) }}">
                                                                             {{ number_format($sh_ot,2) }}
                                                                         </td>
                                                                         <td @if($sh_ot_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][sh_ot_over_eight]" value="{{ number_format($sh_ot_ge,2) }}">
                                                                             {{ number_format($sh_ot_ge,2) }}
                                                                         </td>
                                                                         <td @if($sh_ot_nd > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][sh_nd]" value="{{ number_format($sh_ot_nd,2) }}">
                                                                             {{ number_format($sh_ot_nd,2) }}
                                                                         </td>
                                                                         <td @if($sh_ot_nd_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][sh_nd_over_eight]" value="{{ number_format($sh_ot_nd_ge,2) }}">
                                                                             {{ number_format($sh_ot_nd_ge, 2) }}
                                                                         </td>
-                                                                        <td>0.00</td>
-                                                                        <td>0.00</td>
-                                                                        <td>0.00</td>
-                                                                        <td>0.00</td>
+                                                                        <td @if($rst_lh_ot > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_lh_ot]" value="{{ number_format($rst_lh_ot,2) }}">
+                                                                            {{ number_format($rst_lh_ot,2) }}
+                                                                        </td>
+                                                                        <td @if($rst_lh_ot_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_lh_ot_over_eight]" value="{{ number_format($rst_lh_ot_ge,2) }}">
+                                                                            {{ number_format($rst_lh_ot_ge,2) }}
+                                                                        </td>
+                                                                        <td @if($rst_lh_ot_nd > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_lh_nd]" value="{{ number_format($rst_lh_ot_nd,2) }}">
+                                                                            {{ number_format($rst_lh_ot_nd,2) }}
+                                                                        </td>
+                                                                        <td @if($rst_lh_ot_nd_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_lh_nd_over_eight]" value="{{ number_format($rst_lh_ot_nd_ge,2) }}">
+                                                                            {{ number_format($rst_lh_ot_nd_ge,2) }}
+                                                                        </td>
                                                                         <td @if($rst_sh_ot > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_sh_ot]" value="{{ number_format($rst_sh_ot,2) }}">
                                                                             {{ number_format($rst_sh_ot,2) }}
                                                                         </td>
                                                                         <td @if($rst_sh_ot_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_sh_ot_over_eight]" value="{{ number_format($rst_sh_ot_ge,2) }}">
                                                                             {{ number_format($rst_sh_ot_ge, 2) }}
                                                                         </td>
                                                                         <td @if($rst_sh_ot_nd > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_sh_nd]" value="{{ number_format($rst_sh_ot_nd,2) }}">
                                                                             {{ number_format($rst_sh_ot_nd,2) }}
                                                                         </td>
                                                                         <td @if($rst_sh_ot_nd_ge > 0) class="bg-warning" @endif>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][rst_sh_nd_over_eight]" value="{{ number_format($rst_sh_ot_nd_ge,2) }}">
                                                                             {{ number_format($rst_sh_ot_nd_ge,2) }}
                                                                         </td>
-                                                                        <td></td>
+                                                                        <td>
+                                                                            @php
+                                                                                $leave_count = 0;
+                                                                                $abs_half = 0;
+
+                                                                                $if_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                                if($if_leave)
+                                                                                {
+                                                                                    $l = explode('-',$if_leave);
+                                                                                    $leave_count = (double) $l[1];
+                                                                                    if(str_contains($if_leave,"Without"))
+
+                                                                                    {
+                                                                                        $leave_count = 0;
+                                                                                        $abs_half = $l[1];
+                                                                                    }
+                                                                                }
+                                                                            @endphp
+                                                                            {{$if_has_ob ? 'OB' : ''}}
+                                                                            {{ $if_leave }}
+                                                                        </td>
                                                                     </tr>
                                                                     @endif
                                                                 @endif
@@ -1924,7 +2000,7 @@
                                                 </table>
                                             </div>
                                         </div>
-                                    {{-- </form> --}}
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -1958,7 +2034,24 @@
     document.getElementById('totalForPosting').innerText = total_for_posting
     document.getElementById('totalPendingApproval').innerText = total_pending_approval
 
-    function revertFunction(employeeId)
+    // function revertFunction(employeeId)
+    // {
+    //     Swal.fire({
+    //         title: "Are you sure?",
+    //         text: "You won't be able to revert this!",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonColor: "#3085d6",
+    //         cancelButtonColor: "#d33",
+    //         confirmButtonText: "Yes, revert it!"
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             document.getElementById('revertForm'+employeeId).submit()
+    //         }
+    //     });
+    // }
+
+    function revertFunction(employeeId, date)
     {
         Swal.fire({
             title: "Are you sure?",
@@ -1970,7 +2063,22 @@
             confirmButtonText: "Yes, revert it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('revertForm'+employeeId).submit()
+                // document.getElementById('revertForm'+employeeId).submit()
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('timekeeping-official/dtrStatus') }}",
+                    data: {
+                        employee: employeeId,
+                        date: date,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    beforeSend: function(){
+                        show()
+                    },
+                    success: function() {
+                        location.reload()
+                    }
+                })
             }
         });
     }
@@ -1991,6 +2099,16 @@
             //     "targets": "_all"
             // }],
             order: [] 
+        })
+
+        $(".selectEmployee").on('change', function() {
+            var ifSelected = $(this).closest('td').find('.hidden-selected')
+
+            if ($(this).is(':checked'))
+            {
+                $(this).val("selected")
+            }
+            
         })
     })
 </script>
