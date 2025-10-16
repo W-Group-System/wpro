@@ -45,7 +45,7 @@
                                                                     <span class="sr-only">Toggle Dropdown</span>
                                                                 </button>
                                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
-                                                                    <h6 class="dropdown-header">Settings</h6>
+                                                                    {{-- <h6 class="dropdown-header">Settings</h6> --}}
                                                                     <button type="button" class="dropdown-item" onclick="approveBtn({{ $dtr_correction->id }})">Approve</button>
                                                                     <button type="button" class="dropdown-item" onclick="cancelBtn({{ $dtr_correction->id }})">Cancel</button>
                                                                 </div>
