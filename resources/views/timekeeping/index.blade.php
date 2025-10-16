@@ -1094,7 +1094,7 @@
                             </div>
                             <div class="tab-pane fade show active" id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                                 <div class="row">
-                                    <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;">
+                                    {{-- <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;"> --}}
                                         @csrf
 
                                         {{-- <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button> --}}
@@ -1770,20 +1770,23 @@
                                                                     @endphp
 
                                                                     <tr>
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
+                                                                        {{-- <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}"> --}}
 
+                                                                        @php
+                                                                            $date_formatted = str_replace('-', '', $date_r);
+                                                                        @endphp
                                                                         <td>
-                                                                            <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm{{$employee->id.'_'.$date_r}}">
+                                                                            <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm{{$employee->id.'_'.$date_formatted}}">
                                                                                 @csrf
 
                                                                                 <input type="hidden" name="date" value="{{ $date_r }}">
                                                                                 <input type="hidden" name="employee" value="{{ $employee->id }}">
                                                                                 <input type="hidden" name="status" value="Revert">
 
-                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id.'_'.$date_r }}')">
+                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id.'_'.$date_formatted }}')">
                                                                                     <i class="ti-back-left"></i>
                                                                                     Revert
                                                                                 </button>
@@ -1921,7 +1924,7 @@
                                                 </table>
                                             </div>
                                         </div>
-                                    </form>
+                                    {{-- </form> --}}
                                 </div>
                             </div>
                         </div>
@@ -1955,7 +1958,7 @@
     document.getElementById('totalForPosting').innerText = total_for_posting
     document.getElementById('totalPendingApproval').innerText = total_pending_approval
 
-    function revertFunction(date_r)
+    function revertFunction(employeeId)
     {
         Swal.fire({
             title: "Are you sure?",
@@ -1967,7 +1970,7 @@
             confirmButtonText: "Yes, revert it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('revertForm'+date_r).submit()
+                document.getElementById('revertForm'+employeeId).submit()
             }
         });
     }
