@@ -68,17 +68,17 @@
 
                         <ul class="nav nav-tabs mt-5">
                             <li class="nav-item">
-                                <a class="nav-link" href="#pills-issues" data-toggle="tab" >Issues <span class="badge badge-danger" id="totalIssues">0</span></a>
+                                <a class="nav-link active" href="#pills-issues" data-toggle="tab" >Issues <span class="badge badge-danger" id="totalIssues">0</span></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#pills-for-approval" data-toggle="tab" >Pending Approval <span class="badge badge-warning" id="totalPendingApproval">0</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge badge-success" id="totalForPosting">0</span></a>
+                                <a class="nav-link " href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge badge-success" id="totalForPosting">0</span></a>
                             </li>
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade " id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
+                            <div class="tab-pane fade show active" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
                                 <div class="row mt-5">
                                     <div class="d-flex align-items-center">
                                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -354,12 +354,12 @@
                                                                         }
                                                                         else
                                                                         {
-                                                                            $hours = floatval($employee_schedule['working_hours']);
+                                                                            $hours = intval($employee_schedule['working_hours']);
                                                                             $minutes = ($employee_schedule['working_hours']-$hours)*60;
                                                                             $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($time_in->datetime)));
                                                                             $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
                                                                         }
-                                                                        // dd($estimated_out);
+                                                                        
                                                                         $out_timestamp = strtotime($out);
                                                                         $estimated_out_timestamp = strtotime($date_r.' '.$estimated_out);
                                                                         if ($out_timestamp < $estimated_out_timestamp)
@@ -1092,7 +1092,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade show active" id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
+                            <div class="tab-pane fade " id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                                 <div class="row">
                                     {{-- <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;"> --}}
                                         @csrf
@@ -1373,7 +1373,7 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                $hours = floatval($employee_schedule['working_hours']);
+                                                                                $hours = intval($employee_schedule['working_hours']);
                                                                                 $minutes = ($employee_schedule['working_hours']-$hours)*60;
                                                                                 $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($time_in->datetime)));
                                                                                 $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
