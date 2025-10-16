@@ -9,6 +9,23 @@
                     <div class="card-body">
                         <h5 class="card-title">For Approval</h5>
 
+                        <ul class="nav nav-tabs mt-5">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#pills-for-approval" data-toggle="tab" >For Approval DTR<span class="badge badge-danger" id="totalForApproval">0</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#pills-approved-cancelled" data-toggle="tab" >Approved / Cancelled DTR<span class="badge badge-warning" id="totalApprovedCancelled">0</span></a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade " id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
+                                <div class="row mt-5">
+                                    
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-bordered timekeepingTable">
                                 <thead>

@@ -257,32 +257,41 @@
                                                                 }
 
                                                                 // Reg hrs
-                                                                if ($time_in && $time_out)
+                                                                if ($employee_schedule)
                                                                 {
-                                                                    $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
-                                                                    if($if_has_ob)
+                                                                    if ($time_in && $time_out)
                                                                     {
-                                                                        if ($if_has_ob->date_from < $time_in->datetime)
-                                                                        {
-                                                                            $final_time_in = $if_has_ob->date_from;
-                                                                        }
-                                                                        if ($if_has_ob->date_to > $time_out->datetime) 
-                                                                        {
-                                                                            $final_time_out = $if_has_ob->date_to;
-                                                                        }
-                                                                    }
-                                                                    $start_time = strtotime($final_time_in);
-                                                                    $end_time = strtotime($final_time_out);
+                                                                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                                                                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
 
-                                                                    $reg_hrs = ($end_time - $start_time) / 3600;
+                                                                        $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
 
-                                                                    if ($reg_hrs > 9.5)
-                                                                    {
-                                                                        $total_reg_hrs = 9.5;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        $total_reg_hrs = $reg_hrs;
+                                                                        $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                        if($if_has_ob)
+                                                                        {
+                                                                            if ($if_has_ob->date_from < $time_in->datetime)
+                                                                            {
+                                                                                $final_time_in = $if_has_ob->date_from;
+                                                                            }
+                                                                            if ($if_has_ob->date_to > $time_out->datetime) 
+                                                                            {
+                                                                                $final_time_out = $if_has_ob->date_to;
+                                                                            }
+                                                                        }
+
+                                                                        $start_time = strtotime($final_time_in);
+                                                                        $end_time = strtotime($final_time_out);
+
+                                                                        $working_hrs = ($end_time - $start_time) / 3600;
+
+                                                                        if ($working_hrs > 8)
+                                                                        {
+                                                                            $total_reg_hrs = $reg_hrs-1;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $total_reg_hrs = $reg_hrs;
+                                                                        }
                                                                     }
                                                                 }
 
