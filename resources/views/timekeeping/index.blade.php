@@ -68,17 +68,17 @@
 
                         <ul class="nav nav-tabs mt-5">
                             <li class="nav-item">
-                                <a class="nav-link active" href="#pills-issues" data-toggle="tab" >Issues <span class="badge badge-danger" id="totalIssues">0</span></a>
+                                <a class="nav-link" href="#pills-issues" data-toggle="tab" >Issues <span class="badge badge-danger" id="totalIssues">0</span></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#pills-for-approval" data-toggle="tab" >Pending Approval <span class="badge badge-warning" id="totalPendingApproval">0</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link " href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge badge-success" id="totalForPosting">0</span></a>
+                                <a class="nav-link active" href="#pills-for-posting" data-toggle="tab" >For Posting <span class="badge badge-success" id="totalForPosting">0</span></a>
                             </li>
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
+                            <div class="tab-pane fade " id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
                                 <div class="row mt-5">
                                     <div class="d-flex align-items-center">
                                         <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -1063,7 +1063,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade " id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
+                            <div class="tab-pane fade show active" id="pills-for-posting" role="tabpanel" aria-labelledby="pills-for-posting-tab">
                                 <div class="row">
                                     <form action="{{ url('timekeeping-per-company/post_dtr') }}" method="post" class="my-3" style="width: 100%;">
                                         @csrf
@@ -1247,32 +1247,41 @@
                                                                     }
 
                                                                     // Reg hrs
-                                                                    if ($time_in && $time_out)
+                                                                    if ($employee_schedule)
                                                                     {
-                                                                        $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
-                                                                        if($if_has_ob)
+                                                                        if ($time_in && $time_out)
                                                                         {
-                                                                            if ($if_has_ob->date_from < $time_in->datetime)
-                                                                            {
-                                                                                $final_time_in = $if_has_ob->date_from;
-                                                                            }
-                                                                            if ($if_has_ob->date_to > $time_out->datetime) 
-                                                                            {
-                                                                                $final_time_out = $if_has_ob->date_to;
-                                                                            }
-                                                                        }
-                                                                        $start_time = strtotime($final_time_in);
-                                                                        $end_time = strtotime($final_time_out);
+                                                                            $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                                                                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
 
-                                                                        $reg_hrs = ($end_time - $start_time) / 3600;
+                                                                            $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
 
-                                                                        if ($reg_hrs > 9.5)
-                                                                        {
-                                                                            $total_reg_hrs = 9.5;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            $total_reg_hrs = $reg_hrs;
+                                                                            $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                            if($if_has_ob)
+                                                                            {
+                                                                                if ($if_has_ob->date_from < $time_in->datetime)
+                                                                                {
+                                                                                    $final_time_in = $if_has_ob->date_from;
+                                                                                }
+                                                                                if ($if_has_ob->date_to > $time_out->datetime) 
+                                                                                {
+                                                                                    $final_time_out = $if_has_ob->date_to;
+                                                                                }
+                                                                            }
+
+                                                                            $start_time = strtotime($final_time_in);
+                                                                            $end_time = strtotime($final_time_out);
+    
+                                                                            $working_hrs = ($end_time - $start_time) / 3600;
+    
+                                                                            if ($working_hrs > 8)
+                                                                            {
+                                                                                $total_reg_hrs = $reg_hrs-1;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $total_reg_hrs = $reg_hrs;
+                                                                            }
                                                                         }
                                                                     }
 
