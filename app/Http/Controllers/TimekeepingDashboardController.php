@@ -465,7 +465,8 @@ class TimekeepingDashboardController extends Controller
                 'attendance_logs' => function($q)use($from_date,$to_date) {
                     $q->whereBetween('datetime', [$from_date.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])->orderBy('datetime','asc');
                     // $q->whereBetween('datetime', [$from_date.' 00:00:01', $to_date.' 23:59:59'])->orderBy('datetime','asc');
-                }
+                },
+                'dtr_correction.dtr_correction_approver.user'
             ])
             ->where('company_id', $request->company)
             ->when($department_data, function($q)use($department_data) {

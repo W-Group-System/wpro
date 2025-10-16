@@ -918,8 +918,9 @@
                                                         <th>DATE LOGS</th>
                                                         <th>TIME IN</th>
                                                         <th>TIME OUT</th>
-                                                        <th>TOTAL HRS</th>
-                                                        <th>TOTAL LATE</th>
+                                                        <th>APPROVERS</th>
+                                                        {{-- <th>TOTAL HRS</th>
+                                                        <th>TOTAL LATE</th> --}}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -1032,6 +1033,24 @@
                                                                 </td>
                                                                 <td>
                                                                     @php
+                                                                        $dtr_correction_approvers = ($employee->dtr_correction)->where('date', $date_r)->last();
+                                                                    @endphp
+                                                                    @foreach ($dtr_correction_approvers->dtr_correction_approver as $approver)
+                                                                        {{ $approver->user->name }} - 
+                                                                            @if($approver->status == "Pending") 
+                                                                            <span class="badge badge-warning">
+                                                                            @elseif($approver->status == "Approved") 
+                                                                            <span class="badge badge-success">
+                                                                            @elseif($approver->status == "Cancelled") 
+                                                                            <span class="badge badge-danger">
+                                                                            @endif
+                                                                                {{ $approver->status }}
+                                                                            </span>
+                                                                            <br>
+                                                                    @endforeach
+                                                                </td>
+                                                                {{-- <td>
+                                                                    @php
                                                                         if ($time_in && $time_out)
                                                                         {
                                                                             $start_time = strtotime($time_in->datetime);
@@ -1043,8 +1062,8 @@
                                                                     {{ number_format($total_reg_hrs,2) }}
 
                                                                     <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
-                                                                </td>
-                                                                <td @if($total_late > 0) class="bg-danger" @endif>
+                                                                </td> --}}
+                                                                {{-- <td @if($total_late > 0) class="bg-danger" @endif>
                                                                     @php
                                                                         if ($employee_schedule)
                                                                         {
@@ -1062,6 +1081,7 @@
                                                                     {{ number_format($total_late,0) }}
 
                                                                     <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][abs]" value="{{ number_format($abs,2) }}">
+                                                                </td> --}}
                                                             </tr>
                                                             @endif
                                                         @endforeach
