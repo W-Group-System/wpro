@@ -9,7 +9,7 @@
                     <div class="card-body">
                         <h5 class="card-title">For Approval</h5>
 
-                        <ul class="nav nav-tabs mt-5">
+                        {{-- <ul class="nav nav-tabs mt-5">
                             <li class="nav-item">
                                 <a class="nav-link" href="#pills-for-approval" data-toggle="tab" >For Approval DTR<span class="badge badge-danger" id="totalForApproval">0</span></a>
                             </li>
@@ -24,7 +24,7 @@
                                     
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="table-responsive">
                             <table class="table table-bordered timekeepingTable">
