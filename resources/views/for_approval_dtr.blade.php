@@ -11,10 +11,13 @@
 
                         <ul class="nav nav-tabs mt-5">
                             <li class="nav-item">
-                                <a class="nav-link active" href="#pills-for-approval" data-toggle="tab" >For Approval DTR<span class="badge badge-danger" id="totalForApproval">0</span></a>
+                                <a class="nav-link active" href="#pills-for-approval" data-toggle="tab" >For Approval DTR<span class="badge badge-danger" ></span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#pills-approved-cancelled" data-toggle="tab" >Approved / Cancelled DTR<span class="badge badge-warning" id="totalApprovedCancelled">0</span></a>
+                                <a class="nav-link" href="#pills-approved" data-toggle="tab" >Approved DTR<span class="badge badge-warning" ></span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#pills-cancelled" data-toggle="tab" >Cancelled DTR<span class="badge badge-warning" ></span></a>
                             </li>
                         </ul>
                         
@@ -46,8 +49,8 @@
                                                                 </button>
                                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuSplitButton1">
                                                                     {{-- <h6 class="dropdown-header">Settings</h6> --}}
-                                                                    <button type="button" class="dropdown-item" onclick="approveBtn({{ $dtr_correction->id }})">Approve</button>
-                                                                    <button type="button" class="dropdown-item" onclick="cancelBtn({{ $dtr_correction->id }})">Cancel</button>
+                                                                    <button type="button" class="dropdown-item p-3" onclick="approveBtn({{ $dtr_correction->id }})">Approve</button>
+                                                                    <button type="button" class="dropdown-item p-3" onclick="cancelBtn({{ $dtr_correction->id }})">Reject</button>
                                                                 </div>
                                                             </div>
 
@@ -100,7 +103,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="pills-approved-cancelled" role="tabpanel" aria-labelledby="pills-approved-cancelled">
+                            <div class="tab-pane fade" id="pills-approved" role="tabpanel" aria-labelledby="pills-approved">
                                 <div class="row mt-5">
                                     <div class="table-responsive">
                                         <table class="table table-bordered timekeepingTable">
@@ -116,7 +119,54 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($dtr_corrections->where('status','!=','Pending') as $dtr_correction)
+                                                @foreach ($dtr_corrections->where('status', 'Approved') as $dtr_correction)
+                                                    <tr>
+                                                        <td>{{ $dtr_correction->employee->user_info->name }}</td>
+                                                        <td>{{ $dtr_correction->date }}</td>
+                                                        <td>{{ date('h:i A', strtotime($dtr_correction->time_in)) }}</td>
+                                                        <td>{{ date('h:i A', strtotime($dtr_correction->time_out)) }}</td>
+                                                        <td style="white-space: pre-line;">{{ $dtr_correction->remarks }}</td>
+                                                        <td>
+                                                            <a href="{{ url($dtr_correction->file) }}" target="_blank">
+                                                                <i class="ti-file"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            @if($dtr_correction->status == 'Pending')
+                                                            <span class="badge badge-warning">
+                                                            @elseif($dtr_correction->status == 'Approved')
+                                                            <span class="badge badge-success">
+                                                            @elseif($dtr_correction->status == 'Cancelled')
+                                                            <span class="badge badge-danger">
+                                                            @endif
+                                                            
+                                                            {{ $dtr_correction->status }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pills-cancelled" role="tabpanel" aria-labelledby="pills-cancelled">
+                                <div class="row mt-5">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered timekeepingTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>EMPLOYEE</th>
+                                                    <th>DATE</th>
+                                                    <th>TIME IN</th>
+                                                    <th>TIME OUT</th>
+                                                    <th>REMARKS</th>
+                                                    <th>INCIDENT REPORT</th>
+                                                    <th>STATUS</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($dtr_corrections->where('status', 'Cancelled') as $dtr_correction)
                                                     <tr>
                                                         <td>{{ $dtr_correction->employee->user_info->name }}</td>
                                                         <td>{{ $dtr_correction->date }}</td>
