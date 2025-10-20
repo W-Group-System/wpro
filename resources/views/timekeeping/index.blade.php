@@ -784,7 +784,7 @@
                                                                         @php
                                                                             $label = str_replace('-', '', $employee->id.$date_r);
                                                                         @endphp
-                                                                        <form method="post" action="{{ url('timekeeping-official/moveToForPosting') }}" onsubmit="show()" id="moveToForPostingForm{{ $label }}" style="display: inline-block;">
+                                                                        <form method="post" action="{{ url('timekeeping-official/moveToForPosting') }}" onsubmit="show()" id="moveToForPostingForm{{ $label }}" style="display: inline-block;" onsubmit="show()">
                                                                             @csrf 
 
                                                                             <input type="hidden" name="employee_id" value="{{$employee->id}}">
