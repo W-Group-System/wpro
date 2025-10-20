@@ -553,8 +553,8 @@ class TimekeepingDashboardController extends Controller
             $dtr_status->save();
         }
 
-        Alert::success('Successfully Revert')->persistent('Dismiss');
-        return back();
+        // Alert::success('Successfully Revert')->persistent('Dismiss');
+        // return back();
     }
 
     public function moveToForPosting(Request $request)
