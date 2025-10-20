@@ -427,7 +427,7 @@ class TimekeepingDashboardController extends Controller
 
     public function postDtr(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         foreach($request->employees as $employee_code => $employee)
         {
             foreach($employee as $date => $attendance)
@@ -439,6 +439,7 @@ class TimekeepingDashboardController extends Controller
                     $timekeeping->log_date = $attendance['log_date'] ?? null;
                     $timekeeping->department_id = $attendance['department_id'] ?? null;
                     $timekeeping->shift = $attendance['shift'] ?? null;
+                    $timekeeping->name = $attendance['name'] ?? null;
                     $timekeeping->company_id = $attendance['company_id'] ?? null;
                     $timekeeping->employee_no = $attendance['employee_no'] ?? null;
                     $timekeeping->in = $attendance['in'] ?? null;
