@@ -221,9 +221,9 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(DtrCorrection::class,'employee_id');
     }
-    public function timekeeping_posted()
+    public function attendance_detailed_report()
     {
-        return $this->hasMany(TimekeepingPosted::class,'employee_no','employee_code');
+        return $this->hasMany(AttendanceDetailedReport::class,'employee_no','employee_code');
     }
     public function attendance_logs()
     {
