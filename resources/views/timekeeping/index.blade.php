@@ -59,7 +59,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         Filter
                                     </button>
-                                    <a href="{{ url('timekeeping-per-company') }}" class="btn btn-warning">
+                                    <a href="{{ url('timekeeping-official') }}" class="btn btn-warning">
                                         Reset
                                     </a>
                                 </div>
@@ -760,11 +760,11 @@
                                                                 $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r));
                                                                 $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
-                                                                $approved_status = count(($employee->dtr_status)->where('date',$date_r)->where('status','Approved'));
+                                                                $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                             @endphp
 
-                                                            @if((($pending_dtr == 0) && ($approved_status == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
-                                                                @if(($abs > 0) || ($late > 0) || ($undertime > 0) || ($revert > 0))
+                                                            @if((($pending_dtr == 0) && ($for_posting == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
+                                                                @if(($abs > 0) || ($revert > 0))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -784,7 +784,7 @@
                                                                         @php
                                                                             $label = str_replace('-', '', $employee->id.$date_r);
                                                                         @endphp
-                                                                        <form method="post" action="{{ url('timekeeping-official/moveToForPosting') }}" onsubmit="show()" id="moveToForPostingForm{{ $label }}" style="display: inline-block;">
+                                                                        <form method="post" action="{{ url('timekeeping-official/moveToForPosting') }}" onsubmit="show()" id="moveToForPostingForm{{ $label }}" style="display: inline-block;" onsubmit="show()">
                                                                             @csrf 
 
                                                                             <input type="hidden" name="employee_id" value="{{$employee->id}}">
@@ -1144,7 +1144,9 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
+                                                                @if($department_data)
                                                                 <input type="checkbox" class="form-control" id="checkboxAll">
+                                                                @endif
                                                             </th>
                                                             <th>ACTIONS</th>
                                                             <th>COMPANY</th>
@@ -1815,12 +1817,12 @@
                                                                 @php
                                                                     $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
-                                                                    $approved = count(($employee->dtr_status)->where('date',$date_r)->where('status','Approved'));
+                                                                    $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                                 @endphp
 
                                                                 @if(($revert == 0) && ($posted_dtr == 0))
-                                                                    @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0) || ($approved > 0))
+                                                                    @if((($abs == 0) && ($undertime > 0) && ($late > 0)) || ($approved_dtr > 0) || ($for_posting > 0))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -1834,7 +1836,9 @@
                                                                         
                                                                         <td>
                                                                             {{-- <input type="hidden" class="hidden-selected" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]"> --}}
+                                                                            @if($department_data)
                                                                             <input type="checkbox" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]" class="selectEmployee form-control">
+                                                                            @endif
                                                                         </td>
                                                                         <td>
                                                                             {{-- @php
@@ -2073,11 +2077,11 @@
 @endsection
 
 @section('js')
-{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     var total_issues = "<?php echo($total_issues) ?>"
     var total_for_posting = "<?php echo($total_for_posting) ?>"
@@ -2130,6 +2134,10 @@
                     },
                     success: function() {
                         location.reload()
+                        Swal.fire({
+                            title: "Successfully Revert",
+                            icon: "success"
+                        });
                     }
                 })
             }
@@ -2144,13 +2152,13 @@
             },
             paginate:false,
             dom: 'Bfrtip',
-            // buttons: [
-            //     'copy', 'excel'
-            // ],
-            // columnDefs: [{
-            //     "defaultContent": "-",
-            //     "targets": "_all"
-            // }],
+            buttons: [
+                'copy', 'excel'
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
             order: [] 
         })
 

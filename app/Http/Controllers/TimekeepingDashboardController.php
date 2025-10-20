@@ -536,25 +536,45 @@ class TimekeepingDashboardController extends Controller
     public function dtrStatus(Request $request)
     {
         // dd($request->all());
-        $dtr_status = new DtrStatus;
-        $dtr_status->employee_id = $request->employee;
-        $dtr_status->date = $request->date;
-        $dtr_status->status = 'Revert';
-        $dtr_status->action_by = auth()->user()->id;
-        $dtr_status->save();
+        $dtr_status = DtrStatus::where('employee_id', $request->employee)->where('date',$request->date)->first();
+        if ($dtr_status)
+        {
+            $dtr_status->status = 'Revert';
+            $dtr_status->action_by = auth()->user()->id;
+            $dtr_status->save();
+        }
+        else 
+        {
+            $dtr_status = new DtrStatus;
+            $dtr_status->employee_id = $request->employee;
+            $dtr_status->date = $request->date;
+            $dtr_status->status = 'Revert';
+            $dtr_status->action_by = auth()->user()->id;
+            $dtr_status->save();
+        }
 
-        Alert::success('Successfully Revert')->persistent('Dismiss');
-        return back();
+        // Alert::success('Successfully Revert')->persistent('Dismiss');
+        // return back();
     }
 
     public function moveToForPosting(Request $request)
     {
-        $dtr_status = new DtrStatus;
-        $dtr_status->employee_id = $request->employee_id;
-        $dtr_status->date = $request->date;
-        $dtr_status->status = 'Approved';
-        $dtr_status->action_by = auth()->user()->id;
-        $dtr_status->save();
+        $dtr_status = DtrStatus::where('employee_id', $request->employee_id)->where('date',$request->date)->first();
+        if($dtr_status)
+        {
+            $dtr_status->status = 'For posting';
+            $dtr_status->action_by = auth()->user()->id;
+            $dtr_status->save();
+        }
+        else
+        {
+            $dtr_status = new DtrStatus;
+            $dtr_status->employee_id = $request->employee_id;
+            $dtr_status->date = $request->date;
+            $dtr_status->status = 'For posting';
+            $dtr_status->action_by = auth()->user()->id;
+            $dtr_status->save();
+        }
 
         Alert::success('Successfully Moved')->persistent('Dismiss');
         return back();
