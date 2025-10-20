@@ -760,10 +760,10 @@
                                                                 $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r));
                                                                 $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
-                                                                $approved_status = count(($employee->dtr_status)->where('date',$date_r)->where('status','Approved'));
+                                                                $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                             @endphp
 
-                                                            @if((($pending_dtr == 0) && ($approved_status == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
+                                                            @if((($pending_dtr == 0) && ($for_posting == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
                                                                 @if(($abs > 0) || ($late > 0) || ($undertime > 0) || ($revert > 0))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
@@ -1144,7 +1144,9 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
+                                                                @if($department_data)
                                                                 <input type="checkbox" class="form-control" id="checkboxAll">
+                                                                @endif
                                                             </th>
                                                             <th>ACTIONS</th>
                                                             <th>COMPANY</th>
@@ -1815,12 +1817,12 @@
                                                                 @php
                                                                     $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
-                                                                    $approved = count(($employee->dtr_status)->where('date',$date_r)->where('status','Approved'));
+                                                                    $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                                 @endphp
 
                                                                 @if(($revert == 0) && ($posted_dtr == 0))
-                                                                    @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0) || ($approved > 0))
+                                                                    @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0) || ($for_posting > 0))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -1834,7 +1836,9 @@
                                                                         
                                                                         <td>
                                                                             {{-- <input type="hidden" class="hidden-selected" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]"> --}}
+                                                                            @if($department_data)
                                                                             <input type="checkbox" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]" class="selectEmployee form-control">
+                                                                            @endif
                                                                         </td>
                                                                         <td>
                                                                             {{-- @php
