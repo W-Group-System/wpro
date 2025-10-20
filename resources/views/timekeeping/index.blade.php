@@ -408,7 +408,7 @@
                                                                 
                                                                 // OB
                                                                 $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
-                                                                if($if_has_ob)
+                                                                if($if_has_ob && $time_in)
                                                                 {
                                                                     if ($if_has_ob->date_from < $time_in->datetime)
                                                                     {
@@ -1429,7 +1429,7 @@
                                                                     
                                                                     // OB
                                                                     $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
-                                                                    if($if_has_ob)
+                                                                    if($if_has_ob && $time_in)
                                                                     {
                                                                         if ($if_has_ob->date_from < $time_in->datetime)
                                                                         {
