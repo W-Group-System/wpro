@@ -408,17 +408,28 @@
                                                                 
                                                                 // OB
                                                                 $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
-                                                                if($if_has_ob && $time_in)
+                                                                if($if_has_ob)
                                                                 {
-                                                                    if ($if_has_ob->date_from < $time_in->datetime)
+                                                                    if ($time_in && $time_out)
+                                                                    {
+                                                                        if ($if_has_ob->date_from < $time_in->datetime)
+                                                                        {
+                                                                            $ob_in = $if_has_ob->date_from;
+                                                                            $final_time_in = $ob_in;
+                                                                        }
+                                                                        if ($if_has_ob->date_to > $time_out->datetime) 
+                                                                        {
+                                                                            $ob_out = $if_has_ob->date_to;
+                                                                            $final_time_out = $ob_out;
+                                                                        }
+                                                                    }
+                                                                    else
                                                                     {
                                                                         $ob_in = $if_has_ob->date_from;
-                                                                        $time_in = $ob_in;
-                                                                    }
-                                                                    if ($if_has_ob->date_to > $time_out->datetime) 
-                                                                    {
+                                                                        $final_time_in = $ob_in;
+
                                                                         $ob_out = $if_has_ob->date_to;
-                                                                        $time_out = $ob_out;
+                                                                        $final_time_out = $ob_out;
                                                                     }
 
                                                                     $undertime = 0;
@@ -1431,15 +1442,26 @@
                                                                     $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                     if($if_has_ob && $time_in)
                                                                     {
-                                                                        if ($if_has_ob->date_from < $time_in->datetime)
+                                                                        if ($time_in && $time_out)
+                                                                        {
+                                                                            if ($if_has_ob->date_from < $time_in->datetime)
+                                                                            {
+                                                                                $ob_in = $if_has_ob->date_from;
+                                                                                $final_time_in = $ob_in;
+                                                                            }
+                                                                            if ($if_has_ob->date_to > $time_out->datetime) 
+                                                                            {
+                                                                                $ob_out = $if_has_ob->date_to;
+                                                                                $final_time_out = $ob_out;
+                                                                            }
+                                                                        }
+                                                                        else
                                                                         {
                                                                             $ob_in = $if_has_ob->date_from;
-                                                                            $time_in = $ob_in;
-                                                                        }
-                                                                        if ($if_has_ob->date_to > $time_out->datetime) 
-                                                                        {
+                                                                            $final_time_in = $ob_in;
+
                                                                             $ob_out = $if_has_ob->date_to;
-                                                                            $time_out = $ob_out;
+                                                                            $final_time_out = $ob_out;
                                                                         }
 
                                                                         $undertime = 0;
