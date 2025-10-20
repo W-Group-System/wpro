@@ -264,6 +264,11 @@
                                                                         $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
                                                                         $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
 
+                                                                        if ($schedule_in > $schedule_out)
+                                                                        {
+                                                                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                                                                        }
+                                                                        
                                                                         $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
 
                                                                         $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
@@ -324,7 +329,7 @@
                                                                 // Undertime
                                                                 if ($employee_schedule)
                                                                 {
-                                                                    if ($time_out)
+                                                                    if ($time_out && $time_in)
                                                                     {
                                                                         $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                         if($if_has_ob)
@@ -1138,7 +1143,9 @@
                                                 <table class="table table-bordered mt-5 timekeepingTable">
                                                     <thead>
                                                         <tr>
-                                                            <th></th>
+                                                            <th>
+                                                                <input type="checkbox" class="form-control" id="checkboxAll">
+                                                            </th>
                                                             <th>ACTIONS</th>
                                                             <th>COMPANY</th>
                                                             <th>DEPARTMENT</th>
@@ -1314,8 +1321,13 @@
                                                                             $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
                                                                             $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
 
+                                                                            if ($schedule_in > $schedule_out)
+                                                                            {
+                                                                                $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                                                                            }
+                                                                            
                                                                             $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
-
+                                                                            
                                                                             $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                             if($if_has_ob)
                                                                             {
@@ -1333,7 +1345,7 @@
                                                                             $end_time = strtotime($final_time_out);
     
                                                                             $working_hrs = ($end_time - $start_time) / 3600;
-    
+                                                                            
                                                                             if ($working_hrs > 8)
                                                                             {
                                                                                 $total_reg_hrs = $reg_hrs-1;
@@ -1374,7 +1386,7 @@
                                                                     // Undertime
                                                                     if ($employee_schedule)
                                                                     {
-                                                                        if ($time_out)
+                                                                        if ($time_in)
                                                                         {
                                                                             $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                             if($if_has_ob)
@@ -2077,8 +2089,6 @@
 
     function moveToForPosting(employeeId)
     {
-        console.log(employeeId);
-        
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -2142,6 +2152,17 @@
             //     "targets": "_all"
             // }],
             order: [] 
+        })
+
+        $("#checkboxAll").on('change', function() {
+            if ($(this).is(':checked'))
+            {
+                $(".selectEmployee").prop('checked', true)
+            }
+            else 
+            {
+                $(".selectEmployee").prop('checked', false)
+            }
         })
 
         $(".selectEmployee").on('change', function() {
