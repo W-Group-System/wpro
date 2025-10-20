@@ -755,9 +755,10 @@
                                                                 $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r));
                                                                 $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
+                                                                $approved_status = count(($employee->dtr_status)->where('date',$date_r)->where('status','Approved'));
                                                             @endphp
 
-                                                            @if(($pending_dtr == 0) || ($cancelled_dtr > 0) || ($revert > 0))
+                                                            @if((($pending_dtr == 0) && ($approved_status == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
                                                                 @if(($abs > 0) || ($late > 0) || ($undertime > 0) || ($revert > 0))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
@@ -774,6 +775,21 @@
                                                                             <i class="ti-pencil"></i>
                                                                             Edit
                                                                         </button>
+
+                                                                        @php
+                                                                            $label = str_replace('-', '', $employee->id.$date_r);
+                                                                        @endphp
+                                                                        <form method="post" action="{{ url('timekeeping-official/moveToForPosting') }}" onsubmit="show()" id="moveToForPostingForm{{ $label }}" style="display: inline-block;">
+                                                                            @csrf 
+
+                                                                            <input type="hidden" name="employee_id" value="{{$employee->id}}">
+                                                                            <input type="hidden" name="date" value="{{ $date_r }}">
+
+                                                                            <button type="button" class="btn btn-sm btn-success" onclick="moveToForPosting({{ $label }})">
+                                                                                <i class="ti-arrow-right"></i>
+                                                                                Move to for posting
+                                                                            </button>
+                                                                        </form>
                                                                     </td>
                                                                     <td>
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
@@ -1108,7 +1124,9 @@
                                     <form action="{{ url('timekeeping-official/post_dtr') }}" method="post" class="my-3" style="width: 100%;" onsubmit="show()">
                                         @csrf
 
+                                        @if($department_data)
                                         <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button>
+                                        @endif
 
                                         <div class="d-flex align-items-center ml-2">
                                             <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
@@ -1785,11 +1803,12 @@
                                                                 @php
                                                                     $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
+                                                                    $approved = count(($employee->dtr_status)->where('date',$date_r)->where('status','Approved'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                                 @endphp
 
                                                                 @if(($revert == 0) && ($posted_dtr == 0))
-                                                                    @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0))
+                                                                    @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0) || ($approved > 0))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -2056,22 +2075,24 @@
     document.getElementById('totalForPosting').innerText = total_for_posting
     document.getElementById('totalPendingApproval').innerText = total_pending_approval
 
-    // function revertFunction(employeeId)
-    // {
-    //     Swal.fire({
-    //         title: "Are you sure?",
-    //         text: "You won't be able to revert this!",
-    //         icon: "warning",
-    //         showCancelButton: true,
-    //         confirmButtonColor: "#3085d6",
-    //         cancelButtonColor: "#d33",
-    //         confirmButtonText: "Yes, revert it!"
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             document.getElementById('revertForm'+employeeId).submit()
-    //         }
-    //     });
-    // }
+    function moveToForPosting(employeeId)
+    {
+        console.log(employeeId);
+        
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, move it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('moveToForPostingForm'+employeeId).submit()
+            }
+        });
+    }
 
     function revertFunction(employeeId, date)
     {

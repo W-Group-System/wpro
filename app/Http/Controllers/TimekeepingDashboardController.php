@@ -547,4 +547,17 @@ class TimekeepingDashboardController extends Controller
         Alert::success('Successfully Revert')->persistent('Dismiss');
         return back();
     }
+
+    public function moveToForPosting(Request $request)
+    {
+        $dtr_status = new DtrStatus;
+        $dtr_status->employee_id = $request->employee_id;
+        $dtr_status->date = $request->date;
+        $dtr_status->status = 'Approved';
+        $dtr_status->action_by = auth()->user()->id;
+        $dtr_status->save();
+
+        Alert::success('Successfully Moved')->persistent('Dismiss');
+        return back();
+    }
 }
