@@ -2134,6 +2134,10 @@
                     },
                     success: function() {
                         location.reload()
+                        Swal.fire({
+                            title: "Successfully Revert",
+                            icon: "success"
+                        });
                     }
                 })
             }
