@@ -427,7 +427,7 @@ class TimekeepingDashboardController extends Controller
 
     public function postDtr(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         foreach($request->employees as $employee_code => $employee)
         {
             foreach($employee as $date => $attendance)
