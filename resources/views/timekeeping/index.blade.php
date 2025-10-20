@@ -59,7 +59,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         Filter
                                     </button>
-                                    <a href="{{ url('timekeeping-per-company') }}" class="btn btn-warning">
+                                    <a href="{{ url('timekeeping-official') }}" class="btn btn-warning">
                                         Reset
                                     </a>
                                 </div>
@@ -764,7 +764,7 @@
                                                             @endphp
 
                                                             @if((($pending_dtr == 0) && ($for_posting == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
-                                                                @if(($abs > 0) || ($late > 0) || ($undertime > 0) || ($revert > 0))
+                                                                @if(($abs > 0) || ($revert > 0))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -1822,7 +1822,7 @@
                                                                 @endphp
 
                                                                 @if(($revert == 0) && ($posted_dtr == 0))
-                                                                    @if((($abs == 0) && ($undertime == 0) && ($late == 0)) || ($approved_dtr > 0) || ($for_posting > 0))
+                                                                    @if((($abs == 0) && ($undertime > 0) && ($late > 0)) || ($approved_dtr > 0) || ($for_posting > 0))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -2077,11 +2077,11 @@
 @endsection
 
 @section('js')
-{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     var total_issues = "<?php echo($total_issues) ?>"
     var total_for_posting = "<?php echo($total_for_posting) ?>"
@@ -2152,13 +2152,13 @@
             },
             paginate:false,
             dom: 'Bfrtip',
-            // buttons: [
-            //     'copy', 'excel'
-            // ],
-            // columnDefs: [{
-            //     "defaultContent": "-",
-            //     "targets": "_all"
-            // }],
+            buttons: [
+                'copy', 'excel'
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
             order: [] 
         })
 
