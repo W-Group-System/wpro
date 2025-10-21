@@ -438,6 +438,7 @@
                                                                     }
 
                                                                     $undertime = 0;
+                                                                    $abs = 0;
                                                                 }
                                                                 
                                                                 // ND
@@ -756,15 +757,15 @@
                                                             @endphp
                                                             
                                                             @php
-                                                                $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
-                                                                $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r));
-                                                                $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
+                                                                $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Pending'));
                                                                 $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
+
+                                                                $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
+                                                                $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                             @endphp
 
-                                                            @if((($pending_dtr == 0) && ($for_posting == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
-                                                                @if(($abs > 0) || ($revert > 0))
+                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0)))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -784,6 +785,8 @@
                                                                         @php
                                                                             $label = str_replace('-', '', $employee->id.$date_r);
                                                                         @endphp
+
+                                                                        @if($revert == 0)
                                                                         <form method="post" action="{{ url('timekeeping-official/moveToForPosting') }}" onsubmit="show()" id="moveToForPostingForm{{ $label }}" style="display: inline-block;" onsubmit="show()">
                                                                             @csrf 
 
@@ -795,6 +798,7 @@
                                                                                 Move to for posting
                                                                             </button>
                                                                         </form>
+                                                                        @endif
                                                                     </td>
                                                                     <td>
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
@@ -920,7 +924,6 @@
                                                                     </td>
                                                                     <td></td>
                                                                 </tr>
-                                                                @endif
                                                             @endif
                                                         @endforeach
                                                     @endforeach
@@ -1472,7 +1475,7 @@
                                                                     
                                                                     // OB
                                                                     $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
-                                                                    if($if_has_ob && $time_in)
+                                                                    if($if_has_ob)
                                                                     {
                                                                         if ($time_in && $time_out)
                                                                         {
@@ -1497,6 +1500,7 @@
                                                                         }
 
                                                                         $undertime = 0;
+                                                                        $abs = 0;
                                                                     }
                                                                     
                                                                     // ND
@@ -1817,12 +1821,12 @@
                                                                 @php
                                                                     $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
+
                                                                     $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                                 @endphp
 
-                                                                @if(($revert == 0) && ($posted_dtr == 0))
-                                                                    @if((($abs == 0) && ($undertime > 0) && ($late > 0)) || ($approved_dtr > 0) || ($for_posting > 0))
+                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) || (($for_posting > 0)))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -1835,27 +1839,11 @@
 
                                                                         
                                                                         <td>
-                                                                            {{-- <input type="hidden" class="hidden-selected" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]"> --}}
                                                                             @if($department_data)
                                                                             <input type="checkbox" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]" class="selectEmployee form-control">
                                                                             @endif
                                                                         </td>
                                                                         <td>
-                                                                            {{-- @php
-                                                                                $date_formatted = str_replace('-', '', $date_r);
-                                                                            @endphp --}}
-                                                                            {{-- <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm{{$employee->id.'_'.$date_formatted}}">
-                                                                                @csrf
-
-                                                                                <input type="hidden" name="date" value="{{ $date_r }}">
-                                                                                <input type="hidden" name="employee" value="{{ $employee->id }}">
-                                                                                <input type="hidden" name="status" value="Revert">
-
-                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id.'_'.$date_formatted }}')">
-                                                                                    <i class="ti-back-left"></i>
-                                                                                    Revert
-                                                                                </button>
-                                                                            </form> --}}
                                                                             <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id }}', '{{ $date_r }}')">
                                                                                 <i class="ti-back-left"></i>
                                                                                 Revert
@@ -2049,7 +2037,6 @@
                                                                             {{ $if_leave }}
                                                                         </td>
                                                                     </tr>
-                                                                    @endif
                                                                 @endif
                                                             @endforeach
                                                         @endforeach
@@ -2077,11 +2064,11 @@
 @endsection
 
 @section('js')
-<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
 <script>
     var total_issues = "<?php echo($total_issues) ?>"
     var total_for_posting = "<?php echo($total_for_posting) ?>"
@@ -2133,11 +2120,14 @@
                         show()
                     },
                     success: function() {
-                        location.reload()
                         Swal.fire({
                             title: "Successfully Revert",
                             icon: "success"
                         });
+
+                        setTimeout(() => {
+                            location.reload()
+                        },200)
                     }
                 })
             }
@@ -2152,14 +2142,14 @@
             },
             paginate:false,
             dom: 'Bfrtip',
-            buttons: [
-                'copy', 'excel'
-            ],
-            columnDefs: [{
-                "defaultContent": "-",
-                "targets": "_all"
-            }],
-            order: [] 
+            // buttons: [
+            //     'copy', 'excel'
+            // ],
+            // columnDefs: [{
+            //     "defaultContent": "-",
+            //     "targets": "_all"
+            // }],
+            // order: [] 
         })
 
         $("#checkboxAll").on('change', function() {
