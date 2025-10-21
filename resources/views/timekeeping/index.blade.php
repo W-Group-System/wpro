@@ -257,6 +257,7 @@
                                                                 }
 
                                                                 // Reg hrs
+                                                                $schedule_hrs = 0;
                                                                 if ($employee_schedule)
                                                                 {
                                                                     if ($time_in && $time_out)
@@ -269,7 +270,7 @@
                                                                             $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
                                                                         }
                                                                         
-                                                                        $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+                                                                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
 
                                                                         $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                         if($if_has_ob)
@@ -283,15 +284,29 @@
                                                                                 $final_time_out = $if_has_ob->date_to;
                                                                             }
                                                                         }
+                                                                        
+                                                                        $time_start = date('Y-m-d h:i A', strtotime($final_time_in));
+                                                                        $time_end = date('Y-m-d h:i A', strtotime($final_time_out));
 
-                                                                        $start_time = strtotime($final_time_in);
-                                                                        $end_time = strtotime($final_time_out);
+                                                                        $start_time = strtotime($time_start);
+                                                                        $end_time = strtotime($time_end);
 
-                                                                        $working_hrs = ($end_time - $start_time) / 3600;
-
+                                                                        if ($schedule_in > $start_time)
+                                                                        {
+                                                                            $start_time = $schedule_in;
+                                                                        }
+                                                                        if ($end_time > $schedule_out)
+                                                                        {
+                                                                            $end_time = $schedule_out;
+                                                                        }
+                                                                        $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                                                        
                                                                         if ($working_hrs > 8)
                                                                         {
-                                                                            $total_reg_hrs = $reg_hrs-1;
+                                                                            if ($working_hrs >= ($schedule_hrs/1.5))
+                                                                            {
+                                                                                $total_reg_hrs = $working_hrs-1;
+                                                                            }
                                                                         }
                                                                         else
                                                                         {
@@ -763,9 +778,11 @@
                                                                 $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                 $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
+                                                                $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
+
                                                             @endphp
 
-                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0)))
+                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0)))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -1346,14 +1363,27 @@
                                                                                 }
                                                                             }
 
-                                                                            $start_time = strtotime($final_time_in);
-                                                                            $end_time = strtotime($final_time_out);
+                                                                            $time_start = date('Y-m-d h:i A', strtotime($final_time_in));
+                                                                            $time_end = date('Y-m-d h:i A', strtotime($final_time_out));
+                                                                            $start_time = strtotime($time_start);
+                                                                            $end_time = strtotime($time_end);
+
+                                                                            if ($schedule_in > $start_time)
+                                                                            {
+                                                                                $start_time = $schedule_in;
+                                                                            }
+                                                                            if ($end_time > $schedule_out)
+                                                                            {
+                                                                                $end_time = $schedule_out;
+                                                                            }
     
                                                                             $working_hrs = ($end_time - $start_time) / 3600;
-                                                                            
                                                                             if ($working_hrs > 8)
                                                                             {
-                                                                                $total_reg_hrs = $reg_hrs-1;
+                                                                                if ($working_hrs >= ($schedule_hrs/1.5))
+                                                                                {
+                                                                                    $total_reg_hrs = $working_hrs-1;
+                                                                                }
                                                                             }
                                                                             else
                                                                             {
@@ -2155,27 +2185,29 @@
             
         })
 
-        $("#companySelect").on('change', function() {
+        // @php
+        // $("#companySelect").on('change', function() {
             
-            $("[name='date_from']").removeAttr('min')
-            $("[name='date_to']").removeAttr('min')
+        //     $("[name='date_from']").removeAttr('min')
+        //     $("[name='date_to']").removeAttr('min')
 
-            $.ajax({
-                type:"POST",
-                url:"{{ url('timekeeping-official/refreshDate') }}",
-                data: {
-                    company: $(this).val()
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data) {
-                    $("[name='date_from']").prop('min', data)
-                    $("[name='date_to']").prop('min',data)
-                }
-            })
+        //     $.ajax({
+        //         type:"POST",
+        //         url:"{{ url('timekeeping-official/refreshDate') }}",
+        //         data: {
+        //             company: $(this).val()
+        //         },
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         success: function(data) {
+        //             $("[name='date_from']").prop('min', data)
+        //             $("[name='date_to']").prop('min',data)
+        //         }
+        //     })
 
-        })
+        // })
+        // @endphp
 
 
         $(".forPostingTable").DataTable({
