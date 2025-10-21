@@ -87,7 +87,7 @@
                         
                                     <div class="col-md-12">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered mt-5 timekeepingTable">
+                                            <table class="table table-bordered mt-5 issuesTable">
                                                 <thead>
                                                     <tr>
                                                         <th>ACTION</th>
@@ -1143,7 +1143,7 @@
                             
                                         <div class="col-md-12">
                                             <div class="table-responsive">
-                                                <table class="table table-bordered mt-5 timekeepingTable">
+                                                <table class="table table-bordered mt-5 forPostingTable">
                                                     <thead>
                                                         <tr>
                                                             <th>
@@ -2064,11 +2064,11 @@
 @endsection
 
 @section('js')
-{{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
+<script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     var total_issues = "<?php echo($total_issues) ?>"
     var total_for_posting = "<?php echo($total_for_posting) ?>"
@@ -2135,7 +2135,24 @@
     }
 
     $(document).ready(function() {
-        $(".timekeepingTable").DataTable({
+        $(".forPostingTable").DataTable({
+            // pagelength:15,
+            fixedColumns: {
+                leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
+            },
+            paginate:false,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            // order: [] 
+        })
+
+        $(".issuesTable").DataTable({
             // pagelength:15,
             fixedColumns: {
                 leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
@@ -2145,11 +2162,11 @@
             // buttons: [
             //     'copy', 'excel'
             // ],
-            // columnDefs: [{
-            //     "defaultContent": "-",
-            //     "targets": "_all"
-            // }],
-            // order: [] 
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: [] 
         })
 
         $("#checkboxAll").on('change', function() {
