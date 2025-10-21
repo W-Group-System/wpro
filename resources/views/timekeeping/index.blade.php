@@ -30,7 +30,7 @@
                         <form method="get" onsubmit="show()">
                             <div class="row">
                                 <div class="col-md-2">
-                                    <select class="form-control js-example-basic-single" name="company" data-placeholder="Select company" style="width: 100%;" required>
+                                    <select class="form-control js-example-basic-single" name="company" id="companySelect" data-placeholder="Select company" style="width: 100%;" required>
                                         <option></option>
                                         @foreach ($companies as $company)
                                         <option value="{{ $company->id }}" @if($company->id == $company_data) selected
@@ -1821,12 +1821,11 @@
                                                                 @php
                                                                     $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
-
                                                                     $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                                 @endphp
 
-                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) || (($for_posting > 0)))
+                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) || (($for_posting > 0)))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -2135,6 +2134,50 @@
     }
 
     $(document).ready(function() {
+        $("#checkboxAll").on('change', function() {
+            if ($(this).is(':checked'))
+            {
+                $(".selectEmployee").prop('checked', true)
+            }
+            else 
+            {
+                $(".selectEmployee").prop('checked', false)
+            }
+        })
+
+        $(".selectEmployee").on('change', function() {
+            var ifSelected = $(this).closest('td').find('.hidden-selected')
+
+            if ($(this).is(':checked'))
+            {
+                $(this).val("selected")
+            }
+            
+        })
+
+        $("#companySelect").on('change', function() {
+            
+            $("[name='date_from']").removeAttr('min')
+            $("[name='date_to']").removeAttr('min')
+
+            $.ajax({
+                type:"POST",
+                url:"{{ url('timekeeping-official/refreshDate') }}",
+                data: {
+                    company: $(this).val()
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(data) {
+                    $("[name='date_from']").prop('min', data)
+                    $("[name='date_to']").prop('min',data)
+                }
+            })
+
+        })
+
+
         $(".forPostingTable").DataTable({
             // pagelength:15,
             fixedColumns: {
@@ -2167,27 +2210,6 @@
                 "targets": "_all"
             }],
             order: [] 
-        })
-
-        $("#checkboxAll").on('change', function() {
-            if ($(this).is(':checked'))
-            {
-                $(".selectEmployee").prop('checked', true)
-            }
-            else 
-            {
-                $(".selectEmployee").prop('checked', false)
-            }
-        })
-
-        $(".selectEmployee").on('change', function() {
-            var ifSelected = $(this).closest('td').find('.hidden-selected')
-
-            if ($(this).is(':checked'))
-            {
-                $(this).val("selected")
-            }
-            
         })
     })
 </script>

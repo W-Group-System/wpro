@@ -579,4 +579,15 @@ class TimekeepingDashboardController extends Controller
         Alert::success('Successfully Moved')->persistent('Dismiss');
         return back();
     }
+
+    public function refreshDate(Request $request)
+    {
+        // dd($request->all());
+        $attendance_detailed_reports = AttendanceDetailedReport::select('cut_off_date')
+            ->where('company_id', $request->company)
+            ->orderBy('id','desc')
+            ->first();
+
+        return $attendance_detailed_reports->cut_off_date;
+    }
 }
