@@ -793,7 +793,7 @@
 
                                                             @endphp
 
-                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0)))
+                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0)))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -1873,6 +1873,7 @@
                                                                 @php
                                                                     // $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
                                                                     $pending_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Pending'));
+                                                                    $cancelled_dtr = ($employee->dtr_correction)->where('date',$date_r)->where('status','Cancelled')->last();
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
                                                                     $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));

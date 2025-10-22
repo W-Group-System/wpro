@@ -367,23 +367,46 @@ class TimekeepingDashboardController extends Controller
 
     public function forApproval(Request $request)
     {
-        $dtr_correction = new DtrCorrection;
-        $dtr_correction->employee_id = $request->employee_id;
-        $dtr_correction->date = $request->date;
-        $dtr_correction->time_in = date('Y-m-d H:i:s', strtotime($request->employee_time_in));
-        $dtr_correction->time_out = date('Y-m-d H:i:s', strtotime($request->employee_time_out));
-        $dtr_correction->remarks = $request->remarks;
-        $dtr_correction->status = 'Pending';
-        if ($request->has('incident_report'))
+        // dd($request->all());
+        $dtr_correction = DtrCorrection::where('employee_id', $request->employee_id)->where('date', $request->date)->first();
+        if ($dtr_correction)
         {
-            $file = $request->file('incident_report');
-            $name = time().'_'.$file->getClientOriginalName();
-            $file->move(public_path('incident_report'),$name);
-            $file_name = '/incident_report/'.$name;
-            $dtr_correction->file = $file_name;
+            $dtr_correction->date = $request->date;
+            $dtr_correction->time_in = date('Y-m-d H:i:s', strtotime($request->employee_time_in));
+            $dtr_correction->time_out = date('Y-m-d H:i:s', strtotime($request->employee_time_out));
+            $dtr_correction->remarks = $request->remarks;
+            $dtr_correction->status = 'Pending';
+            if ($request->has('incident_report'))
+            {
+                $file = $request->file('incident_report');
+                $name = time().'_'.$file->getClientOriginalName();
+                $file->move(public_path('incident_report'),$name);
+                $file_name = '/incident_report/'.$name;
+                $dtr_correction->file = $file_name;
+            }
+            $dtr_correction->save();
         }
-        $dtr_correction->save();
+        else
+        {
+            $dtr_correction = new DtrCorrection;
+            $dtr_correction->employee_id = $request->employee_id;
+            $dtr_correction->date = $request->date;
+            $dtr_correction->time_in = date('Y-m-d H:i:s', strtotime($request->employee_time_in));
+            $dtr_correction->time_out = date('Y-m-d H:i:s', strtotime($request->employee_time_out));
+            $dtr_correction->remarks = $request->remarks;
+            $dtr_correction->status = 'Pending';
+            if ($request->has('incident_report'))
+            {
+                $file = $request->file('incident_report');
+                $name = time().'_'.$file->getClientOriginalName();
+                $file->move(public_path('incident_report'),$name);
+                $file_name = '/incident_report/'.$name;
+                $dtr_correction->file = $file_name;
+            }
+            $dtr_correction->save();
 
+        }
+        
         $approvers = DtrApprover::orderBy('level','asc')->get();
         foreach($approvers as $key=>$approver)
         {
@@ -401,12 +424,12 @@ class TimekeepingDashboardController extends Controller
             $dtr_correction_approver->save();
         }
 
-        $dtr_status = DtrStatus::where('employee_id', $request->employee_id)->where('date', $request->date)->first();
-        if ($dtr_status)
-        {
-            $dtr_status->status = 'Pending';
-            $dtr_status->save();
-        }
+        // $dtr_status = DtrStatus::where('employee_id', $request->employee_id)->where('date', $request->date)->first();
+        // if ($dtr_status)
+        // {
+        //     $dtr_status->status = 'Pending';
+        //     $dtr_status->save();
+        // }
 
         Alert::success('Successfully Saved')->persistent('Dismiss');
         return back();
