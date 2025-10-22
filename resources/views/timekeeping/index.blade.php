@@ -87,7 +87,7 @@
                         
                                     <div class="col-md-12">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered mt-5 issuesTable">
+                                            <table class="table table-bordered mt-5 tablewithSearch">
                                                 <thead>
                                                     <tr>
                                                         <th>ACTION</th>
@@ -291,22 +291,33 @@
                                                                         $start_time = strtotime($time_start);
                                                                         $end_time = strtotime($time_end);
 
-                                                                        if ($schedule_in > $start_time)
+                                                                        if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
                                                                         {
-                                                                            $start_time = $schedule_in;
+                                                                            $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                                         }
                                                                         if ($end_time > $schedule_out)
                                                                         {
                                                                             $end_time = $schedule_out;
                                                                         }
+                                                                        
                                                                         $working_hrs = round((($end_time - $start_time)/3600), 2);
                                                                         
-                                                                        if ($working_hrs > 8)
+                                                                        if ($schedule_hrs > 8)
                                                                         {
+                                                                            $schedule_hrs = $schedule_hrs-1;
                                                                             if ($working_hrs >= ($schedule_hrs/1.5))
                                                                             {
-                                                                                $total_reg_hrs = $working_hrs-1;
+                                                                                $working_hrs = $working_hrs-1;
                                                                             }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $working_hrs = $working_hrs;
+                                                                        }
+                                                                        
+                                                                        if($working_hrs > $schedule_hrs)
+                                                                        {
+                                                                            $total_reg_hrs = $schedule_hrs;
                                                                         }
                                                                         else
                                                                         {
@@ -1348,7 +1359,7 @@
                                                                                 $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
                                                                             }
                                                                             
-                                                                            $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+                                                                            $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
                                                                             
                                                                             $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                             if($if_has_ob)
@@ -1365,25 +1376,36 @@
 
                                                                             $time_start = date('Y-m-d h:i A', strtotime($final_time_in));
                                                                             $time_end = date('Y-m-d h:i A', strtotime($final_time_out));
+
                                                                             $start_time = strtotime($time_start);
                                                                             $end_time = strtotime($time_end);
 
-                                                                            if ($schedule_in > $start_time)
+                                                                            if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
                                                                             {
-                                                                                $start_time = $schedule_in;
+                                                                                $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
                                                                             }
                                                                             if ($end_time > $schedule_out)
                                                                             {
                                                                                 $end_time = $schedule_out;
                                                                             }
-    
-                                                                            $working_hrs = ($end_time - $start_time) / 3600;
-                                                                            if ($working_hrs > 8)
+                                                                            
+                                                                            $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                                                            if ($schedule_hrs > 8)
                                                                             {
+                                                                                $schedule_hrs = $schedule_hrs-1;
                                                                                 if ($working_hrs >= ($schedule_hrs/1.5))
                                                                                 {
-                                                                                    $total_reg_hrs = $working_hrs-1;
+                                                                                    $working_hrs = $working_hrs-1;
                                                                                 }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $working_hrs = $working_hrs;
+                                                                            }
+                                                                            
+                                                                            if($working_hrs > $schedule_hrs)
+                                                                            {
+                                                                                $total_reg_hrs = $schedule_hrs;
                                                                             }
                                                                             else
                                                                             {
@@ -1849,13 +1871,15 @@
                                                                 @endphp
                                                                 
                                                                 @php
-                                                                    $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
+                                                                    // $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
+                                                                    $pending_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Pending'));
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
                                                                     $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
+                                                                    // dd($approved_dtr, $revert,$for_posting,$posted_dtr);
                                                                 @endphp
 
-                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) || (($for_posting > 0)))
+                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) || (($for_posting > 0)))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -2227,22 +2251,10 @@
             // order: [] 
         })
 
-        $(".issuesTable").DataTable({
-            // pagelength:15,
-            fixedColumns: {
-                leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
-            },
-            paginate:false,
-            dom: 'Bfrtip',
-            // buttons: [
-            //     'copy', 'excel'
-            // ],
-            columnDefs: [{
-                "defaultContent": "-",
-                "targets": "_all"
-            }],
-            order: [] 
-        })
+        // $(".issuesTable").DataTable({
+        //     // pagelength:15,
+        //     paginate: false
+        // })
     })
 </script>
 @endsection
