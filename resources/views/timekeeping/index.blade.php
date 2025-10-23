@@ -564,48 +564,158 @@
                                                                 }
 
                                                                 // Holiday OT's
-                                                                if ($employee_schedule)
+                                                                $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
+                                                                if ($check_if_holiday)
                                                                 {
-                                                                    $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
-                                                                    if ($check_if_holiday)
+                                                                    if (empty($final_time_in ) && empty($final_time_out))
                                                                     {
-                                                                        if (empty($final_time_in ) && empty($final_time_out))
+                                                                        $total_reg_hrs = floatval($employee_schedule->working_hours)-1;
+                                                                    }
+
+                                                                    $abs = 0;
+                                                                    $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
+                                                                    // SH OT
+                                                                    if ($check_if_holiday == "Special Holiday")
+                                                                    {
+                                                                        if ($rest == "RESTDAY")
                                                                         {
-                                                                            $total_reg_hrs = floatval($employee_schedule->working_hours)-1;
+                                                                            $rst_sh_ot = 8;
+                                                                            if ($approved_ot_hrs > 8)
+                                                                            {
+                                                                                $rst_sh_ot = $rst_sh_ot;
+                                                                                $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $rst_sh_ot = $approved_ot_hrs;
+                                                                            }
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $sh_ot = 8;
+                                                                            if ($approved_ot_hrs > 8)
+                                                                            {
+                                                                                $sh_ot = $sh_ot;
+                                                                                $sh_ot_ge = floatval($approved_ot_hrs) - 8;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $sh_ot = $approved_ot_hrs;
+                                                                            }
                                                                         }
 
-                                                                        $abs = 0;
-                                                                        $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
-                                                                        // SH OT
-                                                                        if ($check_if_holiday == "Special Holiday")
+                                                                        if ($employee_schedule)
                                                                         {
-                                                                            if ($rest == "RESTDAY")
-                                                                            {
-                                                                                $rst_sh_ot = 8;
-                                                                                if ($approved_ot_hrs > 8)
-                                                                                {
-                                                                                    $rst_sh_ot = $rst_sh_ot;
-                                                                                    $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    $rst_sh_ot = $approved_ot_hrs;
-                                                                                }
-                                                                            }
-                                                                            else 
-                                                                            {
-                                                                                $sh_ot = 8;
-                                                                                if ($approved_ot_hrs > 8)
-                                                                                {
-                                                                                    $sh_ot = $sh_ot;
-                                                                                    $sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    $sh_ot = $approved_ot_hrs;
-                                                                                }
-                                                                            }
+                                                                            $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
+                                                                            $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
 
+                                                                            if(strtotime($start_schedule) > strtotime($end_schedule))
+                                                                            {
+                                                                                $s = date('Y-m-d', strtotime($final_time_in . ' +1 day'));
+                                                                                $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
+                                                                            }
+                                                                            
+                                                                            if(strtotime($start_schedule) > strtotime($final_time_in))
+                                                                            {   
+                                                                                $nightdiff_start = $start_schedule;
+                                                                            }
+                                                                            if(strtotime($end_schedule) < strtotime($final_time_out))
+                                                                            {   
+                                                                                $nightdiff_end = $end_schedule;
+                                                                            }
+                                                                        }
+                                                                        
+                                                                        if ($rest == "RESTDAY")
+                                                                        {
+                                                                            $rst_sh_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                                            // $schedule_hours = (strtotime($end_schedule)-strtotime($start_schedule))/3600;
+                                                                            
+                                                                            if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
+                                                                            {
+                                                                                $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
+                                                                                $rst_sh_ot_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
+                                                                                if($work_rest > 9 )
+                                                                                { 
+                                                                                    $rst_sh_ot_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
+                                                                                    $rst_sh_ot_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
+                                                                                    $rst_sh_ot_nd = $rst_sh_ot_nd_ge - $rst_sh_ot_nd;
+                                                                                    $rst_sh_ot_nd = $rst_sh_ot_nd-1;
+                                                                                    if($rst_sh_ot_nd <0)
+                                                                                    {
+                                                                                        $rst_sh_ot_nd = 0;
+                                                                                    }
+                                                                                    if($rst_sh_ot_nd_ge <0)
+                                                                                    {
+                                                                                        $rst_sh_ot_nd_ge = 0;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $sh_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                                            $schedule_hours = (strtotime($end_schedule)-strtotime($start_schedule))/3600;
+                                                                            if($schedule_hours > 8)
+                                                                            {
+                                                                                if($sh_nd >= 5)
+                                                                                {
+                                                                                    $sh_nd = floatval($sh_nd)-1;
+                                                                                }
+
+                                                                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
+                                                                                {
+                                                                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
+                                                                                    $sh_ot_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
+                                                                                    if($work_rest > 9 )
+                                                                                    { 
+                                                                                        $sh_ot_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
+                                                                                        $sh_ot_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
+                                                                                        $sh_ot_nd = $sh_ot_nd_ge - $sh_ot_nd;
+                                                                                        $sh_ot_nd = $sh_ot_nd-1;
+                                                                                        if($sh_ot_nd <0)
+                                                                                        {
+                                                                                            $sh_ot_nd = 0;
+                                                                                        }
+                                                                                        if($sh_ot_nd_ge <0)
+                                                                                        {
+                                                                                            $sh_ot_nd_ge = 0;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if ($rest == "RESTDAY")
+                                                                        {
+                                                                            $rst_lh_ot = 8;
+                                                                            if ($approved_ot_hrs > 8)
+                                                                            {
+                                                                                $rst_lh_ot = $rst_lh_ot;
+                                                                                $lh_ot_ge = floatval($approved_ot_hrs) - 8;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $rst_lh_ot = $approved_ot_hrs;
+                                                                            }
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $lh_ot = 8;
+                                                                            if ($approved_ot_hrs > 8)
+                                                                            {
+                                                                                $lh_ot = $lh_ot;
+                                                                                $lh_ot_ge = floatval($approved_ot_hrs) - 8;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $lh_ot = $approved_ot_hrs;
+                                                                            }
+                                                                        }
+                                                                        
+                                                                        if ($employee_schedule)
+                                                                        {
                                                                             $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
                                                                             $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
                                                                             
@@ -623,157 +733,50 @@
                                                                             {   
                                                                                 $nightdiff_end = $end_schedule;
                                                                             }
-                                                                            
-                                                                            if ($rest == "RESTDAY")
+                                                                        }
+                                                                        
+                                                                        if ($rest == "RESTDAY")
+                                                                        {
+                                                                            if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
                                                                             {
-                                                                                $rst_sh_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                                                                $schedule_hours = (strtotime($end_schedule)-strtotime($start_schedule))/3600;
-                                                                                
-                                                                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                                                                {
-                                                                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                                                                    $rst_sh_ot_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                                                                    if($work_rest > 9 )
-                                                                                    { 
-                                                                                        $rst_sh_ot_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                                                                        $rst_sh_ot_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                                                                        $rst_sh_ot_nd = $rst_sh_ot_nd_ge - $rst_sh_ot_nd;
-                                                                                        $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                                                                        if($rst_sh_ot_nd <0)
-                                                                                        {
-                                                                                            $rst_sh_ot_nd = 0;
-                                                                                        }
-                                                                                        if($rst_sh_ot_nd_ge <0)
-                                                                                        {
-                                                                                            $rst_sh_ot_nd_ge = 0;
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                            else 
-                                                                            {
-                                                                                $sh_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                                                                $schedule_hours = (strtotime($end_schedule)-strtotime($start_schedule))/3600;
-                                                                                if($schedule_hours > 8)
-                                                                                {
-                                                                                    if($sh_nd >= 5)
+                                                                                $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
+                                                                                $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
+                                                                                if($work_rest > 9 )
+                                                                                { 
+                                                                                    $rst_lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
+                                                                                    $rst_lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
+                                                                                    $rst_lh_nd = $rst_lh_nd_ge - $rst_lh_nd;
+                                                                                    $rst_lh_nd = $rst_lh_nd-1;
+                                                                                    if($rst_lh_nd <0)
                                                                                     {
-                                                                                        $sh_nd = floatval($sh_nd)-1;
+                                                                                        $rst_lh_nd = 0;
                                                                                     }
-
-                                                                                    if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
+                                                                                    if($rst_lh_nd_ge <0)
                                                                                     {
-                                                                                        $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                                                                        $sh_ot_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                                                                        if($work_rest > 9 )
-                                                                                        { 
-                                                                                            $sh_ot_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                                                                            $sh_ot_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                                                                            $sh_ot_nd = $sh_ot_nd_ge - $sh_ot_nd;
-                                                                                            $sh_ot_nd = $sh_ot_nd-1;
-                                                                                            if($sh_ot_nd <0)
-                                                                                            {
-                                                                                                $sh_ot_nd = 0;
-                                                                                            }
-                                                                                            if($sh_ot_nd_ge <0)
-                                                                                            {
-                                                                                                $sh_ot_nd_ge = 0;
-                                                                                            }
-                                                                                        }
+                                                                                        $rst_lh_nd_ge = 0;
                                                                                     }
                                                                                 }
                                                                             }
                                                                         }
-                                                                        else
+                                                                        else 
                                                                         {
-                                                                            if ($rest == "RESTDAY")
+                                                                            if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
                                                                             {
-                                                                                $rst_lh_ot = 8;
-                                                                                if ($approved_ot_hrs > 8)
-                                                                                {
-                                                                                    $rst_lh_ot = $rst_lh_ot;
-                                                                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    $rst_lh_ot = $approved_ot_hrs;
-                                                                                }
-                                                                            }
-                                                                            else 
-                                                                            {
-                                                                                $lh_ot = 8;
-                                                                                if ($approved_ot_hrs > 8)
-                                                                                {
-                                                                                    $lh_ot = $lh_ot;
-                                                                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    $lh_ot = $approved_ot_hrs;
-                                                                                }
-                                                                            }
-                                                                            
-                                                                            $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
-                                                                            $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
-                                                                            
-                                                                            if(strtotime($start_schedule) > strtotime($end_schedule))
-                                                                            {
-                                                                                $s = date('Y-m-d', strtotime($final_time_in . ' +1 day'));
-                                                                                $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
-                                                                            }
-                                                                            
-                                                                            if(strtotime($start_schedule) > strtotime($final_time_in))
-                                                                            {   
-                                                                                $nightdiff_start = $start_schedule;
-                                                                            }
-                                                                            if(strtotime($end_schedule) < strtotime($final_time_out))
-                                                                            {   
-                                                                                $nightdiff_end = $end_schedule;
-                                                                            }
-                                                                            
-                                                                            if ($rest == "RESTDAY")
-                                                                            {
-                                                                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                                                                {
-                                                                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                                                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                                                                    if($work_rest > 9 )
-                                                                                    { 
-                                                                                        $rst_lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                                                                        $rst_lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                                                                        $rst_lh_nd = $rst_lh_nd_ge - $rst_lh_nd;
-                                                                                        $rst_lh_nd = $rst_lh_nd-1;
-                                                                                        if($rst_lh_nd <0)
-                                                                                        {
-                                                                                            $rst_lh_nd = 0;
-                                                                                        }
-                                                                                        if($rst_lh_nd_ge <0)
-                                                                                        {
-                                                                                            $rst_lh_nd_ge = 0;
-                                                                                        }
+                                                                                $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
+                                                                                $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
+                                                                                if($work_rest > 9 )
+                                                                                { 
+                                                                                    $lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
+                                                                                    $lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
+                                                                                    $lh_nd = $lh_nd_ge - $lh_nd;
+                                                                                    $lh_nd = $lh_nd-1;
+                                                                                    if($lh_nd <0)
+                                                                                    {
+                                                                                        $lh_nd = 0;
                                                                                     }
-                                                                                }
-                                                                            }
-                                                                            else 
-                                                                            {
-                                                                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                                                                {
-                                                                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                                                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                                                                    if($work_rest > 9 )
-                                                                                    { 
-                                                                                        $lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                                                                        $lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                                                                        $lh_nd = $lh_nd_ge - $lh_nd;
-                                                                                        $lh_nd = $lh_nd-1;
-                                                                                        if($lh_nd <0)
-                                                                                        {
-                                                                                            $lh_nd = 0;
-                                                                                        }
-                                                                                        if($lh_nd_ge <0)
-                                                                                        {
-                                                                                            $lh_nd_ge = 0;
-                                                                                        }
+                                                                                    if($lh_nd_ge <0)
+                                                                                    {
+                                                                                        $lh_nd_ge = 0;
                                                                                     }
                                                                                 }
                                                                             }
@@ -1655,48 +1658,50 @@
                                                                     }
 
                                                                     // Holiday OT's
-                                                                    if ($employee_schedule)
+                                                                    // if ($employee_schedule)
+                                                                    // {
+                                                                    $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
+                                                                    if ($check_if_holiday)
                                                                     {
-                                                                        $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
-                                                                        if ($check_if_holiday)
+                                                                        if (empty($final_time_in ) && empty($final_time_out))
                                                                         {
-                                                                            if (empty($final_time_in ) && empty($final_time_out))
+                                                                            $total_reg_hrs = floatval($employee_schedule->working_hours)-1;
+                                                                        }
+
+                                                                        $abs = 0;
+                                                                        $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
+                                                                        // SH OT
+                                                                        if ($check_if_holiday == "Special Holiday")
+                                                                        {
+                                                                            if ($rest == "RESTDAY")
                                                                             {
-                                                                                $total_reg_hrs = floatval($employee_schedule->working_hours)-1;
+                                                                                $rst_sh_ot = 8;
+                                                                                if ($approved_ot_hrs > 8)
+                                                                                {
+                                                                                    $rst_sh_ot = $rst_sh_ot;
+                                                                                    $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    $rst_sh_ot = $approved_ot_hrs;
+                                                                                }
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                $sh_ot = 8;
+                                                                                if ($approved_ot_hrs > 8)
+                                                                                {
+                                                                                    $sh_ot = $sh_ot;
+                                                                                    $sh_ot_ge = floatval($approved_ot_hrs) - 8;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    $sh_ot = $approved_ot_hrs;
+                                                                                }
                                                                             }
 
-                                                                            $abs = 0;
-                                                                            $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
-                                                                            // SH OT
-                                                                            if ($check_if_holiday == "Special Holiday")
+                                                                            if ($employee_schedule)
                                                                             {
-                                                                                if ($rest == "RESTDAY")
-                                                                                {
-                                                                                    $rst_sh_ot = 8;
-                                                                                    if ($approved_ot_hrs > 8)
-                                                                                    {
-                                                                                        $rst_sh_ot = $rst_sh_ot;
-                                                                                        $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        $rst_sh_ot = $approved_ot_hrs;
-                                                                                    }
-                                                                                }
-                                                                                else 
-                                                                                {
-                                                                                    $sh_ot = 8;
-                                                                                    if ($approved_ot_hrs > 8)
-                                                                                    {
-                                                                                        $sh_ot = $sh_ot;
-                                                                                        $sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        $sh_ot = $approved_ot_hrs;
-                                                                                    }
-                                                                                }
-
                                                                                 $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
                                                                                 $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
                                                                                 
@@ -1705,7 +1710,7 @@
                                                                                     $s = date('Y-m-d', strtotime($final_time_in . ' +1 day'));
                                                                                     $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
                                                                                 }
-                                                                                
+
                                                                                 if(strtotime($start_schedule) > strtotime($final_time_in))
                                                                                 {   
                                                                                     $nightdiff_start = $start_schedule;
@@ -1714,34 +1719,38 @@
                                                                                 {   
                                                                                     $nightdiff_end = $end_schedule;
                                                                                 }
+                                                                            }
+                                                                            
+                                                                            
+                                                                            if ($rest == "RESTDAY")
+                                                                            {
+                                                                                $rst_sh_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                                                // $schedule_hours = (strtotime($end_schedule)-strtotime($start_schedule))/3600;
                                                                                 
-                                                                                if ($rest == "RESTDAY")
+                                                                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
                                                                                 {
-                                                                                    $rst_sh_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                                                                    $schedule_hours = (strtotime($end_schedule)-strtotime($start_schedule))/3600;
-                                                                                    
-                                                                                    if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                                                                    {
-                                                                                        $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                                                                        $rst_sh_ot_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                                                                        if($work_rest > 9 )
-                                                                                        { 
-                                                                                            $rst_sh_ot_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                                                                            $rst_sh_ot_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                                                                            $rst_sh_ot_nd = $rst_sh_ot_nd_ge - $rst_sh_ot_nd;
-                                                                                            $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                                                                            if($rst_sh_ot_nd <0)
-                                                                                            {
-                                                                                                $rst_sh_ot_nd = 0;
-                                                                                            }
-                                                                                            if($rst_sh_ot_nd_ge <0)
-                                                                                            {
-                                                                                                $rst_sh_ot_nd_ge = 0;
-                                                                                            }
+                                                                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
+                                                                                    $rst_sh_ot_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
+                                                                                    if($work_rest > 9 )
+                                                                                    { 
+                                                                                        $rst_sh_ot_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
+                                                                                        $rst_sh_ot_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
+                                                                                        $rst_sh_ot_nd = $rst_sh_ot_nd_ge - $rst_sh_ot_nd;
+                                                                                        $rst_sh_ot_nd = $rst_sh_ot_nd-1;
+                                                                                        if($rst_sh_ot_nd <0)
+                                                                                        {
+                                                                                            $rst_sh_ot_nd = 0;
+                                                                                        }
+                                                                                        if($rst_sh_ot_nd_ge <0)
+                                                                                        {
+                                                                                            $rst_sh_ot_nd_ge = 0;
                                                                                         }
                                                                                     }
                                                                                 }
-                                                                                else 
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                if ($employee_schedule)
                                                                                 {
                                                                                     $sh_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
                                                                                     $schedule_hours = (strtotime($end_schedule)-strtotime($start_schedule))/3600;
@@ -1775,35 +1784,38 @@
                                                                                     }
                                                                                 }
                                                                             }
-                                                                            else
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            if ($rest == "RESTDAY")
                                                                             {
-                                                                                if ($rest == "RESTDAY")
+                                                                                $rst_lh_ot = 8;
+                                                                                if ($approved_ot_hrs > 8)
                                                                                 {
-                                                                                    $rst_lh_ot = 8;
-                                                                                    if ($approved_ot_hrs > 8)
-                                                                                    {
-                                                                                        $rst_lh_ot = $rst_lh_ot;
-                                                                                        $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        $rst_lh_ot = $approved_ot_hrs;
-                                                                                    }
+                                                                                    $rst_lh_ot = $rst_lh_ot;
+                                                                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
                                                                                 }
-                                                                                else 
+                                                                                else
                                                                                 {
-                                                                                    $lh_ot = 8;
-                                                                                    if ($approved_ot_hrs > 8)
-                                                                                    {
-                                                                                        $lh_ot = $lh_ot;
-                                                                                        $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        $lh_ot = $approved_ot_hrs;
-                                                                                    }
+                                                                                    $rst_lh_ot = $approved_ot_hrs;
                                                                                 }
-                                                                                
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                $lh_ot = 8;
+                                                                                if ($approved_ot_hrs > 8)
+                                                                                {
+                                                                                    $lh_ot = $lh_ot;
+                                                                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    $lh_ot = $approved_ot_hrs;
+                                                                                }
+                                                                            }
+                                                                            
+                                                                            if ($employee_schedule)
+                                                                            {
                                                                                 $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
                                                                                 $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
                                                                                 
@@ -1821,56 +1833,57 @@
                                                                                 {   
                                                                                     $nightdiff_end = $end_schedule;
                                                                                 }
-                                                                                
-                                                                                if ($rest == "RESTDAY")
+                                                                            }
+                                                                            
+                                                                            if ($rest == "RESTDAY")
+                                                                            {
+                                                                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
                                                                                 {
-                                                                                    if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                                                                    {
-                                                                                        $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                                                                        $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                                                                        if($work_rest > 9 )
-                                                                                        { 
-                                                                                            $rst_lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                                                                            $rst_lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                                                                            $rst_lh_nd = $rst_lh_nd_ge - $rst_lh_nd;
-                                                                                            $rst_lh_nd = $rst_lh_nd-1;
-                                                                                            if($rst_lh_nd <0)
-                                                                                            {
-                                                                                                $rst_lh_nd = 0;
-                                                                                            }
-                                                                                            if($rst_lh_nd_ge <0)
-                                                                                            {
-                                                                                                $rst_lh_nd_ge = 0;
-                                                                                            }
+                                                                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
+                                                                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
+                                                                                    if($work_rest > 9 )
+                                                                                    { 
+                                                                                        $rst_lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
+                                                                                        $rst_lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
+                                                                                        $rst_lh_nd = $rst_lh_nd_ge - $rst_lh_nd;
+                                                                                        $rst_lh_nd = $rst_lh_nd-1;
+                                                                                        if($rst_lh_nd <0)
+                                                                                        {
+                                                                                            $rst_lh_nd = 0;
+                                                                                        }
+                                                                                        if($rst_lh_nd_ge <0)
+                                                                                        {
+                                                                                            $rst_lh_nd_ge = 0;
                                                                                         }
                                                                                     }
                                                                                 }
-                                                                                else 
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
                                                                                 {
-                                                                                    if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                                                                    {
-                                                                                        $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                                                                        $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                                                                        if($work_rest > 9 )
-                                                                                        { 
-                                                                                            $lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                                                                            $lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                                                                            $lh_nd = $lh_nd_ge - $lh_nd;
-                                                                                            $lh_nd = $lh_nd-1;
-                                                                                            if($lh_nd <0)
-                                                                                            {
-                                                                                                $lh_nd = 0;
-                                                                                            }
-                                                                                            if($lh_nd_ge <0)
-                                                                                            {
-                                                                                                $lh_nd_ge = 0;
-                                                                                            }
+                                                                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
+                                                                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
+                                                                                    if($work_rest > 9 )
+                                                                                    { 
+                                                                                        $lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
+                                                                                        $lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
+                                                                                        $lh_nd = $lh_nd_ge - $lh_nd;
+                                                                                        $lh_nd = $lh_nd-1;
+                                                                                        if($lh_nd <0)
+                                                                                        {
+                                                                                            $lh_nd = 0;
+                                                                                        }
+                                                                                        if($lh_nd_ge <0)
+                                                                                        {
+                                                                                            $lh_nd_ge = 0;
                                                                                         }
                                                                                     }
                                                                                 }
                                                                             }
                                                                         }
                                                                     }
+                                                                    // }
                                                                 @endphp
                                                                 
                                                                 @php
