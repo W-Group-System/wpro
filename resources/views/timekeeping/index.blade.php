@@ -30,7 +30,7 @@
                         <form method="get" onsubmit="show()">
                             <div class="row">
                                 <div class="col-md-2">
-                                    <select class="form-control js-example-basic-single" name="company" data-placeholder="Select company" style="width: 100%;" required>
+                                    <select class="form-control js-example-basic-single" name="company" id="companySelect" data-placeholder="Select company" style="width: 100%;" required>
                                         <option></option>
                                         @foreach ($companies as $company)
                                         <option value="{{ $company->id }}" @if($company->id == $company_data) selected
@@ -87,7 +87,7 @@
                         
                                     <div class="col-md-12">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered mt-5 timekeepingTable">
+                                            <table class="table table-bordered mt-5 tablewithSearch">
                                                 <thead>
                                                     <tr>
                                                         <th>ACTION</th>
@@ -257,6 +257,7 @@
                                                                 }
 
                                                                 // Reg hrs
+                                                                $schedule_hrs = 0;
                                                                 if ($employee_schedule)
                                                                 {
                                                                     if ($time_in && $time_out)
@@ -269,7 +270,7 @@
                                                                             $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
                                                                         }
                                                                         
-                                                                        $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+                                                                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
 
                                                                         $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                         if($if_has_ob)
@@ -283,15 +284,40 @@
                                                                                 $final_time_out = $if_has_ob->date_to;
                                                                             }
                                                                         }
+                                                                        
+                                                                        $time_start = date('Y-m-d h:i A', strtotime($final_time_in));
+                                                                        $time_end = date('Y-m-d h:i A', strtotime($final_time_out));
 
-                                                                        $start_time = strtotime($final_time_in);
-                                                                        $end_time = strtotime($final_time_out);
+                                                                        $start_time = strtotime($time_start);
+                                                                        $end_time = strtotime($time_end);
 
-                                                                        $working_hrs = ($end_time - $start_time) / 3600;
-
-                                                                        if ($working_hrs > 8)
+                                                                        if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
                                                                         {
-                                                                            $total_reg_hrs = $reg_hrs-1;
+                                                                            $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                                                        }
+                                                                        if ($end_time > $schedule_out)
+                                                                        {
+                                                                            $end_time = $schedule_out;
+                                                                        }
+                                                                        
+                                                                        $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                                                        
+                                                                        if ($schedule_hrs > 8)
+                                                                        {
+                                                                            $schedule_hrs = $schedule_hrs-1;
+                                                                            if ($working_hrs >= ($schedule_hrs/1.5))
+                                                                            {
+                                                                                $working_hrs = $working_hrs-1;
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $working_hrs = $working_hrs;
+                                                                        }
+                                                                        
+                                                                        if($working_hrs > $schedule_hrs)
+                                                                        {
+                                                                            $total_reg_hrs = $schedule_hrs;
                                                                         }
                                                                         else
                                                                         {
@@ -438,6 +464,7 @@
                                                                     }
 
                                                                     $undertime = 0;
+                                                                    $abs = 0;
                                                                 }
                                                                 
                                                                 // ND
@@ -756,15 +783,17 @@
                                                             @endphp
                                                             
                                                             @php
-                                                                $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
-                                                                $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r));
-                                                                $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
+                                                                $pending_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Pending'));
                                                                 $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
+
+                                                                $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
+                                                                $cancelled_dtr = count(($employee->dtr_correction)->where('date', $date_r)->where('status','Cancelled'));
                                                                 $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
+                                                                $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
+
                                                             @endphp
 
-                                                            @if((($pending_dtr == 0) && ($for_posting == 0)) || ($cancelled_dtr > 0) || ($revert > 0))
-                                                                @if(($abs > 0) || ($revert > 0))
+                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0)))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -784,6 +813,8 @@
                                                                         @php
                                                                             $label = str_replace('-', '', $employee->id.$date_r);
                                                                         @endphp
+
+                                                                        @if($revert == 0)
                                                                         <form method="post" action="{{ url('timekeeping-official/moveToForPosting') }}" onsubmit="show()" id="moveToForPostingForm{{ $label }}" style="display: inline-block;" onsubmit="show()">
                                                                             @csrf 
 
@@ -795,6 +826,7 @@
                                                                                 Move to for posting
                                                                             </button>
                                                                         </form>
+                                                                        @endif
                                                                     </td>
                                                                     <td>
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
@@ -920,7 +952,6 @@
                                                                     </td>
                                                                     <td></td>
                                                                 </tr>
-                                                                @endif
                                                             @endif
                                                         @endforeach
                                                     @endforeach
@@ -1066,15 +1097,18 @@
                                                                 <td>
                                                                     @php
                                                                         $dtr_correction_approvers = ($employee->dtr_correction)->where('date', $date_r)->last();
+                                                                        $approvers = $dtr_correction_approvers->dtr_correction_approver()->orderBy('id','desc')->get()->take(2)->sortBy('id');
                                                                     @endphp
-                                                                    @foreach ($dtr_correction_approvers->dtr_correction_approver as $approver)
+                                                                    @foreach ($approvers as $approver)
                                                                         {{ $approver->user->name }} - 
                                                                             @if($approver->status == "Pending") 
                                                                             <span class="badge badge-warning">
                                                                             @elseif($approver->status == "Approved") 
                                                                             <span class="badge badge-success">
                                                                             @elseif($approver->status == "Cancelled") 
-                                                                            <span class="badge badge-danger">
+                                                                            <span class="badge badge-danger">   
+                                                                            @else 
+                                                                            <span class="badge badge-info">
                                                                             @endif
                                                                                 {{ $approver->status }}
                                                                             </span>
@@ -1140,7 +1174,7 @@
                             
                                         <div class="col-md-12">
                                             <div class="table-responsive">
-                                                <table class="table table-bordered mt-5 timekeepingTable">
+                                                <table class="table table-bordered mt-5 forPostingTable">
                                                     <thead>
                                                         <tr>
                                                             <th>
@@ -1328,7 +1362,7 @@
                                                                                 $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
                                                                             }
                                                                             
-                                                                            $reg_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+                                                                            $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
                                                                             
                                                                             $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
                                                                             if($if_has_ob)
@@ -1343,14 +1377,38 @@
                                                                                 }
                                                                             }
 
-                                                                            $start_time = strtotime($final_time_in);
-                                                                            $end_time = strtotime($final_time_out);
-    
-                                                                            $working_hrs = ($end_time - $start_time) / 3600;
-                                                                            
-                                                                            if ($working_hrs > 8)
+                                                                            $time_start = date('Y-m-d h:i A', strtotime($final_time_in));
+                                                                            $time_end = date('Y-m-d h:i A', strtotime($final_time_out));
+
+                                                                            $start_time = strtotime($time_start);
+                                                                            $end_time = strtotime($time_end);
+
+                                                                            if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
                                                                             {
-                                                                                $total_reg_hrs = $reg_hrs-1;
+                                                                                $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                                                            }
+                                                                            if ($end_time > $schedule_out)
+                                                                            {
+                                                                                $end_time = $schedule_out;
+                                                                            }
+                                                                            
+                                                                            $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                                                            if ($schedule_hrs > 8)
+                                                                            {
+                                                                                $schedule_hrs = $schedule_hrs-1;
+                                                                                if ($working_hrs >= ($schedule_hrs/1.5))
+                                                                                {
+                                                                                    $working_hrs = $working_hrs-1;
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $working_hrs = $working_hrs;
+                                                                            }
+                                                                            
+                                                                            if($working_hrs > $schedule_hrs)
+                                                                            {
+                                                                                $total_reg_hrs = $schedule_hrs;
                                                                             }
                                                                             else
                                                                             {
@@ -1472,7 +1530,7 @@
                                                                     
                                                                     // OB
                                                                     $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
-                                                                    if($if_has_ob && $time_in)
+                                                                    if($if_has_ob)
                                                                     {
                                                                         if ($time_in && $time_out)
                                                                         {
@@ -1497,6 +1555,7 @@
                                                                         }
 
                                                                         $undertime = 0;
+                                                                        $abs = 0;
                                                                     }
                                                                     
                                                                     // ND
@@ -1815,14 +1874,16 @@
                                                                 @endphp
                                                                 
                                                                 @php
-                                                                    $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
+                                                                    // $approved_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Approved'));
+                                                                    $pending_dtr = count(($employee->dtr_correction)->where('date',$date_r)->where('status','Pending'));
+                                                                    $cancelled_dtr = ($employee->dtr_correction)->where('date',$date_r)->where('status','Cancelled')->last();
                                                                     $revert = count(($employee->dtr_status)->where('date',$date_r)->where('status','Revert'));
                                                                     $for_posting = count(($employee->dtr_status)->where('date',$date_r)->where('status','For posting'));
                                                                     $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
+                                                                    // dd($approved_dtr, $revert,$for_posting,$posted_dtr);
                                                                 @endphp
 
-                                                                @if(($revert == 0) && ($posted_dtr == 0))
-                                                                    @if((($abs == 0) && ($undertime > 0) && ($late > 0)) || ($approved_dtr > 0) || ($for_posting > 0))
+                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) || (($for_posting > 0)))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -1835,27 +1896,11 @@
 
                                                                         
                                                                         <td>
-                                                                            {{-- <input type="hidden" class="hidden-selected" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]"> --}}
                                                                             @if($department_data)
                                                                             <input type="checkbox" name="employees[{{ $employee->employee_code }}][{{$date_r}}][selected]" class="selectEmployee form-control">
                                                                             @endif
                                                                         </td>
                                                                         <td>
-                                                                            {{-- @php
-                                                                                $date_formatted = str_replace('-', '', $date_r);
-                                                                            @endphp --}}
-                                                                            {{-- <form method="POST" action="{{ url('timekeeping-official/dtrStatus') }}" onsubmit="show()" id="revertForm{{$employee->id.'_'.$date_formatted}}">
-                                                                                @csrf
-
-                                                                                <input type="hidden" name="date" value="{{ $date_r }}">
-                                                                                <input type="hidden" name="employee" value="{{ $employee->id }}">
-                                                                                <input type="hidden" name="status" value="Revert">
-
-                                                                                <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id.'_'.$date_formatted }}')">
-                                                                                    <i class="ti-back-left"></i>
-                                                                                    Revert
-                                                                                </button>
-                                                                            </form> --}}
                                                                             <button type="button" class="btn btn-sm btn-danger" onclick="revertFunction('{{ $employee->id }}', '{{ $date_r }}')">
                                                                                 <i class="ti-back-left"></i>
                                                                                 Revert
@@ -2049,7 +2094,6 @@
                                                                             {{ $if_leave }}
                                                                         </td>
                                                                     </tr>
-                                                                    @endif
                                                                 @endif
                                                             @endforeach
                                                         @endforeach
@@ -2133,11 +2177,14 @@
                         show()
                     },
                     success: function() {
-                        location.reload()
                         Swal.fire({
                             title: "Successfully Revert",
                             icon: "success"
                         });
+
+                        setTimeout(() => {
+                            location.reload()
+                        },200)
                     }
                 })
             }
@@ -2145,23 +2192,6 @@
     }
 
     $(document).ready(function() {
-        $(".timekeepingTable").DataTable({
-            // pagelength:15,
-            fixedColumns: {
-                leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
-            },
-            paginate:false,
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'excel'
-            ],
-            columnDefs: [{
-                "defaultContent": "-",
-                "targets": "_all"
-            }],
-            order: [] 
-        })
-
         $("#checkboxAll").on('change', function() {
             if ($(this).is(':checked'))
             {
@@ -2182,6 +2212,53 @@
             }
             
         })
+
+        // @php
+        // $("#companySelect").on('change', function() {
+            
+        //     $("[name='date_from']").removeAttr('min')
+        //     $("[name='date_to']").removeAttr('min')
+
+        //     $.ajax({
+        //         type:"POST",
+        //         url:"{{ url('timekeeping-official/refreshDate') }}",
+        //         data: {
+        //             company: $(this).val()
+        //         },
+        //         headers: {
+        //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //         },
+        //         success: function(data) {
+        //             $("[name='date_from']").prop('min', data)
+        //             $("[name='date_to']").prop('min',data)
+        //         }
+        //     })
+
+        // })
+        // @endphp
+
+
+        $(".forPostingTable").DataTable({
+            // pagelength:15,
+            fixedColumns: {
+                leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
+            },
+            paginate:false,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            // order: [] 
+        })
+
+        // $(".issuesTable").DataTable({
+        //     // pagelength:15,
+        //     paginate: false
+        // })
     })
 </script>
 @endsection

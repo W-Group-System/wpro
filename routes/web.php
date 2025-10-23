@@ -506,6 +506,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('post_dtr', 'TimekeepingDashboardController@postDtr');
         Route::post('dtrStatus','TimekeepingDashboardController@dtrStatus');
         Route::post('moveToForPosting','TimekeepingDashboardController@moveToForPosting');
+        Route::post('refreshDate', 'TimekeepingDashboardController@refreshDate');
     });
 
     // FOR APPROVAL
