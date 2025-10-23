@@ -87,16 +87,16 @@
                         
                                     <div class="col-md-12">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered mt-5 tablewithSearch">
+                                            <table class="table table-bordered mt-5 issuesTable">
                                                 <thead>
                                                     <tr>
                                                         <th>ACTION</th>
                                                         <th>COMPANY</th>
                                                         <th>DEPARTMENT</th>
-                                                        <th>SCHEDULE</th>
                                                         <th>EMPLOYEE ID</th>
                                                         <th>NAME</th>
                                                         <th>DATE LOGS</th>
+                                                        <th>SCHEDULE</th>
                                                         <th>TIME IN</th>
                                                         <th>TIME OUT</th>
                                                         <th>REG HRS (HRS)</th>
@@ -839,6 +839,15 @@
                                                                     </td>
                                                                     <td>{{ $employee->department->name }}</td>
                                                                     <td>
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
+                                                                        {{ $employee->employee_code }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
+                                                                        {{ $employee->last_name.', '.$employee->first_name }}
+                                                                    </td>
+                                                                    <td>{{ $date_r }}</td>
+                                                                    <td>
                                                                         @if($employee_schedule != null)
                                                                             @if($employee_schedule->time_in_from)
                                                                                 <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
@@ -858,15 +867,6 @@
                                                                             <small>{{ $rest }}</small>
                                                                         @endif
                                                                     </td>
-                                                                    <td>
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
-                                                                        {{ $employee->employee_code }}
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
-                                                                        {{ $employee->last_name.', '.$employee->first_name }}
-                                                                    </td>
-                                                                    <td>{{ $date_r }}</td>
                                                                     <td @if(empty($final_time_in) && $rest == "" && $leave == 0 && $abs > 0) class="bg-danger" @endif @if($if_has_ob) class="bg-info" @endif>
                                                                         @if($final_time_in)
                                                                             {{ date('h:i A', strtotime($final_time_in)) }}
@@ -1190,10 +1190,10 @@
                                                             <th>ACTIONS</th>
                                                             <th>COMPANY</th>
                                                             <th>DEPARTMENT</th>
-                                                            <th>SCHEDULE</th>
                                                             <th>EMPLOYEE ID</th>
                                                             <th>NAME</th>
                                                             <th>DATE LOGS</th>
+                                                            <th>SCHEDULE</th>
                                                             <th>TIME IN</th>
                                                             <th>TIME OUT</th>
                                                             <th>ABSENT</th>
@@ -1933,6 +1933,15 @@
                                                                             {{ $employee->department->name }}
                                                                         </td>
                                                                         <td>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
+                                                                            {{ $employee->employee_code }}
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
+                                                                            {{ $employee->last_name.', '.$employee->first_name }}
+                                                                        </td>
+                                                                        <td>{{ $date_r }}</td>
+                                                                        <td>
                                                                             @if($employee_schedule != null)
                                                                                 @if($employee_schedule->time_in_from)
                                                                                     <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
@@ -1952,15 +1961,6 @@
                                                                                 <small>{{ $rest }}</small>
                                                                             @endif
                                                                         </td>
-                                                                        <td>
-                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
-                                                                            {{ $employee->employee_code }}
-                                                                        </td>
-                                                                        <td>
-                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
-                                                                            {{ $employee->last_name.', '.$employee->first_name }}
-                                                                        </td>
-                                                                        <td>{{ $date_r }}</td>
                                                                         <td @if(empty($final_time_in) && $rest == "" && $leave == 0 && $abs > 0) class="bg-danger" @endif @if($if_has_ob) class="bg-info" @endif>
                                                                             @if($final_time_in)
                                                                                 {{ date('h:i A', strtotime($final_time_in)) }}
@@ -2256,27 +2256,53 @@
         // @endphp
 
 
-        $(".forPostingTable").DataTable({
-            // pagelength:15,
-            fixedColumns: {
-                leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
-            },
+        // $(".forPostingTable").DataTable({
+        //     // pagelength:15,
+        //     fixedColumns: {
+        //         leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
+        //     },
+        //     paginate:false,
+        //     dom: 'Bfrtip',
+        //     buttons: [
+        //         'copy', 'excel'
+        //     ],
+        //     columnDefs: [{
+        //         "defaultContent": "-",
+        //         "targets": "_all"
+        //     }],
+        //     order: [] 
+        // })
+
+        new DataTable('.forPostingTable', {
+            // pagelenth:25,
             paginate:false,
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'excel'
-            ],
+            // dom: 'Bfrtip',
+            // buttons: [
+            //     'copy', 'excel'
+            // ],
             columnDefs: [{
                 "defaultContent": "-",
                 "targets": "_all"
             }],
-            // order: [] 
-        })
-
-        // $(".issuesTable").DataTable({
-        //     // pagelength:15,
-        //     paginate: false
-        // })
+            order: [] 
+        });
+    })
+</script>
+<script>
+    $(document).ready(function() {
+        new DataTable('.issuesTable', {
+            // pagelenth:25,
+            paginate:false,
+            // dom: 'Bfrtip',
+            // buttons: [
+            //     'copy', 'excel'
+            // ],
+            columnDefs: [{
+                "defaultContent": "-",
+                "targets": "_all"
+            }],
+            order: [] 
+        });
     })
 </script>
 @endsection
