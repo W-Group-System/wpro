@@ -2276,7 +2276,7 @@
         new DataTable('.forPostingTable', {
             // pagelenth:25,
             paginate:false,
-            // dom: 'Bfrtip',
+            dom: 'Bfrtip',
             // buttons: [
             //     'copy', 'excel'
             // ],
@@ -2293,7 +2293,7 @@
         new DataTable('.issuesTable', {
             // pagelenth:25,
             paginate:false,
-            // dom: 'Bfrtip',
+            dom: 'Bfrtip',
             // buttons: [
             //     'copy', 'excel'
             // ],
