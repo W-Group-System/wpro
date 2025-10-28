@@ -430,7 +430,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{$item->ot_approved_hrs - $item->break_hrs}}
+                                       {{ (float)($item->ot_approved_hrs ?? 0) - (float)($item->break_hrs ?? 0) }}
                                     </td>
                                 </tr>
                                 @endforeach                      

@@ -52,7 +52,7 @@
                         </div>
                         <div class='col-md-12 form-group'>
                             Total Approve Overtime (hrs):
-                            <input id="total_approve_hours" type="number" class="form-control" disabled value="{{ $approve_hrs - $break_hrs}}">
+                            <input id="total_approve_hours" type="number" class="form-control" disabled value="{{ (float)($approve_hrs ?? 0) - (float)($break_hrs ?? 0) }}">
                         </div>
                         
                         <div class='col-md-12 form-group'>
