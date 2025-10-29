@@ -3,10 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Employee extends Model implements Auditable
 {
+    use Notifiable;
+
     use \OwenIt\Auditing\Auditable;
     //
 

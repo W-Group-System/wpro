@@ -2,6 +2,7 @@
 use App\HikAttLog2;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\FormApprovalController;
+use App\Http\Controllers\HmoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 /*
@@ -107,6 +108,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('new-dtr','EmployeeDtrController@new');
     Route::post('edit-dtr/{id}', 'EmployeeDtrController@edit_dtr');
     Route::get('disable-dtr/{id}', 'EmployeeDtrController@disable_dtr');     
+
+    // HMO
+    Route::get('hmo', 'HmoController@index');
+    Route::post('new-hmo', 'HmoController@store');
+    Route::get('delete-hmo/{id}', 'HmoController@destroy');
+    Route::get('hmo-report', 'HmoController@report');
+    Route::get('send-hmo/{id}', [HmoController::class, 'email'])->name('send.hmo');
 
     //FOR APPROVAL
     Route::get('for-leave','FormApprovalController@form_leave_approval');
@@ -479,6 +487,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // NOPA
     Route::get('nopa', 'EmployeeController@nopa');
+
+    //
 
     // Attendance Report
     Route::get('weekly_attendance_report', 'WeeklyReportController@index');

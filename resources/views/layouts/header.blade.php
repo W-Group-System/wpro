@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    @laravelPWA
+    {{-- @laravelPWA --}}
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
@@ -395,7 +395,12 @@
                             <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('loans')}}">Loans</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('payslips')}}">Payslips</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">Proof of Availment</a></li>
+                            {{-- <li class="nav-item"> 
+                                <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">Proof of Availment</a>
+                            </li> --}}
+                            <li class="nav-item"> 
+                                <a class="nav-link" href="{{ url('/hmo') }}">Proof of Availment</a>
+                            </li>
                             </ul>
                         </div>
                     </li>
@@ -712,6 +717,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{url('ob_files')}}">OB Uploaded Files</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url('weekly_attendance_report')}}">Weekly Attendance Report</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url('monthly_attendance_report')}}">Monthly Attendance Report</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{url('hmo-report')}}">Proof of Availment Report</a></li>
                 </ul>
             </div>
         </li>
