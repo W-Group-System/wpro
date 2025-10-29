@@ -705,13 +705,25 @@
                                                     $work_rest = $approved_overtime_hrs;
                                                 }
                                                 
-                                                if($work_rest >2)
+                                                if($emp->company_id == 11)
                                                 {
                                                     $restday_ot = $work_rest;
                                                     if($work_rest >= 8)
                                                     {
                                                         $restday_ot = 8;
                                                         $restday_ot_ge = $work_rest-8;
+                                                    }
+                                                }
+                                                else 
+                                                {
+                                                    if($work_rest >2)
+                                                    {
+                                                        $restday_ot = $work_rest;
+                                                        if($work_rest >= 8)
+                                                        {
+                                                            $restday_ot = 8;
+                                                            $restday_ot_ge = $work_rest-8;
+                                                        }
                                                     }
                                                 }
                                             }
