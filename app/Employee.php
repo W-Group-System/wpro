@@ -3,10 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Employee extends Model implements Auditable
 {
+    use Notifiable;
+
     use \OwenIt\Auditing\Auditable;
     //
 
@@ -229,9 +232,15 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(AttendanceLog::class,'emp_code','employee_number');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class,'user_id','id');
+    }        
     public function dtr_status()
     {
         return $this->hasMany(DtrStatus::class);
+
     }
     // public function daily_schedules()
     // {

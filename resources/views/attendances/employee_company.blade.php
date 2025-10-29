@@ -610,9 +610,7 @@
                                                         {
                                                             $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                           
-                                                            $lunch_start = strtotime(date('Y-m-d 12:00:00', $time_start_ts));
-                                                            $lunch_end   = strtotime(date('Y-m-d 13:00:00', $time_start_ts));
-
+                                                          
                                                             if($schedule_hours > 8)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
@@ -627,15 +625,6 @@
                                                                
                                                                 
                                                             }
-                                                            else
-                                                            {
-                                                                // Case if: Schedule <= 8 hours but spans lunch
-                                                                if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
-                                                                    $schedule_hours = $schedule_hours - 1;
-                                                                    $work = $work - 1;
-                                                                }
-                                                            }
-
                                                             if($emp->employee_code == "A340612")//frosie
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
@@ -772,14 +761,22 @@
                                                     if($abs_half == .5)
                                                     {
                                                         $abs = .5;
-                                                        // dd($work, $schedule_hours/2);
                                                         if($work < ($schedule_hours/2))
                                                             {
                                                                 $late = ($schedule_hours/2)-$work;
                                                                 if($work < $schedule_hours/2)
                                                                 {
-                                                                    // $late = (double) number_format(($schedule_hours/2 - $work),2) *60;
-                                                                    $late = 0;
+                                                                    $default_halfday_hrs = 4;
+                                                                    if ($schedule_hours <= $default_halfday_hrs)
+                                                                    {
+                                                                        $late = 0;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $late = (double) number_format(($schedule_hours/2 - $work),2) *60;
+                                                                    }
+                                                                    
+                                                                    $undertime_hrs = 0;
                                                                 } 
                                                             }
                                                             else{
@@ -933,7 +930,6 @@
                                                                 $restnd =  round(night_difference_per_company($time_start,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($time_start)))));
                                                                 $restnd_ge = night_difference_per_company($time_start,$time_end);
                                                                 $restnd_ge = $restnd_ge - $restnd;
-                                                                $restnd_ge = floatval($restnd_ge) - 1;
                                                                 $restnd = $restnd-1;
                                                                 if($restnd <0)
                                                                 {

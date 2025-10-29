@@ -242,7 +242,7 @@
                                       <i class="ti-pencil-alt"></i>
                                     </a></p>
                                   </div>
-                                  <p class="mb-0"><small>{{$prob_emp->company->company_name}}</small></p>
+                                  <p class="mb-0"><small>{{optional($prob_emp->company)->company_name}}</small></p>
                                   <p class="mb-0"><small>{{$prob_emp->position}}</small></p>
                                   <p class="mb-0"><small>{{date('M d, Y',strtotime($prob_emp->original_date_hired))}}</small></p>
                                   <p class="mb-0"><small>

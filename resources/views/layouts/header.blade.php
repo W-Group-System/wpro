@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    @laravelPWA
+    {{-- @laravelPWA --}}
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
@@ -395,7 +395,12 @@
                             <li class="nav-item"> <a class="nav-link" href="{{url('employee-training-reports')}}">Training</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('loans')}}">Loans</a></li>
                             <li class="nav-item"> <a class="nav-link" href="{{url('payslips')}}">Payslips</a></li>
-                            <li class="nav-item"> <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">Proof of Availment</a></li>
+                            {{-- <li class="nav-item"> 
+                                <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLScC5Xl_2IgYLHeZNd5EwwEX3-pO9p6u1-WO7CMLomS-FZ5tZQ/viewform" target="_blank">Proof of Availment</a>
+                            </li> --}}
+                            <li class="nav-item"> 
+                                <a class="nav-link" href="{{ url('/hmo') }}">Proof of Availment</a>
+                            </li>
                             </ul>
                         </div>
                     </li>
@@ -425,7 +430,7 @@
                     <li class="nav-item @if ($header == 'for-approval') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#for-approval" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-check menu-icon"></i>
-                            <span class="menu-title">For Approval <span class="badge badge-warning">{{ pending_leave_count(auth()->user()->id)+pending_overtime_count(auth()->user()->id)+pending_ob_count(auth()->user()->id)}}</span></span>
+                            <span class="menu-title">For Approval <span class="badge badge-warning">{{ pending_leave_count(auth()->user()->id)+pending_overtime_count(auth()->user()->id)+pending_ob_count(auth()->user()->id)+pending_employee_count(auth()->user()->id)}}</span></span>
                             <i class="menu-arrow"></i>
                         </a>
                         <div class="collapse @if ($header == 'for-approval') show @endif" id="for-approval">
@@ -435,6 +440,9 @@
                                 {{-- <li class="nav-item "><a class="nav-link " href="{{ url('/for-work-from-home') }}">Work From Home <span class="badge badge-warning">{{ session('pending_wfh_count') }}</span></a></li> --}}
                                 <li class="nav-item "><a class="nav-link " href="{{ url('/for-official-business') }}">Official Business <span class="badge badge-warning">{{ pending_ob_count(auth()->user()->id) }}</span></a></li>
                                 {{-- <li class="nav-item "><a class="nav-link " href="{{ url('/for-dtr-correction') }}">DTR Correction <span class="badge badge-warning">{{ session('pending_dtr_count') }}</span></a></li> --}}
+                                @if(Auth::id() == 17)
+                                <li class="nav-item "><a class="nav-link " href="{{ url('/for-employee') }}">New Employee <span class="badge badge-warning">{{ pending_employee_count(auth()->user()->id) }}</span></a></li>
+                                @endif
                             </ul>
                         </div>
                     </li>
@@ -709,6 +717,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{url('ob_files')}}">OB Uploaded Files</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url('weekly_attendance_report')}}">Weekly Attendance Report</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url('monthly_attendance_report')}}">Monthly Attendance Report</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{url('hmo-report')}}">Proof of Availment Report</a></li>
                 </ul>
             </div>
         </li>

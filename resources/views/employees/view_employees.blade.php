@@ -189,7 +189,10 @@
                                         <th>Department</th>
                                         <th>Classification</th>
                                         <th>Immediate Supervisor</th>
-                                        <th>Status </th>
+                                        <th>Status</th>
+                                        @if (checkUserPrivilege('employees_availment',auth()->user()->id) == 'yes')
+                                        <th>Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -218,6 +221,13 @@
                                             <small><img class="rounded-circle" style='width:34px;height:34px;' src='{{URL::asset($employee->immediate_sup_data->employee->avatar)}}' onerror="this.src='{{URL::asset('/images/no_image.png')}}';"></small>
                                             {{$employee->immediate_sup_data->name}}@endif</td>
                                         <td>{{$employee->status}} </td>
+                                        @if (checkUserPrivilege('employees_availment',auth()->user()->id) == 'yes')
+                                        <td>
+                                            <a href="{{ route('send.hmo', $employee->id) }}" class="btn btn-sm btn-info" title="Send Email Notification" onclick="show();">
+                                                <i class="fa fa-envelope"></i>
+                                            </a>
+                                        </td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -236,7 +246,18 @@
 @include('employees.uploadEmployee')
 @include('employees.newEmployee')
 {{-- @include('employees.capture_image') --}}
-
+<script>
+    function show() {
+    Swal.fire({
+        title: 'Sending...',
+        text: 'Please wait while the email is being sent.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}
+</script>
 
 @endsection
 @section('footer')

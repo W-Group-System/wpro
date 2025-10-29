@@ -1,6 +1,8 @@
 <?php
 use App\HikAttLog2;
 use App\Http\Controllers\PayslipController;
+use App\Http\Controllers\FormApprovalController;
+use App\Http\Controllers\HmoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 /*
@@ -107,6 +109,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('edit-dtr/{id}', 'EmployeeDtrController@edit_dtr');
     Route::get('disable-dtr/{id}', 'EmployeeDtrController@disable_dtr');     
 
+    // HMO
+    Route::get('hmo', 'HmoController@index');
+    Route::post('new-hmo', 'HmoController@store');
+    Route::get('delete-hmo/{id}', 'HmoController@destroy');
+    Route::get('hmo-report', 'HmoController@report');
+    Route::get('send-hmo/{id}', [HmoController::class, 'email'])->name('send.hmo');
+
     //FOR APPROVAL
     Route::get('for-leave','FormApprovalController@form_leave_approval');
     Route::post('approve-leave/{id}','FormApprovalController@approveLeave');
@@ -134,6 +143,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('decline-dtr/{id}','FormApprovalController@declineDtr');
     Route::post('approve-dtr-all','FormApprovalController@approveDtrAll');
     Route::post('disapprove-dtr-all','FormApprovalController@disapproveDtrAll');
+
+    Route::get('for-employee','FormApprovalController@form_employee_approval');
+    Route::post('approve-employee/{id}','FormApprovalController@approveEmployee');
+    Route::post('decline-employee/{id}','FormApprovalController@declineEmployee');
+
+    Route::post('/approve-employee-all', [FormApprovalController::class, 'approveEmployeeAll']);
+    Route::post('/disapprove-employee-all', [FormApprovalController::class, 'disapproveEmployeeAll']);
 
     //employees
     Route::get('employees', 'EmployeeController@view');
@@ -471,6 +487,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // NOPA
     Route::get('nopa', 'EmployeeController@nopa');
+
+    //
 
     // Attendance Report
     Route::get('weekly_attendance_report', 'WeeklyReportController@index');

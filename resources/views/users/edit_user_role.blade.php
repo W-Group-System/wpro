@@ -140,6 +140,18 @@
                                         Rate
                                         <br>
                                         <br>
+                                        @if($user->user_privilege)
+                                            @if($user->user_privilege->employees_rate == 'on')
+                                                <input type="checkbox" name="employee_availment" id="employee_availment{{$user->id}}" value="{{ $user->user_privilege->employee_availment }}" checked>
+                                            @else
+                                                <input type="checkbox" name="employee_availment" id="employee_availment{{$user->id}}">
+                                            @endif
+                                        @else
+                                            <input type="checkbox" name="employee_availment" id="employee_availment{{$user->id}}">
+                                        @endif
+                                        Proof of Availment
+                                        <br>
+                                        <br>
                                     </div>
                                     {{-- Reports --}}
                                     <div class="col-md-6 form-group">
