@@ -11,13 +11,13 @@
 
                         <ul class="nav nav-tabs mt-5">
                             <li class="nav-item">
-                                <a class="nav-link active" href="#pills-for-approval" data-toggle="tab" >For Approval DTR<span class="badge badge-danger" ></span></a>
+                                <a class="nav-link active" href="#pills-for-approval" data-toggle="tab" >For Approval DTR<span class="badge badge-warning ml-2" >{{ count($dtr_corrections->where('status', 'Pending')) }}</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#pills-approved" data-toggle="tab" >Approved DTR<span class="badge badge-warning" ></span></a>
+                                <a class="nav-link" href="#pills-approved" data-toggle="tab" >Approved DTR<span class="badge badge-success ml-2" >{{ count($dtr_corrections->where('status', 'Approved')) }}</span></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#pills-cancelled" data-toggle="tab" >Cancelled DTR<span class="badge badge-warning" ></span></a>
+                                <a class="nav-link" href="#pills-cancelled" data-toggle="tab" >Cancelled DTR<span class="badge badge-danger ml-2" >{{ count($dtr_corrections->where('status', 'Cancelled')) }}</span></a>
                             </li>
                         </ul>
                         
