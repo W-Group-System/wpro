@@ -31,7 +31,6 @@
                                         <div class="form-group">
                                             <label class="text-right">To</label>
                                             <input type="date" value='{{$to}}' class="form-control" name="to" id='to' max='{{date('Y-m-d')}}' required />
-                                            
                                         </div>
                                     </div>
                                     <div class='col-md-2'>
