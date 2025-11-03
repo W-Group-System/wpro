@@ -26,14 +26,15 @@
                     <input type="text" name='department' class="form-control" value="{{ auth()->user()->employee->department->name }}" hidden>
                     <div class="row">
                         <div class='col-md-12 form-group'>
-                            Date  
+                            Date of Actual HMO Availment
                             <input type="date" name='date_availment' class="form-control" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class='col-md-12 form-group'>
-                            Attachments  
-                            <input type="file" class="form-control attachments" name="path[]" id="path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            Proof of Availment  
+                            <input type="file" class="form-control attachments" name="path[]" id="path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" required>
+                            <span><small>Like: Receipts, Copy of the HMO agreement and etc.</small></span>
                         </div>
                     </div>
                 </div>

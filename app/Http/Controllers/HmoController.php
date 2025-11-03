@@ -6,8 +6,10 @@ use App\HmoAttachment;
 use App\Company;
 use App\User;
 use App\Employee;
+use App\Notifications\HmoHrNotif;
 use App\Notifications\HmoNotif;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class HmoController extends Controller
@@ -58,19 +60,41 @@ class HmoController extends Controller
             'user_id'       => auth()->user()->employee->user_id
         ]);
 
+        // Store attachments
+        $attachments = [];
         if ($request->hasFile('path')) {
             foreach ($request->file('path') as $file) {
                 $filePath = $file->store('hmo_files', 'public');
 
-                $attachment = new HmoAttachment;
-                $attachment->hmo_id = $new_hmo->id;
-                $attachment->path = $filePath;
-                $attachment->save();
+                HmoAttachment::create([
+                    'hmo_id' => $new_hmo->id,
+                    'path'   => $filePath,
+                ]);
+
+                $attachments[] = $filePath;
             }
         }
-        
+
+        $detailsHr = [
+            'subject'    => 'Document Submission: Proof of Availment',
+            'greeting'   => 'Hi Team,',
+            'body'       => 'Kindly review the document and confirm once received. Should you have any questions or require further assistance, feel free to reach out to us.',
+            'thanks'     => 'Thank you for your time and continued trust in our services.',
+            'actionText' => 'Click Here',
+            'actionURL'  => url('/hmo-report'),
+        ];
+
+        $hrEmails = [
+            'reyzie.repia@rico.com.ph',
+            'julie.reamillo@rico.com.ph',
+            'hr.generalist@rico.com.ph', 
+        ];
+
+        Notification::route('mail', $hrEmails)->notify(new HmoHrNotif($detailsHr, $attachments));
+
         Alert::success('Successfully Stored')->persistent('Dismiss');
         return back();
+
     }
 
     /**
