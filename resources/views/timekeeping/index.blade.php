@@ -324,6 +324,59 @@
                                                                             $total_reg_hrs = $working_hrs;
                                                                         }
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                                                                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                                                                        if ($schedule_in > $schedule_out)
+                                                                        {
+                                                                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                                                                        }
+                                                                        
+                                                                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+
+                                                                        $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                        if($if_has_ob)
+                                                                        {
+                                                                            $final_time_in = $if_has_ob->date_from;
+                                                                            $final_time_out = $if_has_ob->date_to;
+
+                                                                            $start_time = strtotime($final_time_in);
+                                                                            $end_time = strtotime($final_time_out);
+
+                                                                            if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
+                                                                            {
+                                                                                $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                                                            }
+                                                                            if ($end_time > $schedule_out)
+                                                                            {
+                                                                                $end_time = $schedule_out;
+                                                                            }
+                                                                            
+                                                                            $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                                                            if ($schedule_hrs > 8)
+                                                                            {
+                                                                                $schedule_hrs = $schedule_hrs-1;
+                                                                                if ($working_hrs >= ($schedule_hrs/1.5))
+                                                                                {
+                                                                                    $working_hrs = $working_hrs-1;
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $working_hrs = $working_hrs;
+                                                                            }
+                                                                            
+                                                                            if($working_hrs >= $schedule_hrs)
+                                                                            {
+                                                                                $total_reg_hrs = $schedule_hrs;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $total_reg_hrs = $working_hrs;
+                                                                            }
+                                                                        }
+                                                                    }
                                                                 }
 
                                                                 // Late
@@ -1421,6 +1474,59 @@
                                                                             else
                                                                             {
                                                                                 $total_reg_hrs = $working_hrs;
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                                                                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                                                                            if ($schedule_in > $schedule_out)
+                                                                            {
+                                                                                $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                                                                            }
+                                                                            
+                                                                            $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+                                                                            
+                                                                            $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                            if($if_has_ob)
+                                                                            {
+                                                                                $final_time_in = $if_has_ob->date_from;
+                                                                                $final_time_out = $if_has_ob->date_to;
+
+                                                                                $start_time = strtotime($final_time_in);
+                                                                                $end_time = strtotime($final_time_out);
+
+                                                                                if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
+                                                                                {
+                                                                                    $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                                                                }
+                                                                                if ($end_time > $schedule_out)
+                                                                                {
+                                                                                    $end_time = $schedule_out;
+                                                                                }
+                                                                                
+                                                                                $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                                                                if ($schedule_hrs > 8)
+                                                                                {
+                                                                                    $schedule_hrs = $schedule_hrs-1;
+                                                                                    if ($working_hrs >= ($schedule_hrs/1.5))
+                                                                                    {
+                                                                                        $working_hrs = $working_hrs-1;
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    $working_hrs = $working_hrs;
+                                                                                }
+                                                                                
+                                                                                if($working_hrs > $schedule_hrs)
+                                                                                {
+                                                                                    $total_reg_hrs = $schedule_hrs;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    $total_reg_hrs = $working_hrs;
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
