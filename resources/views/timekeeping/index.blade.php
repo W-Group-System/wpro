@@ -798,7 +798,7 @@
                                                                 $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                             @endphp
 
-                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($if_has_ob) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0) || ($total_reg_hrs <= 3 && $rest != "RESTDAY")))
+                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($if_has_ob) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0) || ($total_reg_hrs <= 3 && $rest != "RESTDAY" && $leave == 0)))
                                                                 @php
                                                                     $total_issues = $total_issues+=1;
                                                                 @endphp
@@ -1901,7 +1901,7 @@
                                                                     // dd($approved_dtr, $revert,$for_posting,$posted_dtr);
                                                                 @endphp
 
-                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) && ($total_reg_hrs > 3 || $rest=="RESTDAY") && (!$if_has_ob) || (($for_posting > 0)))
+                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) && ($total_reg_hrs > 3 || $rest=="RESTDAY" || $leave > 0) && (!$if_has_ob) || (($for_posting > 0)))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
