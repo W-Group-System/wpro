@@ -520,8 +520,7 @@ class TimekeepingDashboardController extends Controller
         $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
             ->with(['schedule_info','approved_ots',
                 'attendance_logs' => function($q)use($from_date,$to_date) {
-                    $q->whereBetween('datetime', [$from_date.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])->orderBy('datetime','asc');
-                    // $q->whereBetween('datetime', [$from_date.' 00:00:01', $to_date.' 23:59:59'])->orderBy('datetime','asc');
+                    $q->select('id','emp_code','date','datetime')->whereBetween('datetime', [$from_date.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])->orderBy('datetime','asc');
                 },
                 'dtr_correction.dtr_correction_approver.user'
             ])
@@ -531,7 +530,7 @@ class TimekeepingDashboardController extends Controller
             })
             ->where('status','Active')
             // ->where('employee_code','A285018')
-            // ->where('employee_code','A3189225')
+            // ->where('employee_code','A3176324')
             // ->where('employee_code','A2110025')
             // ->where('employee_code','A192524')
             // ->whereIn('employee_code',['A3189225'])

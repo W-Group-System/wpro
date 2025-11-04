@@ -1901,7 +1901,7 @@
                                                                     // dd($approved_dtr, $revert,$for_posting,$posted_dtr);
                                                                 @endphp
 
-                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) && ($total_reg_hrs > 3) && (!$if_has_ob) || (($for_posting > 0) || $rest == "RESTDAY"))
+                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) && ($total_reg_hrs > 3 || $rest=="RESTDAY") && (!$if_has_ob) || (($for_posting > 0)))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
