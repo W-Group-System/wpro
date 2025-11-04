@@ -405,8 +405,11 @@
                                                                 $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                 if ($check_leave)
                                                                 {
-                                                                    $leave = 1;
+                                                                    $leave = explode("-", $check_leave);
+                                                                    $leave = $leave[1];
+
                                                                     $abs = 0;
+                                                                    $undertime=0;
                                                                 }
                                                                 else
                                                                 {
@@ -1501,8 +1504,11 @@
                                                                     $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                                     if ($check_leave)
                                                                     {
-                                                                        $leave = 1;
+                                                                        $leave = explode("-", $check_leave);
+                                                                        $leave = $leave[1];
+                                                                        // $leave = 1;
                                                                         $abs = 0;
+                                                                        $undertime = 0;
                                                                     }
                                                                     else
                                                                     {
