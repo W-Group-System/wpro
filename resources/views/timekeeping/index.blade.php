@@ -842,6 +842,11 @@
                                                                         }
                                                                     }
                                                                 }
+
+                                                                if ($total_reg_hrs <= 0)
+                                                                {
+                                                                    $total_reg_hrs = 0;
+                                                                }
                                                             @endphp
                                                             
                                                             @php
@@ -2001,6 +2006,11 @@
                                                                         }
                                                                     }
                                                                     // }
+
+                                                                    if ($total_reg_hrs <= 0)
+                                                                    {
+                                                                        $total_reg_hrs = 0;
+                                                                    }
                                                                 @endphp
                                                                 
                                                                 @php
