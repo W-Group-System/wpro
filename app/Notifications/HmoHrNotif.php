@@ -31,9 +31,9 @@ class HmoHrNotif extends Notification
             // ->cc('ict.engineer@wgroup.com.ph')
             ->subject($this->detailsHr['subject'])
             ->greeting($this->detailsHr['greeting'])
-            ->line($this->detailsHr['body'])
-            ->line($this->detailsHr['thanks'])
-            ->action($this->detailsHr['actionText'], $this->detailsHr['actionURL']);
+            ->line(new \Illuminate\Support\HtmlString($this->detailsHr['body']))
+            ->line(new \Illuminate\Support\HtmlString($this->detailsHr['thanks']));
+            // ->action($this->detailsHr['actionText'], $this->detailsHr['actionURL']);
 
         // Attach uploaded files if any
         foreach ($this->attachments as $filePath) {

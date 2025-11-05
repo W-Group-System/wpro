@@ -75,19 +75,23 @@ class HmoController extends Controller
             }
         }
 
-        $detailsHr = [
-            'subject'    => 'Document Submission: Proof of Availment',
-            'greeting'   => 'Hi Team,',
-            'body'       => 'Kindly review the document and confirm once received. Should you have any questions or require further assistance, feel free to reach out to us.',
-            'thanks'     => 'Thank you for your time and continued trust in our services.',
-            'actionText' => 'Click Here',
-            'actionURL'  => url('/hmo-report'),
-        ];
+            $detailsHr = [
+                'subject'    => 'Document Submission: HMO Proof of Availment',
+                'greeting'   => 'Dear HR Team,',
+                'body'       => 'Please review the uploaded proof of availment.<br><br>Clicking the <a href="' . url('/hmo-report') . '">View</a> button will direct you to W Pro to view the details.',
+                'thanks'     => 'If you have any questions or require further assistance, feel free to reach out to us.',
+                // 'actionText' => 'Click Here',
+                // 'actionURL'  => url('/hmo-report'),
+            ];
+
+        // $hrEmails = [
+        //     'reyzie.repia@rico.com.ph',
+        //     'julie.reamillo@rico.com.ph',
+        //     'hr.generalist@rico.com.ph', 
+        // ];
 
         $hrEmails = [
-            'reyzie.repia@rico.com.ph',
-            'julie.reamillo@rico.com.ph',
-            'hr.generalist@rico.com.ph', 
+            'mark.bautista@wgroup.space', 
         ];
 
         Notification::route('mail', $hrEmails)->notify(new HmoHrNotif($detailsHr, $attachments));
@@ -180,12 +184,12 @@ class HmoController extends Controller
         }
 
         $details = [
-            'subject'    => 'Document Submission: Proof of Availment',
-            'greeting'   => 'Dear ' . $employee->first_name . ',',
-            'body'       => 'Kindly review the document and confirm once received. Should you have any questions or require further assistance, feel free to reach out to us.',
-            'thanks'     => 'Thank you for your time and continued trust in our services.',
-            'actionText' => 'Click Here',
-            'actionURL'  => url('/hmo')
+            'subject'    => 'Document Submission: HMO Proof of Availment',
+            'greeting'   => 'Hi ' . $employee->first_name . ',',
+            'body'       => 'We are reviewing our HMO billiing and have identified an availment on date. Please provide documentation to confirm the use as part of our validation. Acceptable documents include any of the following: LOA (Letter of Authorization), hospital/clinic appointment slip or referral form, availment slip, or similar documents.<br><br>If you click the <a href="' . url('/hmo') . '">Submit</a> button, you will be directed to W Pro to attach the required documents',
+            'thanks'     => 'If you have any questions or concerns, please contact the HR Department.',
+            // 'actionText' => 'Click Here',
+            // 'actionURL'  => url('/hmo')
         ];
 
         $user->notify(new HmoNotif($details));
@@ -193,6 +197,39 @@ class HmoController extends Controller
         Alert::success('Success', 'Email sent successfully to ' . $recipientEmail)
             ->persistent('Dismiss');
 
+        return back();
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'date_availment' => 'required|date',
+            'path.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+        ]);
+
+        $hmo = Hmo::findOrFail($id);
+
+        $hmo->update([
+            'date_availment' => $request->date_availment,
+        ]);
+
+        if ($request->hasFile('path')) {
+            foreach ($hmo->attachments as $attachment) {
+                $attachment->delete(); 
+            }
+
+            foreach ($request->file('path') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/hmo_proofs', $filename);
+
+                HmoAttachment::create([
+                    'hmo_id' => $hmo->id,
+                    'path'   => 'hmo_proofs/' . $filename,
+                ]);
+            }
+        }
+
+        Alert::success('Proof(s) of availment updated successfully!')->persistent('Dismiss');
         return back();
     }
 

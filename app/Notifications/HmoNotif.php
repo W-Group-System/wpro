@@ -28,8 +28,8 @@ class HmoNotif extends Notification
         return (new MailMessage)
             ->subject($this->details['subject'])
             ->greeting($this->details['greeting'])
-            ->line($this->details['body'])
-            ->line($this->details['thanks'])
-            ->action($this->details['actionText'], $this->details['actionURL']);
+            ->line(new \Illuminate\Support\HtmlString($this->details['body']))
+            ->line(new \Illuminate\Support\HtmlString($this->details['thanks']));
+            // ->action($this->details['actionText'], $this->details['actionURL']);
     }
 }
