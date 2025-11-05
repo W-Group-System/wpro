@@ -15,4 +15,9 @@ class HmoAttachment extends Model implements Auditable
 
     protected $table = "hmo_attachments";
     protected $fillable = ['hmo_id', 'path'];
+
+    public function hmo()
+    {
+        return $this->belongsTo(Hmo::class, 'hmo_id');
+    }
 }

@@ -114,6 +114,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('new-hmo', 'HmoController@store');
     Route::get('delete-hmo/{id}', 'HmoController@destroy');
     Route::get('hmo-report', 'HmoController@report');
+    Route::post('edit-hmo/{id}', 'HmoController@update');
     Route::get('send-hmo/{id}', [HmoController::class, 'email'])->name('send.hmo');
 
     //FOR APPROVAL

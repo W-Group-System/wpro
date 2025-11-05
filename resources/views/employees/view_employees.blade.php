@@ -191,7 +191,7 @@
                                         <th>Immediate Supervisor</th>
                                         <th>Status</th>
                                         @if (checkUserPrivilege('employees_availment',auth()->user()->id) == 'yes')
-                                        <th>Action</th>
+                                        <th>HMO</th>
                                         @endif
                                     </tr>
                                 </thead>
