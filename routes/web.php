@@ -172,6 +172,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('associate-employees-export','EmployeeController@export_employee_associates');
 
+    Route::get('export-salaries', 'EmployeeController@export_salaries')->name('export.salaries');
+    Route::post('upload-salaries', 'EmployeeController@upload_salaries')->name('upload.salaries');
 
     //Payslips
     Route::get('payslips', 'PayslipController@view');

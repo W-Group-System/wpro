@@ -10,7 +10,8 @@ class EmployeeSalary extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     
     protected $fillable = [
-        'basic_salary', 
+        'user_id',
+        'basic_salary',
         'de_minimis',
         'other_allowance',
     ];

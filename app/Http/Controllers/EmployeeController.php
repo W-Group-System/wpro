@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use Excel;
+// use Excel;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\EmployeesImport;
 use App\Classification;
 use App\Employee;
@@ -2798,5 +2799,74 @@ class EmployeeController extends Controller
         }
 
         return back();
+    }
+
+    public function export_salaries()
+    {
+        $template = public_path('/template/salaries_template.xlsx');
+
+        if (file_exists($template)) {
+            return response()->download($template, 'Employee Salaries.xlsx');
+        }
+
+        return back()->with('error', 'Template file not found.');
+    }
+
+    public function upload_salaries(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls|max:5120',
+        ]);
+        $data = Excel::toArray([], $request->file('file'));
+
+        if (empty($data) || empty($data[0])) {
+            Alert::error('Error', 'The uploaded Excel file is empty or invalid.')->persistent('Dismiss');
+            return back();
+        }
+
+        $rows = $data[0];
+        $saveCount = 0;
+        $notSaved = [];
+        
+        $headers = array_map('strtolower', array_map('trim', $rows[0]));
+
+        $employeeNoKey = array_search('employee no', $headers);
+        $basicSalaryKey = array_search('basic salary', $headers);
+        $deMinimisKey = array_search('de minimis', $headers);
+        $otherAllowanceKey = array_search('other allowance', $headers);
+
+        if ($employeeNoKey === false || $basicSalaryKey === false) {
+            Alert::error('Error', 'The Excel file must have "Employee No" and "Basic Salary" columns.')->persistent('Dismiss');
+            return back();
+        }
+
+        foreach (array_slice($rows, 1) as $row) {
+            $userId = $row[$employeeNoKey] ?? null;
+            $basicSalary = $row[$basicSalaryKey] ?? null;
+            $deMinimis = $deMinimisKey !== false ? $row[$deMinimisKey] ?? null : null;
+            $otherAllowance = $otherAllowanceKey !== false ? $row[$otherAllowanceKey] ?? null : null;
+
+            if (!empty($userId)) {
+                EmployeeSalary::updateOrCreate(
+                    ['user_id' => $userId],
+                    [
+                        'basic_salary' => $basicSalary,
+                        'de_minimis' => $deMinimis,
+                        'other_allowance' => $otherAllowance,
+                    ]
+                );
+                $saveCount++;
+            } else {
+                $notSaved[] = $row;
+            }
+        }
+
+        if ($saveCount > 0) {
+            Alert::success('Success', "Successfully imported {$saveCount} employee salaries.")->persistent('Dismiss');
+        } else {
+            Alert::error('Error', 'No employee salaries were updated.')->persistent('Dismiss');
+        }
+
+        return redirect('/employees');
     }
 }
