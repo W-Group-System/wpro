@@ -110,6 +110,10 @@
                                     <button type="button" class="btn btn-outline-primary btn-icon-text btn-sm text-center" data-toggle="modal" data-target="#uploadEmployeeRevertRate" title="Upload Rate Employees"><i class="ti-arrow-up btn-icon-prepend"></i></button>
                                 @endif
                             @endif
+                            @if(in_array(auth()->user()->id, [875, 17, 272, 781]))
+                                <button type="button" class="btn btn-outline-primary btn-icon-text btn-sm text-center"title="Export Template Employees Salaries"onclick="window.location.href='{{ route('export.salaries') }}'"><i class="ti-download btn-icon-prepend"></i></button>
+                                <button type="button" class="btn btn-outline-info btn-icon-text btn-sm text-center"title="Import Template Employees Salaries" data-toggle="modal" data-target="#uploadSalaries"><i class="ti-upload btn-icon-prepend"></i></button>
+                            @endif
                             @if (checkUserPrivilege('employees_export',auth()->user()->id) == 'yes')
                                 <a href="/employees-export?company={{$company}}&department={{$department}}&status={{$status}}" class="btn btn-outline-danger btn-icon-text btn-sm text-center float-right" title="Export OTPMS"><i class="ti-arrow-down btn-icon-prepend"></i></a>
                                 @if(auth()->user()->id == '660' || auth()->user()->id == '1' || auth()->user()->id == '1202')
@@ -243,6 +247,7 @@
     </div>
 </div>
 @include('employees.updateEmployeeRate')
+@include('employees.updateEmployeeSalaries')
 @include('employees.uploadEmployee')
 @include('employees.newEmployee')
 {{-- @include('employees.capture_image') --}}
