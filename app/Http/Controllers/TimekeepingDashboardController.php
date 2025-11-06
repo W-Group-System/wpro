@@ -518,12 +518,35 @@ class TimekeepingDashboardController extends Controller
         $companies = Company::where('id','!=',1)->get();
         $departments = Department::get();
         $employees = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
-            ->with(['schedule_info','approved_ots',
-                'attendance_logs' => function($q)use($from_date,$to_date) {
-                    $q->select('id','emp_code','date','datetime')->whereBetween('datetime', [$from_date.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])->orderBy('datetime','asc');
-                },
-                'dtr_correction.dtr_correction_approver.user'
+            ->with(['schedule_info'])
+            ->with(['dtr_correction.dtr_correction_approver.user'])
+            ->with([
+                'attendance_logs' => function($q) use ($from_date, $to_date) {
+                    $q->select('id','emp_code','date','datetime')
+                        ->whereBetween('datetime', [$from_date.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])
+                        ->orderBy('datetime','asc');
+                }
             ])
+            ->with([
+                'approved_ots' => function($q) use ($from_date, $to_date) {
+                    $q->whereBetween('ot_date', [$from_date, $to_date])
+                        ->where('status','Approved')
+                        ->orderBy('ot_date','asc');
+                }
+            ])
+            ->with(['approved_leaves' => function ($query) use ($from_date, $to_date) {
+                $query->where(function ($q) use ($from_date, $to_date) {
+                    $q->whereBetween('date_from', [$from_date, $to_date])
+                        ->orWhereBetween('date_to', [$from_date, $to_date]);
+                })
+                ->where('status','Approved')
+                ->orderBy('id','asc');
+            },'approved_leaves.leave'])
+            ->with(['approved_obs' => function ($query) use ($from_date, $to_date) {
+                $query->whereBetween('applied_date', [$from_date, $to_date])
+                ->where('status','Approved')
+                ->orderBy('id','asc');
+            }])
             ->where('company_id', $request->company)
             ->when($department_data, function($q)use($department_data) {
                 $q->where('department_id', $department_data);
