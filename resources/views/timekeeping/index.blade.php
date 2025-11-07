@@ -99,6 +99,7 @@
                                                         <th>SCHEDULE</th>
                                                         <th>TIME IN</th>
                                                         <th>TIME OUT</th>
+                                                        <th>ABSENT</th>
                                                         <th>REG HRS (HRS)</th>
                                                         <th>LATE (MIN)</th>
                                                         <th>UNDERTIME(min)</th>
@@ -164,6 +165,7 @@
                                                                 $rst_sh_ot_ge= 0;
                                                                 $rst_sh_ot_nd= 0;
                                                                 $rst_sh_ot_nd_ge= 0;
+                                                                $plant_company = [5, 10, 11, 12];
 
                                                                 $rest = "";
                                                                 $ob_in = "";
@@ -272,7 +274,7 @@
                                                                         
                                                                         $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
 
-                                                                        $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                        $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                         if($if_has_ob)
                                                                         {
                                                                             if ($if_has_ob->date_from < $time_in->datetime)
@@ -335,7 +337,7 @@
                                                                         
                                                                         $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
 
-                                                                        $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                        $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                         if($if_has_ob)
                                                                         {
                                                                             $final_time_in = $if_has_ob->date_from;
@@ -410,7 +412,7 @@
                                                                 {
                                                                     if ($time_out && $time_in)
                                                                     {
-                                                                        $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                        $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                         if($if_has_ob)
                                                                         {
                                                                             if ($if_has_ob->date_from < $time_in->datetime)
@@ -483,7 +485,34 @@
                                                                         {
                                                                             if ($emp_has_ot < 8)
                                                                             {
-                                                                                $overtime = $emp_has_ot;
+                                                                                $original_sched = $employee_schedule['working_hours'];
+                                                                                $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2)-$original_sched;
+                                                                                // dd($work_ot);
+                                                                                if ($work_ot >= 2)
+                                                                                {
+                                                                                    if ($work_ot <= $emp_has_ot)
+                                                                                    {
+                                                                                        $overtime = $work_ot;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $overtime = $emp_has_ot;
+                                                                                    }
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    if (in_array($employee->company_id, $plant_company))
+                                                                                    {
+                                                                                        if ($work_ot <= $emp_has_ot)
+                                                                                        {
+                                                                                            $overtime = $work_ot;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $overtime = $emp_has_ot;
+                                                                                        }
+                                                                                    }
+                                                                                }
                                                                             }
                                                                             else
                                                                             {
@@ -494,7 +523,7 @@
                                                                 }
                                                                 
                                                                 // OB
-                                                                $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                 if($if_has_ob)
                                                                 {
                                                                     if ($time_in && $time_out)
@@ -623,15 +652,48 @@
                                                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
                                                                 if ($check_if_holiday)
                                                                 {
+                                                                    $abs=0;
                                                                     if ($employee_schedule)
                                                                     {
-                                                                        if (empty($final_time_in ) && empty($final_time_out))
+                                                                        $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
+                                                                        $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
+                                                                        if ($check_leave)
                                                                         {
-                                                                            $total_reg_hrs = floatval($employee_schedule->working_hours)-1;
+                                                                            // $if_attendance_holiday_status = 'With-Pay';
+                                                                            if(str_contains($check_leave,"Without")){
+                                                                                $if_attendance_holiday_status = 'Without-Pay';
+                                                                                $abs = 1;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                // $if_attendance_holiday_status = 'With-Pay';
+                                                                                if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $attendance = ($employee->attendance_logs)->map(function($item) {
+                                                                                return [
+                                                                                    'time_in' => $item->datetime
+                                                                                ];
+                                                                            });
+
+                                                                            $check_attendance = checkHasAttendanceHolidayStatus($attendance,$if_attendance_holiday);
+                                                                            if(empty($check_attendance))
+                                                                            {
+                                                                                // $is_absent = 'Absent';
+                                                                                $abs = 1;
+                                                                            }else{
+                                                                                // $if_attendance_holiday_status = 'With-Pay';
+                                                                                $abs = 0;
+                                                                            }
                                                                         }
                                                                     }
 
-                                                                    $abs = 0;
+                                                                    // $abs = 0;
                                                                     $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                                                                     // SH OT
                                                                     if ($check_if_holiday == "Special Holiday")
@@ -859,9 +921,9 @@
                                                                 $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
                                                             @endphp
 
-                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($if_has_ob) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0) || ($total_reg_hrs <= 3 && $rest != "RESTDAY" && $leave == 0)))
+                                                            @if(($pending_dtr == 0) && ($for_posting == 0) && ($posted_dtr == 0) && (($abs > 0) || ($if_has_ob) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0) || ($total_reg_hrs <= 3 && $rest != "RESTDAY" && $leave == 0 && $abs > 0)))
                                                                 @php
-                                                                    $total_issues = $total_issues+=1;
+                                                                    $total_issues = $total_issues+=1; 
                                                                 @endphp
 
                                                                 <tr>
@@ -940,6 +1002,10 @@
                                                                             {{-- <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}"> --}}
                                                                         @endif
                                                                     </td>
+                                                                    <td @if($abs-$leave > 0) class="bg-danger" @endif>
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][abs]" value="{{ $abs }}">
+                                                                        {{ number_format($abs, 2) }}
+                                                                    </td>
                                                                     <td>
                                                                         {{ number_format($total_reg_hrs,2) }}
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
@@ -1016,7 +1082,27 @@
                                                                     <td @if($rst_sh_ot_nd_ge > 0) class="bg-warning" @endif>
                                                                         {{ number_format($rst_sh_ot_nd_ge,2) }}
                                                                     </td>
-                                                                    <td></td>
+                                                                    <td>
+                                                                        @php
+                                                                            $leave_count = 0;
+                                                                            $abs_half = 0;
+
+                                                                            $if_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                            if($if_leave)
+                                                                            {
+                                                                                $l = explode('-',$if_leave);
+                                                                                $leave_count = (double) $l[1];
+                                                                                if(str_contains($if_leave,"Without"))
+
+                                                                                {
+                                                                                    $leave_count = 0;
+                                                                                    $abs_half = $l[1];
+                                                                                }
+                                                                            }
+                                                                        @endphp
+                                                                        {{$if_has_ob ? 'OB' : ''}}
+                                                                        {{ $if_leave }}
+                                                                    </td>
                                                                 </tr>
                                                             @endif
                                                         @endforeach
@@ -1430,7 +1516,7 @@
                                                                             
                                                                             $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
                                                                             
-                                                                            $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                            $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                             if($if_has_ob)
                                                                             {
                                                                                 if ($if_has_ob->date_from < $time_in->datetime)
@@ -1492,7 +1578,7 @@
                                                                             
                                                                             $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
                                                                             
-                                                                            $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                            $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                             if($if_has_ob)
                                                                             {
                                                                                 $final_time_in = $if_has_ob->date_from;
@@ -1567,7 +1653,7 @@
                                                                     {
                                                                         if ($time_in)
                                                                         {
-                                                                            $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                            $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                             if($if_has_ob)
                                                                             {
                                                                                 if ($if_has_ob->date_from < $time_in->datetime)
@@ -1616,16 +1702,29 @@
                                                                     if ($check_leave)
                                                                     {
                                                                         $leave = explode("-", $check_leave);
-                                                                        $leave = $leave[1];
-                                                                        // $leave = 1;
-                                                                        $abs = 0;
-                                                                        $undertime = 0;
+                                                                        if (str_contains($check_leave,"With-Pay"))
+                                                                        {
+                                                                            $leave = $leave[1];
+                                                                            if ($leave == 0.5)
+                                                                            {
+                                                                                $abs = $leave;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $abs = 0;
+                                                                            }
+                                                                            $undertime = 0;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            $abs = $leave[1];
+                                                                            $leave = 0;
+                                                                        }
                                                                     }
                                                                     else
                                                                     {
                                                                         $leave = 0;
                                                                     }
-
                                                                     // REG OT
                                                                     $emp_has_ot = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                                                                     if ($rest == "RESTDAY")
@@ -1640,7 +1739,33 @@
                                                                             {
                                                                                 if ($emp_has_ot < 8)
                                                                                 {
-                                                                                    $overtime = $emp_has_ot;
+                                                                                    $original_sched = $employee_schedule['working_hours'];
+                                                                                    $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2)-$original_sched;
+                                                                                    if ($work_ot >= 2)
+                                                                                    {
+                                                                                        if ($work_ot <= $emp_has_ot)
+                                                                                        {
+                                                                                            $overtime = $work_ot;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $overtime = $emp_has_ot;
+                                                                                        }
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        if (in_array($employee->company_id, $plant_company))
+                                                                                        {
+                                                                                            if ($work_ot <= $emp_has_ot)
+                                                                                            {
+                                                                                                $overtime = $work_ot;
+                                                                                            }
+                                                                                            else 
+                                                                                            {
+                                                                                                $overtime = $emp_has_ot;
+                                                                                            }
+                                                                                        }
+                                                                                    }
                                                                                 }
                                                                                 else
                                                                                 {
@@ -1651,7 +1776,7 @@
                                                                     }
                                                                     
                                                                     // OB
-                                                                    $if_has_ob = employeeHasOBDetails($employee->obs, $date_r);
+                                                                    $if_has_ob = employeeHasOBDetails($employee->approved_obs, $date_r);
                                                                     if($if_has_ob)
                                                                     {
                                                                         if ($time_in && $time_out)
@@ -1779,18 +1904,52 @@
                                                                     // Holiday OT's
                                                                     // if ($employee_schedule)
                                                                     // {
+                                                                    $if_attendance_holiday_status = '';
                                                                     $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
                                                                     if ($check_if_holiday)
                                                                     {
+                                                                        $abs = 0;
                                                                         if ($employee_schedule)
                                                                         {
-                                                                            if (empty($final_time_in ) && empty($final_time_out))
+                                                                            $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
+                                                                            $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
+                                                                            if ($check_leave)
                                                                             {
-                                                                                $total_reg_hrs = floatval($employee_schedule->working_hours)-1;
+                                                                                // $if_attendance_holiday_status = 'With-Pay';
+                                                                                if(str_contains($check_leave,"Without")){
+                                                                                    $if_attendance_holiday_status = 'Without-Pay';
+                                                                                    $abs = 1;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    // $if_attendance_holiday_status = 'With-Pay';
+                                                                                    if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
+                                                                                    {
+                                                                                        $abs = 0;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $attendance = ($employee->attendance_logs)->map(function($item) {
+                                                                                    return [
+                                                                                        'time_in' => $item->datetime
+                                                                                    ];
+                                                                                });
+
+                                                                                $check_attendance = checkHasAttendanceHolidayStatus($attendance,$if_attendance_holiday);
+                                                                                if(empty($check_attendance))
+                                                                                {
+                                                                                    // $is_absent = 'Absent';
+                                                                                    $abs = 1;
+                                                                                }else{
+                                                                                    // $if_attendance_holiday_status = 'With-Pay';
+                                                                                    $abs = 0;
+                                                                                }
                                                                             }
                                                                         }
 
-                                                                        $abs = 0;
+                                                                        // $abs = 0;
                                                                         $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                                                                         // SH OT
                                                                         if ($check_if_holiday == "Special Holiday")
@@ -2023,7 +2182,7 @@
                                                                     // dd($approved_dtr, $revert,$for_posting,$posted_dtr);
                                                                 @endphp
 
-                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) && ($total_reg_hrs > 3 || $rest=="RESTDAY" || $leave > 0) && (!$if_has_ob) || (($for_posting > 0)))
+                                                                @if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($posted_dtr == 0) && ($pending_dtr == 0) && ($total_reg_hrs > 3 || $rest=="RESTDAY" || ($leave >= 0)) && (!$if_has_ob) || (($for_posting > 0)))
                                                                     @php
                                                                         $total_for_posting = $total_for_posting+=1;
                                                                     @endphp
@@ -2099,7 +2258,7 @@
                                                                             <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="0.00">
                                                                             @endif
                                                                         </td>
-                                                                        <td @if($abs > 0) class="bg-danger" @endif>
+                                                                        <td @if($abs-$leave > 0) class="bg-danger" @endif>
                                                                             <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][abs]" value="{{ $abs }}">
                                                                             {{ number_format($abs, 2) }}
                                                                         </td>

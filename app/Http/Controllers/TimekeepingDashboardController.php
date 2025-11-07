@@ -19,6 +19,7 @@ use App\EmployeeWfh;
 use App\EmployeeOvertime;
 use App\EmployeeDtr;
 use App\Leave;
+use App\ScheduleData;
 use App\Timekeeping;
 use App\TimekeepingPosted;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -315,32 +316,32 @@ class TimekeepingDashboardController extends Controller
                 $dtr_correction->status = $request->status;
                 $dtr_correction->save();
 
-                $employees = Employee::findOrFail($request->emp_id);
-                $timekeeping_in = AttendanceLog::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','asc')->first();
-                $timekeeping_out = AttendanceLog::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','desc')->first();
+                // $employees = Employee::findOrFail($request->emp_id);
+                // $timekeeping_in = AttendanceLog::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','asc')->first();
+                // $timekeeping_out = AttendanceLog::where('emp_code',$employees->employee_number)->where('date', $request->date)->orderBy('id','desc')->first();
                 
-                if ($timekeeping_in && $timekeeping_out)
-                {
-                    $timekeeping_in->datetime = $dtr_correction->time_in;
-                    $timekeeping_in->save();
+                // if ($timekeeping_in && $timekeeping_out)
+                // {
+                //     $timekeeping_in->datetime = $dtr_correction->time_in;
+                //     $timekeeping_in->save();
     
-                    $timekeeping_out->datetime = $dtr_correction->time_out;
-                    $timekeeping_out->save();
-                }
-                else
-                {
-                    $timekeeping = new AttendanceLog;
-                    $timekeeping->emp_code = $dtr_correction->employee->employee_number;
-                    $timekeeping->date = $dtr_correction->date;
-                    $timekeeping->datetime = $dtr_correction->time_in;
-                    $timekeeping->save();
-        
-                    $timekeeping = new AttendanceLog;
-                    $timekeeping->emp_code = $dtr_correction->employee->employee_number;
-                    $timekeeping->date = $dtr_correction->date;
-                    $timekeeping->datetime = $dtr_correction->time_out;
-                    $timekeeping->save();
-                }
+                //     $timekeeping_out->datetime = $dtr_correction->time_out;
+                //     $timekeeping_out->save();
+                // }
+                // else
+                // {
+                // }
+                $timekeeping = new AttendanceLog;
+                $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+                $timekeeping->date = $dtr_correction->date;
+                $timekeeping->datetime = $dtr_correction->time_in;
+                $timekeeping->save();
+    
+                $timekeeping = new AttendanceLog;
+                $timekeeping->emp_code = $dtr_correction->employee->employee_number;
+                $timekeeping->date = $dtr_correction->date;
+                $timekeeping->datetime = $dtr_correction->time_out;
+                $timekeeping->save();
             }
 
         }
@@ -510,8 +511,9 @@ class TimekeepingDashboardController extends Controller
     public function timekeepingOfficial(Request $request)
     {
         $header = 'timekeeping-official';
-        $from_date = $request->date_from;   
+        $from_date = $request->date_from;
         $to_date = $request->date_to;
+        $date_from = date('Y-m-d', strtotime($from_date."-1 day"));
         $company_data = $request->company;
         $department_data = $request->department;
 
@@ -528,22 +530,22 @@ class TimekeepingDashboardController extends Controller
                 }
             ])
             ->with([
-                'approved_ots' => function($q) use ($from_date, $to_date) {
-                    $q->whereBetween('ot_date', [$from_date, $to_date])
+                'approved_ots' => function($q) use ($date_from, $to_date) {
+                    $q->whereBetween('ot_date', [$date_from, $to_date])
                         ->where('status','Approved')
                         ->orderBy('ot_date','asc');
                 }
             ])
-            ->with(['approved_leaves' => function ($query) use ($from_date, $to_date) {
-                $query->where(function ($q) use ($from_date, $to_date) {
-                    $q->whereBetween('date_from', [$from_date, $to_date])
-                        ->orWhereBetween('date_to', [$from_date, $to_date]);
+            ->with(['approved_leaves' => function ($query) use ($date_from, $to_date) {
+                $query->where(function ($q) use ($date_from, $to_date) {
+                    $q->whereBetween('date_from', [$date_from, $to_date])
+                        ->orWhereBetween('date_to', [$date_from, $to_date]);
                 })
                 ->where('status','Approved')
                 ->orderBy('id','asc');
             },'approved_leaves.leave'])
-            ->with(['approved_obs' => function ($query) use ($from_date, $to_date) {
-                $query->whereBetween('applied_date', [$from_date, $to_date])
+            ->with(['approved_obs' => function ($query) use ($date_from, $to_date) {
+                $query->whereBetween('applied_date', [$date_from, $to_date])
                 ->where('status','Approved')
                 ->orderBy('id','asc');
             }])
@@ -552,8 +554,8 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->where('employee_code','A196425')
             // ->where('employee_code','A3176324')
+            // ->where('employee_code','A3188225')
             // ->where('employee_code','A2110025')
             // ->where('employee_code','A192524')
             // ->whereIn('employee_code',['A3189225'])
@@ -562,6 +564,8 @@ class TimekeepingDashboardController extends Controller
 
         $attendance_controller = new AttendanceController;
         $date_range =  $attendance_controller->dateRange($from_date, $to_date);
+
+        $schedules = ScheduleData::get();
 
         return view('timekeeping.index',
             array(
@@ -574,6 +578,7 @@ class TimekeepingDashboardController extends Controller
                 'to_date' => $to_date,
                 'company_data' => $company_data,
                 'department_data' => $department_data,
+                'schedules' => $schedules
             )
         );
     }
