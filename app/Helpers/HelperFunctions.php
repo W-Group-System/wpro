@@ -22,6 +22,7 @@ use App\ExitClearanceSignatory;
 use App\ExitResign;
 use App\Leave;
 use App\Level;
+use App\Hmo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -1190,7 +1191,24 @@ function pending_employee_count($approver_id){
     return 0;
 }
 
+// Proof of Availment
+function pending_hmo_count($approver_id){
+    
+    // Only allow if logged-in user is ID 586
+    if (Auth::check() && Auth::id() == 17) {
 
+        $today = date('Y-m-d');
+        $from_date = date('Y-m-d', strtotime('-1 month', strtotime($today)));
+        $to_date = date('Y-m-d');
+
+        return Hmo::where('status', 'Pending')
+            // ->whereBetween('created_at', [$from_date, $to_date])
+            ->count();
+    }
+
+    // Return 0 (or null) if user is not ID 586
+    return 0;
+}
 
 //clearance-functions
 function for_clearance()

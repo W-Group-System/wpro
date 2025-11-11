@@ -227,9 +227,19 @@
                                         <td>{{$employee->status}} </td>
                                         @if (checkUserPrivilege('employees_availment',auth()->user()->id) == 'yes')
                                         <td>
-                                            <a href="{{ route('send.hmo', $employee->id) }}" class="btn btn-sm btn-info" title="Send Email Notification" onclick="show();">
+                                            <!-- <a href="{{ route('send.hmo', $employee->id) }}" class="btn btn-sm btn-info" title="Send Email Notification" onclick="show();">
                                                 <i class="fa fa-envelope"></i>
-                                            </a>
+                                            </a> -->
+                                            <button type="button" 
+                                                class="btn btn-sm btn-info" 
+                                                title="Send Email Notification"
+                                                data-toggle="modal" 
+                                                data-target="#sendEmailModal" 
+                                                data-id="{{ $employee->id }}"
+                                                data-name="{{ $employee->first_name }}"
+                                                data-email="{{ $employee->email ?? ($employee->user->email ?? '') }}">
+                                                <i class="fa fa-envelope"></i>
+                                            </button>
                                         </td>
                                         @endif
                                     </tr>
@@ -246,6 +256,40 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="sendEmailModal" tabindex="-1" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="sendEmailForm" action="{{ route('send.hmo') }}" method="POST" onsubmit='show()'>
+            @csrf
+            <input type="hidden" name="employee_id" id="employee_id">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="sendEmailModalLabel">Send HMO Email Notification</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="availment_date">Availment Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="availment_date" id="availment_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient_email">Recipient Email</label>
+                        <input type="email" class="form-control" id="recipient_email" readonly>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-info" id="sendEmailBtn">Send Email</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 @include('employees.updateEmployeeRate')
 @include('employees.updateEmployeeSalaries')
 @include('employees.uploadEmployee')
@@ -253,15 +297,26 @@
 {{-- @include('employees.capture_image') --}}
 <script>
     function show() {
-    Swal.fire({
-        title: 'Sending...',
-        text: 'Please wait while the email is being sent.',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        Swal.fire({
+            title: 'Sending...',
+            text: 'Please wait while the email is being sent.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#sendEmailModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var employeeId = button.data('id');
+            var email = button.data('email');
+
+            var modal = $(this);
+            modal.find('#employee_id').val(employeeId);
+            modal.find('#recipient_email').val(email ? email : 'No email available');
+        }); 
     });
-}
 </script>
 
 @endsection
