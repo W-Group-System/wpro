@@ -61,10 +61,50 @@
                                         <td>{{ $item->department }}</td>
                                         <td>{{date('M. d, Y',strtotime($item->date_availment))}}</td>
                                         <td>
-                                            @if($item->attachments && $item->attachments->isNotEmpty())
+                                            {{-- @if($item->attachments && $item->attachments->isNotEmpty())
                                                 @foreach($item->attachments as $file)
                                                     <a href="{{ asset('storage/' .$file->path) }}" target="_blank">
                                                         <i class="fa fa-file-pdf-o"></i>
+                                                    </a>
+                                                @endforeach
+                                            @endif --}} 
+                                            @if($item->attachments && $item->attachments->isNotEmpty())
+                                                @foreach($item->attachments as $file)
+                                                    @php
+                                                        $storage = \Illuminate\Support\Facades\Storage::disk('public');
+
+                                                        if ($storage->exists($file->path)) {
+                                                            $fileUrl = asset('storage/' . $file->path); // URL for files in storage/app/public
+                                                        } else {
+                                                            $fileUrl = $file->path; // fallback if path is already a full URL
+                                                        }
+
+                                                        $extension = strtolower(pathinfo($file->path, PATHINFO_EXTENSION));
+                                                        switch ($extension) {
+                                                            case 'pdf':
+                                                                $icon = 'fa-file-pdf-o';
+                                                                break;
+                                                            case 'doc':
+                                                            case 'docx':
+                                                                $icon = 'fa-file-word-o';
+                                                                break;
+                                                            case 'xls':
+                                                            case 'xlsx':
+                                                                $icon = 'fa-file-excel-o';
+                                                                break;
+                                                            case 'jpg':
+                                                            case 'jpeg':
+                                                            case 'png':
+                                                            case 'gif':
+                                                                $icon = 'fa-file-image-o';
+                                                                break;
+                                                            default:
+                                                                $icon = 'fa-file-o';
+                                                        }
+                                                    @endphp
+
+                                                    <a href="{{ $fileUrl }}" target="_blank" title="View File">
+                                                        <i class="fa {{ $icon }} fa-lg mx-1"></i>
                                                     </a>
                                                 @endforeach
                                             @endif
