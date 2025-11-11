@@ -115,7 +115,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('delete-hmo/{id}', 'HmoController@destroy');
     Route::get('hmo-report', 'HmoController@report');
     Route::post('edit-hmo/{id}', 'HmoController@update');
-    Route::get('send-hmo/{id}', [HmoController::class, 'email'])->name('send.hmo');
+    // Route::get('send-hmo/{id}', [HmoController::class, 'email'])->name('send.hmo');
+    Route::post('/send-hmo', [HmoController::class, 'email'])->name('send.hmo');
+
 
     //FOR APPROVAL
     Route::get('for-leave','FormApprovalController@form_leave_approval');
@@ -148,9 +150,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('for-employee','FormApprovalController@form_employee_approval');
     Route::post('approve-employee/{id}','FormApprovalController@approveEmployee');
     Route::post('decline-employee/{id}','FormApprovalController@declineEmployee');
-
     Route::post('/approve-employee-all', [FormApprovalController::class, 'approveEmployeeAll']);
     Route::post('/disapprove-employee-all', [FormApprovalController::class, 'disapproveEmployeeAll']);
+
+    Route::get('for-hmo','FormApprovalController@form_hmo_approval');
+    Route::post('approve-hmo/{id}','FormApprovalController@approveHmo');
+    Route::post('decline-hmo/{id}','FormApprovalController@declineHmo');
+    Route::post('/approve-hmo-all', [FormApprovalController::class, 'approveHmoAll']);
+    Route::post('/disapprove-hmo-all', [FormApprovalController::class, 'disapproveHmoAll']);
 
     //employees
     Route::get('employees', 'EmployeeController@view');

@@ -15,7 +15,7 @@ class Hmo extends Model implements Auditable
 
     protected $table = "hmos";
     protected $fillable = [
-        'employee_name', 'email', 'company', 'department', 'date_availment', 'user_id'
+        'employee_name', 'email', 'company', 'department', 'date_availment', 'user_id', 'status'
     ];
 
     public function attachments()

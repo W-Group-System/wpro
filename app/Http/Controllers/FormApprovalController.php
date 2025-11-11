@@ -9,6 +9,9 @@ use App\EmployeeDtr;
 use App\EmployeeApprover;
 use App\Employee;
 use App\User;
+use App\Hmo;
+use App\Notifications\HmoNotif;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -1092,5 +1095,281 @@ class FormApprovalController extends Controller
         return response()->json($count);
     }
 
+    // Proof of Availment
+    public function form_hmo_approval(Request $request)
+    { 
 
+        $today = date('Y-m-d');
+        $from_date = isset($request->from) ? $request->from : date('Y-m-d',(strtotime ( '-1 month' , strtotime ( $today) ) ));
+        $to_date = isset($request->to) ? $request->to : date('Y-m-d');
+ 
+        $filter_status = isset($request->status) ? $request->status : 'Pending';
+        $approver_id = auth()->user()->id;
+        $availments = Hmo::where('status', $request->status)
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->orderBy('created_at','DESC')
+                                ->get();
+                                
+        $for_approval = Hmo::where('status','Pending')
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->count();
+        
+        $approved = Hmo::where('status','Approved')
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->count();
+        // dd($approved);
+        $declined = Hmo::where('status','Declined')
+                                ->whereDate('created_at','>=',$from_date)
+                                ->whereDate('created_at','<=',$to_date)
+                                ->count();
+        
+        session(['pending_hmo_count'=>$for_approval]);
+
+        return view('for-approval.hmo-approval',
+        array(
+            'header' => 'for-approval',
+            'availments' => $availments,
+            'for_approval' => $for_approval,
+            'approved' => $approved,
+            'declined' => $declined,
+            'approver_id' => $approver_id,
+            'from' => $from_date,
+            'to' => $to_date,
+            'status' => $filter_status,
+        ));
+    }
+
+    // public function approveHmo(Request $request,$id){
+
+    //     $new_hmo = Hmo::where('id', $id)->first();
+        
+    //     if($new_hmo){
+    //         Hmo::where('id', $id)->update([
+    //                 'status' => 'Active',
+    //                 'approved_date'    => now(),
+    //                 'approval_remarks' => $request->approval_remarks,
+    //             ]);
+                    
+    //         Alert::success('Proof of Availment has been approved.')->persistent('Dismiss');
+    //         return back();
+    //     }
+    // }
+
+    public function approveHmo(Request $request,$id)
+    {
+        $hmo = Hmo::find($id);
+
+        if (!$hmo) {
+            Alert::error('Error', 'HMO record not found.')->persistent('Dismiss');
+            return back();
+        }
+
+        Hmo::where('id', $id)->update([
+            'status' => 'Approved',
+            'approved_date'    => now(),
+            'approval_remarks' => $request->approval_remarks,
+        ]);
+
+        // ✅ Find the related employee (assuming employee_name matches Employee->name)
+        $employee = User::where('name', $hmo->employee_name)->first();
+
+        // ✅ Get recipient email
+        $recipientEmail = $employee->email ?? ($employee->user->email ?? null);
+
+        if ($recipientEmail) {
+            // ✅ Email details for Decline
+            $details = [
+                'subject'  => 'HMO Availment Approved',
+                'greeting' => 'Hi ' . ($employee->first_name ?? $employee->name) . ',',
+                'body'     => 'We regret to inform you that your HMO availment request has been <strong>approved</strong> on <strong>' . 
+                            now()->format('F j, Y') . 
+                            '</strong>.<br><br><strong>Reason:</strong> ' . e($request->approval_remarks) . 
+                            '<br><br>If you believe this was made in error, please contact the HR Department for clarification.',
+                'thanks'   => 'Thank you, HR Department.',
+            ];
+
+            $user = User::where('email', $recipientEmail)->first();
+            if ($user) {
+                $user->notify(new HmoNotif($details));
+            }
+        }
+
+        Alert::success('Proof of Availment has been approved and employee notified.')
+            ->persistent('Dismiss');
+
+        return back();
+    }
+
+    public function declineHmo(Request $request,$id)
+    {
+        $hmo = Hmo::find($id);
+
+        if (!$hmo) {
+            Alert::error('Error', 'HMO record not found.')->persistent('Dismiss');
+            return back();
+        }
+
+        Hmo::where('id', $id)->update([
+            'status' => 'Declined',
+            'disapproved_date'    => now(),
+            'approval_remarks' => $request->approval_remarks,
+        ]);
+
+        // ✅ Find the related employee (assuming employee_name matches Employee->name)
+        $employee = User::where('name', $hmo->employee_name)->first();
+
+        // ✅ Get recipient email
+        $recipientEmail = $employee->email ?? ($employee->user->email ?? null);
+
+        if ($recipientEmail) {
+            // ✅ Email details for Decline
+            $details = [
+                'subject'  => 'HMO Availment Declined',
+                'greeting' => 'Hi ' . ($employee->first_name ?? $employee->name) . ',',
+                'body'     => 'We regret to inform you that your HMO availment request has been <strong>declined</strong> on <strong>' . 
+                            now()->format('F j, Y') . 
+                            '</strong>.<br><br><strong>Reason:</strong> ' . e($request->approval_remarks) . 
+                            '<br><br>If you believe this was made in error, please contact the HR Department for clarification.',
+                'thanks'   => 'Thank you, HR Department.',
+            ];
+
+            $user = User::where('email', $recipientEmail)->first();
+            if ($user) {
+                $user->notify(new HmoNotif($details));
+            }
+        }
+
+        Alert::success('Proof of Availment has been declined and employee notified.')
+            ->persistent('Dismiss');
+
+        return back();
+    }
+
+    public function approveHmoAll(Request $request)
+    {
+        $ids = json_decode($request->ids, true); 
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['error' => 'No IDs provided'], 400);
+        }
+
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $hmo = Hmo::find($id);
+
+            if ($hmo) {
+                // ✅ Update record
+                Hmo::where('id', $id)->update([
+                    'status' => 'Approved',
+                    'approved_date'    => now(),
+                    'approval_remarks' => 'Approved by admin',
+                ]);
+
+                // ✅ Find the employee and their email
+                $employee = User::where('name', $hmo->employee_name)->first();
+                $recipientEmail = $employee->email ?? ($employee->user->email ?? null);
+
+                // ✅ If email exists, send notification
+                if ($recipientEmail) {
+                    $details = [
+                        'subject'  => 'HMO Availment Approved',
+                        'greeting' => 'Hi ' . $employee->first_name . ',',
+                        'body'     => 'Your HMO availment has been approved on <strong>' . now()->format('F j, Y') . '</strong>.<br><br>
+                                    You may now proceed with your submission or contact HR for any further details.',
+                        'thanks'   => 'Thank you, HR Department.',
+                    ];
+
+                    $user = User::where('email', $recipientEmail)->first();
+                    if ($user) {
+                        $user->notify(new HmoNotif($details));
+                    }
+                }
+
+                $count++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $count . ' HMO availment(s) approved and notified successfully.',
+        ]);
+    }
+
+    public function disapproveHmoAll(Request $request)
+    {
+        $ids = json_decode($request->ids, true); 
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['error' => 'No IDs provided'], 400);
+        }
+
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $hmo = Hmo::find($id);
+
+            if ($hmo) {
+                Hmo::where('id', $id)->update([
+                    'status' => 'Declined',
+                    'disapproved_date'    => now(),
+                    'approval_remarks' => 'Disapproved by admin',
+                ]);
+
+                $employee = User::where('name', $hmo->employee_name)->first();
+                $recipientEmail = $employee->email ?? ($employee->user->email ?? null);
+
+                if ($recipientEmail) {
+                    $details = [
+                        'subject'  => 'HMO Availment Approved',
+                        'greeting' => 'Hi ' . $employee->first_name . ',',
+                        'body'     => 'Your HMO availment has been approved on <strong>' . now()->format('F j, Y') . '</strong>.<br><br>
+                                    You may now proceed with your submission or contact HR for any further details.',
+                        'thanks'   => 'Thank you, HR Department.',
+                    ];
+
+                    $user = User::where('email', $recipientEmail)->first();
+                    if ($user) {
+                        $user->notify(new HmoNotif($details));
+                    }
+                }
+
+                $count++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $count . ' HMO availment(s) approved and notified successfully.',
+        ]);
+    }
+
+    // public function disapproveHmoAll(Request $request)
+    // {
+    //     $ids = json_decode($request->ids, true); // [1,2,3]
+
+    //     if (!is_array($ids) || empty($ids)) {
+    //         return response()->json(['error' => 'No IDs provided'], 400);
+    //     }
+
+    //     $count = 0;
+
+    //     foreach ($ids as $id) {
+    //         $employee = Hmo::find($id);
+
+    //         if ($employee) {
+    //             Hmo::where('id', $id)->update([
+    //                     'status' => 'Declined',
+    //                     'disapproved_date'    => now(),
+    //                     'approval_remarks' => 'Disapproved by admin',
+    //                 ]);
+    //             $count++;
+    //         }
+    //     }
+
+    //     return response()->json($count);
+    // }
 }

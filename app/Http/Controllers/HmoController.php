@@ -57,6 +57,7 @@ class HmoController extends Controller
             'company'       => $request->company,
             'department'    => $request->department,
             'date_availment'=> $request->date_availment,
+            'status'        => 'Pending',
             'user_id'       => auth()->user()->employee->user_id
         ]);
 
@@ -167,31 +168,65 @@ class HmoController extends Controller
         ));
     }
 
-    public function email($id)
-    {
-        $employee = Employee::with('user')->findOrFail($id);
+    // public function email($id)
+    // {
+    //     $employee = Employee::with('user')->findOrFail($id);
 
+    //     $recipientEmail = $employee->email ?? ($employee->user->email ?? null);
+    //     if (!$recipientEmail) {
+    //         Alert::error('Error', 'No email address found for this employee.')->persistent('Dismiss');
+    //         return back();
+    //     }
+
+    //     $user = User::where('email', $recipientEmail)->first();
+    //     if (!$user) {
+    //         Alert::error('Error', 'User not found for this employee email.')->persistent('Dismiss');
+    //         return back();
+    //     }
+
+    //     $details = [
+    //         'subject'    => 'Document Submission: HMO Proof of Availment',
+    //         'greeting'   => 'Hi ' . $employee->first_name . ',',
+    //         'body'       => 'We are reviewing our HMO billiing and have identified an availment on date. Please provide documentation to confirm the use as part of our validation. Acceptable documents include any of the following: LOA (Letter of Authorization), hospital/clinic appointment slip or referral form, availment slip, or similar documents.<br><br>If you click the <a href="' . url('/hmo') . '">Submit</a> button, you will be directed to W Pro to attach the required documents',
+    //         'thanks'     => 'If you have any questions or concerns, please contact the HR Department.',
+    //         // 'actionText' => 'Click Here',
+    //         // 'actionURL'  => url('/hmo')
+    //     ];
+
+    //     $user->notify(new HmoNotif($details));
+
+    //     Alert::success('Success', 'Email sent successfully to ' . $recipientEmail)
+    //         ->persistent('Dismiss');
+
+    //     return back();
+    // }
+
+    public function email(Request $request)
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'availment_date' => 'required|date',
+        ]);
+
+        $employee = Employee::with('user')->findOrFail($request->employee_id);
         $recipientEmail = $employee->email ?? ($employee->user->email ?? null);
+
         if (!$recipientEmail) {
             Alert::error('Error', 'No email address found for this employee.')->persistent('Dismiss');
             return back();
         }
 
-        $user = User::where('email', $recipientEmail)->first();
-        if (!$user) {
-            Alert::error('Error', 'User not found for this employee email.')->persistent('Dismiss');
-            return back();
-        }
-
         $details = [
-            'subject'    => 'Document Submission: HMO Proof of Availment',
-            'greeting'   => 'Hi ' . $employee->first_name . ',',
-            'body'       => 'We are reviewing our HMO billiing and have identified an availment on date. Please provide documentation to confirm the use as part of our validation. Acceptable documents include any of the following: LOA (Letter of Authorization), hospital/clinic appointment slip or referral form, availment slip, or similar documents.<br><br>If you click the <a href="' . url('/hmo') . '">Submit</a> button, you will be directed to W Pro to attach the required documents',
-            'thanks'     => 'If you have any questions or concerns, please contact the HR Department.',
-            // 'actionText' => 'Click Here',
-            // 'actionURL'  => url('/hmo')
+            'subject'  => 'Document Submission: HMO Proof of Availment',
+            'greeting' => 'Hi ' . $employee->first_name . ',',
+            'body'     => 'We are reviewing our HMO billing and have identified an availment on <strong>' . 
+                            date('F j, Y', strtotime($request->availment_date)) . 
+                            '</strong>. Please provide documentation to confirm the use as part of our validation. Acceptable documents include LOA, hospital/clinic appointment slip, referral form, or similar.<br><br>
+                            If you click the <a href="' . url('/hmo') . '">Submit</a> button, you will be directed to W Pro to attach the required documents.',
+            'thanks'   => 'If you have any questions or concerns, please contact the HR Department.',
         ];
 
+        $user = User::where('email', $recipientEmail)->first();
         $user->notify(new HmoNotif($details));
 
         Alert::success('Success', 'Email sent successfully to ' . $recipientEmail)
