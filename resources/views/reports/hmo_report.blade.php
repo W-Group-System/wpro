@@ -74,9 +74,9 @@
                                                         $storage = \Illuminate\Support\Facades\Storage::disk('public');
 
                                                         if ($storage->exists($file->path)) {
-                                                            $fileUrl = asset('storage/' . $file->path); // URL for files in storage/app/public
+                                                            $fileUrl = asset('storage/' . $file->path); 
                                                         } else {
-                                                            $fileUrl = $file->path; // fallback if path is already a full URL
+                                                            $fileUrl = $file->path; 
                                                         }
 
                                                         $extension = strtolower(pathinfo($file->path, PATHINFO_EXTENSION));

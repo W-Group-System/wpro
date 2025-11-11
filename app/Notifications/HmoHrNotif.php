@@ -35,10 +35,11 @@ class HmoHrNotif extends Notification
             ->line(new \Illuminate\Support\HtmlString($this->detailsHr['thanks']));
             // ->action($this->detailsHr['actionText'], $this->detailsHr['actionURL']);
 
-        // Attach uploaded files if any
-        foreach ($this->attachments as $filePath) {
-            $fullPath = storage_path('app/public/' . $filePath);
-            if (file_exists($fullPath)) {
+        // Attach files if available
+        foreach ($this->attachments as $file) {
+            // Check if file exists in public folder
+            $fullPath = public_path($file);
+            if(file_exists($fullPath)){
                 $mail->attach($fullPath);
             }
         }
