@@ -578,6 +578,7 @@
                                              'LH ND GE' => 'lh_nd_ge_amount',
                                              'LH ND OT' => 'lh_ot_amount',
                                              'LH ND OT GE' => 'lh_ot_ge_amount',
+                                             'SH OT' => 'sh_ot_amount',
                                              'SH' => 'sh_amount',
                                              'SH ND' => 'sh_nd_amount',
                                              'SH GE' => 'sh_ot_ge_amount',
