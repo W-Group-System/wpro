@@ -14,11 +14,6 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class HmoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $availments = Hmo::where('employee_name', auth()->user()->name)
@@ -32,23 +27,6 @@ class HmoController extends Controller
             'availments' => $availments,
         ));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     // public function store(Request $request)
     // {
     //     $new_hmo = Hmo::create([
@@ -136,7 +114,11 @@ class HmoController extends Controller
             'thanks'   => 'If you have any questions or require assistance, feel free to reach out.',
         ];
 
-        $hrEmails = ['ict.engineer@wgroup.com.ph']; 
+        $hrEmails = [
+            'reyzie.repia@rico.com.ph',
+            'julie.reamillo@rico.com.ph',
+            'hr.generalist@rico.com.ph', 
+        ];
         Notification::route('mail', $hrEmails)->notify(new HmoHrNotif($detailsHr, $attachments));
 
         Alert::success('Successfully Stored')->persistent('Dismiss');
