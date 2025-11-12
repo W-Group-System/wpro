@@ -39,7 +39,7 @@
                                 </div>
                             </form>
                         </p>
-                        <h4 class="card-title">Proof of Availment Report</h4>
+                        <h4 class="card-title" style="text-transform: none;">Proof of Availment Report</h4>
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered table-detailed" id="ob_report">
                                 <thead>
@@ -49,6 +49,7 @@
                                         <th>Company</th>
                                         <th>Department</th>
                                         <th>Date of Availment</th>
+                                        <th>Status</th>
                                         <th>Attachments</th>
                                     </tr>
                                 </thead>
@@ -60,6 +61,7 @@
                                         <td>{{ $item->company }}</td>
                                         <td>{{ $item->department }}</td>
                                         <td>{{date('M. d, Y',strtotime($item->date_availment))}}</td>
+                                        <td>{{ $item->status }}</td>
                                         <td>
                                             {{-- @if($item->attachments && $item->attachments->isNotEmpty())
                                                 @foreach($item->attachments as $file)
