@@ -461,10 +461,18 @@
                                                                 if ($check_leave)
                                                                 {
                                                                     $leave = explode("-", $check_leave);
-                                                                    $leave = $leave[1];
-
-                                                                    $abs = 0;
-                                                                    $undertime=0;
+                                                                    
+                                                                    if ($leave[0] == "LWOP")
+                                                                    {
+                                                                        $abs=1;
+                                                                        $leave = $leave[1];
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $leave = $leave[1];
+                                                                        $abs = 0;
+                                                                        $undertime=0;
+                                                                    }
                                                                 }
                                                                 else
                                                                 {
