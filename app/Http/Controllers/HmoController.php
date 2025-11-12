@@ -27,70 +27,32 @@ class HmoController extends Controller
             'availments' => $availments,
         ));
     }
-    // public function store(Request $request)
-    // {
-    //     $new_hmo = Hmo::create([
-    //         'employee_name' => $request->employee_name,
-    //         'email'         => $request->email,
-    //         'company'       => $request->company,
-    //         'department'    => $request->department,
-    //         'date_availment'=> $request->date_availment,
-    //         'status'        => 'Pending',
-    //         'user_id'       => auth()->user()->employee->user_id
-    //     ]);
-
-    //     // Store attachments
-    //     $attachments = [];
-    //     if ($request->hasFile('path')) {
-    //         foreach ($request->file('path') as $file) {
-    //             $filePath = $file->store('hmo_files', 'public');
-
-    //             HmoAttachment::create([
-    //                 'hmo_id' => $new_hmo->id,
-    //                 'path'   => $filePath,
-    //             ]);
-
-    //             $attachments[] = $filePath;
-    //         }
-    //     }
-
-    //     $detailsHr = [
-    //         'subject'    => 'Document Submission: HMO Proof of Availment',
-    //         'greeting'   => 'Dear HR Team,',
-    //         'body'       => 'Please review the uploaded proof of availment.<br><br>Clicking the <a href="' . url('/hmo-report') . '">View</a> button will direct you to W Pro to view the details.',
-    //         'thanks'     => 'If you have any questions or require further assistance, feel free to reach out to us.',
-    //         // 'actionText' => 'Click Here',
-    //         // 'actionURL'  => url('/hmo-report'),
-    //     ];
-
-    //     // $hrEmails = [
-    //     //     'reyzie.repia@rico.com.ph',
-    //     //     'julie.reamillo@rico.com.ph',
-    //     //     'hr.generalist@rico.com.ph', 
-    //     // ];
-
-    //     $hrEmails = [
-    //         'mark.bautista@wgroup.space', 
-    //     ];
-
-    //     Notification::route('mail', $hrEmails)->notify(new HmoHrNotif($detailsHr, $attachments));
-
-    //     Alert::success('Successfully Stored')->persistent('Dismiss');
-    //     return back();
-
-    // }
     public function store(Request $request)
     {
         $new_hmo = Hmo::create([
-            'employee_name'  => $request->employee_name,
-            'email'          => $request->email,
-            'company'        => $request->company,
-            'department'     => $request->department,
-            'date_availment' => $request->date_availment,
-            'status'         => 'Pending',
-            'user_id'        => auth()->user()->employee->user_id,
+            'employee_name' => $request->employee_name,
+            'email'         => $request->email,
+            'company'       => $request->company,
+            'department'    => $request->department,
+            'date_availment'=> $request->date_availment,
+            'status'        => 'Pending',
+            'user_id'       => auth()->user()->employee->user_id
         ]);
 
+        // Store attachments
+        // $attachments = [];
+        // if ($request->hasFile('path')) {
+        //     foreach ($request->file('path') as $file) {
+        //         $filePath = $file->store('hmo_files', 'public');
+
+        //         HmoAttachment::create([
+        //             'hmo_id' => $new_hmo->id,
+        //             'path'   => $filePath,
+        //         ]);
+
+        //         $attachments[] = $filePath;
+        //     }
+        // }
         $attachments = [];
         if ($request->hasFile('path')) {
             foreach ($request->file('path') as $file) {
@@ -107,23 +69,75 @@ class HmoController extends Controller
         }
 
         $detailsHr = [
-            'subject'  => 'Document Submission: HMO Proof of Availment',
-            'greeting' => 'Dear HR Team,',
-            'body'     => 'Please review the uploaded proof of availment.<br><br>
-                        Click <a href="' . url('/hmo-report') . '">here</a> to view details.',
-            'thanks'   => 'If you have any questions or require assistance, feel free to reach out.',
+            'subject'    => 'Document Submission: HMO Proof of Availment',
+            'greeting'   => 'Dear HR Team,',
+            'body'       => 'Please review the uploaded proof of availment.<br><br>Clicking the <a href="' . url('/hmo-report') . '">View</a> button will direct you to W Pro to view the details.',
+            'thanks'     => 'If you have any questions or require further assistance, feel free to reach out to us.',
+            // 'actionText' => 'Click Here',
+            // 'actionURL'  => url('/hmo-report'),
         ];
 
+        // $hrEmails = [
+        //     'reyzie.repia@rico.com.ph',
+        //     'julie.reamillo@rico.com.ph',
+        //     'hr.generalist@rico.com.ph', 
+        // ];
+
         $hrEmails = [
-            'reyzie.repia@rico.com.ph',
-            'julie.reamillo@rico.com.ph',
-            'hr.generalist@rico.com.ph', 
+            'mark.bautista@wgroup.space', 
         ];
+
         Notification::route('mail', $hrEmails)->notify(new HmoHrNotif($detailsHr, $attachments));
 
         Alert::success('Successfully Stored')->persistent('Dismiss');
         return back();
+
     }
+    // public function store(Request $request)
+    // {
+    //     $new_hmo = Hmo::create([
+    //         'employee_name'  => $request->employee_name,
+    //         'email'          => $request->email,
+    //         'company'        => $request->company,
+    //         'department'     => $request->department,
+    //         'date_availment' => $request->date_availment,
+    //         'status'         => 'Pending',
+    //         'user_id'        => auth()->user()->employee->user_id,
+    //     ]);
+
+    //     $attachments = [];
+    //     if ($request->hasFile('path')) {
+    //         foreach ($request->file('path') as $file) {
+    //             $filename = time() . '_' . $file->getClientOriginalName();
+    //             $file->move(public_path('hmo_files'), $filename);
+
+    //             HmoAttachment::create([
+    //                 'hmo_id' => $new_hmo->id,
+    //                 'path'   => 'hmo_files/' . $filename,
+    //             ]);
+
+    //             $attachments[] = 'hmo_files/' . $filename;
+    //         }
+    //     }
+
+    //     $detailsHr = [
+    //         'subject'  => 'Document Submission: HMO Proof of Availment',
+    //         'greeting' => 'Dear HR Team,',
+    //         'body'     => 'Please review the uploaded proof of availment.<br><br>
+    //                     Click <a href="' . url('/hmo-report') . '">here</a> to view details.',
+    //         'thanks'   => 'If you have any questions or require assistance, feel free to reach out.',
+    //     ];
+
+    //     $hrEmails = [
+    //         'reyzie.repia@rico.com.ph',
+    //         'julie.reamillo@rico.com.ph',
+    //         'hr.generalist@rico.com.ph', 
+    //     ];
+    //     Notification::route('mail', $hrEmails)->notify(new HmoHrNotif($detailsHr, $attachments));
+
+    //     Alert::success('Successfully Stored')->persistent('Dismiss');
+    //     return back();
+    // }
 
     /**
      * Display the specified resource.
@@ -260,10 +274,6 @@ class HmoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'date_availment' => 'required|date',
-            'path.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
-        ]);
 
         $hmo = Hmo::findOrFail($id);
 
