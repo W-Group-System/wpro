@@ -995,6 +995,10 @@
                                                     $restday_ot_ge= 0;
                                                     // dd($check_if_holiday);
                                                   $work = $schedule_hours;
+                                                  if ($work >= 7)
+                                                  {
+                                                    $work = $work-1;
+                                                  }
                                                 //   dd($schedule_hours);
                                                 $att = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
                                                   if($rest == "RESTDAY")
