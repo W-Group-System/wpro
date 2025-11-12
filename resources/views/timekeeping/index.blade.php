@@ -465,12 +465,12 @@
                                                                     if ($leave[0] == "LWOP")
                                                                     {
                                                                         $abs=1;
-                                                                        $leave = $leave[1];
+                                                                        $leave=(float)$leave[1];
                                                                     }
                                                                     else
                                                                     {
                                                                         $leave = $leave[1];
-                                                                        $abs = 0;
+                                                                        $abs=0;
                                                                         $undertime=0;
                                                                     }
                                                                 }
@@ -1011,6 +1011,9 @@
                                                                         @endif
                                                                     </td>
                                                                     <td @if($abs-$leave > 0) class="bg-danger" @endif>
+                                                                        @php
+                                                                            $abs = $abs-$leave;
+                                                                        @endphp
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][abs]" value="{{ $abs }}">
                                                                         {{ number_format($abs, 2) }}
                                                                     </td>
