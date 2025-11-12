@@ -37,14 +37,54 @@
                             <label>Proof of Availment</label>
                             <input type="file" class="form-control attachments" name="path[]" id="path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
                             <small>Upload receipts, copy of HMO agreement, etc.</small>
-
-                            @if ($availment->attachments->count() > 0)
+                            <br>
+                            {{-- @if ($availment->attachments->count() > 0)
                                 <div class="row col-md-12 mt-2">
                                     <label>Existing Files:</label>&nbsp;
                                     @foreach ($availment->attachments as $attachment)
                                         <a href="{{ asset('storage/' . $attachment->path) }}" target="_blank"><i class="fa fa-file-pdf-o"></i></a>&nbsp;
                                     @endforeach
                                 </div>
+                            @endif --}}
+                            @if($availment->attachments && $availment->attachments->isNotEmpty())
+                                @foreach($availment->attachments as $file)
+                                    @php
+                                        $storage = \Illuminate\Support\Facades\Storage::disk('public');
+
+                                        if ($storage->exists($file->path)) {
+                                            $fileUrl = asset('storage/' . $file->path); 
+                                        } else {
+                                            $fileUrl = $file->path; 
+                                        }
+
+                                        $extension = strtolower(pathinfo($file->path, PATHINFO_EXTENSION));
+                                        switch ($extension) {
+                                            case 'pdf':
+                                                $icon = 'fa-file-pdf-o';
+                                                break;
+                                            case 'doc':
+                                            case 'docx':
+                                                $icon = 'fa-file-word-o';
+                                                break;
+                                            case 'xls':
+                                            case 'xlsx':
+                                                $icon = 'fa-file-excel-o';
+                                                break;
+                                            case 'jpg':
+                                            case 'jpeg':
+                                            case 'png':
+                                            case 'gif':
+                                                $icon = 'fa-file-image-o';
+                                                break;
+                                            default:
+                                                $icon = 'fa-file-o';
+                                        }
+                                    @endphp
+
+                                    <a href="{{ $fileUrl }}" target="_blank" title="View File">
+                                        <i class="fa {{ $icon }} fa-lg mx-1"></i>
+                                    </a>
+                                @endforeach
                             @endif
                         </div>
                     </div>

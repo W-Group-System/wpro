@@ -289,19 +289,33 @@ class HmoController extends Controller
             'date_availment' => $request->date_availment,
         ]);
 
-        if ($request->hasFile('path')) {
-            foreach ($hmo->attachments as $attachment) {
-                $attachment->delete(); 
-            }
+        // if ($request->hasFile('path')) {
+        //     foreach ($hmo->attachments as $attachment) {
+        //         $attachment->delete(); 
+        //     }
 
+        //     foreach ($request->file('path') as $file) {
+        //         $filename = time() . '_' . $file->getClientOriginalName();
+        //         $file->storeAs('public/hmo_proofs', $filename);
+
+        //         HmoAttachment::create([
+        //             'hmo_id' => $hmo->id,
+        //             'path'   => 'hmo_proofs/' . $filename,
+        //         ]);
+        //     }
+        // }
+        $attachments = [];
+        if ($request->hasFile('path')) {
             foreach ($request->file('path') as $file) {
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs('public/hmo_proofs', $filename);
+                $file->move(public_path('hmo_files'), $filename);
 
                 HmoAttachment::create([
                     'hmo_id' => $hmo->id,
-                    'path'   => 'hmo_proofs/' . $filename,
+                    'path'   => 'hmo_files/' . $filename,
                 ]);
+
+                $attachments[] = 'hmo_files/' . $filename;
             }
         }
 
