@@ -36,10 +36,10 @@
                                         <button type="button" class="btn btn-info btn-rounded btn-icon" href="#edit_hmo{{$availment->id}}" data-toggle="modal" title='EDIT'>
                                             <i class="ti-pencil-alt"></i>
                                         </button>
-                                        <!-- <button title='Delete Availment' id="{{ $availment->id }}" onclick="remove({{$availment->id}})"
+                                        <button title='Delete Availment' id="{{ $availment->id }}" onclick="remove({{$availment->id}})"
                                             class="btn btn-rounded btn-danger btn-icon">
                                             <i class="fa fa-trash"></i>
-                                        </button> -->
+                                        </button>
                                     </td>
                                 </tr>
                                 @endforeach
