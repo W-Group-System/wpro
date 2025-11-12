@@ -77,15 +77,15 @@ class HmoController extends Controller
             // 'actionURL'  => url('/hmo-report'),
         ];
 
-        // $hrEmails = [
-        //     'reyzie.repia@rico.com.ph',
-        //     'julie.reamillo@rico.com.ph',
-        //     'hr.generalist@rico.com.ph', 
-        // ];
-
         $hrEmails = [
-            'mark.bautista@wgroup.space', 
+            'reyzie.repia@rico.com.ph',
+            'julie.reamillo@rico.com.ph',
+            'hr.generalist@rico.com.ph', 
         ];
+
+        // $hrEmails = [
+        //     'mark.bautista@wgroup.space', 
+        // ];
 
         Notification::route('mail', $hrEmails)->notify(new HmoHrNotif($detailsHr, $attachments));
 
