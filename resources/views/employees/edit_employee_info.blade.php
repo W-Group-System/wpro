@@ -128,14 +128,14 @@
                     @endforeach
                   </select>
                 </div>
-                <div class='col-md-4'>
+                <!-- <div class='col-md-4'>
                   Bank Name
                   <input type="text" class="form-control" name="bank_name" value="{{$user->employee->bank_name}}">
                 </div>
                 <div class='col-md-4'>
                   Bank Account Number
                   <input type="text" class="form-control" name="bank_account_number" value="{{$user->employee->bank_account_number}}">
-                </div>
+                </div> -->
                 <div class='col-md-4'>
                   PHILHEALTH
                   <input type="text" class="form-control" name="philhealth" data-inputmask-alias="9999-9999-9999" value="{{$user->employee->phil_number}}">
@@ -153,7 +153,7 @@
                   <input type="text" class="form-control" name="pagibig" data-inputmask-alias="9999-9999-9999" value="{{$user->employee->hdmf_number}}">
                 </div>
 
-                @if (checkUserPrivilege('employees_rate',auth()->user()->id) == 'yes')
+                {{-- @if (checkUserPrivilege('employees_rate',auth()->user()->id) == 'yes')
                   <div class='col-md-4'>
                     WORK DESCRIPTION
                     <select data-placeholder="Work Description" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='work_description' required>
@@ -185,7 +185,7 @@
                     @endphp
                     <input type="number" class="form-control" name="rate" value="{{ $rate }}" min="0" value="0" step="any">
                   </div>
-                @endif
+                @endif --}}
 
                 <div class='col-md-4'>
                   Status
@@ -203,6 +203,28 @@
                 <div class='col-md-4'>
                   Date Resigned
                   <input type="date" name="date_resigned" value="{{ $user->employee->date_resigned }}" class='form-control form-control-sm' placeholder="Date"/>
+                </div>
+                <div class="col-md-4">
+                  Signed Job Offer
+                  <input type='file' name='job_offer' class='form-control required form-control-sm'>
+                  @if($user->employee->job_offer)
+                    <a href="{{ asset($user->employee->job_offer) }}" target="_blank">
+                      View Job Offer
+                    </a>
+                  @else
+                    No Job Offer
+                  @endif
+                </div>
+                <div class="col-md-4">
+                  Employee Contract
+                  <input type='file' name='contract' class='form-control required form-control-sm'>
+                  @if($user->employee->contract)
+                    <a href="{{ asset($user->employee->contract) }}" target="_blank">
+                      View Job Offer
+                    </a>
+                  @else
+                    No Employee Contract
+                  @endif
                 </div>
 
                 {{-- <div class='col-md-4' id="clearancePortalEmail" @if($user->employee->status != 'Resigned') hidden @endif>
@@ -248,7 +270,51 @@
                       
                   </div>
                 </div>
-                <div class='col-md-1'>
+                <div class='col-md-8'>
+                  <h2 class="fs-title">Payment Information</h2>
+                    <div class="row">
+                      <div class='col-md-4'>
+                        Bank Name
+                        <input type="text" class="form-control" name="bank_name" value="{{$user->employee->bank_name}}">
+                      </div>
+                      <div class='col-md-4'>
+                        Bank Account Number
+                        <input type="text" class="form-control" name="bank_account_number" value="{{$user->employee->bank_account_number}}">
+                      </div>
+                      @if (checkUserPrivilege('employees_rate',auth()->user()->id) == 'yes')
+                        <div class='col-md-4'>
+                          WORK DESCRIPTION
+                          <select data-placeholder="Work Description" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='work_description' required>
+                            <option value="">-- Work Description --</option>
+                            <option value="Monthly" @if ($user->employee->work_description == 'Monthly') selected @endif>Monthly</option>
+                            <option value="Non-Monthly" @if ($user->employee->work_description == 'Non-Monthly') selected @endif>Non-Monthly</option>
+                          </select>
+                        </div>
+                        <div class='col-md-4'>
+                          TAX APPLICATION
+                          <select data-placeholder="TAX Application" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='tax_application' required>
+                            <option value="">-- TAX Application --</option>
+                            <option value="Minimum" @if ($user->employee->tax_application == 'Minimum') selected @endif>Minimum</option>
+                            <option value="Non-Minimum" @if ($user->employee->tax_application == 'Non-Minimum') selected @endif>Non-Minimum</option>
+                          </select>
+                        </div>
+                        <div class='col-md-4'>
+                          RATE
+                          @php
+                            $rate = "";
+                            if($user->employee->rate){
+                              try{
+                                $rate = Crypt::decryptString( $user->employee->rate);
+                              }
+                              catch(Exception $e) {
+                                $rate = "";
+                              }
+                            }  
+                          @endphp
+                          <input type="number" class="form-control" name="rate" value="{{ $rate }}" min="0" value="0" step="any">
+                        </div>
+                      @endif
+                    </div>
                 </div>
                 {{-- <div class='col-md-7'>
                   <h2 class="fs-title">Payment Information</h2>
@@ -298,7 +364,6 @@
                   </div>
                   </div> --}}
               </div>
-              <hr>
             </div>
           </div>
             <div class="modal-footer">

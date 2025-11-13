@@ -1233,6 +1233,25 @@ class EmployeeController extends Controller
         $employee->bank_name = $request->bank_name;
         $employee->bank_account_number = $request->bank_account_number;
 
+        if($request->hasFile('job_offer'))
+            {
+                $attachment = $request->file('job_offer');
+                $original_name = $attachment->getClientOriginalName();
+                $name = time().'_'.$attachment->getClientOriginalName();
+                $attachment->move(public_path().'/images/offer/', $name);
+                $file_name = '/images/offer/'.$name;
+                $employee->job_offer = $file_name;
+            }
+
+            if ($request->hasFile('contract')) {
+                $attachment = $request->file('contract');
+                $original_name = $attachment->getClientOriginalName();
+                $name = time() . '_' . $original_name;
+                $attachment->move(public_path('images/contract'), $name);
+                $file_path = 'images/contract/' . $name;
+                $employee->contract = $file_path; 
+            }
+
         if(checkUserPrivilege('employees_rate',auth()->user()->id) == 'yes'){
             $employee->work_description = $request->work_description;
             $employee->rate = $request->rate ? Crypt::encryptString($request->rate) : "";
