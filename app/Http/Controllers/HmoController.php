@@ -81,7 +81,6 @@ class HmoController extends Controller
             'reyzie.repia@rico.com.ph',
             'julie.reamillo@rico.com.ph',
             'hr.generalist@rico.com.ph', 
-            'mark.bautista@wgroup.space',
         ];
 
         // $hrEmails = [

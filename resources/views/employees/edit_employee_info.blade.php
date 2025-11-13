@@ -191,13 +191,15 @@
                   Status
                   <select data-placeholder="Status" class="form-control form-control-sm required js-example-basic-single " style='width:100%;' name='status' required>
                     <option value="">-- Status--</option>
-                    <option value="Active" @if ($user->employee->status == 'Active') selected @endif>Active</option>
-                    <option value="Inactive" @if ($user->employee->status == 'Inactive') selected @endif>Inactive</option>
-                    <option value="Resigned" @if ($user->employee->status == 'Resigned') selected @endif>Resigned</option>
-                    <option value="Terminated" @if ($user->employee->status == 'Terminated') selected @endif>Terminated</option>
+                    @if($user->employee->status != 'Pending')
+                      <option value="Active" @if ($user->employee->status == 'Active') selected @endif>Active</option>
+                      <option value="Inactive" @if ($user->employee->status == 'Inactive') selected @endif>Inactive</option>
+                      <option value="Resigned" @if ($user->employee->status == 'Resigned') selected @endif>Resigned</option>
+                      <option value="Terminated" @if ($user->employee->status == 'Terminated') selected @endif>Terminated</option>
+                    @endif
+                    <option value="Pending" @if ($user->employee->status == 'Pending') selected @endif>Pending</option>
                   </select>
                 </div>
-
                 <div class='col-md-4'>
                   Date Resigned
                   <input type="date" name="date_resigned" value="{{ $user->employee->date_resigned }}" class='form-control form-control-sm' placeholder="Date"/>
