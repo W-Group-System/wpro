@@ -1916,7 +1916,6 @@ class EmployeeController extends Controller
                                 ->orderBy('last_name','asc')
                                 ->orderBy('first_name','asc')
                                 // ->where('employee_code','A189123')
-                                ->where('employee_code','A3176324')
                                 ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
