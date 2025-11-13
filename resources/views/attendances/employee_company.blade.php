@@ -1031,7 +1031,7 @@
                                                     $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
                                                     if(strtotime($time_end) - strtotime($time_start) > 2)
                                                     {
-                                                        if($approved_overtime_hrs > 2)
+                                                        if($approved_overtime_hrs > 2 || ($approved_overtime_hrs > 0 && $emp->company_id == 11))
                                                     {
                                                         if($check_if_holiday == "Special Holiday")
                                                         {
