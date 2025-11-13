@@ -611,7 +611,7 @@
                                                             $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                           
                                                           
-                                                            if($schedule_hours > 8)
+                                                            if($schedule_hours > 6)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
                                                               
