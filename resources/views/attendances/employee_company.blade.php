@@ -637,10 +637,10 @@
                                                                 }
                                                                 
                                                             }
-                                                            if(in_array($emp->employee_code, ["A3143320", "A3141320", "A3143220", "A3142120", "A3142320", "A3142820", "A3148821"]))//PBI
-                                                            {
-                                                                $work = $schedule_hours;
-                                                            }
+                                                            // if(in_array($emp->employee_code, ["A3143320", "A3141320", "A3143220", "A3142120", "A3142320", "A3142820", "A3148821"]))//PBI
+                                                            // {
+                                                            //     $work = $schedule_hours;
+                                                            // }
 
                                                           
                                                             if($schedule_hours > $work)
