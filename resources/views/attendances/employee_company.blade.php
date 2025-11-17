@@ -555,7 +555,7 @@
                                                         }
                                                         $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                         // dd(date('Y-m-d',strtotime($date_r)));
-                                                        if($schedule_hours > 6)
+                                                        if($schedule_hours > 8)
                                                         {
                                                             $schedule_hours =  $schedule_hours-1;
                                                             
@@ -618,7 +618,7 @@
                                                             $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                           
                                                           
-                                                            if($schedule_hours > 6)
+                                                            if($schedule_hours > 8)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
                                                               
