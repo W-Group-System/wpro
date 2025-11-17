@@ -71,7 +71,7 @@ class HmoController extends Controller
         $detailsHr = [
             'subject'    => 'Document Submission: HMO Proof of Availment',
             'greeting'   => 'Dear HR Team,',
-            'body'       => 'Please review the uploaded proof of availment.<br><br>Clicking the <a href="' . url('/hmo-report') . '">View</a> button will direct you to W Pro to view the details.',
+            'body'       => 'Please review the uploaded proof of availment.<br><br>Clicking the <a href="' . url('/hmo-report') . '">View</a> button will redirect you to W Pro, where you can view the details.',
             'thanks'     => 'If you have any questions or require further assistance, feel free to reach out to us.',
             // 'actionText' => 'Click Here',
             // 'actionURL'  => url('/hmo-report'),
