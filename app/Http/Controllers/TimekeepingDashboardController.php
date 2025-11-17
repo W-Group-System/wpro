@@ -523,9 +523,9 @@ class TimekeepingDashboardController extends Controller
             ->with(['schedule_info'])
             ->with(['dtr_correction.dtr_correction_approver.user'])
             ->with([
-                'attendance_logs' => function($q) use ($from_date, $to_date) {
+                'attendance_logs' => function($q) use ($date_from, $to_date) {
                     $q->select('id','emp_code','date','datetime')
-                        ->whereBetween('datetime', [$from_date.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])
+                        ->whereBetween('datetime', [$date_from.' 00:00:01', date('Y-m-d 23:59:59', strtotime($to_date. '+1 day'))])
                         ->orderBy('datetime','asc');
                 }
             ])
@@ -554,7 +554,7 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            ->where('employee_code','A3189525')
+            // ->where('employee_code','A3176324')
             // ->where('employee_code','A3188225')
             // ->where('employee_code','A2110025')
             // ->where('employee_code','A192524')
