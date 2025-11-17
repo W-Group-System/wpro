@@ -412,7 +412,7 @@
                             <span class="menu-title">Leave Calendar</span>
                         </a>
                     </li>
-                    @if(Auth::id() == 875)
+                    @if(Auth::id() == 17)
                         <li class="nav-item">
                             <hr>
                             <h5>For Approval</h5>

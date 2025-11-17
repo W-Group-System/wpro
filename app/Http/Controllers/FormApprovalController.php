@@ -1184,10 +1184,8 @@ class FormApprovalController extends Controller
             $details = [
                 'subject'  => 'HMO Availment Approved',
                 'greeting' => 'Hi ' . ($employee->first_name ?? $employee->name) . ',',
-                'body'     => 'We regret to inform you that your HMO availment request has been <strong>approved</strong> on <strong>' . 
-                            now()->format('F j, Y') . 
-                            '</strong>.<br><br><strong>Reason:</strong> ' . e($request->approval_remarks) . 
-                            '<br><br>If you believe this was made in error, please contact the HR Department for clarification.',
+                'body'     => 'We are pleased to inform you that your HMO availment proof submitted on <strong>' . date('F j, Y', strtotime($hmo->date_availment)) . '</strong> has been <strong>APPROVED</strong>.<br><br><strong>Reason:</strong> ' . e($request->approval_remarks) . 
+                            '<br><br>For any questions or clarifications, please contact the HR Department.',
                 'thanks'   => 'Thank you, HR Department.',
             ];
 
@@ -1229,10 +1227,8 @@ class FormApprovalController extends Controller
             $details = [
                 'subject'  => 'HMO Availment Declined',
                 'greeting' => 'Hi ' . ($employee->first_name ?? $employee->name) . ',',
-                'body'     => 'We regret to inform you that your HMO availment request has been <strong>declined</strong> on <strong>' . 
-                            now()->format('F j, Y') . 
-                            '</strong>.<br><br><strong>Reason:</strong> ' . e($request->approval_remarks) . 
-                            '<br><br>If you believe this was made in error, please contact the HR Department for clarification.',
+                'body'     => 'We regret to inform you that your HMO availment proof submitted on <strong>' . date('F j, Y', strtotime($hmo->date_availment)) . '</strong> has been <strong>DECLINED</strong>.<br><br><strong>Reason:</strong> ' . e($request->approval_remarks) . 
+                            '<br><br>If you believe this was made in error, please reach out to the HR Department for clarification.',
                 'thanks'   => 'Thank you, HR Department.',
             ];
 
