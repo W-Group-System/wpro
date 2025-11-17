@@ -259,7 +259,7 @@ class HmoController extends Controller
             'body'     => 'We are reviewing our HMO billing and have identified an availment on <strong>' . 
                             date('F j, Y', strtotime($request->availment_date)) . 
                             '</strong>. Please provide documentation to confirm the use as part of our validation. Acceptable documents include LOA, hospital/clinic appointment slip, referral form, or similar.<br><br>
-                            If you click the <a href="' . url('/hmo') . '">Submit</a> button, you will be directed to W Pro to attach the required documents.',
+                            Once you click the <a href="' . url('/hmo') . '">Submit</a> button, you will be directed to W Pro to attach the required documents.',
             'thanks'   => 'If you have any questions or concerns, please contact the HR Department.',
         ];
 
