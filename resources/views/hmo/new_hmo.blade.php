@@ -34,7 +34,7 @@
                         <div class='col-md-12 form-group'>
                             Proof of Availment  
                             <input type="file" class="form-control attachments" name="path[]" id="path" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" required>
-                            <span><small>Like: Receipts, Copy of the HMO agreement and etc.</small></span>
+                            <span><small>i.e. LOA (Letter of Authorization), hospital/clinic appointment slip or referral form, availment slip, or similar documents.</small></span>
                         </div>
                     </div>
                 </div>
