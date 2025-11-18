@@ -555,7 +555,7 @@ class TimekeepingDashboardController extends Controller
             })
             ->where('status','Active')
             // ->where('employee_code','A3176324')
-            // ->where('employee_code','A3188225')
+            // ->where('employee_code','A3189525')
             // ->where('employee_code','A2110025')
             // ->where('employee_code','A192524')
             // ->whereIn('employee_code',['A3189225'])

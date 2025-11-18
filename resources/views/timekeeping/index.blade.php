@@ -466,6 +466,12 @@
                                                                     {
                                                                         $abs=1;
                                                                         $leave=(float)$leave[1];
+
+                                                                        $schedule_hrs = $employee_schedule->working_hours;
+                                                                        if(($schedule_hrs/2) >= 4.75)
+                                                                        {
+                                                                            $undertime=0;
+                                                                        }
                                                                     }
                                                                     else
                                                                     {
