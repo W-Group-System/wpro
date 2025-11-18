@@ -1024,7 +1024,7 @@
                                                                         {{ number_format($abs, 2) }}
                                                                     </td>
                                                                     <td>
-                                                                        {{ number_format($total_reg_hrs,2) }}
+                                                                        {{ number_format($total_reg_hrs) }}
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
                                                                     </td>
                                                                     <td @if($late > 0) class="bg-danger" @endif>
@@ -2296,7 +2296,7 @@
                                                                             {{ number_format($abs, 2) }}
                                                                         </td>
                                                                         <td>
-                                                                            {{ number_format($total_reg_hrs,2) }}
+                                                                            {{ number_format($total_reg_hrs) }}
                                                                             <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
                                                                         </td>
                                                                         <td @if($late > 0) class="bg-danger" @endif>
