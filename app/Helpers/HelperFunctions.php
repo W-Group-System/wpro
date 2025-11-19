@@ -1288,7 +1288,10 @@ function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas)
                     ->orWhere('status', 'Pending');
             })
             ->where('withpay',1)
-            ->whereYear('date_from', date('Y'))
+            // ->whereYear('date_from', date('Y'))
+            ->where(function($q) {
+                $q->whereYear('date_from', date('Y'))->orWhereYear('date_from', date('Y', strtotime('+1 year')));
+            })
             ->where('status','!=','Cancelled')
             ->whereYear('created_at', date('Y'))
             ->whereNull('is_previous_year')
