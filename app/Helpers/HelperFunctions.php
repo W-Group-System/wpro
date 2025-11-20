@@ -372,7 +372,12 @@ function night_difference_per_company($start_work, $end_work)
 
     // Define night shift boundaries
     $night_start = mktime(22, 0, 0, date('m', $start_work), date('d', $start_work), date('Y', $start_work));
-    $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work) + 1, date('Y', $start_work));
+    if (date('H', $start_work) < 6) {
+        $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work), date('Y', $start_work));
+    } else {
+        $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work) + 1, date('Y', $start_work));
+    }
+    // $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work) + 1, date('Y', $start_work));
 
     // Ensure $end_work is compared with the correct night boundaries
     if ($start_work >= $night_start && $start_work < $night_end) {
