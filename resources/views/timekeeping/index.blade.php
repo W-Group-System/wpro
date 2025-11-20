@@ -458,6 +458,7 @@
 
                                                                 // Leave w/ pay
                                                                 $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                $leave_count = 0;
                                                                 if ($check_leave)
                                                                 {
                                                                     $leave = explode("-", $check_leave);
@@ -465,7 +466,8 @@
                                                                     if ($leave[0] == "LWOP")
                                                                     {
                                                                         $abs=1;
-                                                                        $leave=(float)$leave[1];
+                                                                        $leave_count=(float)$leave[1];
+                                                                        $leave=0;
 
                                                                         $schedule_hrs = $employee_schedule->working_hours;
                                                                         if(($schedule_hrs/2) >= 4.75)
@@ -1016,9 +1018,9 @@
                                                                             {{-- <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}"> --}}
                                                                         @endif
                                                                     </td>
-                                                                    <td @if($abs-$leave > 0) class="bg-danger" @endif>
+                                                                    <td @if($abs-$leave_count > 0) class="bg-danger" @endif>
                                                                         @php
-                                                                            $abs = $abs-$leave;
+                                                                            $abs = $abs-$leave_count;
                                                                         @endphp
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][abs]" value="{{ $abs }}">
                                                                         {{ number_format($abs, 2) }}
