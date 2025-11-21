@@ -630,15 +630,30 @@
                                                                             }
                                                                             if ($work_ot >= 2)
                                                                             {
-                                                                                $restday_ot = 8;
-                                                                                if ($work_ot > 8)
+                                                                                if ($work_ot > $emp_has_ot)
                                                                                 {
-                                                                                    $restday_ot = $restday_ot;
-                                                                                    $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                    $restday_ot = 8;
+                                                                                    if ($emp_has_ot >= 8)
+                                                                                    {
+                                                                                        $restday_ot = $restday_ot;
+                                                                                        $restday_ot_ge = floatval($emp_has_ot)-floatval($restday_ot);
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $restday_ot = $emp_has_ot;
+                                                                                    }
                                                                                 }
                                                                                 else 
                                                                                 {
-                                                                                    $restday_ot = $work_ot;
+                                                                                    if ($work_ot > 8)
+                                                                                    {
+                                                                                        $restday_ot = $restday_ot;
+                                                                                        $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $restday_ot = $work_ot;
+                                                                                    }
                                                                                 }
                                                                             }
                                                                             else 
@@ -1909,15 +1924,30 @@
                                                                                 }
                                                                                 if ($work_ot >= 2)
                                                                                 {
-                                                                                    $restday_ot = 8;
-                                                                                    if ($work_ot > 8)
+                                                                                    if ($work_ot > $emp_has_ot)
                                                                                     {
-                                                                                        $restday_ot = $restday_ot;
-                                                                                        $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                        $restday_ot = 8;
+                                                                                        if ($emp_has_ot >= 8)
+                                                                                        {
+                                                                                            $restday_ot = $restday_ot;
+                                                                                            $restday_ot_ge = floatval($emp_has_ot)-floatval($restday_ot);
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $restday_ot = $emp_has_ot;
+                                                                                        }
                                                                                     }
                                                                                     else 
                                                                                     {
-                                                                                        $restday_ot = $work_ot;
+                                                                                        if ($work_ot > 8)
+                                                                                        {
+                                                                                            $restday_ot = $restday_ot;
+                                                                                            $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $restday_ot = $work_ot;
+                                                                                        }
                                                                                     }
                                                                                 }
                                                                                 else 
