@@ -727,10 +727,11 @@
                                                                                 $if_attendance_holiday_status = 'Without-Pay';
                                                                                 $abs = 1;
 
+                                                                                $emp_schedule = $employee_schedule->working_hours-1;
                                                                                 $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
                                                                                 $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
                                                                                 $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                                                                                if ($total_reg_hrs >= 4.75)
+                                                                                if ($total_reg_hrs >= ($emp_schedule/2))
                                                                                 {
                                                                                     $abs=0;
                                                                                     if ($employee_schedule->working_hours > 8) 
@@ -768,10 +769,11 @@
                                                                             }else{
                                                                                 // $if_attendance_holiday_status = 'With-Pay';
                                                                                 // $abs = 0;
+                                                                                $emp_schedule = $employee_schedule->working_hours-1;
                                                                                 $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
                                                                                 $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
                                                                                 $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                                                                                if ($total_reg_hrs >= 4.75)
+                                                                                if ($total_reg_hrs >= ($emp_schedule/2))
                                                                                 {
                                                                                     $abs=0;
                                                                                     if ($employee_schedule->working_hours > 8) 
@@ -786,6 +788,7 @@
                                                                                 else 
                                                                                 {
                                                                                     $abs=1;
+                                                                                    $total_reg_hrs=0;
                                                                                 }
                                                                             }
                                                                         }
@@ -2075,7 +2078,8 @@
                                                                                     $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
                                                                                     $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
                                                                                     $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                                                                                    if ($total_reg_hrs >= 4.75)
+                                                                                    $emp_schedule = $employee_schedule->working_hours-1;
+                                                                                    if ($total_reg_hrs >= ($emp_schedule/2))
                                                                                     {
                                                                                         $abs=0;
                                                                                         if ($employee_schedule->working_hours > 8) 
@@ -2131,10 +2135,11 @@
                                                                                     // {
                                                                                     //     $total_reg_hrs = $employee_schedule->working_hours;
                                                                                     // }
+                                                                                    $emp_schedule = $employee_schedule->working_hours-1;
                                                                                     $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
                                                                                     $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
                                                                                     $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                                                                                    if ($total_reg_hrs >= 4.75)
+                                                                                    if ($total_reg_hrs >= ($emp_schedule/2))
                                                                                     {
                                                                                         $abs=0;
                                                                                         if ($employee_schedule->working_hours > 8) 
@@ -2149,6 +2154,7 @@
                                                                                     else 
                                                                                     {
                                                                                         $abs=1;
+                                                                                        $total_reg_hrs=0;
                                                                                     }
                                                                                 }
                                                                             }
