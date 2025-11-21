@@ -465,9 +465,18 @@
                                                                     
                                                                     if ($leave[0] == "LWOP")
                                                                     {
-                                                                        $abs=1;
-                                                                        $leave_count=(float)$leave[1];
-                                                                        $leave=0;
+                                                                        if ($leave[1] == 0.5)
+                                                                        {
+                                                                            $abs=1;
+                                                                            $leave_count=(float)$leave[1];
+                                                                            $leave=0;
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $abs=1;
+                                                                            $leave_count=0;
+                                                                            $leave=0;
+                                                                        }
 
                                                                         $schedule_hrs = $employee_schedule->working_hours;
                                                                         if(($schedule_hrs/2) >= 4.75)
@@ -1809,8 +1818,20 @@
                                                                         }
                                                                         else
                                                                         {
-                                                                            $abs = $leave[1];
-                                                                            $leave = 0;
+                                                                            // $abs = $leave[1];
+                                                                            // $leave = 0;
+                                                                            if ($leave[1] == 0.5)
+                                                                            {
+                                                                                $abs=1;
+                                                                                $leave_count=(float)$leave[1];
+                                                                                $leave=0;
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                $abs=1;
+                                                                                $leave_count=0;
+                                                                                $leave=0;
+                                                                            }
                                                                         }
                                                                     }
                                                                     else
