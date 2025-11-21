@@ -622,7 +622,10 @@
                                                                     {
                                                                         $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
                                                                         $break_hrs = ($employee->approved_ots)->first();
-                                                                        $work_ot = $work_ot-$break_hrs->break_hrs;
+                                                                        if ($break_hrs)
+                                                                        {
+                                                                            $work_ot = $work_ot-$break_hrs->break_hrs;
+                                                                        }
                                                                         if ($work_ot >= 2)
                                                                         {
                                                                             $restday_ot = 8;
@@ -1895,7 +1898,10 @@
                                                                         {
                                                                             $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
                                                                             $break_hrs = ($employee->approved_ots)->first();
-                                                                            $work_ot = $work_ot-$break_hrs->break_hrs;
+                                                                            if ($break_hrs)
+                                                                            {
+                                                                                $work_ot = $work_ot-$break_hrs->break_hrs;
+                                                                            }
                                                                             if ($work_ot >= 2)
                                                                             {
                                                                                 $restday_ot = 8;
