@@ -620,36 +620,39 @@
                                                                 {
                                                                     if (empty($check_if_holiday))
                                                                     {
-                                                                        $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
-                                                                        $break_hrs = ($employee->approved_ots)->first();
-                                                                        if ($break_hrs)
+                                                                        if ($emp_has_ot)
                                                                         {
-                                                                            $work_ot = $work_ot-$break_hrs->break_hrs;
-                                                                        }
-                                                                        if ($work_ot >= 2)
-                                                                        {
-                                                                            $restday_ot = 8;
-                                                                            if ($work_ot > 8)
+                                                                            $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
+                                                                            $break_hrs = ($employee->approved_ots)->first();
+                                                                            if ($break_hrs)
                                                                             {
-                                                                                $restday_ot = $restday_ot;
-                                                                                $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                $work_ot = $work_ot-$break_hrs->break_hrs;
                                                                             }
-                                                                            else 
+                                                                            if ($work_ot >= 2)
                                                                             {
-                                                                                $restday_ot = $work_ot;
-                                                                            }
-                                                                        }
-                                                                        else 
-                                                                        {
-                                                                            if (in_array($employee->company_id, $plant_company))
-                                                                            {
-                                                                                if ($work_ot <= $emp_has_ot)
+                                                                                $restday_ot = 8;
+                                                                                if ($work_ot > 8)
                                                                                 {
-                                                                                    $overtime = $work_ot;
+                                                                                    $restday_ot = $restday_ot;
+                                                                                    $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
                                                                                 }
                                                                                 else 
                                                                                 {
-                                                                                    $overtime = $emp_has_ot;
+                                                                                    $restday_ot = $work_ot;
+                                                                                }
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                if (in_array($employee->company_id, $plant_company))
+                                                                                {
+                                                                                    if ($work_ot <= $emp_has_ot)
+                                                                                    {
+                                                                                        $overtime = $work_ot;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $overtime = $emp_has_ot;
+                                                                                    }
                                                                                 }
                                                                             }
                                                                         }
@@ -1896,36 +1899,39 @@
                                                                     {
                                                                         if (empty($check_if_holiday))
                                                                         {
-                                                                            $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
-                                                                            $break_hrs = ($employee->approved_ots)->first();
-                                                                            if ($break_hrs)
+                                                                            if ($emp_has_ot)
                                                                             {
-                                                                                $work_ot = $work_ot-$break_hrs->break_hrs;
-                                                                            }
-                                                                            if ($work_ot >= 2)
-                                                                            {
-                                                                                $restday_ot = 8;
-                                                                                if ($work_ot > 8)
+                                                                                $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
+                                                                                $break_hrs = ($employee->approved_ots)->first();
+                                                                                if ($break_hrs)
                                                                                 {
-                                                                                    $restday_ot = $restday_ot;
-                                                                                    $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                    $work_ot = $work_ot-$break_hrs->break_hrs;
                                                                                 }
-                                                                                else 
+                                                                                if ($work_ot >= 2)
                                                                                 {
-                                                                                    $restday_ot = $work_ot;
-                                                                                }
-                                                                            }
-                                                                            else 
-                                                                            {
-                                                                                if (in_array($employee->company_id, $plant_company))
-                                                                                {
-                                                                                    if ($work_ot <= $emp_has_ot)
+                                                                                    $restday_ot = 8;
+                                                                                    if ($work_ot > 8)
                                                                                     {
-                                                                                        $overtime = $work_ot;
+                                                                                        $restday_ot = $restday_ot;
+                                                                                        $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
                                                                                     }
                                                                                     else 
                                                                                     {
-                                                                                        $overtime = $emp_has_ot;
+                                                                                        $restday_ot = $work_ot;
+                                                                                    }
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    if (in_array($employee->company_id, $plant_company))
+                                                                                    {
+                                                                                        if ($work_ot <= $emp_has_ot)
+                                                                                        {
+                                                                                            $overtime = $work_ot;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $overtime = $emp_has_ot;
+                                                                                        }
                                                                                     }
                                                                                 }
                                                                             }
