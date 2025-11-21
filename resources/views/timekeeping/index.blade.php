@@ -504,7 +504,7 @@
                                                                                 $original_sched = $employee_schedule['working_hours'];
                                                                                 $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2)-$original_sched;
                                                                                 // dd($work_ot);
-                                                                                if ($work_ot >= 2)
+                                                                                if ($work_ot >= 2 && $emp_has_ot >= 2)
                                                                                 {
                                                                                     if ($work_ot <= $emp_has_ot)
                                                                                     {
@@ -1798,7 +1798,7 @@
                                                                                 {
                                                                                     $original_sched = $employee_schedule['working_hours'];
                                                                                     $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2)-$original_sched;
-                                                                                    if ($work_ot >= 2)
+                                                                                    if ($work_ot >= 2 && $emp_has_ot >= 2)
                                                                                     {
                                                                                         if ($work_ot <= $emp_has_ot)
                                                                                         {
