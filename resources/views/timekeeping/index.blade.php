@@ -2022,6 +2022,15 @@
                                                                                     if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
                                                                                     {
                                                                                         $abs = 0;
+
+                                                                                        if ($employee_schedule->working_hours > 8) 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                        }
                                                                                     }
                                                                                 }
                                                                             }
@@ -2041,6 +2050,15 @@
                                                                                 }else{
                                                                                     // $if_attendance_holiday_status = 'With-Pay';
                                                                                     $abs = 0;
+
+                                                                                    if ($employee_schedule->working_hours > 8) 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                    }
                                                                                 }
                                                                             }
                                                                         }
