@@ -717,6 +717,22 @@
                                                                             if(str_contains($check_leave,"Without")){
                                                                                 $if_attendance_holiday_status = 'Without-Pay';
                                                                                 $abs = 1;
+
+                                                                                $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
+                                                                                $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
+                                                                                $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                if ($total_reg_hrs >= 4.75)
+                                                                                {
+                                                                                    $abs=0;
+                                                                                    if ($employee_schedule->working_hours > 8) 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                    }
+                                                                                }
                                                                             }
                                                                             else
                                                                             {
@@ -2015,10 +2031,26 @@
                                                                                 if(str_contains($check_leave,"Without")){
                                                                                     $if_attendance_holiday_status = 'Without-Pay';
                                                                                     $abs = 1;
+                                                                                    
+                                                                                    $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
+                                                                                    $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
+                                                                                    $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                    if ($total_reg_hrs >= 4.75)
+                                                                                    {
+                                                                                        $abs=0;
+                                                                                        if ($employee_schedule->working_hours > 8) 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                        }
+                                                                                    }
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    // $if_attendance_holiday_status = 'With-Pay';
+                                                                                    $if_attendance_holiday_status = 'With-Pay';
                                                                                     if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
                                                                                     {
                                                                                         $abs = 0;
