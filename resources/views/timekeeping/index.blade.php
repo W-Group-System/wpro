@@ -736,7 +736,7 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                // $if_attendance_holiday_status = 'With-Pay';
+                                                                                $if_attendance_holiday_status = 'With-Pay';
                                                                                 if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
                                                                                 {
                                                                                     $abs = 0;
@@ -758,7 +758,26 @@
                                                                                 $abs = 1;
                                                                             }else{
                                                                                 // $if_attendance_holiday_status = 'With-Pay';
-                                                                                $abs = 0;
+                                                                                // $abs = 0;
+                                                                                $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
+                                                                                $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
+                                                                                $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                if ($total_reg_hrs >= 4.75)
+                                                                                {
+                                                                                    $abs=0;
+                                                                                    if ($employee_schedule->working_hours > 8) 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                    }
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    $abs=1;
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -2081,15 +2100,34 @@
                                                                                     $abs = 1;
                                                                                 }else{
                                                                                     // $if_attendance_holiday_status = 'With-Pay';
-                                                                                    $abs = 0;
+                                                                                    // $abs = 0;
 
-                                                                                    if ($employee_schedule->working_hours > 8) 
+                                                                                    // if ($employee_schedule->working_hours > 8) 
+                                                                                    // {
+                                                                                    //     $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                    // }
+                                                                                    // else 
+                                                                                    // {
+                                                                                    //     $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                    // }
+                                                                                    $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
+                                                                                    $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
+                                                                                    $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                    if ($total_reg_hrs >= 4.75)
                                                                                     {
-                                                                                        $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                        $abs=0;
+                                                                                        if ($employee_schedule->working_hours > 8) 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                        }
                                                                                     }
                                                                                     else 
                                                                                     {
-                                                                                        $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                        $abs=1;
                                                                                     }
                                                                                 }
                                                                             }
