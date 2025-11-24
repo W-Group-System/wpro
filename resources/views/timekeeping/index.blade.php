@@ -621,6 +621,11 @@
                                                                                 $night_diff_ot = night_difference_per_company($final_time_in,$final_time_out)-$actual_night_diff;
                                                                             }
                                                                         }
+
+                                                                        if ($night_diff_ot < .5)
+                                                                        {
+                                                                            $night_diff_ot = 0;
+                                                                        }
                                                                     }
                                                                 }
 
@@ -1964,6 +1969,11 @@
                                                                                     $actual_night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
                                                                                     $night_diff_ot = night_difference_per_company($final_time_in,$final_time_out)-$actual_night_diff;
                                                                                 }
+                                                                            }
+
+                                                                            if ($night_diff_ot < .5)
+                                                                            {
+                                                                                $night_diff_ot = 0;
                                                                             }
                                                                         }
                                                                     }
