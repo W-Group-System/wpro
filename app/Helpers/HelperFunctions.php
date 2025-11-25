@@ -1176,7 +1176,7 @@ function pending_ob_count($approver_id){
 function pending_employee_count($approver_id){
     
     // Only allow if logged-in user is ID 586
-    if (Auth::check() && Auth::id() == 17) {
+    if (Auth::check() && Auth::id() == 593) {
 
         $today = date('Y-m-d');
         $from_date = date('Y-m-d', strtotime('-1 month', strtotime($today)));
