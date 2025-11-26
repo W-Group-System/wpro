@@ -242,10 +242,10 @@ class Employee extends Model implements Auditable
         return $this->hasMany(DtrStatus::class);
 
     }
-    // public function daily_schedules()
-    // {
-    //     return $this->hasMany(DailySchedule::class,'employee_code','employee_code');
-    // }
+    public function daily_schedules()
+    {
+        return $this->hasMany(DailySchedule::class,'employee_code','employee_code');
+    }
     protected $fillable = [
         'department_id', 
         'project',

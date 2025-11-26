@@ -528,6 +528,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     // TIMEKEEPING OFFICIAL
     Route::get('timekeeping-official','TimekeepingDashboardController@timekeepingOfficial');
+    Route::get('per_employee','TimekeepingDashboardController@perEmployee');
     Route::prefix('timekeeping-official')->group(function() {
         Route::post('update/{id}', 'TimekeepingDashboardController@updateTimekeeping');
         Route::post('for-approval','TimekeepingDashboardController@forApproval');
@@ -535,6 +536,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('dtrStatus','TimekeepingDashboardController@dtrStatus');
         Route::post('moveToForPosting','TimekeepingDashboardController@moveToForPosting');
         Route::post('refreshDate', 'TimekeepingDashboardController@refreshDate');
+
+        // Per Employee
+        Route::post('per_employee','TimekeepingDashboardController@getPerEmployee');
     });
 
     // FOR APPROVAL
