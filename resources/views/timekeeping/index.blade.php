@@ -458,14 +458,31 @@
 
                                                                 // Leave w/ pay
                                                                 $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                $leave_count = 0;
                                                                 if ($check_leave)
                                                                 {
                                                                     $leave = explode("-", $check_leave);
                                                                     
                                                                     if ($leave[0] == "LWOP")
                                                                     {
-                                                                        $abs=1;
-                                                                        $leave=(float)$leave[1];
+                                                                        if ($leave[1] == 0.5)
+                                                                        {
+                                                                            $abs=1;
+                                                                            $leave_count=(float)$leave[1];
+                                                                            $leave=0;
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $abs=1;
+                                                                            $leave_count=0;
+                                                                            $leave=0;
+                                                                        }
+
+                                                                        $schedule_hrs = $employee_schedule->working_hours;
+                                                                        if(($schedule_hrs/2) >= 4.75)
+                                                                        {
+                                                                            $undertime=0;
+                                                                        }
                                                                     }
                                                                     else
                                                                     {
@@ -496,7 +513,7 @@
                                                                                 $original_sched = $employee_schedule['working_hours'];
                                                                                 $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2)-$original_sched;
                                                                                 // dd($work_ot);
-                                                                                if ($work_ot >= 2)
+                                                                                if ($work_ot >= 2 && $emp_has_ot >= 2)
                                                                                 {
                                                                                     if ($work_ot <= $emp_has_ot)
                                                                                     {
@@ -604,6 +621,11 @@
                                                                                 $night_diff_ot = night_difference_per_company($final_time_in,$final_time_out)-$actual_night_diff;
                                                                             }
                                                                         }
+
+                                                                        if ($night_diff_ot < .5)
+                                                                        {
+                                                                            $night_diff_ot = 0;
+                                                                        }
                                                                     }
                                                                 }
 
@@ -614,15 +636,53 @@
                                                                     {
                                                                         if ($emp_has_ot)
                                                                         {
-                                                                            $restday_ot = 8;
-                                                                            if ($emp_has_ot > 8)
+                                                                            $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
+                                                                            $break_hrs = ($employee->approved_ots)->first();
+                                                                            if ($break_hrs)
                                                                             {
-                                                                                $restday_ot = $restday_ot;
-                                                                                $restday_ot_ge = floatval($emp_has_ot)-floatval($restday_ot);
+                                                                                $work_ot = $work_ot-$break_hrs->break_hrs;
                                                                             }
-                                                                            else
+                                                                            if ($work_ot >= 2)
                                                                             {
-                                                                                $restday_ot = $emp_has_ot;
+                                                                                if ($work_ot > $emp_has_ot)
+                                                                                {
+                                                                                    $restday_ot = 8;
+                                                                                    if ($emp_has_ot >= 8)
+                                                                                    {
+                                                                                        $restday_ot = $restday_ot;
+                                                                                        $restday_ot_ge = floatval($emp_has_ot)-floatval($restday_ot);
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $restday_ot = $emp_has_ot;
+                                                                                    }
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    if ($work_ot > 8)
+                                                                                    {
+                                                                                        $restday_ot = $restday_ot;
+                                                                                        $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $restday_ot = $work_ot;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                if (in_array($employee->company_id, $plant_company))
+                                                                                {
+                                                                                    if ($work_ot <= $emp_has_ot)
+                                                                                    {
+                                                                                        $overtime = $work_ot;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $overtime = $emp_has_ot;
+                                                                                    }
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -671,10 +731,27 @@
                                                                             if(str_contains($check_leave,"Without")){
                                                                                 $if_attendance_holiday_status = 'Without-Pay';
                                                                                 $abs = 1;
+
+                                                                                $emp_schedule = $employee_schedule->working_hours-1;
+                                                                                $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
+                                                                                $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
+                                                                                $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                if ($total_reg_hrs >= ($emp_schedule/2))
+                                                                                {
+                                                                                    $abs=0;
+                                                                                    if ($employee_schedule->working_hours > 8) 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                    }
+                                                                                }
                                                                             }
                                                                             else
                                                                             {
-                                                                                // $if_attendance_holiday_status = 'With-Pay';
+                                                                                $if_attendance_holiday_status = 'With-Pay';
                                                                                 if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
                                                                                 {
                                                                                     $abs = 0;
@@ -696,7 +773,28 @@
                                                                                 $abs = 1;
                                                                             }else{
                                                                                 // $if_attendance_holiday_status = 'With-Pay';
-                                                                                $abs = 0;
+                                                                                // $abs = 0;
+                                                                                $emp_schedule = $employee_schedule->working_hours-1;
+                                                                                $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
+                                                                                $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
+                                                                                $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                if ($total_reg_hrs >= ($emp_schedule/2))
+                                                                                {
+                                                                                    $abs=0;
+                                                                                    if ($employee_schedule->working_hours > 8) 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                    }
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    $abs=1;
+                                                                                    $total_reg_hrs=0;
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -1010,16 +1108,16 @@
                                                                             {{-- <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][out]" value="{{ date('h:i A', strtotime($time_out->datetime)) }}"> --}}
                                                                         @endif
                                                                     </td>
-                                                                    <td @if($abs-$leave > 0) class="bg-danger" @endif>
+                                                                    <td @if($abs-$leave_count > 0) class="bg-danger" @endif>
                                                                         @php
-                                                                            $abs = $abs-$leave;
+                                                                            $abs = $abs-$leave_count;
                                                                         @endphp
                                                                         <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][abs]" value="{{ $abs }}">
                                                                         {{ number_format($abs, 2) }}
                                                                     </td>
                                                                     <td>
-                                                                        {{ number_format($total_reg_hrs,2) }}
-                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
+                                                                        {{ $total_reg_hrs }}
+                                                                        <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ $total_reg_hrs }}">
                                                                     </td>
                                                                     <td @if($late > 0) class="bg-danger" @endif>
                                                                         {{ number_format($late,0) }}
@@ -1728,8 +1826,20 @@
                                                                         }
                                                                         else
                                                                         {
-                                                                            $abs = $leave[1];
-                                                                            $leave = 0;
+                                                                            // $abs = $leave[1];
+                                                                            // $leave = 0;
+                                                                            if ($leave[1] == 0.5)
+                                                                            {
+                                                                                $abs=1;
+                                                                                $leave_count=(float)$leave[1];
+                                                                                $leave=0;
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                $abs=1;
+                                                                                $leave_count=0;
+                                                                                $leave=0;
+                                                                            }
                                                                         }
                                                                     }
                                                                     else
@@ -1752,7 +1862,7 @@
                                                                                 {
                                                                                     $original_sched = $employee_schedule['working_hours'];
                                                                                     $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2)-$original_sched;
-                                                                                    if ($work_ot >= 2)
+                                                                                    if ($work_ot >= 2 && $emp_has_ot >= 2)
                                                                                     {
                                                                                         if ($work_ot <= $emp_has_ot)
                                                                                         {
@@ -1860,6 +1970,11 @@
                                                                                     $night_diff_ot = night_difference_per_company($final_time_in,$final_time_out)-$actual_night_diff;
                                                                                 }
                                                                             }
+
+                                                                            if ($night_diff_ot < .5)
+                                                                            {
+                                                                                $night_diff_ot = 0;
+                                                                            }
                                                                         }
                                                                     }
 
@@ -1870,15 +1985,53 @@
                                                                         {
                                                                             if ($emp_has_ot)
                                                                             {
-                                                                                $restday_ot = 8;
-                                                                                if ($emp_has_ot > 8)
+                                                                                $work_ot = round(((strtotime($final_time_out) - strtotime($final_time_in)) / 3600), 2);
+                                                                                $break_hrs = ($employee->approved_ots)->first();
+                                                                                if ($break_hrs)
                                                                                 {
-                                                                                    $restday_ot = $restday_ot;
-                                                                                    $restday_ot_ge = floatval($emp_has_ot)-floatval($restday_ot);
+                                                                                    $work_ot = $work_ot-$break_hrs->break_hrs;
                                                                                 }
-                                                                                else
+                                                                                if ($work_ot >= 2)
                                                                                 {
-                                                                                    $restday_ot = $emp_has_ot;
+                                                                                    if ($work_ot > $emp_has_ot)
+                                                                                    {
+                                                                                        $restday_ot = 8;
+                                                                                        if ($emp_has_ot >= 8)
+                                                                                        {
+                                                                                            $restday_ot = $restday_ot;
+                                                                                            $restday_ot_ge = floatval($emp_has_ot)-floatval($restday_ot);
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $restday_ot = $emp_has_ot;
+                                                                                        }
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        if ($work_ot > 8)
+                                                                                        {
+                                                                                            $restday_ot = $restday_ot;
+                                                                                            $restday_ot_ge = floatval($work_ot)-floatval($restday_ot);
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $restday_ot = $work_ot;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    if (in_array($employee->company_id, $plant_company))
+                                                                                    {
+                                                                                        if ($work_ot <= $emp_has_ot)
+                                                                                        {
+                                                                                            $overtime = $work_ot;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $overtime = $emp_has_ot;
+                                                                                        }
+                                                                                    }
                                                                                 }
                                                                             }
                                                                         }
@@ -1920,6 +2073,7 @@
                                                                     if ($check_if_holiday)
                                                                     {
                                                                         $abs = 0;
+                                                                        $undertime=0;
                                                                         if ($employee_schedule)
                                                                         {
                                                                             $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
@@ -1930,13 +2084,39 @@
                                                                                 if(str_contains($check_leave,"Without")){
                                                                                     $if_attendance_holiday_status = 'Without-Pay';
                                                                                     $abs = 1;
+                                                                                    
+                                                                                    $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
+                                                                                    $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
+                                                                                    $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                    $emp_schedule = $employee_schedule->working_hours-1;
+                                                                                    if ($total_reg_hrs >= ($emp_schedule/2))
+                                                                                    {
+                                                                                        $abs=0;
+                                                                                        if ($employee_schedule->working_hours > 8) 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                        }
+                                                                                    }
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    // $if_attendance_holiday_status = 'With-Pay';
+                                                                                    $if_attendance_holiday_status = 'With-Pay';
                                                                                     if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
                                                                                     {
                                                                                         $abs = 0;
+
+                                                                                        if ($employee_schedule->working_hours > 8) 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                        }
                                                                                     }
                                                                                 }
                                                                             }
@@ -1947,7 +2127,7 @@
                                                                                         'time_in' => $item->datetime
                                                                                     ];
                                                                                 });
-
+                                                                                
                                                                                 $check_attendance = checkHasAttendanceHolidayStatus($attendance,$if_attendance_holiday);
                                                                                 if(empty($check_attendance))
                                                                                 {
@@ -1955,7 +2135,37 @@
                                                                                     $abs = 1;
                                                                                 }else{
                                                                                     // $if_attendance_holiday_status = 'With-Pay';
-                                                                                    $abs = 0;
+                                                                                    // $abs = 0;
+
+                                                                                    // if ($employee_schedule->working_hours > 8) 
+                                                                                    // {
+                                                                                    //     $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                    // }
+                                                                                    // else 
+                                                                                    // {
+                                                                                    //     $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                    // }
+                                                                                    $emp_schedule = $employee_schedule->working_hours-1;
+                                                                                    $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
+                                                                                    $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
+                                                                                    $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
+                                                                                    if ($total_reg_hrs >= ($emp_schedule/2))
+                                                                                    {
+                                                                                        $abs=0;
+                                                                                        if ($employee_schedule->working_hours > 8) 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours-1;
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            $total_reg_hrs = $employee_schedule->working_hours;
+                                                                                        }
+                                                                                    }
+                                                                                    else 
+                                                                                    {
+                                                                                        $abs=1;
+                                                                                        $total_reg_hrs=0;
+                                                                                    }
                                                                                 }
                                                                             }
                                                                         }
@@ -2274,8 +2484,8 @@
                                                                             {{ number_format($abs, 2) }}
                                                                         </td>
                                                                         <td>
-                                                                            {{ number_format($total_reg_hrs,2) }}
-                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ number_format($total_reg_hrs,2) }}">
+                                                                            {{ $total_reg_hrs }}
+                                                                            <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][reg_hrs]" value="{{ $total_reg_hrs }}">
                                                                         </td>
                                                                         <td @if($late > 0) class="bg-danger" @endif>
                                                                             {{ number_format($late,0) }}

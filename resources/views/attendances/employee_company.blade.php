@@ -555,6 +555,17 @@
                                                         }
                                                         $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                         // dd(date('Y-m-d',strtotime($date_r)));
+                                                        if ($emp->employee_code == "A10199")//abanes
+                                                        {
+                                                            if ($schedule_hours >= 7)
+                                                            {
+                                                                $schedule_hours =  $schedule_hours-1;
+                                                                if($work >= ($schedule_hours/1.5))
+                                                                {
+                                                                    $work = $work-1;
+                                                                }
+                                                            }
+                                                        }
                                                         if($schedule_hours > 8)
                                                         {
                                                             $schedule_hours =  $schedule_hours-1;
@@ -610,8 +621,19 @@
                                                         {
                                                             $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
                                                           
+                                                            if ($emp->employee_code == "A10199")//abanes
+                                                            {
+                                                                if ($schedule_hours >= 7)
+                                                                {
+                                                                    $schedule_hours =  $schedule_hours-1;
+                                                                    if($work >= ($schedule_hours/1.5))
+                                                                    {
+                                                                        $work = $work-1;
+                                                                    }
+                                                                }
+                                                            }
                                                           
-                                                            if($schedule_hours > 6)
+                                                            if($schedule_hours > 8)
                                                             {
                                                                 $schedule_hours =  $schedule_hours-1;
                                                               
@@ -637,11 +659,7 @@
                                                                 }
                                                                 
                                                             }
-                                                            // if(in_array($emp->employee_code, ["A3143320", "A3141320", "A3143220", "A3142120", "A3142320", "A3142820", "A3148821"]))//PBI
-                                                            // {
-                                                            //     $work = $schedule_hours;
-                                                            // }
-
+                                                            
                                                           
                                                             if($schedule_hours > $work)
                                                             {
