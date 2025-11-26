@@ -171,38 +171,76 @@ class HmoController extends Controller
         return response()->json(['success' => true]);
     }
 
+    // public function report(Request $request)
+    // {
+    //     $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+    //     $companies = Company::whereHas('employee_has_company')
+    //                             ->whereIn('id',$allowed_companies)
+    //                             ->get();
+    //     // dd($companies);
+        
+    //     $company = isset($request->company) ? $request->company : [];
+    //     $from = isset($request->from) ? $request->from : "";
+    //     $to =  isset($request->to) ? $request->to : "";
+    //     $employee_hmo = [];
+    //     // $employee_hmo = Hmo::get();
+    //     // dd($employee_hmo);
+    //     if(isset($request->from) && isset($request->to)){
+    //         $employee_hmo = Hmo::with('attachments', 'employee')
+    //                                     ->whereDate('created_at','>=', $from)
+    //                                     ->whereDate('created_at','<=', $to)
+    //                                     ->whereHas('employee',function($q) use($company){
+    //                                         $q->whereIn('company_id',$company);
+    //                                     })
+    //                                     ->get();
+           
+    //     };
+    //     return view('reports.hmo_report', array(
+    //         'header' => 'reports',
+    //         'company'=>$company,
+    //         'from'=>$from,
+    //         'to'=>$to,
+    //         'companies' => $companies,
+    //         'employee_hmo' => $employee_hmo
+    //     ));
+    // }
     public function report(Request $request)
     {
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
+
         $companies = Company::whereHas('employee_has_company')
-                                ->whereIn('id',$allowed_companies)
-                                ->get();
-        // dd($companies);
-        
-        $company = isset($request->company) ? $request->company : [];
-        $from = isset($request->from) ? $request->from : "";
-        $to =  isset($request->to) ? $request->to : "";
+                            ->whereIn('id', $allowed_companies)
+                            ->get();
+
+        $company = $request->company ?? [];
+        $from = $request->from ?? "";
+        $to = $request->to ?? "";
         $employee_hmo = [];
-        // $employee_hmo = Hmo::get();
-        // dd($employee_hmo);
-        if(isset($request->from) && isset($request->to)){
+
+        if ($from && $to) {
+
             $employee_hmo = Hmo::with('attachments', 'employee')
-                                        ->whereDate('created_at','>=', $from)
-                                        ->whereDate('created_at','<=', $to)
-                                        ->whereHas('employee',function($q) use($company){
-                                            $q->whereIn('company_id',$company);
-                                        })
-                                        ->get();
-           
-        };
-        return view('reports.hmo_report', array(
+                ->whereDate('created_at', '>=', $from)
+                ->whereDate('created_at', '<=', $to);
+
+            // ✅ Apply filter ONLY if company is selected
+            if (!empty($company)) {
+                $employee_hmo->whereHas('employee', function ($q) use ($company) {
+                    $q->whereIn('company_id', $company);
+                });
+            }
+
+            $employee_hmo = $employee_hmo->get();
+        }
+
+        return view('reports.hmo_report', [
             'header' => 'reports',
-            'company'=>$company,
-            'from'=>$from,
-            'to'=>$to,
+            'company' => $company,
+            'from' => $from,
+            'to' => $to,
             'companies' => $companies,
             'employee_hmo' => $employee_hmo
-        ));
+        ]);
     }
 
     // public function email($id)

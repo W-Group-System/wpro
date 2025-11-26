@@ -11,7 +11,8 @@ use App\Employee;
 use App\User;
 use App\Hmo;
 use App\Notifications\HmoNotif;
-use Illuminate\Support\Facades\Notification;
+use App\Mail\EmployeeReviewedNotification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -956,11 +957,30 @@ class FormApprovalController extends Controller
         // $filter_status = isset($request->status) ? $request->status : 'Pending';
         $filter_status = $request->status;
         $approver_id = auth()->user()->id;
-        $employees = Employee::where('status', $request->status)
-                                ->whereDate('created_at','>=',$from_date)
-                                ->whereDate('created_at','<=',$to_date)
-                                ->orderBy('created_at','DESC')
-                                ->get();
+        $userId = $userId ?? Auth::id();
+        // $employees = Employee::where('status', $request->status)
+        //                         ->whereDate('created_at','>=',$from_date)
+        //                         ->whereDate('created_at','<=',$to_date)
+        //                         ->orderBy('created_at','DESC')
+        //                         ->get();
+        $employees = Employee::with('user', 'creator')
+            ->where('status', $request->status)
+            ->whereDate('created_at', '>=', $from_date)
+            ->whereDate('created_at', '<=', $to_date)
+            ->when($userId == 593, function ($q) {
+                return $q->whereHas('user', function ($query) {
+                    $query->where('status', 'Pending')
+                        ->where('is_review', 1);
+                });
+            })
+            ->when($userId == 875, function ($q) {
+                return $q->whereHas('user', function ($query) {
+                    $query->where('status', 'Pending')
+                        ->whereNull('is_review');
+                });
+            })
+            ->orderBy('created_at', 'DESC')
+            ->get();
                                 
         $for_approval = Employee::where('status','Pending')
                                 ->whereDate('created_at','>=',$from_date)
@@ -993,9 +1013,73 @@ class FormApprovalController extends Controller
         ));
 
     }
+    public function reviewEmployee(Request $request, $id)
+    {
+        $employee = Employee::findOrFail($id);
+
+        // Determine which button was clicked
+        $isReturn = $request->has('btnReturn');
+        $isReview = $request->has('btnReview');
+
+        // Update Employee status
+        $employee->status = 'Pending';
+        $employee->save();
+
+        // Update User status
+        $user = User::find($employee->user_id);
+
+        $user->is_review = $isReturn ? null : 1;
+        $user->status = 'Pending';
+        $user->review_remarks = $request->review_remarks;
+        $user->reviewed_at = now();
+        $user->reviewed_by = auth()->id();
+        $user->save();
+
+        // Email notification — send different email for Return or Review
+        if ($employee->creator && $employee->creator->email) {
+            Mail::to($employee->creator->email)
+                ->send(new EmployeeReviewedNotification(
+                    $employee,
+                    auth()->user(),
+                    $request->review_remarks,
+                    $isReturn ? 'Returned' : 'Reviewed'
+                ));
+        }
+
+        Alert::success(
+            $isReturn ? 'Employee returned for correction.' : 'Employee has been reviewed.'
+        )->persistent('Dismiss');
+
+        return back();
+    }
+
+    // public function reviewEmployee(Request $request,$id){
+    //     $new_employee = Employee::with('creator')->where('id', $id)->first();
+    //     // dd($new_employee);
+    //     if($new_employee){
+    //         Employee::where('id', $id)->update([
+    //                 'status' => 'Pending',
+    //             ]);
+                    
+    //         User::where('id', $new_employee->user_id)->update([
+    //             'is_review'         => 1, 
+    //             'reviewed_at'       => now(), 
+    //             'reviewed_by'       => auth()->user()->id,
+    //             'status'            => 'Pending',
+    //             'review_remarks'    => $request->review_remarks,
+    //         ]);
+
+    //         if ($new_employee->creator && $new_employee->creator->email) {
+    //         Mail::to($new_employee->creator->email)
+    //             ->send(new EmployeeReviewedNotification($new_employee, auth()->user(), $request->review_remarks));
+    //         }
+
+    //         Alert::success('New Employee has been verified.')->persistent('Dismiss');
+    //         return back();
+    //     }
+    // }
 
     public function approveEmployee(Request $request,$id){
-
         $new_employee = Employee::where('id', $id)
                                             ->first();
         // dd($new_employee);

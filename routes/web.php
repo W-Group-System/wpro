@@ -149,6 +149,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('for-employee','FormApprovalController@form_employee_approval');
     Route::post('approve-employee/{id}','FormApprovalController@approveEmployee');
+    Route::post('review-employee/{id}','FormApprovalController@reviewEmployee');
     Route::post('decline-employee/{id}','FormApprovalController@declineEmployee');
     Route::post('/approve-employee-all', [FormApprovalController::class, 'approveEmployeeAll']);
     Route::post('/disapprove-employee-all', [FormApprovalController::class, 'disapproveEmployeeAll']);

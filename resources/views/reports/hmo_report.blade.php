@@ -13,7 +13,7 @@
                                     <div class='col-md-2'>
                                         <div class="form-group">
                                             <label class="text-right">Company</label>
-                                            <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company[]' multiple required>
+                                            <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company[]' multiple>
                                                 <option value="">-- Select Employee --</option>
                                                 @foreach($companies as $comp)
                                                 <option value="{{$comp->id}}" @if (in_array($comp->id,$company)) selected @endif>{{$comp->company_code}}</option>
