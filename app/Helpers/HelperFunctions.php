@@ -13,7 +13,7 @@ use App\Attendance;
 use App\Classification;
 use App\DailySchedule;
 use App\EmployeeOvertime;
-use App\EmployeeWfh;
+use App\User;
 use App\EmployeeOb;
 use App\EmployeeDtr;
 use App\ScheduleData;
@@ -1178,21 +1178,21 @@ function pending_ob_count($approver_id){
 }
 
 // Employee
-function pending_employee_count($approver_id){
-    
-    // Only allow if logged-in user is ID 586
-    if (Auth::check() && Auth::id() == 593) {
-
-        $today = date('Y-m-d');
-        $from_date = date('Y-m-d', strtotime('-1 month', strtotime($today)));
-        $to_date = date('Y-m-d');
-
-        return Employee::where('status', 'Pending')
-            // ->whereBetween('created_at', [$from_date, $to_date])
-            ->count();
+function pending_employee_count($userId = null)
+{
+    $userId = $userId ?? Auth::id(); // Use the passed ID or the logged-in user ID
+    if ($userId == 593) {
+        // For user 593: count Pending with is_review = 1
+        return User::where('status', 'Pending')
+                   ->where('is_review', 1)
+                   ->count();
     }
-
-    // Return 0 (or null) if user is not ID 586
+    if ($userId == 875) {
+        // For user 875: count Pending with is_review = NULL
+        return User::where('status', 'Pending')
+                   ->whereNull('is_review')
+                   ->count();
+    }
     return 0;
 }
 

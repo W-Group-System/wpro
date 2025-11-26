@@ -624,7 +624,7 @@ class EmployeeController extends Controller
                                 $employee->bank_name = isset($value['bank_name']) ? $value['bank_name'] : "";
                                 $employee->bank_account_number = isset($value['bank_account_number']) ? $value['bank_account_number'] : "";
                                 $employee->personal_email = isset($value['personal_email']) ? $value['personal_email'] : "";
-                                $employee->area = isset($value['area']) ? $value['area'] : "";
+                                // $employee->area = isset($value['area']) ? $value['area'] : "";
                                 $employee->religion = isset($value['religion']) ? $value['religion'] : "";
                                 $employee->schedule_id = isset($value['schedule_id']) ? $value['schedule_id'] : "1";
 
@@ -832,11 +832,11 @@ class EmployeeController extends Controller
                                     $check_if_exist->personal_email =  $value['personal_email'];
                                 }
                             }
-                            if(isset($value['area'])){
-                                if($value['area']){
-                                    $check_if_exist->area =  $value['area'];
-                                }
-                            }
+                            // if(isset($value['area'])){
+                            //     if($value['area']){
+                            //         $check_if_exist->area =  $value['area'];
+                            //     }
+                            // }
                             if(isset($value['religion'])){
                                 if($value['religion']){
                                     $check_if_exist->religion =  $value['religion'];
@@ -1001,7 +1001,7 @@ class EmployeeController extends Controller
                                 $employee->bank_name = isset($value['bank_name']) ? $value['bank_name'] : "";
                                 $employee->bank_account_number = isset($value['bank_account_number']) ? $value['bank_account_number'] : "";
                                 $employee->personal_email = isset($value['personal_email']) ? $value['personal_email'] : "";
-                                $employee->area = isset($value['area']) ? $value['area'] : "";
+                                // $employee->area = isset($value['area']) ? $value['area'] : "";
                                 $employee->religion = isset($value['religion']) ? $value['religion'] : "";
                                 $employee->schedule_id = isset($value['schedule_id']) ? $value['schedule_id'] : "1";
 

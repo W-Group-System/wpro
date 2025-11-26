@@ -119,11 +119,18 @@
                                 </td>
                             @endif
                             <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
-                                <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#employee-approved-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Approve">
-                                <i class="ti-check btn-icon-prepend"></i>                                                    
+                                @if(Auth::id() == 875 && ($form_approval->is_review != 1 || $form_approval->is_review == NULL))
+                                <button type="button" class="btn btn-info btn-sm" data-id="{{ $form_approval->id }}" data-target="#employee-review-modal-{{ $form_approval->id }}" data-toggle="modal" title="Review">
+                                  <i class="ti-eye btn-icon-prepend"></i>
                                 </button>
+                                @endif
+                                @if(Auth::id() == 593 || $form_approval->is_review == 1)
+                                <button type="button" class="btn btn-success btn-sm" id="{{ $form_approval->id }}" data-target="#employee-approved-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Approve">
+                                  <i class="ti-check btn-icon-prepend"></i>                                                    
+                                </button>
+                                @endif
                                 <button type="button" class="btn btn-danger btn-sm" id="{{ $form_approval->id }}" data-target="#employee-declined-remarks-{{ $form_approval->id }}" data-toggle="modal" title="Decline">
-                                <i class="ti-close btn-icon-prepend"></i>                                                    
+                                  <i class="ti-close btn-icon-prepend"></i>                                                    
                                 </button> 
                             </td>
                             <td>{{date('M. d, Y h:i A', strtotime($form_approval->created_at))}}</td>
@@ -171,7 +178,8 @@
                                 @endif<br> 
                                 @endforeach
                             </td> --}}
-                            <td>{{ optional($form_approval->user->createdBy)->first_name. ' ' .optional($form_approval->user->createdBy)->last_name }}</td>
+                            {{-- <td>{{ optional($form_approval->creator->createdBy)->first_name. ' ' .optional($form_approval->user->createdBy)->last_name }}</td> --}}
+                            <td>{{ $form_approval->creator->name }}</td>
                             <td>
                                 @if ($form_approval->status == 'Pending')
                                 <label class="badge badge-warning">{{ $form_approval->status }}</label>
@@ -321,6 +329,7 @@
 
 
 @foreach ($employees as $employee)
+  @include('for-approval.remarks.employee_reviewed_remarks')
   @include('for-approval.remarks.employee_approved_remarks')
   @include('for-approval.remarks.employee_declined_remarks')
 @endforeach 
