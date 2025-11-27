@@ -538,8 +538,16 @@ class TimekeepingDashboardController extends Controller
         $company_data = $request->company;
         $department_data = $request->department;
 
-        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
-            ->with(['schedule_info'])
+        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id');
+            if ($search = $request->input('search.value'))
+            {
+                $query->where('employee_code', "LIKE", "%".$search."%")
+                    ->orWhere('last_name',"LIKE","%".$search."%")
+                    ->orWhere('first_name',"LIKE","%".$search."%")
+                    ;
+            }
+
+            $query->with(['schedule_info'])
             ->with([
                 'daily_schedules' => function($q) use ($date_from, $to_date) {
                     $q->whereBetween('log_date', [$date_from, $to_date]);
@@ -1610,8 +1618,15 @@ class TimekeepingDashboardController extends Controller
         $company_data = $request->company;
         $department_data = $request->department;
 
-        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id')
-            ->with(['schedule_info'])
+        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id');
+            if ($search = $request->input('search.value'))
+            {
+                $query->where('employee_code', "LIKE", "%".$search."%")
+                    ->orWhere('last_name',"LIKE","%".$search."%")
+                    ->orWhere('first_name',"LIKE","%".$search."%")
+                    ;
+            }
+            $query->with(['schedule_info'])
             ->with([
                 'daily_schedules' => function($q) use ($date_from, $to_date) {
                     $q->whereBetween('log_date', [$date_from, $to_date]);
