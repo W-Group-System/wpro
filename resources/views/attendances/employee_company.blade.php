@@ -825,6 +825,12 @@
                                                 }
                                           
                                                 @endphp
+                                                @if(($leave_count != 0))
+                                                    @php
+                                                        $abs = $leave_count;
+                                                        $undertime_hrs=0;
+                                                    @endphp
+                                                @endif
                                                 @php
                                                 $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
                                                
