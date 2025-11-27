@@ -372,7 +372,12 @@ function night_difference_per_company($start_work, $end_work)
 
     // Define night shift boundaries
     $night_start = mktime(22, 0, 0, date('m', $start_work), date('d', $start_work), date('Y', $start_work));
-    $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work) + 1, date('Y', $start_work));
+    if (date('H', $start_work) < 6) {
+        $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work), date('Y', $start_work));
+    } else {
+        $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work) + 1, date('Y', $start_work));
+    }
+    // $night_end = mktime(6, 0, 0, date('m', $start_work), date('d', $start_work) + 1, date('Y', $start_work));
 
     // Ensure $end_work is compared with the correct night boundaries
     if ($start_work >= $night_start && $start_work < $night_end) {
@@ -1288,7 +1293,10 @@ function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas)
                     ->orWhere('status', 'Pending');
             })
             ->where('withpay',1)
-            ->whereYear('date_from', date('Y'))
+            // ->whereYear('date_from', date('Y'))
+            ->where(function($q) {
+                $q->whereYear('date_from', date('Y'))->orWhereYear('date_from', date('Y', strtotime('+1 year')));
+            })
             ->where('status','!=','Cancelled')
             ->whereYear('created_at', date('Y'))
             ->whereNull('is_previous_year')
