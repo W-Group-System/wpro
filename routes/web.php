@@ -540,6 +540,9 @@ Route::group(['middleware' => 'auth'], function () {
 
         // Per Employee
         Route::post('per_employee','TimekeepingDashboardController@getPerEmployee');
+
+        // Per Company
+        Route::post('issues_per_company','TimekeepingDashboardController@getPerCompany');
     });
 
     // FOR APPROVAL
