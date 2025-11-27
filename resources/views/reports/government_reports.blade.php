@@ -88,7 +88,9 @@
 									<td>{{$pay->employee_no}}</td>
 									<td>{{$pay->last_name.", ".$pay->first_name}}</td>
 									
-									<td>{{date('M d, Y',strtotime($pay->employee->birth_date))}}</td>
+									{{-- <td>{{date('M d, Y',strtotime($pay->employee->birth_date))}}</td> --}}
+									<td>{{ optional($pay->employee)->birth_date ? date('M d, Y', strtotime($pay->employee->birth_date)) : 'N/A' }}</td>
+
 									@if($benefits == "SSS")
 									
 									<td>{{str_replace('-',"",$pay->employee->sss_number)}}</td>
