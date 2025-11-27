@@ -544,11 +544,6 @@
                                             $abs = $leave_count;
                                         @endphp
                                     @endif
-                                    @if(($leave_count != 0))
-                                        @php
-                                            $abs = $leave_count;
-                                        @endphp
-                                    @endif
                                     @if($rest)
                                         @php
                                             $abs =0;
