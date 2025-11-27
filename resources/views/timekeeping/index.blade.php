@@ -156,140 +156,7 @@
                                                         <th>APPROVERS</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    {{-- @php
-                                                        $total_pending_approval = 0;
-                                                    @endphp
-                                                    @foreach ($employees as $employee)
-                                                        @foreach ($date_range as $date_r)
-                                                            @php
-                                                                $total_reg_hrs = 0;
-                                                                $total_late = 0;
-                                                                $abs = 0;
-
-                                                                $rest = "";
-
-                                                                $employee_schedule = employeeSchedule($employee->ScheduleData,$date_r,$employee->schedule_id,$employee->employee_code);
-                                                                $if_has_pending_approval = ($employee->dtr_correction)->where('employee_id', $employee->id)->where('date', $date_r)->where('status','Pending')->first();
-                                                                $time_in = ($employee->attendance_logs)->where('date', $date_r)->sortBy('datetime')->first();
-                                                                $time_out = ($employee->attendance_logs)->where('date', $date_r)->sortByDesc('datetime')->first();
-                                                            @endphp
-                                                            
-                                                            @if(empty($employee_schedule))
-                                                            @php
-                                                                $rest = "RESTDAY"
-                                                            @endphp
-                                                            @else
-                                                            @php
-                                                                if ($time_in)
-                                                                {
-                                                                    if (date('H:i', strtotime($time_in->datetime)) > $employee_schedule->time_in_to)
-                                                                    {
-                                                                        $late_time_in = strtotime(date('H:i', strtotime($time_in->datetime)));
-                                                                        $late_time_in_to = strtotime(date('H:i', strtotime($employee_schedule->time_in_to)));
-                                                                        $total_late = abs($late_time_in_to - $late_time_in) / 60;
-                                                                    }
-                                                                }
-                                                            @endphp
-                                                            @endif
-
-                                                            @if($employee_schedule)
-                                                                @if($time_in && $time_out)
-                                                                @php
-                                                                    $abs = 0;
-                                                                @endphp
-                                                                @else
-                                                                @php
-                                                                    $abs = 1;
-                                                                @endphp 
-                                                                @endif
-                                                            @else
-                                                            @php
-                                                                $abs = 0;
-                                                            @endphp
-                                                            @endif
-                        
-                                                            @if($if_has_pending_approval)
-                                                            @php
-                                                                $total_pending_approval = $total_pending_approval+=1;
-                                                            @endphp
-
-                                                            <tr>
-                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{$date_r}}][cutoff]" value="{{$to_date}}">
-                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][log_date]" value="{{ $date_r }}">
-                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][department_id]" value="{{ $employee->department_id }}">
-                                                                <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
-
-                                                                <td>
-                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][company_id]" value="{{ $employee->company_id }}">
-                                                                    {{ $employee->company->company_code }}
-                                                                </td>
-                                                                <td>{{ $employee->department->name }}</td>
-                                                                <td>
-                                                                    @if($employee_schedule)
-                                                                        @if($employee_schedule->time_in_from != null)
-                                                                            <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
-                                                                            @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
-                                                                                <small>(Flexi)</small>
-                                                                            @endif
-                                                                        @else
-                                                                        @php
-                                                                            $rest = "RESTDAY"
-                                                                        @endphp
-                                                                        <small>{{ $rest }}</small>
-                                                                        @endif
-                                                                    @else
-                                                                        @php
-                                                                            $rest = "RESTDAY"
-                                                                        @endphp
-                                                                        {{ $rest }}
-                                                                    @endif
-                                                                </td>
-                                                                <td>
-                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][employee_no]" value="{{ $employee->employee_code }}">
-                                                                    {{ $employee->employee_code }}
-                                                                </td>
-                                                                <td>
-                                                                    <input type="hidden" name="employees[{{ $employee->employee_code }}][{{ $date_r }}][name]" value="{{ $employee->last_name .', '.$employee->first_name }}">
-                                                                    {{ $employee->last_name.', '.$employee->first_name }}
-                                                                </td>
-                                                                <td>{{ $date_r }}</td>
-                                                                <td>
-                                                                    @if($if_has_pending_approval->time_in)
-                                                                        {{ date('h:i A', strtotime($if_has_pending_approval->time_in)) }}
-                                                                    @endif
-                                                                </td>
-                                                                <td>
-                                                                    @if($if_has_pending_approval->time_out)
-                                                                        {{ date('h:i A', strtotime($if_has_pending_approval->time_out)) }}
-                                                                    @endif
-                                                                </td>
-                                                                <td>
-                                                                    @php
-                                                                        $dtr_correction_approvers = ($employee->dtr_correction)->where('date', $date_r)->last();
-                                                                        $approvers = $dtr_correction_approvers->dtr_correction_approver()->orderBy('id','desc')->get()->take(2)->sortBy('id');
-                                                                    @endphp
-                                                                    @foreach ($approvers as $approver)
-                                                                        {{ $approver->user->name }} - 
-                                                                            @if($approver->status == "Pending") 
-                                                                            <span class="badge badge-warning">
-                                                                            @elseif($approver->status == "Approved") 
-                                                                            <span class="badge badge-success">
-                                                                            @elseif($approver->status == "Cancelled") 
-                                                                            <span class="badge badge-danger">   
-                                                                            @else 
-                                                                            <span class="badge badge-info">
-                                                                            @endif
-                                                                                {{ $approver->status }}
-                                                                            </span>
-                                                                            <br>
-                                                                    @endforeach
-                                                                </td>
-                                                            </tr>
-                                                            @endif
-                                                        @endforeach
-                                                    @endforeach --}}
-                                                </tbody>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -319,7 +186,7 @@
                                                             </th>
                                                             <th>ACTIONS</th>
                                                             <th>COMPANY</th>
-                                                            <th>DEPARTMENT</th>
+                                                            {{-- <th>DEPARTMENT</th> --}}
                                                             <th>EMPLOYEE ID</th>
                                                             <th>NAME</th>
                                                             <th>DATE LOGS</th>
@@ -1785,6 +1652,9 @@
                                     date: employee.date,
                                     _token:"{{ csrf_token() }}"
                                 },
+                                beforeSend: function() {
+                                    show()
+                                },
                                 success: function(response) {
                                     if (response.status == "success") {
                                         Swal.fire({
@@ -1793,6 +1663,8 @@
                                         });
 
                                         issueTable.ajax.reload()
+                                        forPostingTable.ajax.reload()
+                                        hide()
                                     }
                                 }
                             })
@@ -1801,6 +1673,218 @@
                 })
             }
         });
+
+        var forPostingTable = $('.forPostingTable').DataTable({
+            pagelength:10,
+            dom: 'Bfrtip',
+            paginate:true,
+            processing: true,
+            serverSide: true,
+            lengthChange: true,
+            ordering: false,
+            info: true,
+            autoWidth: false,
+            stateSave:true,
+            language: {
+                processing: `
+                    <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;">
+                        <span class="visually-hidden"></span>
+                    </div>
+                    <div style="font-size:18px;margin-top:10px;">Loading data...</div>
+                `
+            },
+            ajax: {
+                type: "POST",
+                url: "{{ url('timekeeping-official/for_posting_per_company') }}",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: function(d) {
+                    d.company = $("[name='company']").val()
+                    d.date_from = $("[name='date_from']").val()
+                    d.date_to = $("[name='date_to']").val()
+                }
+            },
+            columns: [
+                { data: 'checkbox', name: 'checkbox' },
+                { data: 'action', name: 'action' },
+                { data: 'company', name: 'company' },
+                { data: 'employee_code', name: 'employee_code' },
+                { data: 'name', name: 'name' },
+                { data: 'date', name: 'date' },
+                {
+                    render: function(data, type, row) {
+                        return `<small>${row.schedule}</small>`
+                    }
+                },
+                {data:'time_in'},
+                {data:'time_out'},
+                {data:'abs'},
+                {data:"reg_hrs"},
+                {data:"late"},
+                {data:"undertime"},
+                {data:"leave"},
+                {data:"overtime"},
+                {data:"reg_nd"},
+                {data:"reg_ot_nd"},
+                {data:"restday_ot"},
+                {data:"restday_ot_ge"},
+                {data:"restnd"},
+                {data:"restnd_ge"},
+                {data:"lh_ot"},
+                {data:"lh_ot_ge"},
+                {data:"lh_nd"},
+                {data:"lh_nd_ge"},
+                {data:"sh_ot"},
+                {data:"sh_ot_ge"},
+                {data:"sh_ot_nd"},
+                {data:"sh_ot_nd_ge"},
+                {data:"rst_lh_ot"},
+                {data:"rst_lh_ot_ge"},
+                {data:"rst_lh_ot_nd"},
+                {data:"rst_lh_ot_nd_ge"},
+                {data:"rst_sh_ot"},
+                {data:"rst_sh_ot_ge"},
+                {data:"rst_sh_ot_nd"},
+                {data:"rst_sh_ot_nd_ge"},
+                {data:"remarks"},
+            ],
+            createdRow: function(row, data, dataIndex) {
+                if (data.if_has_ob == "Yes") {
+                    $(row).find('td:eq(7)').addClass('bg-info');
+                }
+                else if(data.time_in == "" && data.schedule != "RESTDAY") {
+                    $(row).find('td:eq(7)').addClass('bg-danger');
+                }
+
+                if (data.if_has_ob == "Yes") {
+                    $(row).find('td:eq(8)').addClass('bg-info');
+                }
+                else if(data.time_out == "" && data.schedule != "RESTDAY") {
+                    $(row).find('td:eq(8)').addClass('bg-danger');
+                }
+                if (parseFloat(data.abs)-parseFloat(data.leave_count) > 0) {
+                    $(row).find('td:eq(9)').addClass('bg-danger');
+                }
+                if (data.late > 0) {
+                    $(row).find('td:eq(11)').addClass('bg-danger');
+                }
+                if (data.undertime > 0) {
+                    $(row).find('td:eq(12)').addClass('bg-danger');
+                }
+                if (data.overtime > 0) {
+                    $(row).find('td:eq(14)').addClass('bg-warning');
+                }
+                if (data.reg_nd > 0) {
+                    $(row).find('td:eq(15)').addClass('bg-warning');
+                }
+                if (data.reg_ot_nd > 0) {
+                    $(row).find('td:eq(16)').addClass('bg-warning');
+                }
+                if (data.restday_ot > 0) {
+                    $(row).find('td:eq(17)').addClass('bg-warning');
+                }
+                if (data.restday_ot_ge > 0) {
+                    $(row).find('td:eq(18)').addClass('bg-warning');
+                }
+                if (data.restnd > 0) {
+                    $(row).find('td:eq(19)').addClass('bg-warning');
+                }
+                if (data.restnd_ge > 0) {
+                    $(row).find('td:eq(20)').addClass('bg-warning');
+                }
+                if (data.lh_ot > 0) {
+                    $(row).find('td:eq(21)').addClass('bg-warning');
+                }
+                if (data.lh_ot_ge > 0) {
+                    $(row).find('td:eq(22)').addClass('bg-warning');
+                }
+                if (data.lh_nd > 0) {
+                    $(row).find('td:eq(23)').addClass('bg-warning');
+                }
+                if (data.lh_nd_ge > 0) {
+                    $(row).find('td:eq(24)').addClass('bg-warning');
+                }
+                if (data.sh_ot > 0) {
+                    $(row).find('td:eq(25)').addClass('bg-warning');
+                }
+                if (data.sh_ot_ge > 0) {
+                    $(row).find('td:eq(26)').addClass('bg-warning');
+                }
+                if (data.sh_nd > 0) {
+                    $(row).find('td:eq(27)').addClass('bg-warning');
+                }
+                if (data.sh_nd_ge > 0) {
+                    $(row).find('td:eq(28)').addClass('bg-warning');
+                }
+                if (data.rst_lh_ot > 0) {
+                    $(row).find('td:eq(29)').addClass('bg-warning');
+                }
+                if (data.rst_lh_ot_ge > 0) {
+                    $(row).find('td:eq(30)').addClass('bg-warning');
+                }
+                if (data.rst_lh_ot_nd > 0) {
+                    $(row).find('td:eq(31)').addClass('bg-warning');
+                }
+                if (data.rst_lh_ot_nd_ge > 0) {
+                    $(row).find('td:eq(32)').addClass('bg-warning');
+                }
+                if (data.rst_sh_ot > 0) {
+                    $(row).find('td:eq(33)').addClass('bg-warning');
+                }
+                if (data.rst_sh_ot_ge > 0) {
+                    $(row).find('td:eq(34)').addClass('bg-warning');
+                }
+                if (data.rst_sh_ot_nd > 0) {
+                    $(row).find('td:eq(35)').addClass('bg-warning');
+                }
+                if (data.rst_sh_ot_nd_ge > 0) {
+                    $(row).find('td:eq(36)').addClass('bg-warning');
+                }
+            },
+            rowCallback:function(row, data) {
+                $(row).find("#revertBtn").on('click', function() {
+                    var employee = $(this).data()
+                    
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, revert it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type:"POST",
+                                url:"{{ url('timekeeping-official/dtrStatus') }}",
+                                data: {
+                                    employee: employee.employee,
+                                    date: employee.date,
+                                    _token:"{{ csrf_token() }}"
+                                },
+                                beforeSend: function() {
+                                    show()
+                                },
+                                success: function(response) {
+                                    if (response.status == "success") {
+                                        Swal.fire({
+                                            title: response.message,
+                                            icon: "success"
+                                        });
+
+                                        issueTable.ajax.reload()
+                                        forPostingTable.ajax.reload()
+                                        hide()
+                                    }
+                                }
+                            })
+                        }
+                    });
+                })
+            }
+        })
 
         function to24HourFormat(time12h) {
             // Example input: "02:30 PM" or "02:30 AM"
@@ -1822,9 +1906,20 @@
             return `${hours}:${minutes}`;
         }
 
+        issueTable.on('xhr.dt', function() {
+            hide();
+        });
+
+        forPostingTable.on('xhr.dt', function() {
+            hide();
+        });
+
         $("#filterForm").on('submit', function(e) {
             e.preventDefault()
+
+            show()
             issueTable.ajax.reload()
+            forPostingTable.ajax.reload()
         })
 
         $("#checkboxAll").on('change', function() {
@@ -1868,25 +1963,11 @@
 
                         $('#editTimekeepingModal').modal('hide')
                         issueTable.ajax.reload()
+                        forPostingTable.ajax.reload()
                     }
                 }
             });
         })
-
-        
-        // new DataTable('.forPostingTable', {
-        //     // pagelenth:25,
-        //     paginate:false,
-        //     dom: 'Bfrtip',
-        //     // buttons: [
-        //     //     'copy', 'excel'
-        //     // ],
-        //     columnDefs: [{
-        //         "defaultContent": "-",
-        //         "targets": "_all"
-        //     }],
-        //     order: [] 
-        // });
     })
 </script>
 @endsection

@@ -901,6 +901,9 @@
         function show() {
             document.getElementById("loader").style.display = "block";
         }
+        function hide() {
+            document.getElementById("loader").style.display = "none";
+        }
 
         function logout() {
             event.preventDefault();

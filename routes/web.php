@@ -542,7 +542,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('per_employee','TimekeepingDashboardController@getPerEmployee');
 
         // Per Company
-        Route::post('issues_per_company','TimekeepingDashboardController@getPerCompany');
+        Route::post('issues_per_company','TimekeepingDashboardController@issuesPerCompany');
+        Route::post('for_posting_per_company', 'TimekeepingDashboardController@forPostingCompany');
     });
 
     // FOR APPROVAL
