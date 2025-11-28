@@ -1561,19 +1561,34 @@ class TimekeepingDashboardController extends Controller
                 // {
                 // }
 
+                $action = '';
+                if ($revert > 0)
+                {
+                    $action = '
+                        <button type="button" class="btn btn-sm btn-warning" id="editTimekeepingBtn" data-employee="'.$employee->id.'" data-date="'.$date_r.'">
+                            <i class="ti-pencil"></i>
+                            Edit
+                        </button>
+                    ';
+                }
+                else 
+                {
+                    $action = '
+                        <button type="button" class="btn btn-sm btn-warning" id="editTimekeepingBtn" data-employee="'.$employee->id.'" data-date="'.$date_r.'">
+                            <i class="ti-pencil"></i>
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-sm btn-success" id="moveToForPostingBtn" data-employee="'.$employee->id.'" data-date="'.$date_r.'">
+                            <i class="ti-arrow-right"></i>
+                            Move to for posting
+                        </button>
+                    ';
+                }
+
                 if (($pending_dtr == 0) && ($for_posting == 0) && ($abs > 0) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0))
                 {
                     $data[]=[
-                        'action' => '
-                            <button type="button" class="btn btn-sm btn-warning" id="editTimekeepingBtn" data-employee="'.$employee->id.'" data-date="'.$date_r.'">
-                                <i class="ti-pencil"></i>
-                                Edit
-                            </button>
-                            <button type="button" class="btn btn-sm btn-success" id="moveToForPostingBtn" data-employee="'.$employee->id.'" data-date="'.$date_r.'">
-                                <i class="ti-arrow-right"></i>
-                                Move to for posting
-                            </button>
-                        ',
+                        'action' => $action,
                         'company' => $employee->company->company_code,
                         'employee_code' => $employee->employee_code,
                         'name' => $employee->last_name.', '.$employee->first_name,

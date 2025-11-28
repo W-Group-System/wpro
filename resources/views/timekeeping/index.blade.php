@@ -1754,14 +1754,14 @@
                 if (data.if_has_ob == "Yes") {
                     $(row).find('td:eq(7)').addClass('bg-info');
                 }
-                else if(data.time_in == "" && data.schedule != "RESTDAY") {
+                else if(data.time_in == "" && data.schedule != "RESTDAY" && data.abs > 0) {
                     $(row).find('td:eq(7)').addClass('bg-danger');
                 }
 
                 if (data.if_has_ob == "Yes") {
                     $(row).find('td:eq(8)').addClass('bg-info');
                 }
-                else if(data.time_out == "" && data.schedule != "RESTDAY") {
+                else if(data.time_out == "" && data.schedule != "RESTDAY" && data.abs > 0) {
                     $(row).find('td:eq(8)').addClass('bg-danger');
                 }
                 if (parseFloat(data.abs)-parseFloat(data.leave_count) > 0) {
