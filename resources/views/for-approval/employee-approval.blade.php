@@ -162,7 +162,7 @@
                                     No Contract
                                 @endif
                             </td>
-                            <td>{{$form_approval->immediate_sup_data->name ?? ''}}</td>
+                            <td>{{ optional($form_approval->immediate_sup_data)->name ?? '' }}</td>
                             {{-- <td id="tdStatus{{ $form_approval->id }}">
                                 @foreach($form_approval->approver as $approver)
                                 @if($form_approval->level >= $approver->level)

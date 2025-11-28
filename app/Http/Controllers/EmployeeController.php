@@ -380,6 +380,7 @@ class EmployeeController extends Controller
             $employee->birth_date = $request->birthdate;
             $employee->birth_place = $request->birthplace;
             $employee->marital_status = $request->marital_status;
+            $user->created_by = auth()->user()->id;
             // $employee->status = "Active";
             $employee->status = "Pending";
             $employee->present_address = $request->present_address;
