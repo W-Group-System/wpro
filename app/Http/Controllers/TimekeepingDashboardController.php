@@ -816,9 +816,12 @@ class TimekeepingDashboardController extends Controller
                         }
                         else
                         {
-                            if ($working_hrs >= ($schedule_hrs/2))
+                            if ($check_leave)
                             {
-                                $total_reg_hrs = $schedule_hrs/2;
+                                if ($working_hrs >= ($schedule_hrs/2))
+                                {
+                                    $total_reg_hrs = $schedule_hrs/2;
+                                }
                             }
                             else 
                             {
@@ -1990,7 +1993,17 @@ class TimekeepingDashboardController extends Controller
                             }
                             else
                             {
-                                $total_reg_hrs = $working_hrs;
+                                if ($check_leave)
+                                {
+                                    if($working_hrs >= $schedule_hrs)
+                                    {
+                                        $total_reg_hrs = $schedule_hrs;
+                                    }
+                                }
+                                else
+                                {
+                                    $total_reg_hrs = $working_hrs;
+                                }
                             }
                         }
                     }
