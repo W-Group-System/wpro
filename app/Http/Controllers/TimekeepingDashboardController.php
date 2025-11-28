@@ -586,7 +586,7 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->where('employee_code','A3176324')
+            ->where('employee_code','A3189525')
             // ->where('employee_code','A3179024')
             // ->where('employee_code','A3191125')
             // ->where('employee_code','A192724')
@@ -815,7 +815,14 @@ class TimekeepingDashboardController extends Controller
                         }
                         else
                         {
-                            $total_reg_hrs = $working_hrs;
+                            if ($working_hrs >= ($schedule_hrs/2))
+                            {
+                                $total_reg_hrs = $schedule_hrs/2;
+                            }
+                            else 
+                            {
+                                $total_reg_hrs = $working_hrs;
+                            }
                         }
                     }
                     else
@@ -959,7 +966,7 @@ class TimekeepingDashboardController extends Controller
                     {
                         if ($leave[1] == 0.5)
                         {
-                            $abs=1;
+                            $abs=$leave[1];
                             $leave_count=(float)$leave[1];
                             $leave=0;
                         }
@@ -978,9 +985,19 @@ class TimekeepingDashboardController extends Controller
                     }
                     else
                     {
-                        $leave = $leave[1];
-                        $abs=0;
-                        $undertime=0;
+                        if ($leave[1] == 0.5)
+                        {
+                            $abs=$leave[1];
+                            $leave_count=(float)$leave[1];
+                            $leave=$leave_count;
+                            $undertime=0;
+                        }
+                        else 
+                        {
+                            $abs=0;
+                            $leave_count=(float)$leave[1];
+                            $leave=$leave_count;
+                        }
                     }
                 }
                 else
@@ -1665,7 +1682,7 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->where('employee_code','A3176324')
+            ->where('employee_code','A3189525')
             // ->where('employee_code','A3179024')
             // ->where('employee_code','A3191125')
             // ->where('employee_code','A192724')
@@ -1891,7 +1908,14 @@ class TimekeepingDashboardController extends Controller
                         }
                         else
                         {
-                            $total_reg_hrs = $working_hrs;
+                            if ($working_hrs >= ($schedule_hrs/2))
+                            {
+                                $total_reg_hrs = $schedule_hrs/2;
+                            }
+                            else 
+                            {
+                                $total_reg_hrs = $working_hrs;
+                            }
                         }
                     }
                     else
@@ -2044,8 +2068,6 @@ class TimekeepingDashboardController extends Controller
                     }
                     else
                     {
-                        // $abs = $leave[1];
-                        // $leave = 0;
                         if ($leave[1] == 0.5)
                         {
                             $abs=1;
