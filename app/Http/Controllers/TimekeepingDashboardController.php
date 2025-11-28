@@ -652,6 +652,7 @@ class TimekeepingDashboardController extends Controller
 
                 $employee_schedule = HelperClass::employeeSchedule($employee->ScheduleData,$employee->daily_schedules,$date_r,$employee->schedule_id,$employee->employee_code);
                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
+                $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                 // Employee Schedule
                 if($employee_schedule)
                 {
@@ -867,10 +868,13 @@ class TimekeepingDashboardController extends Controller
                             {
                                 $working_hrs = $working_hrs;
                             }
-                            
-                            if($working_hrs >= $schedule_hrs)
+
+                            if ($check_leave)
                             {
-                                $total_reg_hrs = $schedule_hrs;
+                                if($working_hrs >= $schedule_hrs)
+                                {
+                                    $total_reg_hrs = $schedule_hrs;
+                                }
                             }
                             else
                             {
@@ -1762,6 +1766,7 @@ class TimekeepingDashboardController extends Controller
 
                 $employee_schedule = HelperClass::employeeSchedule($employee->ScheduleData,$employee->daily_schedules,$date_r,$employee->schedule_id,$employee->employee_code);
                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
+                $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
 
                 if($employee_schedule)
                 {
@@ -1923,9 +1928,12 @@ class TimekeepingDashboardController extends Controller
                         }
                         else
                         {
-                            if ($working_hrs >= ($schedule_hrs/2))
+                            if ($check_leave)
                             {
-                                $total_reg_hrs = $schedule_hrs/2;
+                                if ($working_hrs >= ($schedule_hrs/2))
+                                {
+                                    $total_reg_hrs = $schedule_hrs/2;
+                                }
                             }
                             else 
                             {
