@@ -135,10 +135,12 @@
                             </td>
                             <td>{{date('M. d, Y h:i A', strtotime($form_approval->created_at))}}</td>
                             <td>
+                              <a href="/account-setting-hr/{{$form_approval->user_id}}" style="color: #212529 !important; text-decoration: none">
                                 <strong>{{$form_approval->user->name}}</strong> <br>
                                 <small>Department : {{$form_approval->user->employee->department ? $form_approval->user->employee->department->name : ""}}</small><br>
                                 <small>Position : {{$form_approval->user->employee->position}}</small><br>
                                 <small>Location : {{$form_approval->user->location}}</small>
+                              </a>
                             </td>
                             <td>{{$form_approval->company->company_name}}</td>
                             <td>{{date('M. d, Y', strtotime($form_approval->original_date_hired))}}</td>
@@ -160,7 +162,7 @@
                                     No Contract
                                 @endif
                             </td>
-                            <td>{{$form_approval->immediate_sup_data->name}}</td>
+                            <td>{{$form_approval->immediate_sup_data->name ?? ''}}</td>
                             {{-- <td id="tdStatus{{ $form_approval->id }}">
                                 @foreach($form_approval->approver as $approver)
                                 @if($form_approval->level >= $approver->level)
