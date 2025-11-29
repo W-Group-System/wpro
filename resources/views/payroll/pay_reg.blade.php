@@ -962,7 +962,11 @@
                               <td>{{number_format($gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions,2)}}<input type='hidden' name='netpay[{{$key+1}}]' value="{{$gross_taxable_income+$total_allowances+$de_minimis+$other_allowances_basic_pay+$subliq-$taxable_deductable_total-$total_loans-$tax+$total_payroll_instructions}}"></td>
                               @if($payroll_b)
                               <td>{{$lastccc}}</td>
-                              <td>{{$government_amount-$lastccc}}</td>
+
+                              @php
+                                $de_minimis_adjustment = ($name->employee->pay_instructions)->where('benefit_name','De Minimis Adjustment')->where('frequency', 'This cut off')->sum('amount');
+                              @endphp
+                              <td>{{$government_amount-$lastccc+$de_minimis_adjustment}}</td>
                               
                               @if($name->employee->work_description == "Non-Monthly")
                               {
