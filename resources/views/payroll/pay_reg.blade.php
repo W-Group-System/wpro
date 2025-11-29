@@ -498,6 +498,11 @@
                               {
                                 $last_c = $last_cut_off->where('employee_no',$name->employee_no)->where('cut_off_date','>',date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')))->first();
                                 // dd($name->cut_off_date." - ".date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')));
+                                if (empty($last_c)) {
+                                    // last prev cut off of employee before leave
+                                    $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
+                                }
+
                                 if($last_c)
                                 {
                                  
