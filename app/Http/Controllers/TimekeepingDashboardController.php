@@ -962,7 +962,7 @@ class TimekeepingDashboardController extends Controller
                         if($employee_schedule->working_hours > $total_reg_hrs)
                         {
                             $undertime_hrs = (double) number_format($employee_schedule->working_hours - $total_reg_hrs,2);
-                            $undertime = ($undertime_hrs-1)*60;
+                            $undertime = ($undertime_hrs)*60;
                         }
                     }
                 }
@@ -2089,7 +2089,7 @@ class TimekeepingDashboardController extends Controller
                         if($employee_schedule->working_hours > $total_reg_hrs)
                         {
                             $undertime_hrs = (double) number_format($employee_schedule->working_hours - $total_reg_hrs,2);
-                            $undertime = ($undertime_hrs-1)*60;
+                            $undertime = ($undertime_hrs)*60;
                         }
                     }
                 }
