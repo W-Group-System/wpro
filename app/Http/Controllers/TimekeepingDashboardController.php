@@ -586,7 +586,7 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->where('employee_code','A3189525')
+            // ->where('employee_code','A3174924')
             // ->where('employee_code','A3179024')
             // ->where('employee_code','A3191125')
             // ->where('employee_code','A192724')
@@ -952,12 +952,17 @@ class TimekeepingDashboardController extends Controller
                             $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
                         }
                         
-                        $out_timestamp = strtotime($out);
-                        $estimated_out_timestamp = strtotime($date_r.' '.$estimated_out);
-                        if ($out_timestamp < $estimated_out_timestamp)
+                        // $out_timestamp = strtotime($out);
+                        // $estimated_out_timestamp = strtotime($date_r.' '.$estimated_out);
+                        // if ($out_timestamp < $estimated_out_timestamp)
+                        // {
+                        //     $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
+                        //     $undertime = $total_undertime;
+                        // }
+                        if($employee_schedule->working_hours > $total_reg_hrs)
                         {
-                            $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
-                            $undertime = $total_undertime;
+                            $undertime_hrs = (double) number_format($employee_schedule->working_hours - $total_reg_hrs,2);
+                            $undertime = ($undertime_hrs-1)*60;
                         }
                     }
                 }
@@ -2074,12 +2079,17 @@ class TimekeepingDashboardController extends Controller
                             $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
                         }
                         // dd($estimated_out);
-                        $out_timestamp = strtotime($out);
-                        $estimated_out_timestamp = strtotime($date_r.' '.$estimated_out);
-                        if ($out_timestamp < $estimated_out_timestamp)
+                        // $out_timestamp = strtotime($out);
+                        // $estimated_out_timestamp = strtotime($date_r.' '.$estimated_out);
+                        // if ($out_timestamp < $estimated_out_timestamp)
+                        // {
+                        //     $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
+                        //     $undertime = $total_undertime;
+                        // }
+                        if($employee_schedule->working_hours > $total_reg_hrs)
                         {
-                            $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
-                            $undertime = $total_undertime;
+                            $undertime_hrs = (double) number_format($employee_schedule->working_hours - $total_reg_hrs,2);
+                            $undertime = ($undertime_hrs-1)*60;
                         }
                     }
                 }
