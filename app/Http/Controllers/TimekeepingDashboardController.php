@@ -1001,7 +1001,7 @@ class TimekeepingDashboardController extends Controller
                         }
                         else 
                         {
-                            $abs=0;
+                            $abs=$leave[1];
                             $leave_count=(float)$leave[1];
                             $leave=$leave_count;
                         }
@@ -2098,7 +2098,7 @@ class TimekeepingDashboardController extends Controller
                         }
                         else
                         {
-                            $abs = 0;
+                            $abs = $leave;
                         }
                         $undertime = 0;
                     }
