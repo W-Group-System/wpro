@@ -497,11 +497,6 @@
                               if($payroll_b)
                               {
                                 $last_c = $last_cut_off->where('employee_no',$name->employee_no)->where('cut_off_date','>',date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')))->first();
-                                // dd($name->cut_off_date." - ".date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')));
-                                if (empty($last_c)) {
-                                    // last prev cut off of employee before leave
-                                    $last_c = $last_cut_off->where('employee_no',$name->employee_no)->first();
-                                }
 
                                 if($last_c)
                                 {
@@ -547,6 +542,15 @@
                                   $government_amount = round($government_amount+$lastccc,2);
                                  
                                 
+                                }
+                                else 
+                                {
+                                    $payroll_instructions_adjustment = ($name->employee->pay_instructions);
+                                  $every_cut_off_payroll_instructions_adjustment = $payroll_instructions_adjustment->where('benefit_name',"De Minimis Adjustment")->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
+                                  $other_adjustment = $payroll_instructions_adjustment->where('benefit_name',"De Minimis Adjustment")->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
+                                  $totasions_adjustment_adjustment = $other_adjustment+$every_cut_off_payroll_instructions_adjustment;
+                                  $government_amount = $government_amount+$totasions_adjustment_adjustment;
+                                  $government_amount = round($government_amount+$lastccc,2);
                                 }
                                 // dd($government_amount);
                                 $sss_amount = $sss->where('salary_to','>=',$government_amount)->first();
