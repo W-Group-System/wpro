@@ -1812,10 +1812,10 @@
                 if (data.sh_ot_ge > 0) {
                     $(row).find('td:eq(26)').addClass('bg-warning');
                 }
-                if (data.sh_nd > 0) {
+                if (data.sh_ot_nd > 0) {
                     $(row).find('td:eq(27)').addClass('bg-warning');
                 }
-                if (data.sh_nd_ge > 0) {
+                if (data.sh_ot_nd_ge > 0) {
                     $(row).find('td:eq(28)').addClass('bg-warning');
                 }
                 if (data.rst_lh_ot > 0) {
