@@ -214,7 +214,7 @@ class EmployeeLeaveListController extends Controller
         $employees = Employee::with('employee_leave_list')
             ->where('status','Active')
             ->whereHas('employee_leave_list')
-            ->where('employee_code','A346512')
+            // ->where('employee_code','A346512')
             ->get();
 
         $sl_leave_array = [];
