@@ -539,12 +539,15 @@ class TimekeepingDashboardController extends Controller
         $department_data = $request->department;
 
         $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id');
+
             if ($search = $request->input('search.value'))
             {
-                $query->where('employee_code', "LIKE", "%".$search."%")
-                    ->orWhere('last_name',"LIKE","%".$search."%")
-                    ->orWhere('first_name',"LIKE","%".$search."%")
-                    ;
+                $query->where(function($query)use($search) {
+                    $query->where('employee_code', "LIKE", "%".$search."%")
+                        ->orWhere('last_name',"LIKE","%".$search."%")
+                        ->orWhere('first_name',"LIKE","%".$search."%")
+                        ;
+                });
             }
 
             $query->with(['schedule_info'])
@@ -1665,10 +1668,12 @@ class TimekeepingDashboardController extends Controller
         $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id');
             if ($search = $request->input('search.value'))
             {
-                $query->where('employee_code', "LIKE", "%".$search."%")
-                    ->orWhere('last_name',"LIKE","%".$search."%")
-                    ->orWhere('first_name',"LIKE","%".$search."%")
-                    ;
+                $query->where(function($query)use($search) {
+                    $query->where('employee_code', "LIKE", "%".$search."%")
+                        ->orWhere('last_name',"LIKE","%".$search."%")
+                        ->orWhere('first_name',"LIKE","%".$search."%")
+                        ;
+                });
             }
             $query->with(['schedule_info'])
             ->with([
