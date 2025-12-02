@@ -962,9 +962,17 @@ class TimekeepingDashboardController extends Controller
                         //     $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
                         //     $undertime = $total_undertime;
                         // }
-                        if(($employee_schedule->working_hours-1) > $total_reg_hrs)
+                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                        if ($schedule_in > $schedule_out)
                         {
-                            $undertime_hrs = (double) number_format(($employee_schedule->working_hours-1) - $total_reg_hrs,2);
+                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                        }
+                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+
+                        if(($schedule_hrs-1) > $total_reg_hrs)
+                        {
+                            $undertime_hrs = (double) number_format(($schedule_hrs-1) - $total_reg_hrs,2);
                             $undertime = ($undertime_hrs)*60;
                         }
                     }
@@ -2138,9 +2146,17 @@ class TimekeepingDashboardController extends Controller
                         //     $undertime = $total_undertime;
                         // }
                         // dd($employee_schedule->working_hours, $total_reg_hrs);
-                        if(($employee_schedule->working_hours-1) > $total_reg_hrs)
+                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                        if ($schedule_in > $schedule_out)
                         {
-                            $undertime_hrs = (double) number_format(($employee_schedule->working_hours-1) - $total_reg_hrs,2);
+                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                        }
+                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+
+                        if(($schedule_hrs-1) > $total_reg_hrs)
+                        {
+                            $undertime_hrs = (double) number_format(($schedule_hrs-1) - $total_reg_hrs,2);
                             $undertime = ($undertime_hrs)*60;
                         }
                     }
