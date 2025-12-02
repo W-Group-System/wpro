@@ -797,7 +797,16 @@
                 </a>
             </li>
             @endif
+            @if (auth()->user()->employee->department->name === 'Information Technology' || auth()->user()->employee->department->name === 'Information and Communication Technology')
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{{ url('audit_logs') }}" onclick='show()'>
+                            <i class="icon-grid menu-icon"></i>
+                            <span class="menu-title">Audit Logs</span>
+                        </a>
+                    </li>
+            @endif
         </ul>
+        
         </nav>
         <!-- partial -->
 
