@@ -567,7 +567,8 @@
                                             {{ $leave->pluck('earned_per_month')->sum() }}
                                         @endif --}}
                                         @if ($leave_id == '1')
-                                            {{ $leave->where('year', date('Y'))->pluck('earned_per_month')->sum() }}
+                                        {{-- 2 decimal places --}}
+                                            {{ number_format($leave->where('year', date('Y'))->pluck('earned_per_month')->sum(), 2) }}
                                         @elseif ($leave_id == '2')
                                             {{ $leave->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '10')
@@ -633,8 +634,9 @@
                                                 }else{
                                                     $is_allowed_to_file_vl = false;
                                                 }
+                                                // 2 decimal places
 
-                                                $vl_balance = $count_vl;
+                                                $vl_balance = number_format($count_vl,2);
                                             @endphp
                                             @if($vl_balance > 0)
                                             {{ number_format($vl_balance,2) }}
