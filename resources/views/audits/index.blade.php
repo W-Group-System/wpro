@@ -45,40 +45,35 @@
                                                 <td>{{ $audit->user->name }}</td>
                                                 <td>
                                                     @if($audit->old_values)
-                                                        <ul class="mb-0 pl-3">
-                                                            @foreach(json_decode($audit->old_values, true) as $key => $value)
-                                                                <li>
-                                                                    <strong>{{ ucfirst($key) }}:</strong> 
-                                                                    @if(strtolower($key) == 'rate') 
-                                                                        Confidential
-                                                                    @else
-                                                                        {{ $value }}
-                                                                    @endif
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @else 
+                                                        @php
+                                                            $oldValues = json_decode($audit->old_values, true);
+                                                            $text = '';
+                                                            foreach($oldValues as $key => $value) {
+                                                                $displayValue = strtolower($key) == 'rate' ? 'Confidential' : $value;
+                                                                $text .= ucfirst($key) . ': ' . $displayValue . "\n";
+                                                            }
+                                                        @endphp
+                                                        {!! nl2br(e($text)) !!}
+                                                    @else
                                                         None
                                                     @endif
                                                 </td>
                                                 <td>
                                                     @if($audit->new_values)
-                                                        <ul class="mb-0 pl-3">
-                                                            @foreach(json_decode($audit->new_values, true) as $key => $value)
-                                                                <li>
-                                                                    <strong>{{ ucfirst($key) }}:</strong> 
-                                                                    @if(strtolower($key) == 'rate') 
-                                                                        Confidential
-                                                                    @else
-                                                                        {{ $value }}
-                                                                    @endif
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @else 
+                                                        @php
+                                                            $newValues = json_decode($audit->new_values, true);
+                                                            $text = '';
+                                                            foreach($newValues as $key => $value) {
+                                                                $displayValue = strtolower($key) == 'rate' ? 'Confidential' : $value;
+                                                                $text .= ucfirst($key) . ': ' . $displayValue . "\n";
+                                                            }
+                                                        @endphp
+                                                        {!! nl2br(e($text)) !!}
+                                                    @else
                                                         None
                                                     @endif
                                                 </td>
+
 
                                                 <td>{{ \Carbon\Carbon::parse($audit->created_at)->format('F d, Y') }}</td>
                                             </tr>
