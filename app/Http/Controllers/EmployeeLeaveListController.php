@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Employee;
 use App\EmployeeLeaveCredit;
 use App\EmployeeLeaveList;
+use App\Helpers\HelperClass;
 use App\Leave;
 use App\Level;
 use DateTime;
@@ -210,15 +211,19 @@ class EmployeeLeaveListController extends Controller
     {
         // dd($request->all());
         $header = 'leave_report';
-        $employees = Employee::with('employee_leave_list')->where('status','Active')->whereHas('employee_leave_list')->get();
-        // $employee_leave_list = EmployeeLeaveList::with('user.employee')->get();
+        $employees = Employee::with('employee_leave_list')
+            ->where('status','Active')
+            ->whereHas('employee_leave_list')
+            ->where('employee_code','A346512')
+            ->get();
+
         $sl_leave_array = [];
         $vl_leave_array = [];
         foreach($employees as $employee)
         {
             // $sl = ($employee_leave_list)->where('leave_id', 2)->first();
-            $used_sl_this_yr = usedSlVlThisYear($employee->user_id,2,$employee->original_date_hired,$employee->ScheduleData);
-            $used_vl_this_yr = usedSlVlThisYear($employee->user_id,1,$employee->original_date_hired,$employee->ScheduleData);
+            $used_sl_this_yr = HelperClass::usedSlVlThisYear($employee->user_id,2,$employee->original_date_hired,$employee->ScheduleData);
+            $used_vl_this_yr = HelperClass::usedSlVlThisYear($employee->user_id,1,$employee->original_date_hired,$employee->ScheduleData);
 
             $total_earned_vl = ($employee->employee_leave_list)->where('leave_id', 1)->pluck('earned_per_month')->sum();
             $total_earned_sl = ($employee->employee_leave_list)->where('leave_id', 2)->pluck('earned_per_month')->sum();
