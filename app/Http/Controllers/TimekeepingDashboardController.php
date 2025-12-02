@@ -962,9 +962,9 @@ class TimekeepingDashboardController extends Controller
                         //     $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
                         //     $undertime = $total_undertime;
                         // }
-                        if($employee_schedule->working_hours > $total_reg_hrs)
+                        if(($employee_schedule->working_hours-1) > $total_reg_hrs)
                         {
-                            $undertime_hrs = (double) number_format($employee_schedule->working_hours - $total_reg_hrs,2);
+                            $undertime_hrs = (double) number_format(($employee_schedule->working_hours-1) - $total_reg_hrs,2);
                             $undertime = ($undertime_hrs)*60;
                         }
                     }
@@ -2083,7 +2083,7 @@ class TimekeepingDashboardController extends Controller
                             $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($time_in->datetime)));
                             $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
                         }
-                        // dd($estimated_out);
+                        
                         // $out_timestamp = strtotime($out);
                         // $estimated_out_timestamp = strtotime($date_r.' '.$estimated_out);
                         // if ($out_timestamp < $estimated_out_timestamp)
@@ -2091,9 +2091,10 @@ class TimekeepingDashboardController extends Controller
                         //     $total_undertime = ($estimated_out_timestamp - $out_timestamp) / 60;
                         //     $undertime = $total_undertime;
                         // }
-                        if($employee_schedule->working_hours > $total_reg_hrs)
+                        // dd($employee_schedule->working_hours, $total_reg_hrs);
+                        if(($employee_schedule->working_hours-1) > $total_reg_hrs)
                         {
-                            $undertime_hrs = (double) number_format($employee_schedule->working_hours - $total_reg_hrs,2);
+                            $undertime_hrs = (double) number_format(($employee_schedule->working_hours-1) - $total_reg_hrs,2);
                             $undertime = ($undertime_hrs)*60;
                         }
                     }
