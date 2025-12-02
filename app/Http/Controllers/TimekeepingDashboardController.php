@@ -1296,28 +1296,74 @@ class TimekeepingDashboardController extends Controller
                                 // $is_absent = 'Absent';
                                 $abs = 1;
                             }else{
-                                // $if_attendance_holiday_status = 'With-Pay';
-                                // $abs = 0;
-                                $emp_schedule = $employee_schedule->working_hours-1;
-                                $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
-                                $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
-                                $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                                if ($total_reg_hrs >= ($emp_schedule/2))
+                                $if_attendance_holiday_status = 'With-Pay';
+                                $abs = 0;
+                                
+                                $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                                $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+
+                                if ($schedule_in > $schedule_out)
+                                {
+                                    $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                                }
+                                
+                                $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working 
+                                $time_start = date('Y-m-d h:i A', strtotime($final_time_in));
+                                $time_end = date('Y-m-d h:i A', strtotime($final_time_out));
+
+                                $start_time = strtotime($time_start);
+                                $end_time = strtotime($time_end);
+
+                                if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
+                                {
+                                    $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                }
+                                if ($end_time > $schedule_out)
+                                {
+                                    $end_time = $schedule_out;
+                                }
+                                
+                                $working_hrs = round((($end_time - $start_time)/3600), 2);
+
+                                $time_in = ($attendance)->sortBy('datetime')->first();
+                                $time_out = ($attendance)->sortByDesc('datetime')->first();
+                                // dd($time_in['datetime']);
+                                $time_start = date('Y-m-d h:i A', strtotime($time_in['time_in']));
+                                $time_end = date('Y-m-d h:i A', strtotime($time_out['time_in']));
+
+                                $start_time = strtotime($time_start);
+                                $end_time = strtotime($time_end);
+
+                                if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
+                                {
+                                    $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                }
+                                if ($end_time > $schedule_out)
+                                {
+                                    $end_time = $schedule_out;
+                                }
+                                
+                                $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                if ($schedule_hrs > 8)
+                                {
+                                    $schedule_hrs = $schedule_hrs-1;
+                                    if ($working_hrs >= ($schedule_hrs/1.5))
+                                    {
+                                        $working_hrs = $working_hrs-1;
+                                    }
+                                }
+                                else
+                                {
+                                    $working_hrs = $working_hrs;
+                                }
+                                
+                                if ($working_hrs >= ($schedule_hrs/2))
                                 {
                                     $abs=0;
-                                    if ($employee_schedule->working_hours > 8) 
-                                    {
-                                        $total_reg_hrs = $employee_schedule->working_hours-1;
-                                    }
-                                    else 
-                                    {
-                                        $total_reg_hrs = $employee_schedule->working_hours;
-                                    }
                                 }
                                 else 
                                 {
                                     $abs=1;
-                                    $total_reg_hrs=0;
                                 }
                             }
                         }
@@ -2426,37 +2472,74 @@ class TimekeepingDashboardController extends Controller
                                 // $is_absent = 'Absent';
                                 $abs = 1;
                             }else{
-                                // $if_attendance_holiday_status = 'With-Pay';
-                                // $abs = 0;
+                                $if_attendance_holiday_status = 'With-Pay';
+                                $abs = 0;
 
-                                // if ($employee_schedule->working_hours > 8) 
-                                // {
-                                //     $total_reg_hrs = $employee_schedule->working_hours-1;
-                                // }
-                                // else 
-                                // {
-                                //     $total_reg_hrs = $employee_schedule->working_hours;
-                                // }
-                                $emp_schedule = $employee_schedule->working_hours-1;
-                                $time_in = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortBy('datetime')->first();
-                                $time_out = ($employee->attendance_logs)->where('date', (date('Y-m-d', strtotime($check_attendance))))->sortByDesc('datetime')->first();
-                                $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                                if ($total_reg_hrs >= ($emp_schedule/2))
+                                $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                                $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+
+                                if ($schedule_in > $schedule_out)
+                                {
+                                    $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                                }
+                                
+                                $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working 
+                                $time_start = date('Y-m-d h:i A', strtotime($final_time_in));
+                                $time_end = date('Y-m-d h:i A', strtotime($final_time_out));
+
+                                $start_time = strtotime($time_start);
+                                $end_time = strtotime($time_end);
+
+                                if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
+                                {
+                                    $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                }
+                                if ($end_time > $schedule_out)
+                                {
+                                    $end_time = $schedule_out;
+                                }
+                                
+                                $working_hrs = round((($end_time - $start_time)/3600), 2);
+
+                                $time_in = ($attendance)->sortBy('datetime')->first();
+                                $time_out = ($attendance)->sortByDesc('datetime')->first();
+                                // dd($time_in['datetime']);
+                                $time_start = date('Y-m-d h:i A', strtotime($time_in['time_in']));
+                                $time_end = date('Y-m-d h:i A', strtotime($time_out['time_in']));
+
+                                $start_time = strtotime($time_start);
+                                $end_time = strtotime($time_end);
+
+                                if (strtotime($date_r." ".$employee_schedule->time_in_from) > $start_time)
+                                {
+                                    $start_time = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                }
+                                if ($end_time > $schedule_out)
+                                {
+                                    $end_time = $schedule_out;
+                                }
+                                
+                                $working_hrs = round((($end_time - $start_time)/3600), 2);
+                                if ($schedule_hrs > 8)
+                                {
+                                    $schedule_hrs = $schedule_hrs-1;
+                                    if ($working_hrs >= ($schedule_hrs/1.5))
+                                    {
+                                        $working_hrs = $working_hrs-1;
+                                    }
+                                }
+                                else
+                                {
+                                    $working_hrs = $working_hrs;
+                                }
+                                
+                                if ($working_hrs >= ($schedule_hrs/2))
                                 {
                                     $abs=0;
-                                    if ($employee_schedule->working_hours > 8) 
-                                    {
-                                        $total_reg_hrs = $employee_schedule->working_hours-1;
-                                    }
-                                    else 
-                                    {
-                                        $total_reg_hrs = $employee_schedule->working_hours;
-                                    }
                                 }
                                 else 
                                 {
                                     $abs=1;
-                                    $total_reg_hrs=0;
                                 }
                             }
                         }
