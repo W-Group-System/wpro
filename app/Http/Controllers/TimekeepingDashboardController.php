@@ -1255,314 +1255,236 @@ class TimekeepingDashboardController extends Controller
                     $abs=0;
                     $undertime=0;
                     $overtime=0;
+
                     if ($employee_schedule)
                     {
-                        // $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
-                        // $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
-                        // if ($check_leave)
-                        // {
-                        //     // $if_attendance_holiday_status = 'With-Pay';
-                        //     if(str_contains($check_leave,"Without")){
-                        //         $if_attendance_holiday_status = 'Without-Pay';
-                        //         $abs = 1;
+                        $schedule_hrs = (strtotime($employee_schedule->time_out_from) - strtotime($employee_schedule->time_in_from))/3600;
+                        $total_reg_hrs = $schedule_hrs - 1;
 
-                        //         $emp_schedule = $employee_schedule->working_hours-1;
-                        //         $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
-                        //         $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
-                        //         $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                        //         if ($total_reg_hrs >= ($emp_schedule/2))
-                        //         {
-                        //             $abs=0;
-                        //             if ($employee_schedule->working_hours > 8) 
-                        //             {
-                        //                 $total_reg_hrs = $employee_schedule->working_hours-1;
-                        //             }
-                        //             else 
-                        //             {
-                        //                 $total_reg_hrs = $employee_schedule->working_hours;
-                        //             }
-                        //         }
-                        //     }
-                        //     else
-                        //     {
-                        //         $if_attendance_holiday_status = 'With-Pay';
-                        //         if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
-                        //         {
-                        //             $abs = 0;
-                        //         }
-                        //     }
-                        // }
-                        // else
-                        // {
-                        //     $attendance = ($employee->attendance_logs)->map(function($item) {
-                        //         return [
-                        //             'time_in' => $item->datetime
-                        //         ];
-                        //     });
-
-                        //     $check_attendance = checkHasAttendanceHolidayStatus($attendance,$if_attendance_holiday);
-                        //     if(empty($check_attendance))
-                        //     {
-                        //         // $is_absent = 'Absent';
-                        //         $abs = 1;
-                        //     }else{
-                        //         $if_attendance_holiday_status = 'With-Pay';
-                        //         $abs = 0;
-                        //     }
-                        // }
-
-                        $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
-                        // SH OT
-                        if ($check_if_holiday == "Special Holiday")
+                        $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
+                        $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
+                        if ($check_leave)
                         {
-                            if ($rest == "RESTDAY")
+                            $abs=0;
+                            if (str_contains($check_leave, "LWOP"))
                             {
-                                $rst_sh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $rst_sh_ot = $rst_sh_ot;
-                                    $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $rst_sh_ot = $approved_ot_hrs;
-                                }
+                                $abs=1;
+                                $total_reg_hrs=0;
                             }
-                            else 
+                        }
+                        else
+                        {
+                            $abs=1;
+                        }
+
+                        $time_in = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortBy('datetime')->first();
+                        $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortByDesc('datetime')->first();
+                        if ($time_in && $time_out)
+                        {
+                            if((strtotime($time_out->datetime) - strtotime($time_in->datetime)/3600) >= 4);
                             {
-                                $sh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $sh_ot = $sh_ot;
-                                    $sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $sh_ot = $approved_ot_hrs;
-                                }
+                                $abs=0;
                             }
-    
-                            $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
-                            $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
-                            if(strtotime($start_schedule) > strtotime($end_schedule))
+                        }
+
+                        $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$employee->location);
+                        if ($check_if_holiday_before)
+                        {
+                            $abs=0;
+                        }
+                    }
+                    
+                    $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
+                    // SH OT
+                    if ($check_if_holiday == "Special Holiday")
+                    {
+                        if ($rest == "RESTDAY")
+                        {
+                            $rst_sh_ot = 8;
+                            if ($approved_ot_hrs > 8)
                             {
-                                $s = date('Y-m-d', strtotime($final_time_in . ' +1 day'));
-                                $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
+                                $rst_sh_ot = $rst_sh_ot;
+                                $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
                             }
-                            if(strtotime($start_schedule) > strtotime($final_time_in))
-                            {   
-                                $nightdiff_start = $start_schedule;
+                            else
+                            {
+                                $rst_sh_ot = $approved_ot_hrs;
                             }
-                            if(strtotime($end_schedule) < strtotime($final_time_out))
-                            {   
-                                $nightdiff_end = $end_schedule;
+                        }
+                        else 
+                        {
+                            $sh_ot = 8;
+                            if ($approved_ot_hrs > 8)
+                            {
+                                $sh_ot = $sh_ot;
+                                $sh_ot_ge = floatval($approved_ot_hrs) - 8;
+                            }
+                            else
+                            {
+                                $sh_ot = $approved_ot_hrs;
+                            }
+                        }
+                        
+                        $sh_ot_nd =  night_difference_per_company($time_start,$time_end);
+                        if($sh_ot_nd >=4.5 )
+                        {
+                            $sh_ot_nd = $sh_ot_nd-1;
+                        }
+                        if($sh_ot_nd > $sh_ot)
+                        {
+                            $sh_ot_nd = $sh_ot;
+                        }
+
+                        if($employee_schedule)
+                        {
+                            $time_start = $final_time_in;
+                            $time_end = $final_time_out;
+                            
+                            $time_start_string = strtotime($time_start);
+                            $time_end_string = strtotime($time_end);
+                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                            $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                            
+                            if(($schedule_out) < ($schedule_in))
+                            {
+                                
+                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
                             }
                             
-                            if ($rest == "RESTDAY")
+                            if($time_end_string>$schedule_out)
                             {
-                                $rst_sh_ot_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                if($rst_sh_ot_nd >= 4.5)
-                                {
-                                    $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                }
-                                if ($rst_sh_ot_nd > $sh_ot)
-                                {
-                                    $rst_sh_ot_nd = $sh_ot;
-                                }
-
-                                $time_start_string = strtotime($time_start);
-                                $time_end_string = strtotime($time_end);
-                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
-                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
-                                
-                                if(($schedule_out) < ($schedule_in))
-                                {
-                                    
-                                    $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
-                                }
-                                if($time_end_string>$schedule_out)
-                                {
-                                    $rst_sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
-                                    $sh_ot_use = $rst_sh_ot_nd;
-                                    if($rst_sh_ot_nd >=4.5 )
-                                    {   
-                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
-                                        if($schedule_hours > 8)
-                                        {
-                                            $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                        }
-                                    }
-
-                                    $rst_sh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
-                                    $rst_sh_ot_nd_ge = $rst_sh_ot_nd_ge;
-                                    if($rst_sh_ot_nd_ge <0)
+                                $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                $sh_ot_use = $sh_ot_nd;
+                                if($sh_ot_nd >=4.5 )
+                                {   
+                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                    if($schedule_hours > 8)
                                     {
-                                        $rst_sh_ot_nd_ge=0;
+                                        $sh_ot_nd = $sh_ot_nd-1;
                                     }
-                                    
-                                }
-                                else {
-                                    $rst_sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
-                                    if($rst_sh_ot_nd >=4.5 )
-                                    {   
-                                        if($schedule_hours > 8)
-                                        {
-                                        $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                        }
-                                    }
-                                }
-                            }
-                            else 
-                            {
-                                $sh_ot_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                if($sh_ot_nd >= 4.5)
-                                {
-                                    $sh_ot_nd = $sh_ot_nd-1;
-                                }
-                                if ($sh_ot_nd > $sh_ot)
-                                {
-                                    $sh_ot_nd = $sh_ot;
                                 }
 
-                                $time_start_string = strtotime($time_start);
-                                $time_end_string = strtotime($time_end);
-                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
-                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
-                                
-                                if(($schedule_out) < ($schedule_in))
+                                if($rest == "RESTDAY")
                                 {
-                                    
-                                    $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
-                                }
-                                if($time_end_string>$schedule_out)
-                                {
-                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
-                                    $sh_ot_use = $sh_ot_nd;
-                                    if($sh_ot_nd >=4.5 )
-                                    {   
-                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
-                                        if($schedule_hours > 8)
-                                        {
-                                            $sh_ot_nd = $sh_ot_nd-1;
-                                        }
+                                    $rst_sh_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
+                                    $rst_sh_nd_ge = $rst_sh_nd_ge;
+                                    if($rst_sh_nd_ge <0)
+                                    {
+                                        $rst_sh_nd_ge=0;
                                     }
-
+                                }
+                                else
+                                {
                                     $sh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
                                     $sh_ot_nd_ge = $sh_ot_nd_ge;
                                     if($sh_ot_nd_ge <0)
                                     {
                                         $sh_ot_nd_ge=0;
                                     }
-                                    
                                 }
-                                else {
-                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
-                                    if($sh_ot_nd >=4.5 )
-                                    {   
-                                        if($schedule_hours > 8)
-                                        {
-                                        $sh_ot_nd = $sh_ot_nd-1;
-                                        }
+                                
+                            }
+                            else {
+                                $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
+                                if($sh_ot_nd >=4.5 )
+                                {   
+                                    if($schedule_hours > 8)
+                                    {
+                                    $sh_ot_nd = $sh_ot_nd-1;
                                     }
                                 }
+                            }
+                            
+                        }
+                    }
+                    else
+                    {
+                        if ($rest == "RESTDAY")
+                        {
+                            $rst_lh_ot = 8;
+                            if ($approved_ot_hrs > 8)
+                            {
+                                $rst_lh_ot = $rst_lh_ot;
+                                $lh_ot_ge = floatval($approved_ot_hrs) - 8;
+                            }
+                            else
+                            {
+                                $rst_lh_ot = $approved_ot_hrs;
                             }
                         }
-                        else
+                        else 
                         {
-                            if ($rest == "RESTDAY")
+                            $lh_ot = 8;
+                            if ($approved_ot_hrs > 8)
                             {
-                                $rst_lh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $rst_lh_ot = $rst_lh_ot;
-                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $rst_lh_ot = $approved_ot_hrs;
-                                }
+                                $lh_ot = $lh_ot;
+                                $lh_ot_ge = floatval($approved_ot_hrs) - 8;
                             }
-                            else 
+                            else
                             {
-                                $lh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $lh_ot = $lh_ot;
-                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $lh_ot = $approved_ot_hrs;
-                                }
+                                $lh_ot = $approved_ot_hrs;
                             }
+                        }
+                        
+                        if($employee_schedule)
+                        {
+                            $time_start = $final_time_in;
+                            $time_end = $final_time_out;
+
+                            $time_start_string = strtotime($time_start);
+                            $time_end_string = strtotime($time_end);
+                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                            $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
                             
-                            if ($employee_schedule)
+                            if(($schedule_out) < ($schedule_in))
                             {
-                                $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
-                                $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
                                 
-                                if(strtotime($start_schedule) > strtotime($end_schedule))
-                                {
-                                    $s = date('Y-m-d', strtotime($final_time_in . ' +1 day'));
-                                    $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
-                                }
-                                
-                                if(strtotime($start_schedule) > strtotime($final_time_in))
-                                {   
-                                    $nightdiff_start = $start_schedule;
-                                }
-                                if(strtotime($end_schedule) < strtotime($final_time_out))
-                                {   
-                                    $nightdiff_end = $end_schedule;
-                                }
+                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
                             }
-                            
-                            if ($rest == "RESTDAY")
+                            if($time_end_string>$schedule_out)
                             {
-                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
+                                $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                $lh_ot_use = $lh_ot_nd;
+                                if($lh_ot_nd >=4.5 )
+                                {   
+                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                    if($schedule_hours > 8)
+                                    {
+                                    $lh_ot_nd = $lh_ot_nd-1;
+                                    }
+                                }
+                                
+                                if ($rest == "RESTDAY")
                                 {
-                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                    if($work_rest > 9 )
-                                    { 
-                                        $rst_lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                        $rst_lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                        $rst_lh_nd = $rst_lh_nd_ge - $rst_lh_nd;
-                                        $rst_lh_nd = $rst_lh_nd-1;
-                                        if($rst_lh_nd <0)
-                                        {
-                                            $rst_lh_nd = 0;
-                                        }
-                                        if($rst_lh_nd_ge <0)
-                                        {
-                                            $rst_lh_nd_ge = 0;
-                                        }
+                                    $lh_ot_nd = 0;
+                                    $rst_lh_nd_ge = night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_use;
+                                    if($rst_lh_nd_ge <0)
+                                    {
+                                        $rst_lh_nd_ge=0;
+                                    }
+                                }
+                                else 
+                                {
+                                    $rst_lh_nd_ge = 0;
+                                    $lh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_use;
+                                    if($lh_ot_nd_ge <0)
+                                    {
+                                        $lh_ot_nd_ge=0;
                                     }
                                 }
                             }
-                            else 
-                            {
-                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                {
-                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                    if($work_rest > 9 )
-                                    { 
-                                        $lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                        $lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                        $lh_nd = $lh_nd_ge - $lh_nd;
-                                        $lh_nd = $lh_nd-1;
-                                        if($lh_nd <0)
-                                        {
-                                            $lh_nd = 0;
-                                        }
-                                        if($lh_nd_ge <0)
-                                        {
-                                            $lh_nd_ge = 0;
-                                        }
+                            else {
+                                $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
+                                if($lh_ot_nd >=4.5 )
+                                {   
+                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                    if($schedule_hours > 8)
+                                    {
+                                    $lh_ot_nd = $lh_ot_nd-1;
                                     }
                                 }
                             }
+                            
                         }
                     }
 
@@ -2410,321 +2332,235 @@ class TimekeepingDashboardController extends Controller
                     $overtime=0;
                     if ($employee_schedule)
                     {
-                        // $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
-                        // $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
-                        // if ($check_leave)
-                        // {
-                        //     // $if_attendance_holiday_status = 'With-Pay';
-                        //     if(str_contains($check_leave,"Without")){
-                        //         $if_attendance_holiday_status = 'Without-Pay';
-                        //         $abs = 1;
-                                
-                        //         $time_in = ($employee->attendance_logs)->sortBy('datetime')->first();
-                        //         $time_out = ($employee->attendance_logs)->sortByDesc('datetime')->first();
-                        //         $total_reg_hrs = number_format((strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600, 2);
-                        //         $emp_schedule = $employee_schedule->working_hours-1;
-                        //         if ($total_reg_hrs >= ($emp_schedule/2))
-                        //         {
-                        //             $abs=0;
-                        //             if ($employee_schedule->working_hours > 8) 
-                        //             {
-                        //                 $total_reg_hrs = $employee_schedule->working_hours-1;
-                        //             }
-                        //             else 
-                        //             {
-                        //                 $total_reg_hrs = $employee_schedule->working_hours;
-                        //             }
-                        //         }
-                        //     }
-                        //     else
-                        //     {
-                        //         $if_attendance_holiday_status = 'With-Pay';
-                        //         if(str_contains($check_leave,".5") || str_contains($check_leave,"1"))
-                        //         {
-                        //             $abs = 0;
-
-                        //             if ($employee_schedule->working_hours > 8) 
-                        //             {
-                        //                 $total_reg_hrs = $employee_schedule->working_hours-1;
-                        //             }
-                        //             else 
-                        //             {
-                        //                 $total_reg_hrs = $employee_schedule->working_hours;
-                        //             }
-                        //         }
-                        //     }
-                        // }
-                        // else
-                        // {
-                        //     $attendance = ($employee->attendance_logs)->map(function($item) {
-                        //         return [
-                        //             'time_in' => $item->datetime
-                        //         ];
-                        //     });
-                            
-                        //     $check_attendance = checkHasAttendanceHolidayStatus($attendance,$if_attendance_holiday);
-                        //     if(empty($check_attendance))
-                        //     {
-                        //         // $is_absent = 'Absent';
-                        //         $abs = 1;
-                        //     }else{
-                        //         $if_attendance_holiday_status = 'With-Pay';
-                        //         $abs = 0;
-                        //     }
-                        // }
-
-                        $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
-                        // SH OT
-                        if ($check_if_holiday == "Special Holiday")
+                        $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
+                        $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
+                        if ($check_leave)
                         {
-                            if ($rest == "RESTDAY")
+                            $abs=0;
+                            if (str_contains($check_leave, "LWOP"))
                             {
-                                $rst_sh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $rst_sh_ot = $rst_sh_ot;
-                                    $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $rst_sh_ot = $approved_ot_hrs;
-                                }
+                                $abs=1;
+                                $total_reg_hrs=0;
                             }
-                            else 
+                        }
+                        else
+                        {
+                            $abs=1;
+                        }
+
+                        $time_in = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortBy('datetime')->first();
+                        $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortByDesc('datetime')->first();
+                        if ($time_in && $time_out)
+                        {
+                            if((strtotime($time_out->datetime) - strtotime($time_in->datetime)/3600) >= 4);
                             {
-                                $sh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $sh_ot = $sh_ot;
-                                    $sh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $sh_ot = $approved_ot_hrs;
-                                }
+                                $abs=0;
                             }
-    
-                            $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
-                            $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
-                            if(strtotime($start_schedule) > strtotime($end_schedule))
+                        }
+
+                        $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$employee->location);
+                        if ($check_if_holiday_before)
+                        {
+                            $abs=0;
+                        }
+
+                        $schedule_hrs = (strtotime($employee_schedule->time_out_from) - strtotime($employee_schedule->time_in_from))/3600;
+                        $total_reg_hrs = $schedule_hrs - 1;
+                    }
+                    
+                    $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
+                    // SH OT
+                    if ($check_if_holiday == "Special Holiday")
+                    {
+                        if ($rest == "RESTDAY")
+                        {
+                            $rst_sh_ot = 8;
+                            if ($approved_ot_hrs > 8)
                             {
-                                $s = date('Y-m-d', strtotime($final_time_in . ' +1 day'));
-                                $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
+                                $rst_sh_ot = $rst_sh_ot;
+                                $rst_sh_ot_ge = floatval($approved_ot_hrs) - 8;
                             }
-                            if(strtotime($start_schedule) > strtotime($final_time_in))
-                            {   
-                                $nightdiff_start = $start_schedule;
+                            else
+                            {
+                                $rst_sh_ot = $approved_ot_hrs;
                             }
-                            if(strtotime($end_schedule) < strtotime($final_time_out))
-                            {   
-                                $nightdiff_end = $end_schedule;
+                        }
+                        else 
+                        {
+                            $sh_ot = 8;
+                            if ($approved_ot_hrs > 8)
+                            {
+                                $sh_ot = $sh_ot;
+                                $sh_ot_ge = floatval($approved_ot_hrs) - 8;
+                            }
+                            else
+                            {
+                                $sh_ot = $approved_ot_hrs;
+                            }
+                        }
+
+                        // dd($time_start,$time_end);
+                        $sh_ot_nd =  night_difference_per_company($time_start,$time_end);
+                        if($sh_ot_nd >=4.5 )
+                        {
+                            $sh_ot_nd = $sh_ot_nd-1;
+                        }
+                        if($sh_ot_nd > $sh_ot)
+                        {
+                            $sh_ot_nd = $sh_ot;
+                        }
+
+                        if($employee_schedule)
+                        {
+                            $time_start = $final_time_in;
+                            $time_end = $final_time_out;
+                            
+                            $time_start_string = strtotime($time_start);
+                            $time_end_string = strtotime($time_end);
+                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                            $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                            
+                            if(($schedule_out) < ($schedule_in))
+                            {
+                                
+                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
                             }
                             
-                            if ($rest == "RESTDAY")
+                            if($time_end_string>$schedule_out)
                             {
-                                $rst_sh_ot_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                if($rst_sh_ot_nd >= 4.5)
-                                {
-                                    $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                }
-                                if ($rst_sh_ot_nd > $sh_ot)
-                                {
-                                    $rst_sh_ot_nd = $sh_ot;
-                                }
-
-                                $time_start_string = strtotime($time_start);
-                                $time_end_string = strtotime($time_end);
-                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
-                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
-                                
-                                if(($schedule_out) < ($schedule_in))
-                                {
-                                    
-                                    $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
-                                }
-                                if($time_end_string>$schedule_out)
-                                {
-                                    $rst_sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
-                                    $sh_ot_use = $rst_sh_ot_nd;
-                                    if($rst_sh_ot_nd >=4.5 )
-                                    {   
-                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
-                                        if($schedule_hours > 8)
-                                        {
-                                            $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                        }
-                                    }
-
-                                    $rst_sh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
-                                    $rst_sh_ot_nd_ge = $rst_sh_ot_nd_ge;
-                                    if($rst_sh_ot_nd_ge <0)
+                                $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                $sh_ot_use = $sh_ot_nd;
+                                if($sh_ot_nd >=4.5 )
+                                {   
+                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                    if($schedule_hours > 8)
                                     {
-                                        $rst_sh_ot_nd_ge=0;
+                                        $sh_ot_nd = $sh_ot_nd-1;
                                     }
-                                    
-                                }
-                                else {
-                                    $rst_sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
-                                    if($rst_sh_ot_nd >=4.5 )
-                                    {   
-                                        if($schedule_hours > 8)
-                                        {
-                                        $rst_sh_ot_nd = $rst_sh_ot_nd-1;
-                                        }
-                                    }
-                                }
-                            }
-                            else 
-                            {
-                                $sh_ot_nd = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                if($sh_ot_nd >= 4.5)
-                                {
-                                    $sh_ot_nd = $sh_ot_nd-1;
-                                }
-                                if ($sh_ot_nd > $sh_ot)
-                                {
-                                    $sh_ot_nd = $sh_ot;
                                 }
 
-                                $time_start_string = strtotime($time_start);
-                                $time_end_string = strtotime($time_end);
-                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
-                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
-                                
-                                if(($schedule_out) < ($schedule_in))
+                                if($rest == "RESTDAY")
                                 {
-                                    
-                                    $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
-                                }
-                                if($time_end_string>$schedule_out)
-                                {
-                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
-                                    $sh_ot_use = $sh_ot_nd;
-                                    if($sh_ot_nd >=4.5 )
-                                    {   
-                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
-                                        if($schedule_hours > 8)
-                                        {
-                                            $sh_ot_nd = $sh_ot_nd-1;
-                                        }
+                                    $rst_sh_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
+                                    $rst_sh_nd_ge = $rst_sh_nd_ge;
+                                    if($rst_sh_nd_ge <0)
+                                    {
+                                        $rst_sh_nd_ge=0;
                                     }
-
+                                }
+                                else
+                                {
                                     $sh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
                                     $sh_ot_nd_ge = $sh_ot_nd_ge;
                                     if($sh_ot_nd_ge <0)
                                     {
                                         $sh_ot_nd_ge=0;
                                     }
-                                    
                                 }
-                                else {
-                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
-                                    if($sh_ot_nd >=4.5 )
-                                    {   
-                                        if($schedule_hours > 8)
-                                        {
-                                        $sh_ot_nd = $sh_ot_nd-1;
-                                        }
+                                
+                            }
+                            else {
+                                $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
+                                if($sh_ot_nd >=4.5 )
+                                {   
+                                    if($schedule_hours > 8)
+                                    {
+                                    $sh_ot_nd = $sh_ot_nd-1;
                                     }
                                 }
+                            }
+                            
+                        }
+
+                    }
+                    else
+                    {
+                        if ($rest == "RESTDAY")
+                        {
+                            $rst_lh_ot = 8;
+                            if ($approved_ot_hrs > 8)
+                            {
+                                $rst_lh_ot = $rst_lh_ot;
+                                $lh_ot_ge = floatval($approved_ot_hrs) - 8;
+                            }
+                            else
+                            {
+                                $rst_lh_ot = $approved_ot_hrs;
                             }
                         }
-                        else
+                        else 
                         {
-                            if ($rest == "RESTDAY")
+                            $lh_ot = 8;
+                            if ($approved_ot_hrs > 8)
                             {
-                                $rst_lh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $rst_lh_ot = $rst_lh_ot;
-                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $rst_lh_ot = $approved_ot_hrs;
-                                }
+                                $lh_ot = $lh_ot;
+                                $lh_ot_ge = floatval($approved_ot_hrs) - 8;
                             }
-                            else 
+                            else
                             {
-                                $lh_ot = 8;
-                                if ($approved_ot_hrs > 8)
-                                {
-                                    $lh_ot = $lh_ot;
-                                    $lh_ot_ge = floatval($approved_ot_hrs) - 8;
-                                }
-                                else
-                                {
-                                    $lh_ot = $approved_ot_hrs;
-                                }
+                                $lh_ot = $approved_ot_hrs;
                             }
+                        }
+                        
+                        if($employee_schedule)
+                        {
+                            $time_start = $final_time_in;
+                            $time_end = $final_time_out;
                             
-                            if ($employee_schedule)
-                            {
-                                $start_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_in_to);
-                                $end_schedule = (date('Y-m-d',strtotime($final_time_in))." ".$employee_schedule->time_out_to);
-                                
-                                if(strtotime($start_schedule) > strtotime($end_schedule))
-                                {
-                                    $s = date('Y-m-d', strtotime($final_time_in . ' +1 day'));
-                                    $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
-                                }
-                                
-                                if(strtotime($start_schedule) > strtotime($final_time_in))
-                                {   
-                                    $nightdiff_start = $start_schedule;
-                                }
-                                if(strtotime($end_schedule) < strtotime($final_time_out))
-                                {   
-                                    $nightdiff_end = $end_schedule;
-                                }
-                            }
+                            $time_start_string = strtotime($time_start);
+                            $time_end_string = strtotime($time_end);
+                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                            $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
                             
-                            if ($rest == "RESTDAY")
+                            if(($schedule_out) < ($schedule_in))
                             {
-                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
+                                
+                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                            }
+                            if($time_end_string>$schedule_out)
+                            {
+                                $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                $lh_ot_use = $lh_ot_nd;
+                                if($lh_ot_nd >=4.5 )
+                                {   
+                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                    if($schedule_hours > 8)
+                                    {
+                                    $lh_ot_nd = $lh_ot_nd-1;
+                                    }
+                                }
+                                
+                                if ($rest == "RESTDAY")
                                 {
-                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                    if($work_rest > 9 )
-                                    { 
-                                        $rst_lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                        $rst_lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                        $rst_lh_nd = $rst_lh_nd_ge - $rst_lh_nd;
-                                        $rst_lh_nd = $rst_lh_nd-1;
-                                        if($rst_lh_nd <0)
-                                        {
-                                            $rst_lh_nd = 0;
-                                        }
-                                        if($rst_lh_nd_ge <0)
-                                        {
-                                            $rst_lh_nd_ge = 0;
-                                        }
+                                    $lh_ot_nd = 0;
+                                    $rst_lh_nd_ge = night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_use;
+                                    if($rst_lh_nd_ge <0)
+                                    {
+                                        $rst_lh_nd_ge=0;
+                                    }
+                                }
+                                else 
+                                {
+                                    $rst_lh_nd_ge = 0;
+                                    $lh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_use;
+                                    if($lh_ot_nd_ge <0)
+                                    {
+                                        $lh_ot_nd_ge=0;
                                     }
                                 }
                             }
-                            else 
-                            {
-                                if(($final_time_in) && ($final_time_out) && ($emp_has_ot >0))
-                                {
-                                    $work_rest =  round(((strtotime($final_time_out) - strtotime($final_time_in))/3600), 2);
-                                    $lh_nd_ge =  night_difference_per_company($final_time_in,$final_time_out);
-                                    if($work_rest > 9 )
-                                    { 
-                                        $lh_nd =  round(night_difference_per_company($final_time_in,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($final_time_in)))));
-                                        $lh_nd_ge = night_difference_per_company($final_time_in,$final_time_out);
-                                        $lh_nd = $lh_nd_ge - $lh_nd;
-                                        $lh_nd = $lh_nd-1;
-                                        if($lh_nd <0)
-                                        {
-                                            $lh_nd = 0;
-                                        }
-                                        if($lh_nd_ge <0)
-                                        {
-                                            $lh_nd_ge = 0;
-                                        }
+                            else {
+                                $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
+                                if($lh_ot_nd >=4.5 )
+                                {   
+                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                    if($schedule_hours > 8)
+                                    {
+                                    $lh_ot_nd = $lh_ot_nd-1;
                                     }
                                 }
                             }
+                            
                         }
                     }
 

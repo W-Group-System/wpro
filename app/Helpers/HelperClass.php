@@ -189,4 +189,16 @@ class HelperClass {
         
         return $count;
     }
+
+    public static function checkHasAttendanceHolidayStatus($attendances=array(),$check_date){
+        $status =  '';
+        if(count($attendances) > 0 && $check_date){
+            foreach($attendances as $item){            
+                if(date('Y-m-d',strtotime($item['time_in'])) == date('Y-m-d',strtotime($check_date))){
+                return $item['time_in'];
+                }
+            }
+        }
+        return $status;
+    }
 }
