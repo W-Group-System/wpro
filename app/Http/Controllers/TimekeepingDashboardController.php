@@ -1325,7 +1325,7 @@ class TimekeepingDashboardController extends Controller
                             }
                         }
                         
-                        $sh_ot_nd =  night_difference_per_company($time_start,$time_end);
+                        $sh_ot_nd =  night_difference_per_company($final_time_in,$final_time_out);
                         if($sh_ot_nd >=4.5 )
                         {
                             $sh_ot_nd = $sh_ot_nd-1;
@@ -2400,7 +2400,7 @@ class TimekeepingDashboardController extends Controller
                         }
 
                         // dd($time_start,$time_end);
-                        $sh_ot_nd =  night_difference_per_company($time_start,$time_end);
+                        $sh_ot_nd =  night_difference_per_company($final_time_in,$final_time_out);
                         if($sh_ot_nd >=4.5 )
                         {
                             $sh_ot_nd = $sh_ot_nd-1;
