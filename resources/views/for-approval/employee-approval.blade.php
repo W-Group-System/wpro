@@ -181,7 +181,13 @@
                                 @endforeach
                             </td> --}}
                             {{-- <td>{{ optional($form_approval->creator->createdBy)->first_name. ' ' .optional($form_approval->user->createdBy)->last_name }}</td> --}}
-                            <td>{{ optional($form_approval->creator)->name }}</td>
+                            <td>
+                                @if($form_approval->user->createdBy)
+                                {{ $form_approval->user->createdBy->first_name." ".$form_approval->user->createdBy->last_name }}
+                                @endif  
+                                {{-- {{ optional($form_approval->creator)->name }} --}}
+                                
+                            </td>
                             <td>
                                 @if ($form_approval->status == 'Pending')
                                 <label class="badge badge-warning">{{ $form_approval->status }}</label>

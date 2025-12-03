@@ -106,7 +106,7 @@ class User extends Authenticatable
 
     public function createdBy()
     {
-        return $this->belongsTo(Employee::class, 'created_by', 'id');
+        return $this->belongsTo(Employee::class, 'created_by', 'user_id');
     }
 
 }
