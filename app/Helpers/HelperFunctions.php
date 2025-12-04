@@ -1472,7 +1472,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     {
         if (in_array($company, $plant_company))
         {
-            if (date('Y-m', strtotime($hired_date)) > 2025-04)
+            if (date('Y-m', strtotime($hired_date)) > 2015-04)
             {
                 if ($date_diff->y < 1)
                 {
@@ -1572,7 +1572,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     {
         if (in_array($company, $plant_company))
         {
-            if (date('Y-m', strtotime($hired_date)) > 2025-04)
+            if (date('Y-m', strtotime($hired_date)) > 2015-04)
             {
                 if ($date_diff->y < 1)
                 {
@@ -1672,7 +1672,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     {
         if (in_array($company, $plant_company))
         {
-            if (date('Y-m', strtotime($hired_date)) > 2025-04)
+            if (date('Y-m', strtotime($hired_date)) > 2015-04)
             {
                 if ($date_diff->y < 1)
                 {
