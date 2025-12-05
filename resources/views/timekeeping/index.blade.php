@@ -1614,7 +1614,7 @@
     
                         $("[name='employee_id']").val(data.employee_id)
                         $("[name='date']").val(data.date)
-                        
+                        $("[name='incident_report']").val("")
 
                         if (data.time_in != "" && data.time_out != "")
                         {
