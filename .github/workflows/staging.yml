@@ -1,0 +1,49 @@
+name: Deploy to staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+
+    - name: Install composer
+      run: composer install --optimize-autoloader --no-dev --no-progress --no-interaction --prefer-dist
+
+    - name: sync files to server
+      uses: easingthemes/ssh-deploy@v4.1.8
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SOURCE: "./"
+        REMOTE_HOST: ${{ secrets.VPS_HOST }}
+        REMOTE_USER: ${{ secrets.VPS_USER }}
+        TARGET: "/home/iqkjgzqtvgb7/public_html/beta.hris.wgroup.space"
+        EXCLUDE: ".git*, .github*, /node_modules/, /vendor/, /storage/logs/, /storage/framework/cache/data/"
+
+    - name: run remote/artisan commands
+      uses: appleboy/ssh-action@v0.1.6
+      with: 
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: | 
+          cd public_html/beta.hris.wgroup.space
+          php artisan optimize
+          composer install --no-dev --optimize-autoloader
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan route:clear
+          php artisan view:clear
+          chmod -R 775 storage
+          chmod -R 775 bootstrap/cache

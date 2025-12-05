@@ -12,7 +12,7 @@
         <div class="row justify-content-center">
           <div class="col-md-8">
             <div class="mb-4">
-              <h3>Welcome back!</h3>
+              <h3>Welcome back!!</h3>
               <p class="mb-4"><strong>Please Login to your account</strong></p>
             </div>
             <form method="POST" action="{{ route('login') }}" aria-label="{{ __('Login') }}" onsubmit='show()'>

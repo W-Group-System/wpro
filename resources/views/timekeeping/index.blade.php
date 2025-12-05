@@ -142,12 +142,10 @@
                         
                                     <div class="col-md-12">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered mt-5 timekeepingTable">
+                                            <table class="table table-bordered mt-5" id="pendingApprovalTable">
                                                 <thead>
                                                     <tr>
                                                         <th>COMPANY</th>
-                                                        <th>DEPARTMENT</th>
-                                                        <th>SCHEDULE</th>
                                                         <th>EMPLOYEE ID</th>
                                                         <th>NAME</th>
                                                         <th>DATE LOGS</th>
@@ -1887,6 +1885,55 @@
             }
         })
 
+        var pendingTable = $("#pendingApprovalTable").DataTable({
+            pagelength:10,
+            dom: 'Bfrtip',
+            paginate:true,
+            processing: true,
+            serverSide: true,
+            lengthChange: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            stateSave:true,
+            language: {
+                processing: `
+                    <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;">
+                        <span class="visually-hidden"></span>
+                    </div>
+                    <div style="font-size:18px;margin-top:10px;">Loading data...</div>
+                `
+            },
+            ajax: {
+                type: "POST",
+                url: "{{ url('timekeeping-official/pending_approval') }}",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: function(d) {
+                    d.company = $("[name='company']").val()
+                    d.date_from = $("[name='date_from']").val()
+                    d.date_to = $("[name='date_to']").val()
+                }
+            },
+            columns: [
+                {data:"company"},
+                {data:"employee_code"},
+                {data:"name"},
+                {data:"date"},
+                {data:"time_in"},
+                {data:"time_out"},
+                {render: function(data, type, row) {
+                    let html = ""
+                    Object.values(row.approvers).forEach(element => {
+                        html += `<div>${element.name} - ${element.status}</div><br>`
+                    })
+
+                    return html
+                }}
+            ],
+        })
+
         function to24HourFormat(time12h) {
             // Example input: "02:30 PM" or "02:30 AM"
             const [time, modifier] = time12h.split(' '); // ["02:30", "PM"]
@@ -1921,6 +1968,7 @@
             show()
             issueTable.ajax.reload()
             forPostingTable.ajax.reload()
+            pendingTable.ajax.reload()
         })
 
         $("#checkboxAll").on('change', function() {

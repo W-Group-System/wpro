@@ -544,6 +544,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
         // Per Company
         Route::post('issues_per_company','TimekeepingDashboardController@issuesPerCompany');
         Route::post('for_posting_per_company', 'TimekeepingDashboardController@forPostingCompany');
+        Route::post('pending_approval','TimekeepingDashboardController@pendingApproval');
     });
 
     // FOR APPROVAL
