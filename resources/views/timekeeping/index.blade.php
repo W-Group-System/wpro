@@ -1955,12 +1955,20 @@
             return `${hours}:${minutes}`;
         }
 
-        issueTable.on('xhr.dt', function() {
+        issueTable.on('xhr.dt', function(e, settings, json, xhr) {
             hide();
+
+            $("#totalIssues").text(json.recordsFiltered)
         });
 
-        forPostingTable.on('xhr.dt', function() {
+        forPostingTable.on('xhr.dt', function(e, settings, json, xhr) {
             hide();
+
+            $("#totalForPosting").text(json.recordsFiltered)
+        });
+
+        pendingTable.on('xhr.dt', function(e, settings, json, xhr) {
+            $("#totalPendingApproval").text(json.recordsFiltered)
         });
 
         $("#filterForm").on('submit', function(e) {
