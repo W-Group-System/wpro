@@ -1599,7 +1599,7 @@ class TimekeepingDashboardController extends Controller
                     ';
                 }
 
-                if (($pending_dtr == 0) && ($for_posting == 0) && ($abs > 0) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0) || ($if_has_ob))
+                if (($pending_dtr == 0) && ($for_posting == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0) || ($if_has_ob)))
                 {
                     $data[]=[
                         'action' => $action,
