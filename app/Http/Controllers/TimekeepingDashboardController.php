@@ -1264,6 +1264,7 @@ class TimekeepingDashboardController extends Controller
 
                 // Holiday OT's
                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
+                $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                 if ($check_if_holiday)
                 {
                     $abs=0;
@@ -1338,7 +1339,6 @@ class TimekeepingDashboardController extends Controller
                         }
                     }
                     
-                    $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                     // SH OT
                     if ($check_if_holiday == "Special Holiday")
                     {
@@ -1599,7 +1599,7 @@ class TimekeepingDashboardController extends Controller
                     ';
                 }
 
-                if (($pending_dtr == 0) && ($for_posting == 0) && (($abs > 0) || ($overtime > 0) || ($revert > 0) || ($cancelled_dtr > 0) || ($if_has_ob)))
+                if (($pending_dtr == 0) && ($for_posting == 0) && (($abs > 0) || ($approved_ot_hrs) || ($revert > 0) || ($cancelled_dtr > 0) || ($if_has_ob)))
                 {
                     $data[]=[
                         'action' => $action,
@@ -2369,6 +2369,7 @@ class TimekeepingDashboardController extends Controller
                 // {
                 $if_attendance_holiday_status = '';
                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
+                $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                 if ($check_if_holiday)
                 {
                     $abs = 0;
@@ -2441,7 +2442,6 @@ class TimekeepingDashboardController extends Controller
                         }
                     }
                     
-                    $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                     // SH OT
                     if ($check_if_holiday == "Special Holiday")
                     {
@@ -2676,7 +2676,7 @@ class TimekeepingDashboardController extends Controller
                 $posted_dtr = count(($employee->attendance_detailed_report)->where('log_date', $date_r));
 
 
-                if(($abs == 0) && ($overtime == 0) && ($revert == 0) && ($pending_dtr == 0) && (!$if_has_ob) || (($for_posting > 0)))
+                if(($abs == 0) && (!$approved_ot_hrs) && ($revert == 0) && ($pending_dtr == 0) && (!$if_has_ob) || (($for_posting > 0)))
                 {
                     $data[]=[
                         'checkbox' => '
@@ -3482,6 +3482,7 @@ class TimekeepingDashboardController extends Controller
                 // Holiday OT
                 $if_attendance_holiday_status = '';
                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$employee->location);
+                $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                 if ($check_if_holiday)
                 {
                     $abs = 0;
@@ -3582,8 +3583,6 @@ class TimekeepingDashboardController extends Controller
                         }
                     }
 
-                    // $abs = 0;
-                    $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
                     // SH OT
                     if ($check_if_holiday == "Special Holiday")
                     {
