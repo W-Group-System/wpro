@@ -589,7 +589,7 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->where('employee_code','A3174924')
+            // ->where('employee_code','A2110325')
             // ->where('employee_code','A3179024')
             // ->where('employee_code','A3191125')
             // ->where('employee_code','A192724')
@@ -1103,9 +1103,23 @@ class TimekeepingDashboardController extends Controller
 
                         $ob_out = $if_has_ob->date_to;
                         $final_time_out = $ob_out;
+
+                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                        if ($schedule_in > $schedule_out)
+                        {
+                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                        }
+                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600; // default working hours
+
+                        if(($schedule_hrs-1) > $total_reg_hrs)
+                        {
+                            $undertime_hrs = (double) number_format(($schedule_hrs-1) - $total_reg_hrs,2);
+                            $undertime = ($undertime_hrs)*60;
+                        }
                     }
 
-                    $undertime = 0;
+                    // $undertime = 0;
                     $abs = 0;
                 }
                 
@@ -1258,8 +1272,14 @@ class TimekeepingDashboardController extends Controller
 
                     if ($employee_schedule)
                     {
-                        $schedule_hrs = (strtotime($employee_schedule->time_out_from) - strtotime($employee_schedule->time_in_from))/3600;
-                        $total_reg_hrs = $schedule_hrs - 1;
+                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                        if ($schedule_in > $schedule_out)
+                        {
+                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                        }
+                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600;
+                        $total_reg_hrs = $schedule_hrs-1;
 
                         $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
                         $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
@@ -1279,18 +1299,34 @@ class TimekeepingDashboardController extends Controller
 
                         $time_in = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortBy('datetime')->first();
                         $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortByDesc('datetime')->first();
+
                         if ($time_in && $time_out)
                         {
-                            if((strtotime($time_out->datetime) - strtotime($time_in->datetime)/3600) >= 4);
+                            $regular_hrs_before = (strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600;
+                            if($regular_hrs_before >= 4)
                             {
                                 $abs=0;
                             }
+                            else 
+                            {
+                                $abs=1;
+                                $total_reg_hrs=0;
+                            }
                         }
-
+                        
                         $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$employee->location);
                         if ($check_if_holiday_before)
                         {
                             $abs=0;
+                        }
+
+                        $ob_date = ($employee->approved_obs)->where('applied_date', $if_attendance_holiday)->first();
+                        if ($ob_date)
+                        {
+                            if((strtotime($ob_date->date_to) - strtotime($ob_date->date_from)/3600) >= 4);
+                            {
+                                $abs=0;
+                            }
                         }
                     }
                     
@@ -2332,6 +2368,15 @@ class TimekeepingDashboardController extends Controller
                     $overtime=0;
                     if ($employee_schedule)
                     {
+                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                        if ($schedule_in > $schedule_out)
+                        {
+                            $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to)+86400;
+                        }
+                        $schedule_hrs = ($schedule_out - $schedule_in) / 3600;
+                        $total_reg_hrs = $schedule_hrs-1;
+
                         $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $employee->employee_number,$employee->location);
                         $check_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r.'-1 day')),$employee_schedule);
                         if ($check_leave)
@@ -2350,11 +2395,18 @@ class TimekeepingDashboardController extends Controller
 
                         $time_in = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortBy('datetime')->first();
                         $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortByDesc('datetime')->first();
+
                         if ($time_in && $time_out)
                         {
-                            if((strtotime($time_out->datetime) - strtotime($time_in->datetime)/3600) >= 4);
+                            $regular_hrs_before = (strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600;
+                            if($regular_hrs_before >= 4)
                             {
                                 $abs=0;
+                            }
+                            else 
+                            {
+                                $abs=1;
+                                $total_reg_hrs=0;
                             }
                         }
 
@@ -2363,9 +2415,15 @@ class TimekeepingDashboardController extends Controller
                         {
                             $abs=0;
                         }
-
-                        $schedule_hrs = (strtotime($employee_schedule->time_out_from) - strtotime($employee_schedule->time_in_from))/3600;
-                        $total_reg_hrs = $schedule_hrs - 1;
+                        
+                        $ob_date = ($employee->approved_obs)->where('applied_date', $if_attendance_holiday)->first();
+                        if ($ob_date)
+                        {
+                            if((strtotime($ob_date->date_to) - strtotime($ob_date->date_from)/3600) >= 4);
+                            {
+                                $abs=0;
+                            }
+                        }
                     }
                     
                     $approved_ot_hrs = employeeHasOTDetails($employee->approved_ots,date('Y-m-d',strtotime($date_r)));
@@ -3797,6 +3855,51 @@ class TimekeepingDashboardController extends Controller
             'draw' => $request->draw,
             'recordsTotal' => count($employees),
             'recordsFiltered' => count($employees),
+            'data' => $data
+        ]);
+    }
+
+    public function pendingApproval(Request $request)
+    {
+        // dd($request->all());
+        $query = DtrCorrection::with('employee.company','dtr_correction_approver.user')
+            ->whereHas('employee.company', function($q)use($request) {
+                $q->where('id', $request->company);
+            })
+            ->whereBetween('date', [$request->date_from, $request->date_to]);
+
+        $recordsFiltered = $query->count();
+        
+        $query->where('status','Pending')->get();
+        
+        $dtr_correction = $query->offset($request->start)->limit($request->length)->get();
+
+        $data=[];
+        foreach($dtr_correction as $dtr)
+        {
+            $approvers =  $dtr->dtr_correction_approver->sortByDesc('id')->take(2);
+            $approvers_final = $approvers->sortBy('id')->map(function($item,$key) {
+                return [
+                    'name' => $item->user->name,
+                    'status' => $item->status
+                ];
+            })->toArray();
+            
+            $data[] = [
+                'company' => $dtr->employee->company->company_code,
+                'employee_code' => $dtr->employee->employee_code,
+                'name' => $dtr->employee->first_name.' '.$dtr->employee->last_name,
+                'date' => $dtr->date,
+                'time_in' => date('h:i A', strtotime($dtr->time_in)),
+                'time_out' => date('h:i A', strtotime($dtr->time_out)),
+                'approvers' => $approvers_final
+            ];
+        }
+
+        return response()->json([
+            'draw' => $request->draw,
+            'recordsTotal' => count($dtr_correction),
+            'recordsFiltered' => $recordsFiltered,
             'data' => $data
         ]);
     }
