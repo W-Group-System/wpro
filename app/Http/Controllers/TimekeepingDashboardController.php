@@ -1299,10 +1299,18 @@ class TimekeepingDashboardController extends Controller
 
                         $time_in = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortBy('datetime')->first();
                         $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortByDesc('datetime')->first();
-
+                        
+                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                        if ($schedule_in > $schedule_out)
+                        {
+                            $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r)))->sortBy('datetime')->first();
+                        }
+                        
                         if ($time_in && $time_out)
                         {
                             $regular_hrs_before = (strtotime($time_out->datetime) - strtotime($time_in->datetime))/3600;
+                            
                             if($regular_hrs_before >= 4)
                             {
                                 $abs=0;
@@ -2395,6 +2403,13 @@ class TimekeepingDashboardController extends Controller
 
                         $time_in = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortBy('datetime')->first();
                         $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r."-1 day")))->sortByDesc('datetime')->first();
+
+                        $schedule_in = strtotime($date_r.' '.$employee_schedule->time_in_to);
+                        $schedule_out = strtotime($date_r.' '.$employee_schedule->time_out_to);
+                        if ($schedule_in > $schedule_out)
+                        {
+                            $time_out = ($employee->attendance_logs)->where('date', date('Y-m-d', strtotime($date_r)))->sortBy('datetime')->first();
+                        }
 
                         if ($time_in && $time_out)
                         {
