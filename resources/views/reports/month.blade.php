@@ -204,36 +204,6 @@
                                             @endif
                                         @endfor
                                         @php
-                                            // Sort payregs by cut_off_date ascending
-                                            $payregs_sorted = $employee->get_payreg->sortBy('cut_off_date');
-
-                                            // Find the first payreg in the given year that has the instruction
-                                            $firstPayreg = $payregs_sorted->first(function ($payreg) use ($year) {
-                                                $payregYear = date('Y', strtotime($payreg->cut_off_date));
-
-                                                // Check if this payreg has the instruction for the year
-                                                return $payregYear == $year 
-                                                    && $payreg->pay_instructions->contains(function ($instruction) {
-                                                        return $instruction->instruction_name === 'THIRTEENTH MONTH PAY NONTAXABLE';
-                                                    });
-                                            });
-                                            
-                                            $firstInstruction = null;
-                                            if ($firstPayreg) {
-                                                $firstInstruction = $firstPayreg->pay_instructions->first(function ($instruction) {
-                                                    return $instruction->instruction_name === 'THIRTEENTH MONTH PAY NONTAXABLE';
-                                                });
-                                            }
-                                        
-                                            $thirteenth_month_amount = 0;
-                                            if ($firstInstruction) {
-                                                $thirteenth_month_amount = $firstInstruction->amount;
-                                            }
-                                            
-                                            // Use the safely checked amount in the final calculation
-                                            $final_gross_pay = $gross_pay - $thirteenth_month_amount;
-                                        @endphp
-                                        @php
                                             if($employee->employee_code == "A3131019")
                                             {
                                                 $salary_diff = 2848;
@@ -319,6 +289,37 @@
                                         <td>{{number_format($payroll,2)}}</td>
                                         <td>{{number_format($payroll,2)}}</td>
                                         <td>
+                                            @php
+                                                // Sort payregs by cut_off_date ascending
+                                                $payregs_sorted = $employee->get_payreg->sortBy('cut_off_date');
+
+                                                // Find the first payreg in the given year that has the instruction
+                                                $firstPayreg = $payregs_sorted->first(function ($payreg) use ($year) {
+                                                    $payregYear = date('Y', strtotime($payreg->cut_off_date));
+
+                                                    // Check if this payreg has the instruction for the year
+                                                    return $payregYear == $year 
+                                                        && $payreg->pay_instructions->contains(function ($instruction) {
+                                                            return $instruction->instruction_name === 'THIRTEENTH MONTH PAY NONTAXABLE';
+                                                        });
+                                                });
+                                                
+                                                $firstInstruction = null;
+                                                if ($firstPayreg) {
+                                                    $firstInstruction = $firstPayreg->pay_instructions->first(function ($instruction) {
+                                                        return $instruction->instruction_name === 'THIRTEENTH MONTH PAY NONTAXABLE';
+                                                    });
+                                                }
+                                            
+                                                $thirteenth_month_amount = 0;
+                                                if ($firstInstruction) {
+                                                    $thirteenth_month_amount = $firstInstruction->amount;
+                                                }
+                                                
+                                                // Use the safely checked amount in the final calculation
+                                                $final_gross_pay = $gross_pay - $thirteenth_month_amount;
+                                            @endphp
+                                            
                                             @if($firstInstruction)
                                                 {{ number_format($firstInstruction->amount, 2) }}
                                             @else
