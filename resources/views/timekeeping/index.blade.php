@@ -1513,16 +1513,16 @@
                 if (data.if_has_ob == "Yes") {
                     $(row).find('td:eq(6)').addClass('bg-info');
                 }
-                else if(data.time_in == "" && data.schedule != "RESTDAY" && data.abs > 0 && data.leave_count == 0) {
-                    $(row).find('td:eq(6)').addClass('bg-danger');
-                }
+                // else if(data.time_in == "" && data.schedule != "RESTDAY" && data.abs > 0 && data.leave_count == 0) {
+                //     $(row).find('td:eq(6)').addClass('bg-danger');
+                // }
 
                 if (data.if_has_ob == "Yes") {
                     $(row).find('td:eq(7)').addClass('bg-info');
                 }
-                else if(data.time_out == "" && data.schedule != "RESTDAY" && data.abs > 0 && data.leave_count == 0) {
-                    $(row).find('td:eq(7)').addClass('bg-danger');
-                }
+                // else if(data.time_out == "" && data.schedule != "RESTDAY" && data.abs > 0 && data.leave_count == 0) {
+                //     $(row).find('td:eq(7)').addClass('bg-danger');
+                // }
 
                 if (parseFloat(data.abs)-parseFloat(data.leave_count) > 0) {
                     $(row).find('td:eq(8)').addClass('bg-danger');
@@ -1560,10 +1560,10 @@
                 if (data.lh_ot_ge > 0) {
                     $(row).find('td:eq(21)').addClass('bg-warning');
                 }
-                if (data.lh_nd > 0) {
+                if (data.lh_ot_nd > 0) {
                     $(row).find('td:eq(22)').addClass('bg-warning');
                 }
-                if (data.lh_nd_ge > 0) {
+                if (data.lh_ot_nd_ge > 0) {
                     $(row).find('td:eq(23)').addClass('bg-warning');
                 }
                 if (data.sh_ot > 0) {
@@ -1572,10 +1572,10 @@
                 if (data.sh_ot_ge > 0) {
                     $(row).find('td:eq(25)').addClass('bg-warning');
                 }
-                if (data.sh_nd > 0) {
+                if (data.sh_ot_nd > 0) {
                     $(row).find('td:eq(26)').addClass('bg-warning');
                 }
-                if (data.sh_nd_ge > 0) {
+                if (data.sh_ot_nd_ge > 0) {
                     $(row).find('td:eq(27)').addClass('bg-warning');
                 }
                 if (data.rst_lh_ot > 0) {
@@ -1614,7 +1614,7 @@
     
                         $("[name='employee_id']").val(data.employee_id)
                         $("[name='date']").val(data.date)
-                        
+                        $("[name='incident_report']").val("")
 
                         if (data.time_in != "" && data.time_out != "")
                         {
@@ -1752,16 +1752,17 @@
                 if (data.if_has_ob == "Yes") {
                     $(row).find('td:eq(7)').addClass('bg-info');
                 }
-                else if(data.time_in == "" && data.schedule != "RESTDAY" && data.abs > 0) {
-                    $(row).find('td:eq(7)').addClass('bg-danger');
-                }
+                // else if(data.time_in == "" && data.schedule != "RESTDAY" && data.abs > 0) {
+                //     $(row).find('td:eq(7)').addClass('bg-danger');
+                // }
 
                 if (data.if_has_ob == "Yes") {
                     $(row).find('td:eq(8)').addClass('bg-info');
                 }
-                else if(data.time_out == "" && data.schedule != "RESTDAY" && data.abs > 0) {
-                    $(row).find('td:eq(8)').addClass('bg-danger');
-                }
+                // else if(data.time_out == "" && data.schedule != "RESTDAY" && data.abs > 0) {
+                //     $(row).find('td:eq(8)').addClass('bg-danger');
+                // }
+                
                 if (parseFloat(data.abs)-parseFloat(data.leave_count) > 0) {
                     $(row).find('td:eq(9)').addClass('bg-danger');
                 }
@@ -1954,12 +1955,20 @@
             return `${hours}:${minutes}`;
         }
 
-        issueTable.on('xhr.dt', function() {
+        issueTable.on('xhr.dt', function(e, settings, json, xhr) {
             hide();
+
+            $("#totalIssues").text(json.recordsFiltered)
         });
 
-        forPostingTable.on('xhr.dt', function() {
+        forPostingTable.on('xhr.dt', function(e, settings, json, xhr) {
             hide();
+
+            $("#totalForPosting").text(json.recordsFiltered)
+        });
+
+        pendingTable.on('xhr.dt', function(e, settings, json, xhr) {
+            $("#totalPendingApproval").text(json.recordsFiltered)
         });
 
         $("#filterForm").on('submit', function(e) {
