@@ -252,6 +252,19 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(DailySchedule::class,'employee_code','employee_code');
     }
+    public function pending_leaves() 
+    {
+        return $this->hasMany(EmployeeLeave::class,'user_id','user_id')->where('status','Pending');
+    }
+    public function pending_ots() 
+    {
+        return $this->hasMany(EmployeeOvertime::class,'user_id','user_id')->where('status','Pending');
+    }
+    public function pending_obs() 
+    {
+        return $this->hasMany(EmployeeOb::class,'user_id','user_id')->where('status','Pending');
+    }
+    
     protected $fillable = [
         'department_id', 
         'project',
