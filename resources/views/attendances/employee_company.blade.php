@@ -1272,23 +1272,23 @@
                                                   
                                                 }
                                                 // Paid Legal Holiday for Daily Rate Employee
-                                                if($emp->work_description == "Non-Monthly")
-                                                {
-                                                    if($check_if_holiday == "Special Holiday")
-                                                    {
-                                                        $abs = 1;
-                                                    }
-                                                    else 
-                                                    {
-                                                        $abs = 0;
-
-                                                        if($employee_schedule_before)
-                                                        {
-                                                            $work = (strtotime($date_r." ".$employee_schedule_before->time_out_to)-strtotime($date_r." ".$employee_schedule_before->time_in_to))/3600;
-                                                            $work = $work-1;
-                                                        }
-                                                    }
-                                                }
+                                                // if($emp->work_description == "Non-Monthly")
+                                                // {
+                                                //     if($check_if_holiday == "Special Holiday")
+                                                //     {
+                                                //         $abs = 1;
+                                                //     }
+                                                //     else 
+                                                //     {
+                                                //         $abs = 0;
+                                                        
+                                                //         if(empty($employee_schedule) || $employee_schedule->time_in_from == null)
+                                                //         {
+                                                //             $work = (strtotime($date_r." ".$employee_schedule_before->time_out_to)-strtotime($date_r." ".$employee_schedule_before->time_in_to))/3600;
+                                                //             $work = $work-1;
+                                                //         }
+                                                //     }
+                                                // }
 
                                                 if($abs == 1)
                                                 {
