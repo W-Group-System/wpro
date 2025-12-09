@@ -538,7 +538,7 @@ class TimekeepingDashboardController extends Controller
         $company_data = $request->company;
         $department_data = $request->department;
 
-        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id');
+        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id','work_description');
 
             if ($search = $request->input('search.value'))
             {
@@ -589,7 +589,7 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->where('employee_code','A2110325')
+            // ->where('employee_code','A3156222')
             // ->where('employee_code','A3179024')
             // ->where('employee_code','A3191125')
             // ->where('employee_code','A192724')
@@ -1322,11 +1322,51 @@ class TimekeepingDashboardController extends Controller
                                 $total_reg_hrs=0;
                             }
                         }
+                        else
+                        {
+                            if (empty($check_leave))
+                            {
+                                $abs=1;
+                                $total_reg_hrs=0;
+                            }
+                        }
                         
                         $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$employee->location);
                         if ($check_if_holiday_before)
                         {
                             $abs=0;
+                        }
+
+                        if($employee->work_description == "Non-Monthly")
+                        {
+                            // $if_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                        
+                            // if(empty($if_leave)){
+                            //     if($employee_schedule->time_in_from) {
+                            //     if(empty($if_has_dtr)){
+                            //             if($time_out == null){
+                            //                 $is_absent = 'Absent';
+                            //             }
+                            //     }
+                            //     }
+                            //     else {
+                            //         $abs = 0;
+                            //         $if_restday = 'Restday';
+                            //     }
+                            // } 
+                            // else {
+                            //     $abs = 1;
+                            // }
+                            // if($check_if_holiday == "Special Holiday")
+                            // {
+                            //     $abs = 1;
+                            // }
+
+                            if (empty($final_time_in) && empty($final_time_out))
+                            {
+                                $abs=1;
+                                $total_reg_hrs=0;
+                            }
                         }
 
                         $ob_date = ($employee->approved_obs)->where('applied_date', $if_attendance_holiday)->first();
@@ -1664,7 +1704,7 @@ class TimekeepingDashboardController extends Controller
         $company_data = $request->company;
         $department_data = $request->department;
 
-        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id');
+        $query = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','employee_number','company_id','department_id','work_description');
             if ($search = $request->input('search.value'))
             {
                 $query->where(function($query)use($search) {
@@ -1713,7 +1753,7 @@ class TimekeepingDashboardController extends Controller
                 $q->where('department_id', $department_data);
             })
             ->where('status','Active')
-            // ->where('employee_code','A3189525')
+            // ->where('employee_code','A3156222')
             // ->where('employee_code','A3179024')
             // ->where('employee_code','A3191125')
             // ->where('employee_code','A192724')
@@ -2425,11 +2465,52 @@ class TimekeepingDashboardController extends Controller
                                 $total_reg_hrs=0;
                             }
                         }
+                        else
+                        {
+                            if (empty($check_leave))
+                            {
+                                $abs=1;
+                                $total_reg_hrs=0;
+                            }
+                        }
 
                         $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$employee->location);
                         if ($check_if_holiday_before)
                         {
                             $abs=0;
+                        }
+                        
+                        if($employee->work_description == "Non-Monthly")
+                        {
+                            // $if_leave = employeeHasLeave($employee->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                        
+                            // if(empty($if_leave)){
+                            //     if($employee_schedule->time_in_from) {
+                            //         if(empty($if_has_dtr)){
+                            //                 if($time_out == null){
+                            //                     $is_absent = 'Absent';
+                            //                 }
+                            //         }
+                            //     }
+                            //     else {
+                            //         $abs = 0;
+                            //         $if_restday = 'Restday';
+                            //     }
+                            // } 
+                            // else {
+                            //     $abs = 1;
+                            // }
+                            
+                            // if($check_if_holiday == "Special Holiday")
+                            // {
+                            //     $abs = 1;
+                            // }
+                            
+                            if (empty($final_time_in) && empty($final_time_out))
+                            {
+                                $abs=1;
+                                $total_reg_hrs=0;
+                            }
                         }
                         
                         $ob_date = ($employee->approved_obs)->where('applied_date', $if_attendance_holiday)->first();
