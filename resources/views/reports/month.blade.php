@@ -42,235 +42,273 @@
 					<div class="card-body">
 						<div class="table-responsive">
 							<table class="table table-db table-hover table-bordered employee_attendance">
-							<thead>
-								<tr>
-									<th>Company</th>
-									{{-- <th>Name</th> --}}
-                                    <th>Employee No</th>
-                                    <th>Last Name</th>
-                                    <th>First Name</th>
-                                    <th>Middle Name</th>
-                                    <th>Department</th>
-                                    <!-- <th>Cost Center</th> -->
-                                    <th>Account No</th>
-                                    
-                                    <!-- <th>Tax Status</th> -->
-                                    <th>Pay Rate</th>
-                                    @for($i = 1; $i <= 12; $i++)
-                                        <th>{{ date('M Y',strtotime($year."-".$i.'-01')) }}</th>
-                                    @endfor
-                                    <th>Total</th>
-                                    <th>Salary Diff</th>
-                                    <th>For Release(WLI)</th>
-                                    <th>Withholding Tax</th>
-									<th>Thirteenth Month Pay Nontaxable</th>
-									<th>Non Taxable Benefits Total</th>
-									<th>Gross Pay</th>
-									<th>1st Released {{$year}}</th>
-									<th>Net Pay</th>
-								</tr>
-							</thead>
-							<tbody>
-                                @foreach($employees->sortBy('last_name') as $key => $employee)
-                                @php
-                                    $total_Payroll = 0;
-                                    $pay_rate = $employee->salary->basic_salary+$employee->salary->subliq+$employee->salary->de_minimis+$employee->salary->other_allowance;
-                                    $previous= ($employee->benefits)->first();
-                                    if($previous)
-                                    {
-                                        $previous = $previous->netpay;
-                                    }
-                                    else {
+                                <thead>
+                                    <tr>
+                                        <th>Company</th>
+                                        {{-- <th>Name</th> --}}
+                                        <th>Employee No</th>
+                                        <th>Last Name</th>
+                                        <th>First Name</th>
+                                        <th>Middle Name</th>
+                                        <th>Department</th>
+                                        <!-- <th>Cost Center</th> -->
+                                        <th>Account No</th>
                                         
-                                        $previous = 0.00;
-                                    }
-                                @endphp
-                                <tr>
-                                    <td>{{$employee->company->company_code}} <input type='hidden' name='company_code[{{$key+1}}]' value="{{$employee->company->company_code}}"></td>
-                                    <td>{{$employee->employee_code}} <input type='hidden' name='employee_code[{{$key+1}}]' value="{{$employee->employee_code}}"></td>
-                                    <td>{{$employee->last_name}} <input type='hidden' name='last_name[{{$key+1}}]' value="{{$employee->last_name}}"></td>
-                                    <td>{{$employee->first_name}} <input type='hidden' name='first_name[{{$key+1}}]' value="{{$employee->first_name}}"></td>
-                                    <td>{{$employee->middle_name}} <input type='hidden' name='middle_name[{{$key+1}}]' value="{{$employee->middle_name}}"></td>
-                                    <td>{{$employee->department->name}} <input type='hidden' name='department_name[{{$key+1}}]' value="{{$employee->department->name}}"></td>
-                                    <!-- <td></td> -->
-                                    <td>{{$employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$employee->bank_account_number}}"></td>
-                                    <!-- <td></td> -->
-                                    <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
-								
-									{{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
-									{{-- <td>{{$employee->employee_code}}</td> --}}
+                                        <!-- <th>Tax Status</th> -->
+                                        <th>Pay Rate</th>
+                                        @for($i = 1; $i <= 12; $i++)
+                                            <th>{{ date('M Y',strtotime($year."-".$i.'-01')) }}</th>
+                                        @endfor
+                                        <th>Total</th>
+                                        <th>Salary Diff</th>
+                                        <th>For Release(WLI)</th>
+                                        <th>Withholding Tax</th>
+                                        <th>Thirteenth Month Pay Nontaxable</th>
+                                        <th>Non Taxable Benefits Total</th>
+                                        <th>Gross Pay</th>
+                                        <th>1st Released {{$year}}</th>
+                                        <th>Net Pay</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($employees->sortBy('last_name') as $key => $employee)
                                     @php
-                                    $no_december = ['A3156322'];
-                                    $for_release = 0;
-                                    $salary_diff = 0;
-                                    $first_release = 0;
+                                        $total_Payroll = 0;
+                                        $pay_rate = $employee->salary->basic_salary+$employee->salary->subliq+$employee->salary->de_minimis+$employee->salary->other_allowance;
+                                        $previous= ($employee->benefits)->first();
+                                        if($previous)
+                                        {
+                                            $previous = $previous->netpay;
+                                        }
+                                        else {
+                                            
+                                            $previous = 0.00;
+                                        }
                                     @endphp
-                                    @for($i = 1; $i <= 12; $i++)
-                                        @if($i == 12)
-                                        @if((!in_array($employee->employee_code, $no_december)))
-                                        @if($employee->salary)
-                                        @if($company == 10)
-                                        
+                                    <tr>
+                                        <td>{{$employee->company->company_code}} <input type='hidden' name='company_code[{{$key+1}}]' value="{{$employee->company->company_code}}"></td>
+                                        <td>{{$employee->employee_code}} <input type='hidden' name='employee_code[{{$key+1}}]' value="{{$employee->employee_code}}"></td>
+                                        <td>{{$employee->last_name}} <input type='hidden' name='last_name[{{$key+1}}]' value="{{$employee->last_name}}"></td>
+                                        <td>{{$employee->first_name}} <input type='hidden' name='first_name[{{$key+1}}]' value="{{$employee->first_name}}"></td>
+                                        <td>{{$employee->middle_name}} <input type='hidden' name='middle_name[{{$key+1}}]' value="{{$employee->middle_name}}"></td>
+                                        <td>{{$employee->department->name}} <input type='hidden' name='department_name[{{$key+1}}]' value="{{$employee->department->name}}"></td>
+                                        <!-- <td></td> -->
+                                        <td>{{$employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$employee->bank_account_number}}"></td>
+                                        <!-- <td></td> -->
+                                        <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
+                                    
+                                        {{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
+                                        {{-- <td>{{$employee->employee_code}}</td> --}}
+                                        @php
+                                        $no_december = ['A3156322'];
+                                        $for_release = 0;
+                                        $salary_diff = 0;
+                                        $first_release = 0;
+                                        @endphp
+                                        @for($i = 1; $i <= 12; $i++)
+                                            @if($i == 12)
+                                            @if((!in_array($employee->employee_code, $no_december)))
+                                            @if($employee->salary)
+                                            @if($company == 10)
+                                            
+                                                @php
+                                                    $date_need = date('Y-m-01', strtotime($year . "-" . $i . '-01 -1 month'));
+                                                    $date_need_next = date('Y-m-t', strtotime($year . "-" . $i . '-01 -1 month'));
+                                                    $payregs = $employee->get_payreg()
+                                                        ->whereBetween('cut_off_date', [
+                                                        $date_need, $date_need_next
+                                                        ]);
+                                                    $pay_reg_id = $payregs->pluck('id')->toArray();
+                                                    $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
+                                                    // dd($salary_adjustments_amount);
+                                                    $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
+                                                    $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
+                                                    + $payregs->sum('deminimis') 
+                                                    + $payregs->sum('other_allowances_basic_pay') 
+                                                    + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
+                                                    $total_Payroll  = $total_Payroll + (($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance)/2);
+                                                @endphp
+                                                <td>
+                                                    @php
+                                                        $first = $payregs->sum('basic_pay') 
+                                                    + $payregs->sum('deminimis') 
+                                                    + $payregs->sum('other_allowances_basic_pay') 
+                                                    + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
+                                                    $second = (($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance)/2);
+                                                    @endphp
+                                                    {{-- {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}} --}}
+                                                    {{number_format($first+$second,2)}}
+                                                
+                                                </td>
+                                            @else
                                             @php
+                                                    $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
+                                                @endphp
+                                                <td>
+                                                    {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
+                                                
+                                                </td>
+                                            @endif
+                                            @else
+                                            <td>
+                                                0.00
+                                            </td>
+                                            @endif
+                                            @else
+                                            <td>
+                                                0.00
+                                            </td>
+                                            @endif
+                                            @else
+                                            @php
+                                        
+                                        if($company == 10)
+                                            {
                                                 $date_need = date('Y-m-01', strtotime($year . "-" . $i . '-01 -1 month'));
                                                 $date_need_next = date('Y-m-t', strtotime($year . "-" . $i . '-01 -1 month'));
                                                 $payregs = $employee->get_payreg()
                                                     ->whereBetween('cut_off_date', [
                                                     $date_need, $date_need_next
                                                     ]);
-                                                $pay_reg_id = $payregs->pluck('id')->toArray();
-                                                $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
-                                                // dd($salary_adjustments_amount);
-                                                $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
-                                                $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
+                                            }
+                                            else {
+                                                $payregs = $employee->get_payreg()
+                                                    ->whereBetween('cut_off_date', [
+                                                        date('Y-m-01', strtotime($year . "-" . $i . '-01')), 
+                                                        date('Y-m-t', strtotime($year . "-" . $i . '-01'))
+                                                    ]);
+                                                
+                                            }
+                                            $pay_reg_id = $payregs->pluck('id')->toArray();
+                                            $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
+                                            // dd($salary_adjustments_amount);
+                                            $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
+
+                                            $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
                                                 + $payregs->sum('deminimis') 
                                                 + $payregs->sum('other_allowances_basic_pay') 
                                                 + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
-                                                $total_Payroll  = $total_Payroll + (($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance)/2);
                                             @endphp
+
+                                            
                                             <td>
                                                 @php
-                                                    $first = $payregs->sum('basic_pay') 
+                                                
+                                                @endphp
+                                                {{number_format($payregs->sum('basic_pay') 
                                                 + $payregs->sum('deminimis') 
                                                 + $payregs->sum('other_allowances_basic_pay') 
-                                                + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
-                                                $second = (($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance)/2);
-                                                @endphp
-                                                {{-- {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}} --}}
-                                                {{number_format($first+$second,2)}}
-                                            
+                                                + $payregs->sum('subliq')-$payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount,2)
+                                            }}
                                             </td>
-                                        @else
+                                            @endif
+                                        @endfor
                                         @php
-                                                $total_Payroll  = $total_Payroll + $employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance;
-                                            @endphp
-                                            <td>
-                                                {{number_format($employee->salary->basic_salary+$employee->salary->de_minimis+$employee->salary->subliq+$employee->salary->other_allowance,2)}}
-                                            
-                                            </td>
-                                        @endif
-                                        @else
-                                        <td>
-                                            0.00
-                                        </td>
-                                        @endif
-                                        @else
-                                        <td>
-                                            0.00
-                                        </td>
-                                        @endif
-                                        @else
-                                        @php
-                                       
-                                       if($company == 10)
-                                        {
-                                            $date_need = date('Y-m-01', strtotime($year . "-" . $i . '-01 -1 month'));
-                                            $date_need_next = date('Y-m-t', strtotime($year . "-" . $i . '-01 -1 month'));
-                                            $payregs = $employee->get_payreg()
-                                                ->whereBetween('cut_off_date', [
-                                                   $date_need, $date_need_next
-                                                ]);
-                                        }
-                                        else {
-                                            $payregs = $employee->get_payreg()
-                                                ->whereBetween('cut_off_date', [
-                                                    date('Y-m-01', strtotime($year . "-" . $i . '-01')), 
-                                                    date('Y-m-t', strtotime($year . "-" . $i . '-01'))
-                                                ]);
-                                            
-                                        }
-                                        $pay_reg_id = $payregs->pluck('id')->toArray();
-                                        $salary_adjustments_amount = $salary_adjustments->whereIn('pay_reg_id',$pay_reg_id)->sum('amount');
-                                        // dd($salary_adjustments_amount);
-                                        $pay_instructions_amount = $pay_instructions->whereIn('payreg_id',$pay_reg_id)->sum('amount');
-
-                                        $total_Payroll  = $total_Payroll + $payregs->sum('basic_pay') 
-                                            + $payregs->sum('deminimis') 
-                                            + $payregs->sum('other_allowances_basic_pay') 
-                                            + $payregs->sum('subliq')- $payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount;
-                                        @endphp
-
+                                            if($employee->employee_code == "A3131019")
+                                            {
+                                                $salary_diff = 2848;
+                                            }
+                                            if($employee->employee_code == "A3167723")
+                                            {
+                                                $salary_diff = 26460.00;
+                                            }
+                                            if($employee->employee_code == "A3144920")
+                                            {
+                                                $salary_diff = 1290.08;
+                                            }
+                                            if($employee->employee_code == "A3150121")
+                                            {
+                                                $salary_diff =13080;
+                                            }
+                                            if($employee->employee_code == "A3167723")
+                                            {
+                                                $salary_diff =26460;
+                                            }
+                                            if($employee->employee_code == "A393916")
+                                            {
+                                                $salary_diff =38850;
+                                            }
+                                            if($employee->employee_code == "A3176524")
+                                            {
+                                                $for_release  =9914.41;
+                                            }
+        
+                                            $tax = 0;
+                                            // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
+                                            // dd($pay_reg_id);
                                         
+                                        
+                                            // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
+                                            // $total_Payroll = $total_Payroll;
+                                            
+                                            $payroll = ($total_Payroll+$salary_diff)/12;
+                                            
+                                            if($employee->employee_code == "A287819")
+                                            {
+                                                $tax =($payroll-$previous)*.05;
+                                            }
+                                            if($employee->employee_code == "A178517")
+                                            {
+                                                $tax =($payroll-$previous)*.05;
+                                            }
+                                            if($employee->employee_code == "A180518")
+                                            {
+                                                $tax =($payroll-$previous)*.05;
+                                            }
+                                            $first_release = $pay_rate / 2;
+                                            $gross_pay = $payroll-$previous-$tax-$for_release;
+                                        @endphp
+                                        <td>{{number_format($total_Payroll,2)}}</td>
+                                        <td>{{number_format($salary_diff,2)}}</td>
+                                        <td>{{number_format($for_release,2)}}</td>
+                                        <td>{{number_format($tax,2)}}</td>
+                                        <td>{{number_format($payroll,2)}}</td>
+                                        <td>{{number_format($payroll,2)}}</td>
+                                        <td>{{number_format($payroll,2)}}</td>
                                         <td>
                                             @php
-                                               
+                                                // Sort payregs by cut_off_date ascending
+                                                $payregs_sorted = $employee->get_payreg->sortBy('cut_off_date');
+
+                                                // Find the first payreg in the given year that has the instruction
+                                                $firstPayreg = $payregs_sorted->first(function ($payreg) use ($year) {
+                                                    $payregYear = date('Y', strtotime($payreg->cut_off_date));
+
+                                                    // Check if this payreg has the instruction for the year
+                                                    return $payregYear == $year 
+                                                        && $payreg->pay_instructions->contains(function ($instruction) {
+                                                            return $instruction->instruction_name === 'THIRTEENTH MONTH PAY NONTAXABLE';
+                                                        });
+                                                });
+                                                
+                                                $firstInstruction = null;
+                                                if ($firstPayreg) {
+                                                    $firstInstruction = $firstPayreg->pay_instructions->first(function ($instruction) {
+                                                        return $instruction->instruction_name === 'THIRTEENTH MONTH PAY NONTAXABLE';
+                                                    });
+                                                }
+                                            
+                                                $thirteenth_month_amount = 0;
+                                                if ($firstInstruction) {
+                                                    $thirteenth_month_amount = $firstInstruction->amount;
+                                                }
+                                                
+                                                // Use the safely checked amount in the final calculation
+                                                $final_gross_pay = $gross_pay - $thirteenth_month_amount;
                                             @endphp
-                                            {{number_format($payregs->sum('basic_pay') 
-                                            + $payregs->sum('deminimis') 
-                                            + $payregs->sum('other_allowances_basic_pay') 
-                                            + $payregs->sum('subliq')-$payregs->sum('absent_amount')-$payregs->sum('tardiness_amount')-$payregs->sum('undertime_amount')+$salary_adjustments_amount+$pay_instructions_amount,2)
-                                        }}
+                                            
+                                            @if($firstInstruction)
+                                                {{ number_format($firstInstruction->amount, 2) }}
+                                            @else
+                                                -
+                                            @endif
                                         </td>
-                                        @endif
-                                    @endfor
-                                    @php
-                                        if($employee->employee_code == "A3131019")
-                                        {
-                                            $salary_diff = 2848;
-                                        }
-                                        if($employee->employee_code == "A3167723")
-                                        {
-                                            $salary_diff = 26460.00;
-                                        }
-                                        if($employee->employee_code == "A3144920")
-                                        {
-                                            $salary_diff = 1290.08;
-                                        }
-                                        if($employee->employee_code == "A3150121")
-                                        {
-                                            $salary_diff =13080;
-                                        }
-                                        if($employee->employee_code == "A3167723")
-                                        {
-                                            $salary_diff =26460;
-                                        }
-                                        if($employee->employee_code == "A393916")
-                                        {
-                                            $salary_diff =38850;
-                                        }
-                                        if($employee->employee_code == "A3176524")
-                                        {
-                                            $for_release  =9914.41;
-                                        }
-	
-                                        $tax = 0;
-                                        // $pay_reg_id = ($employee->get_payreg())->pluck('id')->toArray();
-                                        // dd($pay_reg_id);
-                                       
-                                     
-                                        // $total_Payroll = $total_Payroll + $salary_adjustments_amount+$pay_instructions_amount;
-                                        // $total_Payroll = $total_Payroll;
-                                        
-                                        $payroll = ($total_Payroll+$salary_diff)/12;
-                                         
-                                        if($employee->employee_code == "A287819")
-                                        {
-                                            $tax =($payroll-$previous)*.05;
-                                        }
-                                        if($employee->employee_code == "A178517")
-                                        {
-                                            $tax =($payroll-$previous)*.05;
-                                        }
-                                        if($employee->employee_code == "A180518")
-                                        {
-                                            $tax =($payroll-$previous)*.05;
-                                        }
-                                        $first_release = $pay_rate / 2;
-                                        $gross_pay = $payroll-$previous-$tax-$for_release-$first_release;
-                                    @endphp
-                                    <td>{{number_format($total_Payroll,2)}}</td>
-                                    <td>{{number_format($salary_diff,2)}}</td>
-                                    <td>{{number_format($for_release,2)}}</td>
-                                    <td>{{number_format($tax,2)}}</td>
-									<td>{{number_format($payroll,2)}}</td>
-									<td>{{number_format($payroll,2)}}</td>
-									<td>{{number_format($payroll,2)}}</td>
-									<td>{{number_format($first_release,2)}}</td>
-									<td>{{number_format($gross_pay,2)}}</td>
-								</tr>
-                                @endforeach
-								
-							</tbody>
+                                        {{-- <td>{{number_format($first_release,2)}}</td> --}}
+                                        <td>{{number_format($final_gross_pay,2)}}</td>
+                                    </tr>
+                                    @endforeach
+                                    
+                                </tbody>
 							</table>
 						</div>
 					</div>
