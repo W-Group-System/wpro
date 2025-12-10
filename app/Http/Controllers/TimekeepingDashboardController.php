@@ -594,6 +594,18 @@ class TimekeepingDashboardController extends Controller
                     ->orderBy('id','asc');
                 }
             ])
+            ->with(['pending_obs' => function ($query) use ($date_from, $to_date) {
+                $query->whereBetween('applied_date', [$date_from, $to_date])
+                ->where('status','Pending')
+                ->orderBy('id','asc');
+            }])
+            ->with([
+                'pending_ots' => function($q) use ($date_from, $to_date) {
+                    $q->whereBetween('ot_date', [$date_from, $to_date])
+                        ->where('status','Pending')
+                        ->orderBy('ot_date','asc');
+                }
+            ])
             ->where('company_id', $request->company)
             ->when($department_data, function($q)use($department_data) {
                 $q->where('department_id', $department_data);
@@ -1595,12 +1607,29 @@ class TimekeepingDashboardController extends Controller
                     }
                 }
 
+                // Pending Leaves
                 $pending_leaves = HelperClass::employeePendingLeave($employee->pending_leaves,$date_r);
                 $pending_leave_count = 0;
                 if ($pending_leaves)
                 {
                     $count = explode('-', $pending_leaves);
                     $pending_leave_count = $count[0];
+                }
+
+                // Pending Overtime
+                $pending_ots = HelperClass::employeePendingOvertime($employee->pending_ots,$date_r);
+                $pending_ots_count = 0;
+                if($pending_ots)
+                {
+                    $pending_ots_count = 1;
+                }
+                
+                // Pending Obs
+                $pending_obs = HelperClass::employeePendingObs($employee->pending_obs,$date_r);
+                $pending_obs_count = 0;
+                if($pending_obs)
+                {
+                    $pending_obs_count = 1;
                 }
 
                 if ($total_reg_hrs <= 0)
@@ -1711,7 +1740,9 @@ class TimekeepingDashboardController extends Controller
                         'remarks' => $remarks,
                         'if_has_ob' => $if_has_ob ? 'Yes' : 'No',
                         'employee_id' => $employee->id,
-                        'pending_leave_count' => $pending_leave_count
+                        'pending_leave_count' => $pending_leave_count,
+                        'pending_ots_count' => $pending_ots_count,
+                        'pending_obs_count' => $pending_obs_count
                     ];
                 }
 
@@ -1786,6 +1817,18 @@ class TimekeepingDashboardController extends Controller
                     })
                     ->where('status','Pending')
                     ->orderBy('id','asc');
+                }
+            ])
+            ->with(['pending_obs' => function ($query) use ($date_from, $to_date) {
+                $query->whereBetween('applied_date', [$date_from, $to_date])
+                ->where('status','Pending')
+                ->orderBy('id','asc');
+            }])
+            ->with([
+                'pending_ots' => function($q) use ($date_from, $to_date) {
+                    $q->whereBetween('ot_date', [$date_from, $to_date])
+                        ->where('status','Pending')
+                        ->orderBy('ot_date','asc');
                 }
             ])
             ->where('company_id', $request->company)
@@ -2797,12 +2840,29 @@ class TimekeepingDashboardController extends Controller
                     $remarks = $if_leave;
                 }
 
+                // Pending Leaves
                 $pending_leaves = HelperClass::employeePendingLeave($employee->pending_leaves,$date_r);
                 $pending_leave_count = 0;
                 if ($pending_leaves)
                 {
                     $count = explode('-', $pending_leaves);
                     $pending_leave_count = $count[0];
+                }
+
+                // Pending Overtime
+                $pending_ots = HelperClass::employeePendingOvertime($employee->pending_ots,$date_r);
+                $pending_ots_count = 0;
+                if($pending_ots)
+                {
+                    $pending_ots_count = 1;
+                }
+
+                // Pending Obs
+                $pending_obs = HelperClass::employeePendingObs($employee->pending_obs,$date_r);
+                $pending_obs_count = 0;
+                if($pending_obs)
+                {
+                    $pending_obs_count = 1;
                 }
 
                 if ($total_reg_hrs <= 0)
@@ -2868,7 +2928,9 @@ class TimekeepingDashboardController extends Controller
                         'remarks' => $remarks,
                         'if_has_ob' => $if_has_ob ? 'Yes' : 'No',
                         'employee_id' => $employee->id,
-                        'pending_leave_count' => $pending_leave_count
+                        'pending_leave_count' => $pending_leave_count,
+                        'pending_ots_count' => $pending_ots_count,
+                        'pending_obs_count' => $pending_obs_count
                     ];
                 }
             }

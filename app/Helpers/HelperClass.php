@@ -234,4 +234,32 @@ class HelperClass {
 
         return $status;
     }
+    
+    public static function employeePendingOvertime($employeeOts=array(),$date)
+    {
+        $status = false;
+        foreach($employeeOts as $employeeOt)
+        {
+            if($date == date('Y-m-d', strtotime($employeeOt->ot_date)))
+            {
+                $status = true;
+            }
+        }
+
+        return $status;
+    }
+
+    public static function employeePendingObs($employeeObs=array(),$date)
+    {
+        $status = false;
+        foreach($employeeObs as $employeeOb)
+        {
+            if($date == date('Y-m-d', strtotime($employeeOb->applied_date)))
+            {
+                $status = true;
+            }
+        }
+
+        return $status;
+    }
 }
