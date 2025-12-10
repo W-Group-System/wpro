@@ -1273,11 +1273,7 @@
                                                     // Paid Legal Holiday for Daily Rate Employee
                                                     if($emp->work_description == "Non-Monthly")
                                                     {
-                                                        if($check_if_holiday == "Special Holiday")
-                                                        {
-                                                            $abs = 1;
-                                                        }
-                                                        else 
+                                                        if($check_if_holiday != "Special Holiday")
                                                         {
                                                             if($time_in)
                                                             {
