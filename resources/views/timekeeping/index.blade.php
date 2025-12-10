@@ -16,6 +16,10 @@
         opacity: .8;
         background-size: 120px 120px;
     }
+
+    .pendingLeave {
+        background-color: orange;
+    }
 </style>
 @endsection
 
@@ -79,8 +83,12 @@
                             <div class="tab-pane fade show active" id="pills-issues" role="tabpanel" aria-labelledby="pills-issues-tab">
                                 <div class="row mt-5">
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
-                                        <span>Absent</span>
+                                        <div class="bg-danger mx-2" style="width: 15px; height: 15px;"></div>
+                                        <span>Absent/Late/Undertime</span>
+                                        <div class="pendingLeave mx-2" style="width: 15px; height: 15px;"></div>
+                                        <span>Pending Leave/OT/OB</span>
+                                        <div class="bg-info mx-2" style="width: 15px; height: 15px;"></div>
+                                        <span>Approved OB</span>
                                     </div>
                         
                                     <div class="col-md-12">
@@ -169,9 +177,13 @@
                                         <button class="btn btn-lg btn-primary mt-3" type="submit">POST DTR</button>
                                         @endif --}}
 
-                                        <div class="d-flex align-items-center ml-2">
-                                            <div class="bg-danger" style="width: 15px; height: 15px; margin-right: 5px;"></div>
-                                            <span>Absent</span>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-danger mx-2" style="width: 15px; height: 15px;"></div>
+                                            <span>Absent/Late/Undertime</span>
+                                            <div class="pendingLeave mx-2" style="width: 15px; height: 15px;"></div>
+                                            <span>Pending Leave/OT/OB</span>
+                                            <div class="bg-info mx-2" style="width: 15px; height: 15px;"></div>
+                                            <span>Approved OB</span>
                                         </div>
                             
                                         <div class="col-md-12">
@@ -1533,6 +1545,10 @@
                 if (data.undertime > 0) {
                     $(row).find('td:eq(11)').addClass('bg-danger');
                 }
+                if (parseInt(data.pending_leave_count) > 0)
+                {
+                    $(row).find('td:eq(12)').addClass('pendingLeave')
+                }
                 if (data.overtime > 0) {
                     $(row).find('td:eq(13)').addClass('bg-warning');
                 }
@@ -1615,6 +1631,7 @@
                         $("[name='employee_id']").val(data.employee_id)
                         $("[name='date']").val(data.date)
                         $("[name='incident_report']").val("")
+                        $("[name='remarks']").val("")
 
                         if (data.time_in != "" && data.time_out != "")
                         {
@@ -1771,6 +1788,10 @@
                 }
                 if (data.undertime > 0) {
                     $(row).find('td:eq(12)').addClass('bg-danger');
+                }
+                if (parseInt(data.pending_leave_count) > 0)
+                {
+                    $(row).find('td:eq(13)').addClass('pendingLeave')
                 }
                 if (data.overtime > 0) {
                     $(row).find('td:eq(14)').addClass('bg-warning');

@@ -201,4 +201,37 @@ class HelperClass {
         }
         return $status;
     }
+
+    public static function employeePendingLeave($leaves=array(),$date)
+    {
+        // dd($leaves,$date);
+        $status="";
+        foreach($leaves as $leave)
+        {
+            if ($leave->withpay == 1)
+            {
+                if ($leave->halfday == 1)
+                {
+                    $status = "0.5-Withpay";
+                }
+                else 
+                {
+                    $status = "1-Withpay";
+                }
+            }
+            else 
+            {
+                if ($leave->halfday == 1)
+                {
+                    $status = "0.5-Withoutpay";
+                }
+                else 
+                {
+                    $status = "1-Withoutpay";
+                }
+            }
+        }
+
+        return $status;
+    }
 }

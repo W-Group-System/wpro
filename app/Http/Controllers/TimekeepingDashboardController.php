@@ -584,6 +584,16 @@ class TimekeepingDashboardController extends Controller
                 ->where('status','Approved')
                 ->orderBy('id','asc');
             }])
+            ->with([
+                'pending_leaves' => function ($query) use ($date_from, $to_date) {
+                    $query->where(function ($q) use ($date_from, $to_date) {
+                        $q->whereBetween('date_from', [$date_from, $to_date])
+                            ->orWhereBetween('date_to', [$date_from, $to_date]);
+                    })
+                    ->where('status','Pending')
+                    ->orderBy('id','asc');
+                }
+            ])
             ->where('company_id', $request->company)
             ->when($department_data, function($q)use($department_data) {
                 $q->where('department_id', $department_data);
@@ -1585,6 +1595,14 @@ class TimekeepingDashboardController extends Controller
                     }
                 }
 
+                $pending_leaves = HelperClass::employeePendingLeave($employee->pending_leaves,$date_r);
+                $pending_leave_count = 0;
+                if ($pending_leaves)
+                {
+                    $count = explode('-', $pending_leaves);
+                    $pending_leave_count = $count[0];
+                }
+
                 if ($total_reg_hrs <= 0)
                 {
                     $total_reg_hrs = 0;
@@ -1692,7 +1710,8 @@ class TimekeepingDashboardController extends Controller
                         'rst_sh_ot_nd_ge'=> number_format($rst_sh_ot_nd_ge,2),
                         'remarks' => $remarks,
                         'if_has_ob' => $if_has_ob ? 'Yes' : 'No',
-                        'employee_id' => $employee->id
+                        'employee_id' => $employee->id,
+                        'pending_leave_count' => $pending_leave_count
                     ];
                 }
 
@@ -1759,6 +1778,16 @@ class TimekeepingDashboardController extends Controller
                 ->where('status','Approved')
                 ->orderBy('id','asc');
             }])
+            ->with([
+                'pending_leaves' => function ($query) use ($date_from, $to_date) {
+                    $query->where(function ($q) use ($date_from, $to_date) {
+                        $q->whereBetween('date_from', [$date_from, $to_date])
+                            ->orWhereBetween('date_to', [$date_from, $to_date]);
+                    })
+                    ->where('status','Pending')
+                    ->orderBy('id','asc');
+                }
+            ])
             ->where('company_id', $request->company)
             ->when($department_data, function($q)use($department_data) {
                 $q->where('department_id', $department_data);
@@ -2768,6 +2797,14 @@ class TimekeepingDashboardController extends Controller
                     $remarks = $if_leave;
                 }
 
+                $pending_leaves = HelperClass::employeePendingLeave($employee->pending_leaves,$date_r);
+                $pending_leave_count = 0;
+                if ($pending_leaves)
+                {
+                    $count = explode('-', $pending_leaves);
+                    $pending_leave_count = $count[0];
+                }
+
                 if ($total_reg_hrs <= 0)
                 {
                     $total_reg_hrs = 0;
@@ -2830,7 +2867,8 @@ class TimekeepingDashboardController extends Controller
                         'rst_sh_ot_nd_ge'=> number_format($rst_sh_ot_nd_ge,2),
                         'remarks' => $remarks,
                         'if_has_ob' => $if_has_ob ? 'Yes' : 'No',
-                        'employee_id' => $employee->id
+                        'employee_id' => $employee->id,
+                        'pending_leave_count' => $pending_leave_count
                     ];
                 }
             }
