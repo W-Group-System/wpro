@@ -1280,8 +1280,11 @@
                                                                 if ($time_in->time_in != null)
                                                                 {
                                                                     $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
-                                                                    $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
-                                                                    $work = $work-1;
+                                                                    if ($employee_schedule_before->time_in_to != null)
+                                                                    {
+                                                                        $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
+                                                                        $work = $work-1;
+                                                                    }
                                                                 }
                                                             }
                                                         }
