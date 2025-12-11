@@ -1837,3 +1837,24 @@ function checkUsedPvl($id, $leave_id)
     
     return $used_pvl;
 }
+
+function employeeScheduleV2($schedules = array(), $dailySchedule=array(), $check_date, $schedule_id, $empNum=""){
+    if (count($dailySchedule) > 0){
+        foreach($dailySchedule as $item){
+            if ($item['log_date'] == $check_date && $item['employee_code'] == $empNum) {
+                return $item;
+            }
+        }
+    }
+    
+    $schedule_name = date('l',strtotime($check_date));
+    if(count($schedules) > 0){
+        foreach($schedules as $item){
+            if (isset($item['schedule_id'], $item['name'])) {
+                if($item['schedule_id'] == $schedule_id && $item['name'] == $schedule_name){
+                    return $item;
+                }
+            }
+        }
+    }
+}
