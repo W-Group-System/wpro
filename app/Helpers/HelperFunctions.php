@@ -967,7 +967,12 @@ function getLastWorkingDay($date, $location, $schedules, $schedule_id, $employee
             $employee_code
         );
 
-        if (!checkIfHoliday($date, $location) && isRestDayBySchedule($schedule_for_day) == 0) {
+        if ($schedule_for_day) {
+            $is_rest_day = isRestDayBySchedule($schedule_for_day);
+        } else {
+            $is_rest_day = isRestDay($date);
+        }
+        if (!checkIfHoliday($date, $location) && $is_rest_day == 0) {
             return $date;
         }
         $date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
