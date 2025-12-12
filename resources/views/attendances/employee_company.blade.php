@@ -1015,17 +1015,8 @@
                                                     $restnd_ge=0;
                                                     $restday_ot= 0;
                                                     $restday_ot_ge= 0;
-                                                    
                                                     // dd($check_if_holiday);
-                                                //   $work = $schedule_hours;
-                                                    $last_working_day = getLastWorkingDay(date('Y-m-d',strtotime($date_r)),$emp->location, $schedules,$emp->schedule_id,$emp->employee_code);
-                                                    $time_in_new = checkHasAttendanceHolidayStatus($emp->attendances, $last_working_day);
-
-                                                    if ($time_in_new == '') {
-                                                        $work = 0;
-                                                    } else {
-                                                        $work = $schedule_hours;
-                                                    }
+                                                  $work = $schedule_hours;
                                                 //   if ($work >= 7)
                                                 //   {
                                                 //     $work = $work-1;
@@ -1289,20 +1280,10 @@
                                                                 if ($time_in->time_in != null)
                                                                 {
                                                                     $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
-                                                                    if ($employee_schedule_before && $employee_schedule_before->time_in_to != null)
+                                                                    if ($employee_schedule_before->time_in_to != null)
                                                                     {
-                                                                        // $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
-                                                                        // $work = $work-1;
-                                                                        $timeIn  = strtotime($employee_schedule_before->time_in_to);
-                                                                        $timeOut = strtotime($employee_schedule_before->time_out_to);
-
-                                                                        if ($timeOut < $timeIn) {
-                                                                            $timeOut += 24 * 3600;
-                                                                        }
-
-                                                                        $work = ($timeOut - $timeIn) / 3600;
-
-                                                                        $work = $work - 1;
+                                                                        $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
+                                                                        $work = $work-1;
                                                                     }
                                                                 }
                                                             }
