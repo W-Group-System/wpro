@@ -413,7 +413,16 @@
                                                                     }
                                                                     if($employee_schedule_before == null)
                                                                     {
-                                                                        $abs = 0;
+                                                                        // $abs = 0;
+                                                                        $attendance = ($emp->attendances)->whereBetween('time_in',[$if_attendance_holiday.' 00:00:00', $if_attendance_holiday." 23:59:59"]);
+                                                                        if(count($attendance) == 0)
+                                                                        {
+                                                                            $abs=1;
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
                                                                     
                                                                     }
                                                                     else {
