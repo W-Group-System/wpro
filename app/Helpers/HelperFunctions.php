@@ -957,6 +957,17 @@ function checkHasAttendanceHolidayStatus($attendances=array(),$check_date){
     return $status;
 }
 
+function getLastWorkingDay($date, $location) {
+    $date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
+    for ($i = 0; $i < 7; $i++) { 
+        if (!checkIfHoliday($date, $location) && isRestDay($date) == 0) {
+            return $date;
+        }
+        $date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
+    }
+    return null; 
+}
+
 function checkEmployeeLeaveCredits($user_id, $leave_type){
     $employee_leave = EmployeeLeaveCredit::where('user_id',$user_id)
                                     ->where('leave_type',$leave_type)
