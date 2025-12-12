@@ -1019,9 +1019,9 @@
                                                     // dd($check_if_holiday);
                                                 //   $work = $schedule_hours;
                                                     $last_working_day = getLastWorkingDay(date('Y-m-d',strtotime($date_r)),$emp->location);
-                                                    $time_in = checkHasAttendanceHolidayStatus($emp->attendances, $last_working_day);
+                                                    $time_in_new = checkHasAttendanceHolidayStatus($emp->attendances, $last_working_day);
 
-                                                    if ($time_in == '') {
+                                                    if ($time_in_new == '') {
                                                         $work = 0;
                                                     } else {
                                                         $work = $schedule_hours;
