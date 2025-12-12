@@ -19,7 +19,7 @@
                                     <th>Company</th>
                                     <th>Department</th>
                                     <th>Date of Availment</th>
-                                    <th>Status</th>
+                                    <th>Status</th> 
                                     <th>Action</th>
                                 </tr>
                             </thead>
