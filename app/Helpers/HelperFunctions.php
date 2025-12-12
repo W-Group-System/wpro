@@ -957,15 +957,41 @@ function checkHasAttendanceHolidayStatus($attendances=array(),$check_date){
     return $status;
 }
 
-function getLastWorkingDay($date, $location) {
+function getLastWorkingDay($date, $location, $schedules, $schedule_id, $employee_code) {
     $date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
     for ($i = 0; $i < 7; $i++) { 
-        if (!checkIfHoliday($date, $location) && isRestDay($date) == 0) {
+       $schedule_for_day = employeeSchedule(
+            $schedules,
+            $date,
+            $schedule_id,
+            $employee_code
+        );
+
+        if (!checkIfHoliday($date, $location) && isRestDayBySchedule($schedule_for_day) == 0) {
             return $date;
         }
         $date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
     }
     return null; 
+}
+
+function isRestDayBySchedule($schedule_for_day) {
+
+    if (!$schedule_for_day) {
+       
+        return 0;
+    }
+
+    if (
+        empty($schedule_for_day->time_in_from) &&
+        empty($schedule_for_day->time_in_to) &&
+        empty($schedule_for_day->time_out_from) &&
+        empty($schedule_for_day->time_out_to)
+    ) {
+        return 1; 
+    }
+
+    return 0; 
 }
 
 function checkEmployeeLeaveCredits($user_id, $leave_type){
