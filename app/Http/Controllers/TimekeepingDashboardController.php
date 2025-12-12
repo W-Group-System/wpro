@@ -433,13 +433,8 @@ class TimekeepingDashboardController extends Controller
         //     $dtr_status->save();
         // }
 
-        // Alert::success('Successfully Saved')->persistent('Dismiss');
-        // return back();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully Saved'
-        ]);
+        Alert::success('Successfully Saved')->persistent('Dismiss');
+        return back();
     }
 
     public function forApprovalView()
@@ -537,7 +532,7 @@ class TimekeepingDashboardController extends Controller
                     $q->whereBetween('date',[$date_from,$to_date])->where('status','Pending');
                 }
             ])
-            // ->with(['dtr_correction_approver.user'])
+            ->with(['dtr_correction.dtr_correction_approver.user'])
             ->with([
                 'attendance_logs' => function($q) use ($date_from, $to_date) {
                     $q->select('id','emp_code','date','datetime')
@@ -589,7 +584,7 @@ class TimekeepingDashboardController extends Controller
             ])
             ->where('company_id', $request->company)
             ->where('status','Active')
-            // ->where('employee_code','A3176324')
+            ->where('employee_code','A3176324')
             ->orderBy('last_name','asc')
             ->get();
         
@@ -3072,12 +3067,12 @@ class TimekeepingDashboardController extends Controller
             $dtr_status->save();
         }
 
-        // Alert::success('Successfully Moved')->persistent('Dismiss');
-        // return back();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully Move to for posting'
-        ]);
+        Alert::success('Successfully moved to for posting')->persistent('Dismiss');
+        return back();
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Successfully Move to for posting'
+        // ]);
     }
 
     public function refreshDate(Request $request)

@@ -136,6 +136,9 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @php
+                                                        $total_issues = 0;
+                                                    @endphp
                                                     @foreach ($employees as $employee)
                                                         @foreach ($date_range as $date_r)
                                                             @php
@@ -1177,6 +1180,7 @@
                                                                 $isIssues = false;
                                                                 if (($pending_dtr == 0) && ($for_posting == 0) && (($abs > 0) || ($approved_ot_hrs) || ($revert > 0) || ($cancelled_dtr > 0) || ($if_has_ob)))
                                                                 {
+                                                                    $total_issues+=1;
                                                                     $isIssues = true;
                                                                 }
 
@@ -1184,7 +1188,28 @@
 
                                                             @if($isIssues)
                                                             <tr>
-                                                                <td></td>
+                                                                <td>
+                                                                    @php
+                                                                        $attendance_date = str_replace("-","",$date_r);
+                                                                    @endphp
+
+                                                                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editTimekeepingModal{{ $employee->id }}{{$attendance_date}}">
+                                                                        <i class="ti-pencil"></i>
+                                                                        Edit
+                                                                    </button>
+
+                                                                    <form method="POST" action="{{ url('timekeeping-official/moveToForPosting') }}" id="moveToForPostingForm{{ $employee->id }}{{ $attendance_date }}" class="d-inline-block" onsubmit="show()">
+                                                                        @csrf
+                                                                        
+                                                                        <input type="hidden" name="employee_id" value="{{ $employee->id }}">
+                                                                        <input type="hidden" name="date" value="{{ $date_r }}">
+
+                                                                        <button type="button" class="btn btn-sm btn-success" onclick="moveToForPosting({{ $employee->id }},{{$attendance_date}})">
+                                                                            <i class="ti-arrow-right"></i>
+                                                                            Move to for posting
+                                                                        </button>
+                                                                    </form>
+                                                                </td>
                                                                 <td>{{ $employee->company->company_code }}</td>
                                                                 <td>{{$employee->employee_code}}</td>
                                                                 <td>{{ $employee->last_name.' '.$employee->first_name }}</td>
@@ -1253,8 +1278,14 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @php
+                                                        $total_pending_approval = 0;
+                                                    @endphp
                                                     @foreach ($employees as $employee)
                                                         @foreach ($employee->dtr_correction as $dtr_correction)
+                                                            @php
+                                                                $total_pending_approval++;
+                                                            @endphp
                                                             <tr>
                                                                 <td>{{$dtr_correction->employee->company->company_code}}</td>
                                                                 <td>{{$dtr_correction->employee->employee_code}}</td>
@@ -1347,6 +1378,9 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                        @php
+                                                            $total_for_posting = 0;
+                                                        @endphp
                                                         @foreach ($employees as $employee)
                                                             @foreach ($date_range as $date_r)
                                                                 @php
@@ -2371,13 +2405,22 @@
                                                                     if(($abs == 0) && (!$approved_ot_hrs) && ($revert == 0) && ($pending_dtr == 0) && (!$if_has_ob) || (($for_posting > 0)))
                                                                     {
                                                                         $isForPosting = true;
+                                                                        $total_for_posting++;
                                                                     }
                                                                 @endphp
                                                                 
                                                                 @if($isForPosting)
                                                                 <tr>
                                                                     <td></td>
-                                                                    <td></td>
+                                                                    <td>
+                                                                        @php
+                                                                            $date = str_replace("-","",$date_r);
+                                                                        @endphp
+                                                                        {{-- <form method="post" action="{{ url('/timekeeping-official/dtrStatus') }}" id="revertForm{{$employee->id}}{{$date}}">
+                                                                            @csrf
+                                                                        </form> --}}
+                                                                        <button type="button" class="btn btn-danger" onclick="revertFunction({{ $employee->id }}, {{ $date }})">Revert</button>
+                                                                    </td>
                                                                     <td>{{ $employee->company->company_code }}</td>
                                                                     <td>{{$employee->employee_code}}</td>
                                                                     <td>{{ $employee->last_name.' '.$employee->first_name }}</td>
@@ -2433,68 +2476,116 @@
     </div>
 </div>
 
-@include('timekeeping.edit_timekeeping')
-{{-- @foreach ($employees as $employee)
-@foreach ($date_range as $date_r)
+@foreach ($employees as $employee)
+    @foreach ($date_range as $date_r)
+        @php
+            $attendance_date = str_replace("-","",$date_r);
+        @endphp
+
+        @include('timekeeping.edit_timekeeping')
+    @endforeach
 @endforeach
-@endforeach --}}
-
-{{-- // @php
-// var total_issues = "<?php echo($total_issues) ?>"
-// var total_for_posting = "<?php echo($total_for_posting) ?>"
-// var total_pending_approval = "<?php echo($total_pending_approval) ?>"
-
-// document.getElementById('totalIssues').innerText = total_issues
-// document.getElementById('totalForPosting').innerText = total_for_posting
-// document.getElementById('totalPendingApproval').innerText = total_pending_approval
-// @endphp --}}
 @endsection
 
 @section('js')
+<script>
+    var total_issues = "<?php echo($total_issues) ?>"
+    document.getElementById('totalIssues').innerText = total_issues
+
+    var total_pending_approval = "<?php echo($total_pending_approval) ?>"
+    document.getElementById('totalPendingApproval').innerText = total_pending_approval
+
+    var total_for_posting = "<?php echo($total_for_posting) ?>"
+    document.getElementById('totalForPosting').innerText = total_for_posting
+</script>
 {{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script> --}}
 <script>
-    // function revertFunction(employeeId, date)
-    // {
-    //     Swal.fire({
-    //         title: "Are you sure?",
-    //         text: "You won't be able to revert this!",
-    //         icon: "warning",
-    //         showCancelButton: true,
-    //         confirmButtonColor: "#3085d6",
-    //         cancelButtonColor: "#d33",
-    //         confirmButtonText: "Yes, revert it!"
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             // document.getElementById('revertForm'+employeeId).submit()
-    //             $.ajax({
-    //                 type: "POST",
-    //                 url: "{{ url('timekeeping-official/dtrStatus') }}",
-    //                 data: {
-    //                     employee: employeeId,
-    //                     date: date,
-    //                     _token: "{{ csrf_token() }}"
-    //                 },
-    //                 beforeSend: function(){
-    //                     show()
-    //                 },
-    //                 success: function() {
-    //                     Swal.fire({
-    //                         title: "Successfully Revert",
-    //                         icon: "success"
-    //                     });
+    function revertFunction(employeeId, date)
+    {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, revert it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // document.getElementById('revertForm'+employeeId+date).submit()
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('timekeeping-official/dtrStatus') }}",
+                    data: {
+                        employee: employeeId,
+                        date: date,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    beforeSend: function(){
+                        show()
+                    },
+                    success: function() {
+                        Swal.fire({
+                            title: "Successfully Revert",
+                            icon: "success"
+                        });
 
-    //                     setTimeout(() => {
-    //                         location.reload()
-    //                     },200)
-    //                 }
-    //             })
-    //         }
-    //     });
-    // }
+                        hide()
+
+                        setTimeout(() => {
+                            location.reload()
+                        },1000)
+                    }
+                })
+            }
+        });
+    }
+
+    function moveToForPosting(employeeId,date)
+    {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, move it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // document.getElementById('moveToForPostingForm'+employeeId+date).submit()
+
+                $.ajax({
+                    type:"POST",
+                    url:"{{ url('timekeeping-official/moveToForPosting') }}",
+                    data: {
+                        employee_id: employee.employee,
+                        date: employee.date,
+                        _token:"{{ csrf_token() }}"
+                    },
+                    beforeSend: function() {
+                        show()
+                    },
+                    success: function(response) {
+                        if (response.status == "success") {
+                            Swal.fire({
+                                title: response.message,
+                                icon: "success"
+                            });
+
+                            issueTable.ajax.reload()
+                            forPostingTable.ajax.reload()
+                            hide()
+                        }
+                    }
+                })
+            }
+        });
+    }
 
     $(document).ready(function() {
         // var issueTable = $('.issuesTable').DataTable({
@@ -3108,11 +3199,15 @@
         // })
 
         $('.issuesTable').DataTable({
-            
+            ordering:false
         });
 
         $('.forPostingTable').DataTable({
-            
+            ordering:false
+        });
+
+        $('#pendingApprovalTable').DataTable({
+            ordering:false
         });
     })
 </script>
