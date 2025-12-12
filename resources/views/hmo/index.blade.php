@@ -20,9 +20,7 @@
                                     <th>Department</th>
                                     <th>Date of Availment</th>
                                     <th>Status</th>
-                                    @if($availment->status != 'Approved')
-                                        <th>Action</th>
-                                    @endif
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
