@@ -1907,3 +1907,52 @@ function employeeScheduleV2($schedules = array(), $dailySchedule=array(), $check
         }
     }
 }
+
+function employeePendingLeave($leaves=array(),$date)
+{
+    $status = 0;
+    foreach($leaves as $leave)
+    {
+        if (date('Y-m-d', strtotime($leave->date_from)) == $date)
+        {
+            if ($leave->halfday == 0)
+            {
+                $status = 1;
+            }
+            else 
+            {
+                $status = 0.5;
+            }
+        }
+    }
+
+    return $status;
+}
+
+function employeePendingOvertime($overtime=array(),$date)
+{
+    $status = 0;
+    foreach($overtime as $ot)
+    {
+        if (date('Y-m-d', strtotime($ot->ot_date)) == $date)
+        {
+            $status = 1;
+        }
+    }
+
+    return $status;
+}
+
+function employeePendingObs($obs=array(),$date)
+{
+    $status = 0;
+    foreach($obs as $ob)
+    {
+        if (date('Y-m-d', strtotime($ob->applied_date)) == $date)
+        {
+            $status = 1;
+        }
+    }
+
+    return $status;
+}
