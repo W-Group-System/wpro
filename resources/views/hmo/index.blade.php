@@ -19,7 +19,7 @@
                                     <th>Company</th>
                                     <th>Department</th>
                                     <th>Date of Availment</th>
-                                    <th>Status</th>
+                                    <th>Status</th> 
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -33,13 +33,15 @@
                                     <td>{{date('M. d, Y',strtotime($availment->date_availment))}}</td>
                                     <td>{{ $availment->status }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-info btn-rounded btn-icon" href="#edit_hmo{{$availment->id}}" data-toggle="modal" title='EDIT'>
-                                            <i class="ti-pencil-alt"></i>
-                                        </button>
-                                        <button title='Delete Availment' id="{{ $availment->id }}" onclick="remove({{$availment->id}})"
-                                            class="btn btn-rounded btn-danger btn-icon">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
+                                        @if($availment->status != 'Approved')
+                                            <button type="button" class="btn btn-info btn-rounded btn-icon" href="#edit_hmo{{$availment->id}}" data-toggle="modal" title='EDIT'>
+                                                <i class="ti-pencil-alt"></i>
+                                            </button>
+                                            <button title='Delete Availment' id="{{ $availment->id }}" onclick="remove({{$availment->id}})"
+                                                class="btn btn-rounded btn-danger btn-icon">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

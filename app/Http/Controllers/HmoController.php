@@ -294,9 +294,9 @@ class HmoController extends Controller
         $details = [
             'subject'  => 'Document Submission: HMO Proof of Availment',
             'greeting' => 'Hi ' . $employee->first_name . ',',
-            'body'     => 'We are reviewing our HMO billing and have identified an availment on <strong>' . 
+            'body'     => 'We are currently reviewing our HMO records and have identified an availment dated <strong>' . 
                             date('F j, Y', strtotime($request->availment_date)) . 
-                            '</strong>. Please provide documentation to confirm the use as part of our validation. Acceptable documents include LOA, hospital/clinic appointment slip, referral form, or similar.<br><br>
+                            '</strong>. Please provide supporting documentation to confirm this transaction as part of our validation process. Kindly note that failure to comply within three (3) working days may result in a salary deduction. Acceptable documents include LOA, hospital/clinic appointment slip, referral form, or similar.<br><br>
                             Once you click the <a href="' . url('/hmo') . '">Submit</a> button, you will be directed to W Pro to attach the required documents.',
             'thanks'   => 'If you have any questions or concerns, please contact the HR Department.',
         ];

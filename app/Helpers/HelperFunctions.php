@@ -393,7 +393,14 @@ function night_difference_per_company($start_work, $end_work)
             return ($end_work - $start_work) / 3600;
         }
     } elseif ($start_work < $night_start && $end_work >= $night_end) {
-        return ($night_end - $night_start) / 3600;
+        if ($start_work < $night_start)
+        {
+            return ($night_end - $start_work) / 3600;
+        }
+        else 
+        {
+            return ($night_end - $night_start) / 3600;
+        }
     }
 
     return 0; // Default case when no night shift overlap
@@ -955,6 +962,48 @@ function checkHasAttendanceHolidayStatus($attendances=array(),$check_date){
         }
     }
     return $status;
+}
+
+function getLastWorkingDay($date, $location, $schedules, $schedule_id, $employee_code) {
+    $date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
+    for ($i = 0; $i < 7; $i++) { 
+       $schedule_for_day = employeeSchedule(
+            $schedules,
+            $date,
+            $schedule_id,
+            $employee_code
+        );
+
+        if ($schedule_for_day) {
+            $is_rest_day = isRestDayBySchedule($schedule_for_day);
+        } else {
+            $is_rest_day = isRestDay($date);
+        }
+        if (!checkIfHoliday($date, $location) && $is_rest_day == 0) {
+            return $date;
+        }
+        $date = date('Y-m-d', strtotime('-1 day', strtotime($date)));
+    }
+    return null; 
+}
+
+function isRestDayBySchedule($schedule_for_day) {
+
+    if (!$schedule_for_day) {
+       
+        return 0;
+    }
+
+    if (
+        empty($schedule_for_day->time_in_from) &&
+        empty($schedule_for_day->time_in_to) &&
+        empty($schedule_for_day->time_out_from) &&
+        empty($schedule_for_day->time_out_to)
+    ) {
+        return 1; 
+    }
+
+    return 0; 
 }
 
 function checkEmployeeLeaveCredits($user_id, $leave_type){

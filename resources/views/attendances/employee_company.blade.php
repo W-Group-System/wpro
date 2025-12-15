@@ -413,7 +413,16 @@
                                                                     }
                                                                     if($employee_schedule_before == null)
                                                                     {
-                                                                        $abs = 0;
+                                                                        // $abs = 0;
+                                                                        $attendance = ($emp->attendances)->whereBetween('time_in',[$if_attendance_holiday.' 00:00:00', $if_attendance_holiday." 23:59:59"]);
+                                                                        if(count($attendance) == 0)
+                                                                        {
+                                                                            $abs=1;
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
                                                                     
                                                                     }
                                                                     else {
@@ -1280,10 +1289,25 @@
                                                                 if ($time_in->time_in != null)
                                                                 {
                                                                     $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
-                                                                    if ($employee_schedule_before->time_in_to != null)
+                                                                    
+                                                                    if ($employee_schedule_before->time_in_to > $employee_schedule_before->time_out_to)
                                                                     {
-                                                                        $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
-                                                                        $work = $work-1;
+                                                                        $schedule_in = strtotime($date_r." ".$employee_schedule_before->time_in_to);
+                                                                        $schedule_out = strtotime($date_r." ".$employee_schedule_before->time_out_to)+86400;
+                                                                        // dd($schedule_in, $schedule_out);
+                                                                        if ($employee_schedule_before->time_in_to != null)
+                                                                        {
+                                                                            $work = ($schedule_out-$schedule_in)/3600;
+                                                                            $work = $work-1;
+                                                                        }
+                                                                    }
+                                                                    else 
+                                                                    {
+                                                                        if ($employee_schedule_before->time_in_to != null)
+                                                                        {
+                                                                            $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
+                                                                            $work = $work-1;
+                                                                        }
                                                                     }
                                                                 }
                                                             }
