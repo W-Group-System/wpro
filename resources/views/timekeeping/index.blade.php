@@ -18,7 +18,7 @@
     }
 
     .pendingLeave {
-        background-color: orange;
+        background-color: #f86f54;
     }
 </style>
 @endsection
@@ -1118,30 +1118,29 @@
                                                                     }
                                                                 }
 
-                                                                // // Pending Leaves
-                                                                // $pending_leaves = employeePendingLeave($employee->pending_leaves,$date_r);
-                                                                // $pending_leave_count = 0;
-                                                                // if ($pending_leaves)
-                                                                // {
-                                                                //     $count = explode('-', $pending_leaves);
-                                                                //     $pending_leave_count = $count[0];
-                                                                // }
+                                                                // Pending Leaves
+                                                                $pending_leaves = employeePendingLeave($employee->pending_leaves,$date_r);
+                                                                $pending_leave_count = 0;
+                                                                if ($pending_leaves)
+                                                                {
+                                                                    $pending_leave_count = $pending_leaves;
+                                                                }
 
-                                                                // // Pending Overtime
-                                                                // $pending_ots = employeePendingOvertime($employee->pending_ots,$date_r);
-                                                                // $pending_ots_count = 0;
-                                                                // if($pending_ots)
-                                                                // {
-                                                                //     $pending_ots_count = 1;
-                                                                // }
+                                                                // Pending Overtime
+                                                                $pending_ots = employeePendingOvertime($employee->pending_ots,$date_r);
+                                                                $pending_ots_count = 0;
+                                                                if($pending_ots)
+                                                                {
+                                                                    $pending_ots_count = $pending_ots;
+                                                                }
                                                                 
                                                                 // // Pending Obs
-                                                                // $pending_obs = employeePendingObs($employee->pending_obs,$date_r);
-                                                                // $pending_obs_count = 0;
-                                                                // if($pending_obs)
-                                                                // {
-                                                                //     $pending_obs_count = 1;
-                                                                // }
+                                                                $pending_obs = employeePendingObs($employee->pending_obs,$date_r);
+                                                                $pending_obs_count = 0;
+                                                                if($pending_obs)
+                                                                {
+                                                                    $pending_obs_count = $pending_obs;
+                                                                }
 
                                                                 if ($total_reg_hrs <= 0)
                                                                 {
@@ -1218,14 +1217,14 @@
                                                                 <td>{{ $employee->last_name.' '.$employee->first_name }}</td>
                                                                 <td>{{ $date_r }}</td>
                                                                 <td><small>{{ $schedule_display }}</small></td>
-                                                                <td @if($if_has_ob) class="bg-info" @endif>@if($final_time_in){{date('h:i A', strtotime($final_time_in))}} @endif</td>
-                                                                <td @if($if_has_ob) class="bg-info" @endif>@if($final_time_out){{date('h:i A', strtotime($final_time_out))}} @endif</td>
+                                                                <td @if($if_has_ob) class="bg-info" @endif @if($pending_obs_count) class="pendingLeave" @endif>@if($final_time_in){{date('h:i A', strtotime($final_time_in))}} @endif</td>
+                                                                <td @if($if_has_ob) class="bg-info" @endif @if($pending_obs_count) class="pendingLeave" @endif>@if($final_time_out){{date('h:i A', strtotime($final_time_out))}} @endif</td>
                                                                 <td @if($abs-$leave_count > 0) class="bg-danger" @endif>{{ number_format($abs, 2) }}</td>
                                                                 <td>{{  round($total_reg_hrs,2) }}</td>
                                                                 <td @if($late > 0) class="bg-danger" @endif>{{ $late }}</td>
                                                                 <td @if($undertime > 0) class="bg-danger" @endif>{{ number_format($undertime,2) }}</td>
-                                                                <td>{{ number_format($leave,2) }}</td>
-                                                                <td @if($overtime > 0) class="bg-warning" @endif>{{ number_format($overtime,2) }}</td>
+                                                                <td @if($pending_leave_count > 0) class="pendingLeave" @endif>{{ number_format($leave,2) }}</td>
+                                                                <td @if($overtime > 0) class="bg-warning" @endif @if($pending_ots_count) class="pendingLeave" @endif>{{ number_format($overtime,2) }}</td>
                                                                 <td @if($night_diff > 0) class="bg-warning" @endif>{{ number_format($night_diff,2) }}</td>
                                                                 <td @if($night_diff_ot > 0) class="bg-warning" @endif>{{ number_format($night_diff_ot,2) }}</td>
                                                                 <td @if($restday_ot > 0) class="bg-warning" @endif>{{ number_format($restday_ot,2) }}</td>
@@ -2385,30 +2384,29 @@
                                                                         $remarks = $if_leave;
                                                                     }
 
-                                                                    // // Pending Leaves
-                                                                    // $pending_leaves = HelperClass::employeePendingLeave($employee->pending_leaves,$date_r);
-                                                                    // $pending_leave_count = 0;
-                                                                    // if ($pending_leaves)
-                                                                    // {
-                                                                    //     $count = explode('-', $pending_leaves);
-                                                                    //     $pending_leave_count = $count[0];
-                                                                    // }
+                                                                    // Pending Leaves
+                                                                    $pending_leaves = employeePendingLeave($employee->pending_leaves,$date_r);
+                                                                    $pending_leave_count = 0;
+                                                                    if ($pending_leaves)
+                                                                    {
+                                                                        $pending_leave_count = $pending_leaves;
+                                                                    }
 
-                                                                    // // Pending Overtime
-                                                                    // $pending_ots = HelperClass::employeePendingOvertime($employee->pending_ots,$date_r);
-                                                                    // $pending_ots_count = 0;
-                                                                    // if($pending_ots)
-                                                                    // {
-                                                                    //     $pending_ots_count = 1;
-                                                                    // }
-
+                                                                    // Pending Overtime
+                                                                    $pending_ots = employeePendingOvertime($employee->pending_ots,$date_r);
+                                                                    $pending_ots_count = 0;
+                                                                    if($pending_ots)
+                                                                    {
+                                                                        $pending_ots_count = $pending_ots;
+                                                                    }
+                                                                    
                                                                     // // Pending Obs
-                                                                    // $pending_obs = HelperClass::employeePendingObs($employee->pending_obs,$date_r);
-                                                                    // $pending_obs_count = 0;
-                                                                    // if($pending_obs)
-                                                                    // {
-                                                                    //     $pending_obs_count = 1;
-                                                                    // }
+                                                                    $pending_obs = employeePendingObs($employee->pending_obs,$date_r);
+                                                                    $pending_obs_count = 0;
+                                                                    if($pending_obs)
+                                                                    {
+                                                                        $pending_obs_count = $pending_obs;
+                                                                    }
 
                                                                     if ($total_reg_hrs <= 0)
                                                                     {
@@ -2446,14 +2444,14 @@
                                                                     <td>{{ $employee->last_name.' '.$employee->first_name }}</td>
                                                                     <td>{{ $date_r }}</td>
                                                                     <td><small>{{ $schedule_display }}</small></td>
-                                                                    <td @if($if_has_ob) class="bg-info" @endif>@if($final_time_in){{date('h:i A', strtotime($final_time_in))}} @endif</td>
-                                                                    <td @if($if_has_ob) class="bg-info" @endif>@if($final_time_out){{date('h:i A', strtotime($final_time_out))}} @endif</td>
+                                                                    <td @if($if_has_ob) class="bg-info" @endif @if($pending_obs_count) class="pendingLeave" @endif>@if($final_time_in){{date('h:i A', strtotime($final_time_in))}} @endif</td>
+                                                                    <td @if($if_has_ob) class="bg-info" @endif @if($pending_obs_count) class="pendingLeave" @endif>@if($final_time_out){{date('h:i A', strtotime($final_time_out))}} @endif</td>
                                                                     <td @if($abs-$leave_count > 0) class="bg-danger" @endif>{{ number_format($abs, 2) }}</td>
                                                                     <td>{{  round($total_reg_hrs,2) }}</td>
                                                                     <td @if($late > 0) class="bg-danger" @endif>{{ $late }}</td>
                                                                     <td @if($undertime > 0) class="bg-danger" @endif>{{ number_format($undertime,2) }}</td>
-                                                                    <td>{{ number_format($leave,2) }}</td>
-                                                                    <td @if($overtime > 0) class="bg-warning" @endif>{{ number_format($overtime,2) }}</td>
+                                                                    <td @if($pending_leave_count > 0) class="pendingLeave" @endif>{{ number_format($leave,2) }}</td>
+                                                                    <td @if($overtime > 0) class="bg-warning" @endif  @if($pending_ots_count) class="pendingLeave" @endif>{{ number_format($overtime,2) }}</td>
                                                                     <td @if($night_diff > 0) class="bg-warning" @endif>{{ number_format($night_diff,2) }}</td>
                                                                     <td @if($night_diff_ot > 0) class="bg-warning" @endif>{{ number_format($night_diff_ot,2) }}</td>
                                                                     <td @if($restday_ot > 0) class="bg-warning" @endif>{{ number_format($restday_ot,2) }}</td>
