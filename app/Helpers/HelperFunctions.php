@@ -393,7 +393,14 @@ function night_difference_per_company($start_work, $end_work)
             return ($end_work - $start_work) / 3600;
         }
     } elseif ($start_work < $night_start && $end_work >= $night_end) {
-        return ($night_end - $night_start) / 3600;
+        if ($start_work < $night_start)
+        {
+            return ($night_end - $start_work) / 3600;
+        }
+        else 
+        {
+            return ($night_end - $night_start) / 3600;
+        }
     }
 
     return 0; // Default case when no night shift overlap
