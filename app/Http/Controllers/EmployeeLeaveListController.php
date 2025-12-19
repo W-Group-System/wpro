@@ -75,7 +75,7 @@ class EmployeeLeaveListController extends Controller
             $employee = Employee::where('user_id', $request->employee)->first();
             $leave_entitlement = get_leave_entitlement($employee->level, $request->date_hired, $employee->company_id);
             $leave_credits = compute_leave_credits($request->leave, $leave_entitlement, $request->date_hired, $request->date_regularization);
-            $earned_per_month = earn_per_month($request->leave, $request->date_regularization);
+            $earned_per_month = earn_per_month($request->leave, $request->date_regularization, $leave_entitlement);
             // dd($earned_per_month);
             $employee_leave_list = new EmployeeLeaveList;
             $employee_leave_list->user_id = $request->employee;

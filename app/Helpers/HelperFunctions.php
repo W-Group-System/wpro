@@ -1848,7 +1848,7 @@ function compute_leave_credits($leave,$leave_entitlement,$date_hired,$date_regul
     }
 }
 
-function earn_per_month($leave,$date_regularization="")
+function earn_per_month($leave,$date_regularization="", $leave_entitlement)
 {
     $leave_type = Leave::where('id', $leave)->first();
     
@@ -1859,7 +1859,7 @@ function earn_per_month($leave,$date_regularization="")
         $count_days = $end_date->diff($date_regular);
 
         $days = $count_days->days+1;
-        $total_earned = (int)$days / 365 * 12;
+        $total_earned = (int)$days / 365 * (int)$leave_entitlement;
 
         return round($total_earned, 2);
     }
