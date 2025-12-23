@@ -92,9 +92,9 @@
                                             <td>{{$form_approval->employee->company->company_name}}</td>
 										  {{-- <td>{{$form_approval->user->id}}</td> --}}
 										  <td>{{$form_approval->employee->employee_code}}</td>
-										  <td>{{$form_approval->user->name}}</td>
+										  <td>{{optional($form_approval->user)->name}}</td>
 										  
-										  <td>{{$form_approval->created_by_info->name}}</td>
+										  <td>{{optional($form_approval->created_by_info)->name}}</td>
 										  <td>{{date('d/m/Y h:i A', strtotime($form_approval->created_at))}}</td>
 										  <td>{{$form_approval->leave->leave_type}}</td>
 										  <td>{{date('d/m/Y', strtotime($form_approval->date_from))}}</td>
@@ -115,7 +115,7 @@
                                             @endif
                                           </td>
 										  <td>@foreach($form_approval->approver as $approvers)
-												{{$approvers->approver_info->name}}
+												{{optional($approvers->approver_info)->name}}
 											
 											@endforeach</td>
 										  <td>
