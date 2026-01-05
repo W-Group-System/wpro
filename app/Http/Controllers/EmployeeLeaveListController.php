@@ -263,4 +263,9 @@ class EmployeeLeaveListController extends Controller
         
         return $leave_credits;
     }
+
+    public function refreshSickLeave(Request $request)
+    {
+
+    }
 }

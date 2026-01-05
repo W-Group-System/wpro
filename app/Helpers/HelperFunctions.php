@@ -1876,15 +1876,36 @@ function earn_per_month($leave,$date_regularization="", $leave_entitlement)
     }
 }
 
-function checkUsedPvl($id, $leave_id)
+function checkUsedPvl($id, $vl,$prev_vl)
 {
-    $used_pvl = EmployeeLeave::where('leave_type', $leave_id)
-        ->whereIn('status',['Pending','Approved'])
+    $used_pvl = EmployeeLeave::where('leave_type', $vl)
+        ->where('status','Approved')
         ->where('user_id', $id)
-        ->where('date_from', 'LIKE', "%".date('Y')."%")
-        ->count();
+        // // ->where('date_from', 'LIKE', "%".date('Y')."%")
+        ->where(function($query) {
+            $query->whereYear('date_from', date('Y', strtotime('-1 year')))
+                ->orWhereYear('date_from',date('Y'));
+        })
+        ->whereYear('created_at', date('Y', strtotime('-1 year')))
+        ->get();
     
-    return $used_pvl;
+    $count = 0;
+    foreach($used_pvl as $pvl)
+    {
+        if ($pvl->halfday == 1)
+        {
+            $count += 0.5;
+        }
+        else 
+        {
+            $dateRanges = dateRangeHelperLeaveCount($pvl->date_from, $pvl->date_to);
+            foreach ($dateRanges as $dateRange) {
+                $count++;
+            }
+        }
+    }
+
+    return $count;
 }
 
 function employeeScheduleV2($schedules = array(), $dailySchedule=array(), $check_date, $schedule_id, $empNum=""){
