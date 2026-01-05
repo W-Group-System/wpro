@@ -46,7 +46,7 @@ class EmployeeLeaveController extends Controller
         $used_el = checkUsedLeave(auth()->user()->id,6);
         $used_bl = checkUsedLeave(auth()->user()->id,11);
         $used_mc = checkUsedLeave(auth()->user()->id,12);
-        $used_pvl =  checkUsedPvl(auth()->user()->id,14);
+        $used_pvl =  checkUsedPvl(auth()->user()->id,1,14,$employee_status->ScheduleData);
 
         $earned_vl = checkEarnedLeave(auth()->user()->id,1,$employee_status->original_date_hired);
         $earned_sl = checkEarnedLeave(auth()->user()->id,2,$employee_status->original_date_hired);
