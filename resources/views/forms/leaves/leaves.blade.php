@@ -570,7 +570,7 @@
                                         {{-- 2 decimal places --}}
                                             {{ number_format($leave->where('year', date('Y'))->pluck('earned_per_month')->sum(), 2) }}
                                         @elseif ($leave_id == '2')
-                                            {{ $leave->pluck('earned_per_month')->where('year', date('Y'))->sum() }}
+                                            {{ $leave->where('year', date('Y'))->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '10')
                                             {{ $leave->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '3')

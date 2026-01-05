@@ -266,6 +266,39 @@ class EmployeeLeaveListController extends Controller
 
     public function refreshSickLeave(Request $request)
     {
+        $employees = Employee::with('employee_leave_list')
+                        ->where('status','Active')
+                        ->whereHas('employee_leave_list')
+                        ->get();
+        
+        $year = date('Y');
+        $month = date('m');
+        foreach($employees as $employee)
+        {
+            $leave_entitlement = get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
+            $leave_credits = ($employee->employee_leave_list)->where('leave_id',2)->sortByDesc('id')->first();
+            
+            if($leave_credits != null)
+            {
+                $check_if_exist_vl = EmployeeLeaveList::where('user_id', $employee->user_id)
+                                        ->where('year', $year)
+                                        ->whereNotNull('earned_date')
+                                        ->where('leave_id',2)
+                                        ->first();                
+                
+                if(empty($check_if_exist_vl)){
+                    $earned_leave = new EmployeeLeaveList;
+                    $earned_leave->leave_id = 2;
+                    $earned_leave->user_id = $employee->user_id;
+                    $earned_leave->month = $month;
+                    $earned_leave->year = $year;
+                    $earned_leave->earned_date = date('Y-m-d');
+                    $earned_leave->earned_per_month = $leave_entitlement;
+                    $earned_leave->save();
+                }
+            }
+        }
 
+        return "success";
     }
 }
