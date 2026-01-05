@@ -570,7 +570,7 @@
                                         {{-- 2 decimal places --}}
                                             {{ number_format($leave->where('year', date('Y'))->pluck('earned_per_month')->sum(), 2) }}
                                         @elseif ($leave_id == '2')
-                                            {{ $leave->pluck('earned_per_month')->sum() }}
+                                            {{ $leave->where('year', date('Y'))->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '10')
                                             {{ $leave->pluck('earned_per_month')->sum() }}
                                         @elseif ($leave_id == '3')
@@ -870,8 +870,8 @@
                                         </td>
                                         <td>
                                             @php
-                                                $pvl_balance = $employee_leave_lists->where('year', date('Y', strtotime('-1 year')))->sum('earned_per_month') - $used_pvl;
-                                                if ($pvl_balance !== 0)
+                                                $pvl_balance = $employee_leave_lists->where('year', date('Y', strtotime('-1 year')))->where('leave_id',1)->sum('earned_per_month') - $used_pvl;
+                                                if ($pvl_balance >= 0.5)
                                                 {
                                                     $is_allowed_to_file_prev_vl = true;
                                                 }

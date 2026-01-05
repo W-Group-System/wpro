@@ -518,6 +518,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('refresh_leave', 'EmployeeLeaveListController@refreshLeave');
     Route::post('refresh_leave_credit', 'EmployeeLeaveListController@refreshLeaveCredit');
     Route::get('leave_report', 'EmployeeLeaveListController@leaveReport');
+    Route::get('refresh_sick_leave', 'EmployeeLeaveListController@refreshSickLeave');
 
     // HOLD EMPLOYEE
     Route::get('hold-employee', 'HoldEmployeeController@index');
