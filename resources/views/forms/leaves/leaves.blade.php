@@ -649,7 +649,8 @@
                                                 $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
                                                 $total_months = (($date_diff->y) * 12) + ($date_diff->m);
 
-                                                $count_sl =  ($leave->pluck('earned_per_month')->sum()) - $used_sl_this_yr;
+                                                {{-- $count_sl =  ($leave->pluck('earned_per_month')->sum()) - $used_sl_this_yr; --}}
+                                                $count_sl =  ($leave->where('year', date('Y'))->pluck('earned_per_month')->sum()) - $used_sl_this_yr;
 
                                                 if($count_sl > 0){
                                                     if($total_months > 11){
