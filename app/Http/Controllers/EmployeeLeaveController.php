@@ -47,6 +47,7 @@ class EmployeeLeaveController extends Controller
         $used_bl = checkUsedLeave(auth()->user()->id,11);
         $used_mc = checkUsedLeave(auth()->user()->id,12);
         $used_pvl =  checkUsedPvl(auth()->user()->id,1,14,$employee_status->ScheduleData);
+        $used_psl =  checkUsedPsl(auth()->user()->id,2,15,$employee_status->ScheduleData);
 
         $earned_vl = checkEarnedLeave(auth()->user()->id,1,$employee_status->original_date_hired);
         $earned_sl = checkEarnedLeave(auth()->user()->id,2,$employee_status->original_date_hired);
@@ -182,7 +183,8 @@ class EmployeeLeaveController extends Controller
             'count_previous_vl_used' => $count_previous_vl_used,
             'employee_leave_lists' => $employee_leave_lists,
             'used_mc' => $used_mc,
-            'used_pvl' => $used_pvl
+            'used_pvl' => $used_pvl,
+            'used_psl' => $used_psl,
         ));
     }  
 
@@ -230,7 +232,7 @@ class EmployeeLeaveController extends Controller
                 $new_leave->withpay = $request->withpay == 'on' ? 1 : 0 ;
                 $new_leave->halfday = (isset($request->halfday)) ? $request->halfday : 0 ; 
                 $new_leave->halfday_status = $request->halfday == '1' && (isset($request->halfday_status)) ? $request->halfday_status : "" ; 
-                if ($request->leave_type == 14)
+                if ($request->leave_type == 14 || $request->leave_type == 15)
                 {
                     $new_leave->is_previous_year = 1;
                 }

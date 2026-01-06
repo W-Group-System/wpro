@@ -31,6 +31,7 @@
                           $is_allowed_to_file_bl = false;
                           $is_allowed_to_file_mc = false;
                           $is_allowed_to_file_prev_vl = false;
+                          $is_allowed_to_file_prev_sl = false;
 
                           $vl_balance = 0;
                           $sl_balance = 0;
@@ -877,6 +878,22 @@
                                                 
                                             @endphp
                                             {{ number_format($pvl_balance, 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            SL from {{date('Y', strtotime('-1 year'))}}
+                                        </td>
+                                        <td>
+                                            @php
+                                                $psl_balance = $employee_leave_lists->where('year', date('Y', strtotime('-1 year')))->where('leave_id',2)->sum('earned_per_month') - $used_psl;
+                                                if ($psl_balance >= 0.5)
+                                                {
+                                                    $is_allowed_to_file_prev_sl = true;
+                                                }
+                                                
+                                            @endphp
+                                            {{ number_format($psl_balance, 2) }}
                                         </td>
                                     </tr>
                                     {{-- <tr>

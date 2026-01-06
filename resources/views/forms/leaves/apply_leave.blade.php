@@ -61,6 +61,8 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_prev_vl && $leave_type->code == 'PVL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
+                          @elseif($is_allowed_to_file_prev_sl && $leave_type->code == 'PSL')
+                            <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
                       </select>
@@ -167,6 +169,7 @@
               bl_balance : '<?php echo $bl_balance; ?>',
               mc_balance : '<?php echo $mc_balance; ?>',
               pvl_balance : '<?php echo $pvl_balance; ?>',
+              psl_balance : '<?php echo $psl_balance; ?>',
           },
           methods: {
             validateLeave() {
@@ -265,6 +268,15 @@
               else if (this.leave_type == '14') {
                 if(Number(this.pvl_balance) >= 0.5){
                     this.leave_balances = this.pvl_balance;
+                    this.isAllowedWithPay = false;
+                    amen = true;
+                }else{
+                this.isAllowedWithPay = true;
+                }
+              }
+              else if (this.leave_type == '15') {
+                if(Number(this.psl_balance) >= 0.5){
+                    this.leave_balances = this.psl_balance;
                     this.isAllowedWithPay = false;
                     amen = true;
                 }else{

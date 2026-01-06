@@ -1933,6 +1933,63 @@ function checkUsedPvl($id, $vl,$prev_vl)
     return $total_count;
 }
 
+function checkUsedPsl($id, $sl,$prev_sl)
+{
+    $used_prev_sl = EmployeeLeave::where('leave_type', $sl)
+        ->where('status','Approved')
+        ->where('user_id', $id)
+        // // ->where('date_from', 'LIKE', "%".date('Y')."%")
+        ->where(function($query) {
+            $query->whereYear('date_from', date('Y', strtotime('-1 year')))
+                ->orWhereYear('date_from',date('Y'));
+        })
+        ->whereYear('created_at', date('Y', strtotime('-1 year')))
+        ->get();
+
+    $used_psl = EmployeeLeave::where('leave_type',$prev_sl)
+                        ->whereIn('status',['Pending','Approved'])
+                        ->where('user_id',$id)
+                        ->whereYear('date_from', date('Y'))
+                        ->where('is_previous_year',1)
+                        ->get();
+    
+    $count = 0;
+    foreach($used_prev_sl as $psl)
+    {
+        if ($psl->halfday == 1)
+        {
+            $count += 0.5;
+        }
+        else 
+        {
+            $dateRanges = dateRangeHelperLeaveCount($psl->date_from, $psl->date_to);
+            foreach ($dateRanges as $dateRange) {
+                $count++;
+            }
+        }
+    }
+
+    $count_psl=0;
+    foreach($used_psl as $psl)
+    {
+        if ($psl->halfday == 1)
+        {
+            $count_psl += 0.5;
+        }
+        else 
+        {
+            $dateRanges = dateRangeHelperLeaveCount($psl->date_from, $psl->date_to);
+            foreach ($dateRanges as $dateRange) {
+                $count_psl++;
+            }
+        }
+    }
+    
+    $total_count = $count + $count_psl;
+    
+    return $total_count;
+}
+
 function employeeScheduleV2($schedules = array(), $dailySchedule=array(), $check_date, $schedule_id, $empNum=""){
     if (count($dailySchedule) > 0){
         foreach($dailySchedule as $item){
