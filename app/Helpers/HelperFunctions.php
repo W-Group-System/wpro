@@ -1516,7 +1516,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     $date_diff = $date_now->diff($date_hired);
     
     $leave_entitlement = 0;
-    $plant_company = [5,6,11,12];
+    $plant_company = [5,11,12];
     if ($rank_level->name == 'RANK&FILE')
     {
         if (in_array($company, $plant_company))
