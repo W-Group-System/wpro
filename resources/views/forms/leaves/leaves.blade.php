@@ -877,7 +877,14 @@
                                                 }
                                                 
                                             @endphp
+                                            @if($pvl_balance <= 0)
+                                            @php
+                                                $pvl_balance = 0.00;
+                                            @endphp
                                             {{ number_format($pvl_balance, 2) }}
+                                            @else
+                                            {{ number_format($pvl_balance, 2) }}
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>
