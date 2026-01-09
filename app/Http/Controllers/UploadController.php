@@ -112,6 +112,7 @@ class UploadController extends Controller
                         $types = 0;
                         $pay =1;
                         $halfday =0;
+                        $is_last_year = null;
                         if ($row[6] == "Vacation Leave" || $row[6] == "VL") {
                             $types = 1;
                         }
@@ -126,6 +127,14 @@ class UploadController extends Controller
                         }
                         if ($row[6] == "Paternity Leave" || $row[6] == 'PL') {
                             $types = 4;
+                        }
+                        if ($row[6] == "Previous VL" || $row[6] == 'PVL') {
+                            $types = 14;
+                            $is_last_year = 1;
+                        }
+                        if ($row[6] == "Previous SL" || $row[6] == 'PSL') {
+                            $types = 15;
+                            $is_last_year = 1;
                         }
                         if (str_contains($row[6],"without") || $row[6] == "LWOP"){
                             $types = 13;
@@ -158,6 +167,7 @@ class UploadController extends Controller
                             $leaves->date_to = $endDate;
                             $leaves->withpay = $pay;
                             $leaves->halfday = $halfday;
+                            $leaves->is_previous_year = $is_last_year;
                             $leaves->approved_date = $approved_date;
                             $leaves->status = $row[10];
                             $leaves->created_by = auth()->user()->id;
