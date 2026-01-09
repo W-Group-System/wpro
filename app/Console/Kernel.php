@@ -44,7 +44,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('command:dtr_approval')->everyMinute();
         $schedule->command('command:email_attendance')->dailyAt('8:00');
         $schedule->command('command:auto_earned_leaves')->monthly();
-        $schedule->command('command:refresh_previous_vl')->cron('0 0 1 4 *');
+        // $schedule->command('command:refresh_previous_vl')->cron('0 0 1 4 *');
         // $schedule->command('command:auto_earned_leave')->dailyAt('8:00');
     }
 

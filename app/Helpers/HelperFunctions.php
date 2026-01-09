@@ -1879,22 +1879,23 @@ function earn_per_month($leave,$date_regularization="", $leave_entitlement)
 function checkUsedPvl($id, $vl,$prev_vl)
 {
     $used_prev_vl = EmployeeLeave::where('leave_type', $vl)
-        ->where('status','Approved')
-        ->where('user_id', $id)
-        // // ->where('date_from', 'LIKE', "%".date('Y')."%")
-        ->where(function($query) {
-            $query->whereYear('date_from', date('Y', strtotime('-1 year')))
-                ->orWhereYear('date_from',date('Y'));
-        })
-        ->whereYear('created_at', date('Y', strtotime('-1 year')))
-        ->get();
+                                    ->where('status','Approved')
+                                    ->where('user_id', $id)
+                                    // // ->where('date_from', 'LIKE', "%".date('Y')."%")
+                                    ->where(function($query) {
+                                        $query->whereYear('date_from', date('Y', strtotime('-1 year')))
+                                            ->orWhereYear('date_from',date('Y'));
+                                    })
+                                    ->whereYear('created_at', date('Y', strtotime('-1 year')))
+                                    ->whereNull('is_previous_year')
+                                    ->get();
 
     $used_pvl = EmployeeLeave::where('leave_type',$prev_vl)
-                        ->whereIn('status',['Pending','Approved'])
-                        ->where('user_id',$id)
-                        ->whereYear('date_from', date('Y'))
-                        ->where('is_previous_year',1)
-                        ->get();
+                                ->whereIn('status',['Pending','Approved'])
+                                ->where('user_id',$id)
+                                ->whereYear('date_from', date('Y'))
+                                ->where('is_previous_year',1)
+                                ->get();
     
     $count = 0;
     foreach($used_prev_vl as $pvl)
