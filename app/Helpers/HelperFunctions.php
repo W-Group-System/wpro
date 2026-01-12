@@ -1938,11 +1938,10 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
     }
     
     $total_count = $count + $count_pvl;
-    
     return $total_count;
 }
 
-function checkUsedPsl($id, $sl,$prev_sl)
+function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
 {
     $used_prev_sl = EmployeeLeave::where('leave_type', $sl)
         ->where('status','Approved')
@@ -1953,6 +1952,7 @@ function checkUsedPsl($id, $sl,$prev_sl)
                 ->orWhereYear('date_from',date('Y'));
         })
         ->whereYear('created_at', date('Y', strtotime('-1 year')))
+        ->whereNull('is_previous_year')
         ->get();
 
     $used_psl = EmployeeLeave::where('leave_type',$prev_sl)
@@ -1963,6 +1963,10 @@ function checkUsedPsl($id, $sl,$prev_sl)
                         ->get();
     
     $count = 0;
+    if(count($scheduleData) > 0)
+    {
+        $workingDays = $scheduleData->pluck('name')->toArray();
+    }
     foreach($used_prev_sl as $psl)
     {
         if ($psl->halfday == 1)
@@ -1973,7 +1977,11 @@ function checkUsedPsl($id, $sl,$prev_sl)
         {
             $dateRanges = dateRangeHelperLeaveCount($psl->date_from, $psl->date_to);
             foreach ($dateRanges as $dateRange) {
-                $count++;
+                $leaveDate = date('l', strtotime($dateRange));
+                if(in_array($leaveDate, $workingDays))
+                {
+                    $count++;
+                }
             }
         }
     }
@@ -1995,7 +2003,6 @@ function checkUsedPsl($id, $sl,$prev_sl)
     }
     
     $total_count = $count + $count_psl;
-    
     return $total_count;
 }
 
