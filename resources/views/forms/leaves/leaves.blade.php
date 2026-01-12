@@ -900,6 +900,11 @@
                                                 }
                                                 
                                             @endphp
+                                            @if($psl_balance <= 0)
+                                            @php
+                                                $psl_balance = 0;
+                                            @endphp
+                                            @endif
                                             {{ number_format($psl_balance, 2) }}
                                         </td>
                                     </tr>

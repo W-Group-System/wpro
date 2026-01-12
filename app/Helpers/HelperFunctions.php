@@ -1878,7 +1878,8 @@ function earn_per_month($leave,$date_regularization="", $leave_entitlement)
 
 function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
 {
-    $used_prev_vl = EmployeeLeave::where('leave_type', $vl)
+    $used_prev_vl = EmployeeLeave::with('employee.daily_schedules')
+                                    ->where('leave_type', $vl)
                                     ->where('status','Approved')
                                     ->where('user_id', $id)
                                     ->where(function($query) {
@@ -1901,21 +1902,54 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
     {
         $workingDays = $scheduleData->pluck('name')->toArray();
     }
-    
+    $all_days=[];
     foreach($used_prev_vl as $pvl)
     {
-        if ($pvl->halfday == 1)
+        if ($pvl->halfday == 1 && $pvl->withpay == 1)
         {
             $count += 0.5;
         }
         else 
         {
+            $dailySchedules = ($pvl->employee->daily_schedules)->where('log_date','>=',$pvl->date_from)->where('log_date',"<=",$pvl->date_to)->unique('log_date');
             $dateRanges = dateRangeHelperLeaveCount($pvl->date_from, $pvl->date_to);
-            foreach ($dateRanges as $dateRange) {
-                $leaveDate = date('l', strtotime($dateRange));
-                if(in_array($leaveDate, $workingDays))
-                {
-                    $count++;
+            if($dateRanges)
+            {
+                foreach ($dateRanges as $dateRange) {
+                    $leaveDate = date('Y-m-d', strtotime($dateRange));
+                    if($pvl->withpay == 1)
+                    {
+                        $d = $dailySchedules->where('log_date',$leaveDate)->first();
+                        
+                        if ($d)
+                        {
+                            foreach($dailySchedules as $dailySched)
+                            {
+                                $logDate = $dailySched->log_date ? date('Y-m-d',strtotime($dailySched->log_date)) : null;
+    
+                                if($logDate === $leaveDate)
+                                {
+                                    if ($dailySched->working_hours)
+                                    {
+                                        $count++;
+                                        $all_days[]=$leaveDate;
+                                    }
+                                }
+                            }
+                        }
+                        else 
+                        {
+                            $dayName = date('l', strtotime($leaveDate));
+                            if(in_array($dayName, $workingDays))
+                            {
+                                $count++;
+                            }
+                        }
+                    }
+                    // if(in_array($leaveDate, $workingDays))
+                    // {
+                    //     $count++;
+                    // }
                 }
             }
         }
@@ -1943,45 +1977,76 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
 
 function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
 {
-    $used_prev_sl = EmployeeLeave::where('leave_type', $sl)
-        ->where('status','Approved')
-        ->where('user_id', $id)
-        // // ->where('date_from', 'LIKE', "%".date('Y')."%")
-        ->where(function($query) {
-            $query->whereYear('date_from', date('Y', strtotime('-1 year')))
-                ->orWhereYear('date_from',date('Y'));
-        })
-        ->whereYear('date_from', date('Y', strtotime('-1 year')))
-        ->whereNull('is_previous_year')
-        ->where('withpay', 1)
-        ->get();
+    $used_prev_sl = EmployeeLeave::with('employee.daily_schedules')->where('leave_type', $sl)
+                                    ->where('status','Approved')
+                                    ->where('user_id', $id)
+                                    // // ->where('date_from', 'LIKE', "%".date('Y')."%")
+                                    ->where(function($query) {
+                                        $query->whereYear('date_from', date('Y', strtotime('-1 year')))
+                                            ->orWhereYear('date_from',date('Y'));
+                                    })
+                                    ->whereYear('date_from', date('Y', strtotime('-1 year')))
+                                    ->whereNull('is_previous_year')
+                                    ->where('withpay', 1)
+                                    ->get();
 
     $used_psl = EmployeeLeave::where('leave_type',$prev_sl)
-                        ->whereIn('status',['Pending','Approved'])
-                        ->where('user_id',$id)
-                        ->whereYear('date_from', date('Y'))
-                        ->where('is_previous_year',1)
-                        ->get();
+                                ->whereIn('status',['Pending','Approved'])
+                                ->where('user_id',$id)
+                                ->whereYear('date_from', date('Y'))
+                                ->where('is_previous_year',1)
+                                ->get();
     
     $count = 0;
     if(count($scheduleData) > 0)
     {
         $workingDays = $scheduleData->pluck('name')->toArray();
     }
+
+    $all_days=[];
     foreach($used_prev_sl as $psl)
     {
-        if ($psl->halfday == 1)
+        if ($psl->halfday == 1 && $psl->withpay == 1)
         {
             $count += 0.5;
         }
         else 
         {
+            $dailySchedules = ($psl->employee->daily_schedules)->where('log_date','>=',$psl->date_from)->where('log_date',"<=",$psl->date_to)->unique('log_date');
             $dateRanges = dateRangeHelperLeaveCount($psl->date_from, $psl->date_to);
-            foreach ($dateRanges as $dateRange) {
-                $leaveDate = date('l', strtotime($dateRange));
-                if(in_array($leaveDate, $workingDays))
-                {
-                    $count++;
+            if($dateRanges)
+            {
+                foreach ($dateRanges as $dateRange) {
+                    $leaveDate = date('Y-m-d', strtotime($dateRange));
+                    if($psl->withpay == 1)
+                    {
+                        $d = $dailySchedules->where('log_date',$leaveDate)->first();
+                        
+                        if ($d)
+                        {
+                            foreach($dailySchedules as $dailySched)
+                            {
+                                $logDate = $dailySched->log_date ? date('Y-m-d',strtotime($dailySched->log_date)) : null;
+    
+                                if($logDate === $leaveDate)
+                                {
+                                    if ($dailySched->working_hours)
+                                    {
+                                        $count++;
+                                        $all_days[]=$leaveDate;
+                                    }
+                                }
+                            }
+                        }
+                        else 
+                        {
+                            $dayName = date('l', strtotime($leaveDate));
+                            if(in_array($dayName, $workingDays))
+                            {
+                                $count++;
+                            }
+                        }
+                    }
                 }
             }
         }
