@@ -1953,6 +1953,7 @@ function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
         })
         ->whereYear('date_from', date('Y', strtotime('-1 year')))
         ->whereNull('is_previous_year')
+        ->where('withpay', 1)
         ->get();
 
     $used_psl = EmployeeLeave::where('leave_type',$prev_sl)
