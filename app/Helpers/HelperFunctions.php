@@ -395,11 +395,11 @@ function night_difference_per_company($start_work, $end_work)
     } elseif ($start_work < $night_start && $end_work >= $night_end) {
         if ($start_work < $night_start)
         {
-            return ($night_end - $start_work) / 3600;
+            return ($night_end - $night_start) / 3600;
         }
         else 
         {
-            return ($night_end - $night_start) / 3600;
+            return ($night_end - $start_work) / 3600;
         }
     }
 
