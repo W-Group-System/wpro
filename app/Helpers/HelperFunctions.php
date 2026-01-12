@@ -1951,7 +1951,7 @@ function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
             $query->whereYear('date_from', date('Y', strtotime('-1 year')))
                 ->orWhereYear('date_from',date('Y'));
         })
-        ->whereYear('created_at', date('Y', strtotime('-1 year')))
+        ->whereYear('date_from', date('Y', strtotime('-1 year')))
         ->whereNull('is_previous_year')
         ->get();
 
