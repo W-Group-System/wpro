@@ -410,6 +410,11 @@
                                                                     if($check_if_holiday_before)
                                                                     {
                                                                         $abs = 0;
+                                                                        $check_attendance = checkHasAttendanceHolidayStatus($emp->attendances,$if_attendance_holiday);
+                                                                        if(empty($check_attendance))
+                                                                        {
+                                                                            $abs=1;
+                                                                        }
                                                                     }
                                                                     if($employee_schedule_before == null)
                                                                     {
