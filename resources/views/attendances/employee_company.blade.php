@@ -438,8 +438,8 @@
                                                                                 $if_attendance_holiday_status = 'With-Pay';
                                                                                 $abs =0;
                                                                             }
-
-                                                                            if($time_in_ob != null)
+                                                                            $timeInObBeforeHoliday = ($emp->approved_obs)->where('applied_date',date('Y-m-d',strtotime($if_attendance_holiday)))->sortBy('applied_date')->first();
+                                                                            if($timeInObBeforeHoliday != null)
                                                                             {
                                                                                 $abs =0;
                                                                             }
