@@ -1334,8 +1334,16 @@
                                                                     {
                                                                         if ($employee_schedule_before->time_in_to != null)
                                                                         {
-                                                                            $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
-                                                                            $work = $work-1;
+                                                                            // if consultant 0hrs in legal holiday
+                                                                            if($emp->level == 5)
+                                                                            {
+                                                                                $work=0;
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
+                                                                                $work = $work-1;
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
