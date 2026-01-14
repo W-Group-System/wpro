@@ -438,6 +438,38 @@
                                                                                 $if_attendance_holiday_status = 'With-Pay';
                                                                                 $abs =0;
                                                                             }
+
+                                                                            if($time_in_ob != null)
+                                                                            {
+                                                                                $abs =0;
+                                                                            }
+                                                                            
+                                                                            $employeeScheduleBeforeHoliday = employeeSchedule($schedules,date('Y-m-d',strtotime($if_attendance_holiday)),$emp->schedule_id, $emp->employee_code);
+                                                                            // dd($employeeScheduleBeforeHoliday);
+                                                                            if($employeeScheduleBeforeHoliday == null)
+                                                                            {
+                                                                                $attendance = ($emp->attendances)->whereBetween('time_in',[$if_attendance_holiday.' 00:00:00', $if_attendance_holiday." 23:59:59"]);
+                                                                                if(count($attendance) == 0)
+                                                                                {
+                                                                                    $abs=1;
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
+                                                                            
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                if($employeeScheduleBeforeHoliday->time_in_from == '00:00')
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
+                                                                                if($employeeScheduleBeforeHoliday->time_in_from == null)
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
+                                                                            }
                                                                         }
                                                                     }
                                                                     if($employee_schedule_before == null)
