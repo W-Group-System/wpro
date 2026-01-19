@@ -1964,9 +1964,46 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
         }
         else 
         {
+            // $dateRanges = dateRangeHelperLeaveCount($pvl->date_from, $pvl->date_to);
+            // foreach ($dateRanges as $dateRange) {
+            //     $count_pvl++;
+            // }
+            $dailySchedules = ($pvl->employee->daily_schedules)->where('log_date','>=',$pvl->date_from)->where('log_date',"<=",$pvl->date_to)->unique('log_date');
             $dateRanges = dateRangeHelperLeaveCount($pvl->date_from, $pvl->date_to);
-            foreach ($dateRanges as $dateRange) {
-                $count_pvl++;
+            if ($dateRanges)
+            {
+                foreach ($dateRanges as $dateRange) {
+                    $leaveDate = date('Y-m-d', strtotime($dateRange));
+                    if($pvl->withpay == 1)
+                    {
+                        $d = $dailySchedules->where('log_date',$leaveDate)->first();
+                        
+                        if ($d)
+                        {
+                            foreach($dailySchedules as $dailySched)
+                            {
+                                $logDate = $dailySched->log_date ? date('Y-m-d',strtotime($dailySched->log_date)) : null;
+    
+                                if($logDate === $leaveDate)
+                                {
+                                    if ($dailySched->working_hours)
+                                    {
+                                        $count_pvl++;
+                                        $all_days[]=$leaveDate;
+                                    }
+                                }
+                            }
+                        }
+                        else 
+                        {
+                            $dayName = date('l', strtotime($leaveDate));
+                            if(in_array($dayName, $workingDays))
+                            {
+                                $count++;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
