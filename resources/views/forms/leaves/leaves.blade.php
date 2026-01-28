@@ -640,7 +640,7 @@
                                                 $vl_balance = number_format($count_vl,2);
                                             @endphp
                                             @if($vl_balance > 0)
-                                            {{ number_format($vl_balance,2) }}
+                                            {{ $vl_balance }}
                                             @else
                                             0
                                             @endif
@@ -665,7 +665,7 @@
                                                 $sl_balance = $count_sl;
                                             @endphp
                                             @if($sl_balance > 0)
-                                            {{ number_format($sl_balance,2) }}
+                                            {{ $sl_balance }}
                                             @else
                                             0
                                             @endif
@@ -881,9 +881,9 @@
                                             @php
                                                 $pvl_balance = 0.00;
                                             @endphp
-                                            {{ number_format($pvl_balance, 2) }}
+                                            {{ $pvl_balance }}
                                             @else
-                                            {{ number_format($pvl_balance, 2) }}
+                                            {{ $pvl_balance }}
                                             @endif
                                         </td>
                                     </tr>
@@ -905,7 +905,7 @@
                                                 $psl_balance = 0;
                                             @endphp
                                             @endif
-                                            {{ number_format($psl_balance, 2) }}
+                                            {{ $psl_balance }}
                                         </td>
                                     </tr>
                                     {{-- <tr>
