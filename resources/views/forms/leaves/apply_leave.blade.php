@@ -295,7 +295,7 @@
 
     $(document).ready(function() {
         $("#leave_type").on('change', function() {
-            if ($(this).val() == 1) {
+            if ($(this).val() == 1 || $(this).val() == 14) {
                 $("[name='date_from']").attr('min', "{{date('Y-m-d', strtotime('+3 days'))}}");
                 $("[name='date_to']").attr('min', "{{date('Y-m-d', strtotime('+3 days'))}}");
 
