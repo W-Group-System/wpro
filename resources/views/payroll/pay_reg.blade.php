@@ -604,6 +604,7 @@
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
                                 }
+                                // dd($cut_off);
                                
                                 
                                 $hdmf = 200.00;
@@ -703,6 +704,17 @@
                                 }
 
                                 if ($name->employee->employee_code == "A118109") 
+                                {
+                                  $philhealth = 0;
+                                  $hdmf       = 0;
+                                  $sss_ecc    = 0;
+                                  $sss_ee     = 0;
+                                  $sss_er     = 0;
+                                  $wisp_ee    = 0;
+                                  $wisp_er    = 0;
+                                }
+                                
+                                if ($name->employee->employee_code == "A3182024" && $name->cut_off_date == "2026-01-25") 
                                 {
                                   $philhealth = 0;
                                   $hdmf       = 0;
