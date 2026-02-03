@@ -504,8 +504,9 @@
                                   $sss_allowance=($last_c->pay_allowances)->where('allowance_id','!=',9)->sum('amount');
                                 //   dd($de_minimis_deduction);
                                     $de_minimis_deduction = ($last_c->pay_instructions)->where('payreg_id', $last_c->id)->where('instruction_name', 'De Minimis Deduction')->sum('amount');
-                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-abs($de_minimis_deduction)-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay+$last_c->subliq;
-                                  
+                                    $de_minimis_adjustment = ($last_c->pay_instructions)->where('payreg_id', $last_c->id)->where('instruction_name', 'De Minimis Adjustment')->sum('amount');
+
+                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-abs($de_minimis_deduction)-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay+$last_c->subliq+$de_minimis_adjustment;
                                   // dd($government_amount);
                                   // dd($last_c);
                                 // if($name->employee->employee_code == "A3177424")
