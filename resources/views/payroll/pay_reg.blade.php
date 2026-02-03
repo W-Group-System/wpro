@@ -498,12 +498,14 @@
                               {
                                 $last_c = $last_cut_off->where('employee_no',$name->employee_no)->where('cut_off_date','>',date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')))->first();
                                 // dd($name->cut_off_date." - ".date('Y-m-d', strtotime($name->cut_off_date . ' -17 days')));
+                                $de_minimis_deduction = ($last_c->pay_instructions)->where('payreg_id', $last_c->id)->where('instruction_name', 'De Minimis Deduction')->sum('amount');
                                 if($last_c)
                                 {
                                  
                                   $sss_allowance=($last_c->pay_allowances)->where('allowance_id','!=',9)->sum('amount');
+                                //   dd($de_minimis_deduction);
+                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-abs($de_minimis_deduction)-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay+$last_c->subliq;
                                   
-                                  $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay+$last_c->subliq;
                                   // dd($government_amount);
                                   // dd($last_c);
                                 // if($name->employee->employee_code == "A3177424")
