@@ -508,7 +508,11 @@
 
                                   $lastccc = $last_c->gross_taxable_income-$last_c->absent_amount-$last_c->tardiness_amount-abs($de_minimis_deduction)-$last_c->undertime_amount+$last_c->deminimis+$last_c->other_allowances_basic_pay+$last_c->subliq+$de_minimis_adjustment;
                                   // dd($government_amount);
-                                  // dd($last_c);
+                                //   dd($last_c);
+                                  if($name->employee->employee_code == "A368423")
+                                  {
+                                    $lastccc = $lastccc + $last_c->ot_total;
+                                  }
                                 // if($name->employee->employee_code == "A3177424")
                                 //  {
                                 //    $lastccc = $lastccc +500;
