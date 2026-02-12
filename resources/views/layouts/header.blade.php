@@ -1179,6 +1179,14 @@
                 }
             });
 
+            $(".editViewleaveHalfday").change(function(){
+                if($(this).is(':checked')){
+                    $(".edithalfDayStatus").show(300);
+                } else {
+                    $(".edithalfDayStatus").hide(200);
+                }
+            });
+
             $("#privacy-check").click(function() {
                 $("#privacy").attr("disabled", !this.checked); 
                 if(this.checked == false) {

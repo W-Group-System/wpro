@@ -44,9 +44,9 @@
                               <div class='col-md-6'>
                                 <label class="form-check-label ">
                                   @if($leave->halfday == 1)
-                                      <input id="editViewleaveHalfday" type="checkbox" name="halfday" class="form-check-input" value="1" checked>  
+                                      <input id="editViewleaveHalfday" type="checkbox" name="halfday" class="form-check-input editViewleaveHalfday" value="1" checked>  
                                   @else
-                                      <input id="editViewleaveHalfday" type="checkbox" name="halfday" class="form-check-input" value="0">  
+                                      <input id="editViewleaveHalfday" type="checkbox" name="halfday" class="form-check-input editViewleaveHalfday" value="0">  
                                   @endif
                                   Halfday
                               </label>
