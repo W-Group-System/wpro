@@ -767,6 +767,10 @@
                               {
                                 $tax = $net_taxable_income*.05;
                               }
+                              if($name->employee->employee_code == "A2114926")
+                              {
+                                $tax = $net_taxable_income*.05;
+                              }
                               if($name->employee->employee_code == "M1010")
                               {
                                 $tax = 0;
