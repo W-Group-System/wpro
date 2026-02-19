@@ -32,9 +32,11 @@ use App\Loan;
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Options;
 use App\Exports\AttendanceExport;
+use App\Payreg;
 use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Facades\App;
+use Shuchkin\SimpleXLSX;
 
 class PayslipController extends Controller
 {
@@ -1025,16 +1027,36 @@ class PayslipController extends Controller
     }
     public function uploadpayreg(Request $request)
     {
-        return view('upload_pay_reg');
+        $companies = Company::where("id", "!=", 1)->get();
+        return view('upload_pay_reg', compact("companies"));
     }
 
     public function postuploadpayreg(Request $request)
     {
-      $data =  Excel::import(new PayRegImport,request()->file('pay-reg'));
-    //   dd($data);
-    //   dd($data[0]);
+        // dd($request->all());
+        $path = $request->file("pay-reg")->getRealPath();
+        $xlsx = SimpleXLSX::parse($path)->rows();
+        foreach($xlsx as $key => $row) {
+            if ($key > 0) {
+                $payReg = Payreg::select("id")
+                                ->where("company_id", $request->company)
+                                ->where("cut_off_date", $request->cut_off)
+                                ->where("employee_no", $row[0])
+                                ->first();
+                
+                if ($payReg) {
+                    $payInstruction = new PayregInstruction;
+                    $payInstruction->instruction_name = $request->instruction_name;
+                    $payInstruction->employee_code = $row[0];
+                    $payInstruction->amount = $row[3];
+                    $payInstruction->remarks = "This cutoff";
+                    $payInstruction->payreg_id = $payReg->id;
+                    $payInstruction->save();
+                }
+            }
+        }
 
-       return back();
+        return back();
     }
    
 
