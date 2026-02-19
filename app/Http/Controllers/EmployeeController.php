@@ -1904,10 +1904,12 @@ class EmployeeController extends Controller
                                     ->orderBy('id','asc');
                                 }])
                                 ->with(['approved_leaves' => function ($query) use ($date_from, $to_date) {
-                                    $query->where(function ($q) use ($date_from, $to_date) {
-                                        $q->whereBetween('date_from', [$date_from, $to_date])
-                                          ->orWhereBetween('date_to', [$date_from, $to_date]);
-                                    })
+                                    // $query->where(function ($q) use ($date_from, $to_date) {
+                                    //     $q->whereBetween('date_from', [$date_from, $to_date])
+                                    //       ->orWhereBetween('date_to', [$date_from, $to_date]);
+                                    // })
+                                    $query->where("date_from", "<=", $to_date)
+                                    ->where("date_to", ">=", $date_from)
                                     ->where('status','Approved')
                                     ->orderBy('id','asc');
                                 },'approved_leaves.leave'])
@@ -1936,6 +1938,7 @@ class EmployeeController extends Controller
                                 ->orderBy('last_name','asc')
                                 ->orderBy('first_name','asc')
                                 // ->where('employee_code','A189123')
+                                ->where('employee_code','A3155322')
                                 ;
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
