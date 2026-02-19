@@ -1039,7 +1039,7 @@ class PayslipController extends Controller
         foreach($xlsx as $key => $row) {
             if ($key > 0) {
                 $payReg = Payregs::select("id")
-                                ->where("company_id", $request->company)
+                                // ->where("company_id", $request->company)
                                 ->where("cut_off_date", $request->cut_off)
                                 ->where("employee_no", $row[0])
                                 ->first();
