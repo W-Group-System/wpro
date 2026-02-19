@@ -1038,7 +1038,7 @@ class PayslipController extends Controller
         $xlsx = SimpleXLSX::parse($path)->rows();
         foreach($xlsx as $key => $row) {
             if ($key > 0) {
-                $payReg = Payreg::select("id")
+                $payReg = Payregs::select("id")
                                 ->where("company_id", $request->company)
                                 ->where("cut_off_date", $request->cut_off)
                                 ->where("employee_no", $row[0])
