@@ -372,7 +372,6 @@
                                 // dd($hours_count);
                                 if($hours_count>8)
                                 {
-                                  // dd($hours_count);
                                   $hours_count = $hours_count-1;
                                 }
 
