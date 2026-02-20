@@ -480,9 +480,22 @@
             <hr>
             <table>
                 <tbody>
+                    @php
+                        $extra = 0;
+
+                        if ($payroll->pay_instructions) {
+                            foreach ($payroll->pay_instructions as $instruction) {
+                                if (in_array($instruction->instruction_name, ['KPI BONUS', 'THIRTEEN MONTH', 'THIRTEENTH MONTH PAY NONTAXABLE'])) {
+                                    $extra += $instruction->amount;
+                                }
+                            }
+                        }
+
+                        $total_pay = $payroll->netpay + $extra;
+                    @endphp
                     <tr>
                         <td style="font-weight: bold;">Net Pay</td>
-                        <td style="text-align: right; font-weight: bold;">{{number_format($payroll->netpay,2)}}</td>
+                        <td style="text-align: right; font-weight: bold;">{{number_format($total_pay,2)}}</td>
                     </tr>
                 </tbody>
             </table>
