@@ -375,6 +375,14 @@
                                   $hours_count = $hours_count-1;
                                 }
 
+                                if($absent_dat->employee_no == 'A340612')
+                                {
+                                  if($hours_count>6)
+                                  {
+                                    $hours_count = $hours_count-1;
+                                  }
+                                }
+
                                 $hours_data = $hours_count*($absent_dat->abs-$absent_dat->lv_w_pay);
                                 $hours = $hours+$hours_data;
                               }
