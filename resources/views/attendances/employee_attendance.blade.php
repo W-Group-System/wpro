@@ -596,8 +596,13 @@
                                         
                                         if($employee_schedule)
                                         {
-                                            
-                                            $start_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
+                                            // night differential halfday
+                                            // $start_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
+                                            if ($time_start > $date_r) {
+                                                $start_schedule = $date_r . " " . $employee_schedule->time_in_to;
+                                            } else {
+                                                $start_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
+                                            }
                                             $end_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_out_to);
 
                                             if(strtotime($start_schedule) > strtotime($end_schedule))
@@ -615,8 +620,7 @@
                                                 $nightdiff_end = $end_schedule;
                                             }
                                         }
-                                        
-                                         $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                         $night_diff = night_difference_per_company_per_employee($nightdiff_start,$nightdiff_end, $date_r);
                                        
                                          if($night_diff >= 5)
                                          {

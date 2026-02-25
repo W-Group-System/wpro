@@ -406,6 +406,57 @@ function night_difference_per_company($start_work, $end_work)
     return 0; // Default case when no night shift overlap
 }
 
+function night_difference_per_company_per_employee($start_work, $end_work, $date_r)
+{
+    if (!is_numeric($start_work)) {
+        $start_work = strtotime($start_work);
+    }
+    if (!is_numeric($end_work)) {
+        $end_work = strtotime($end_work);
+    }
+    if (!is_numeric($date_r)) {
+        $date_r = strtotime($date_r);
+    }
+    if ($start_work < $date_r) {
+        $start_work = $date_r;
+    }
+
+    if (date('H', $start_work) < 6) {
+        $base_date = strtotime('-1 day', $start_work);
+    } else {
+        $base_date = $start_work;
+    }
+
+    $night_start = mktime(22, 0, 0, date('m', $base_date), date('d', $base_date), date('Y', $base_date));
+   
+    $night_end = mktime(6, 0, 0, date('m', $base_date), date('d', $base_date) + 1, date('Y', $base_date));
+
+    if ($start_work >= $night_start && $start_work < $night_end) {
+        if ($end_work >= $night_end) {
+            return ($night_end - $start_work) / 3600;
+        } else {
+            return ($end_work - $start_work) / 3600;
+        }
+    } elseif ($end_work >= $night_start && $end_work < $night_end) {
+        if ($start_work < $night_start) {
+            return ($end_work - $night_start) / 3600;
+        } else {
+            return ($end_work - $start_work) / 3600;
+        }
+    } elseif ($start_work < $night_start && $end_work >= $night_end) {
+        if ($start_work < $night_start)
+        {
+            return ($night_end - $night_start) / 3600;
+        }
+        else 
+        {
+            return ($night_end - $start_work) / 3600;
+        }
+    }
+
+    return 0; 
+}
+
 // function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday)
 // {
 //     $date_from = Carbon::parse($date_from);
@@ -1521,7 +1572,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     {
         if (in_array($company, $plant_company))
         {
-            if (date('Y-m', strtotime($hired_date)) > 2015-04)
+            if (date('Y-m', strtotime($hired_date)) > '2015-04')
             {
                 if ($date_diff->y < 1)
                 {
@@ -1621,7 +1672,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     {
         if (in_array($company, $plant_company))
         {
-            if (date('Y-m', strtotime($hired_date)) > 2015-04)
+            if (date('Y-m', strtotime($hired_date)) > '2015-04')
             {
                 if ($date_diff->y < 1)
                 {
@@ -1721,7 +1772,7 @@ function get_leave_entitlement($level, $date_hired, $company)
     {
         if (in_array($company, $plant_company))
         {
-            if (date('Y-m', strtotime($hired_date)) > 2015-04)
+            if (date('Y-m', strtotime($hired_date)) > '2015-04')
             {
                 if ($date_diff->y < 1)
                 {
