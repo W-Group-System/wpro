@@ -1047,7 +1047,7 @@ class PayslipController extends Controller
         //     ->whereIn('id', $allowed_companies)
         //     ->get();
 
-        Company::whereIn('id', $allowed_companies)->get();
+        $companies = Company::whereIn('id', $allowed_companies)->get();
         
         $company = isset($request->company) ? $request->company : "";
 
