@@ -618,6 +618,14 @@
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
                                 }
+                                if($name->employee->employee_code == "A197326")
+                                {
+                                  $sss_ecc = 10;
+                                  $sss_ee = 675;
+                                  $sss_er = 1350;
+                                  $hdmf = 200;
+                                  $philhealth = 250;
+                                }
                                 // dd($cut_off);
                                
                                 
