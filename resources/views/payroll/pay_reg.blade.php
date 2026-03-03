@@ -686,10 +686,10 @@
                                 {
                                   $philhealth = 0;
                                 }
-                                if($name->employee->employee_code == "A3193626")
-                                {
-                                  $philhealth = 450;
-                                }
+                                // if($name->employee->employee_code == "A3193626")
+                                // {
+                                //   $philhealth = 450;
+                                // }
                                 if($name->employee->employee_code == "M1010")
                                 {
                                   $philhealth = 0;
