@@ -758,6 +758,11 @@
                               }
                               
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
+                              if($name->employee->employee_code == "A197326")
+                                {
+                                  $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth+$sss_er+$hdmf+$philhealth+$sss_ecc;
+
+                                }
                               $taxable_deductable_total = $statutory+$total_abs+$total_late_min+$total_undertime_min;
                               $net_taxable_income = $gross_taxable_income-$taxable_deductable_total;
                          
