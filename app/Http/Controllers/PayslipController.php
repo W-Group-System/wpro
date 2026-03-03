@@ -381,9 +381,10 @@ class PayslipController extends Controller
             }
         }
 
-        $companies = Company::whereHas('employee_has_company')
-            ->whereIn('id', $allowed_companies)
-            ->get();
+        // $companies = Company::whereHas('employee_has_company')
+        //     ->whereIn('id', $allowed_companies)
+        //     ->get();
+        $companies = Company::whereIn('id', $allowed_companies)->get();
 
         // $departments = Department::whereHas('employee_has_department')
         //     ->where('status', 1)
