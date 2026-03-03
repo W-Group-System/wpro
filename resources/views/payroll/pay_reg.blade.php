@@ -624,7 +624,8 @@
                                   $sss_ee = 675;
                                   $sss_er = 1350;
                                   $hdmf = 200;
-                                  $philhealth = 250;
+                                  $wisp_ee = 0;
+                                  $wisp_er = 0;
                                 }
                                 // dd($cut_off);
                                
@@ -654,6 +655,10 @@
                                 else {
                                   
                                   $philhealth = (($previous_pay_rate+($pay_rate/2))*.05)/2;
+                                }
+                                if($name->employee->employee_code == "A197326")
+                                {
+                                  $philhealth = 250;
                                 }
                                 // dd($philhealth);
                               
