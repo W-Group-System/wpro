@@ -32,11 +32,9 @@ use App\Loan;
 use Barryvdh\DomPDF\PDF;
 use Dompdf\Options;
 use App\Exports\AttendanceExport;
-use App\Payreg;
 use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Facades\App;
-use Shuchkin\SimpleXLSX;
 
 class PayslipController extends Controller
 {
@@ -1027,36 +1025,16 @@ class PayslipController extends Controller
     }
     public function uploadpayreg(Request $request)
     {
-        $companies = Company::where("id", "!=", 1)->get();
-        return view('upload_pay_reg', compact("companies"));
+        return view('upload_pay_reg');
     }
 
     public function postuploadpayreg(Request $request)
     {
-        // dd($request->all());
-        $path = $request->file("pay-reg")->getRealPath();
-        $xlsx = SimpleXLSX::parse($path)->rows();
-        foreach($xlsx as $key => $row) {
-            if ($key > 0) {
-                $payReg = Payregs::select("id")
-                                // ->where("company_id", $request->company)
-                                ->where("cut_off_date", $request->cut_off)
-                                ->where("employee_no", $row[0])
-                                ->first();
-                
-                if ($payReg) {
-                    $payInstruction = new PayregInstruction;
-                    $payInstruction->instruction_name = $request->instruction_name;
-                    $payInstruction->employee_code = $row[0];
-                    $payInstruction->amount = $row[3];
-                    $payInstruction->remarks = "This cutoff";
-                    $payInstruction->payreg_id = $payReg->id;
-                    $payInstruction->save();
-                }
-            }
-        }
+      $data =  Excel::import(new PayRegImport,request()->file('pay-reg'));
+    //   dd($data);
+    //   dd($data[0]);
 
-        return back();
+       return back();
     }
    
 
@@ -1065,10 +1043,12 @@ class PayslipController extends Controller
         $generated_timekeepings = [];
         $allowed_companies = getUserAllowedCompanies(auth()->user()->id);
 
-        $companies = Company::whereHas('employee_has_company')
-            ->whereIn('id', $allowed_companies)
-            ->get();
+        // $companies = Company::whereHas('employee_has_company')
+        //     ->whereIn('id', $allowed_companies)
+        //     ->get();
 
+        Company::whereIn('id', $allowed_companies)->get();
+        
         $company = isset($request->company) ? $request->company : "";
 
         $from_date = $request->from;
