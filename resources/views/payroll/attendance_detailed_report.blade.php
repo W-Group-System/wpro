@@ -294,12 +294,12 @@
 
                             @php
                                 $approved_ob = $timekeeping->employee->approved_obs()->whereDate("date_from", $timekeeping->log_date)->first();
-                                $leave = $timekeeping->employee->approved_leaves_with_pay()->whereDate("date_from", $timekeeping->log_date)->first();
+                                // $leave = $timekeeping->employee->approved_leaves_with_pay()->whereDate("date_from", $timekeeping->log_date)->first();
                                 $leave = $timekeeping->employee
                                       ->approved_leaves_with_pay()
                                       ->where(function ($query) use ($timekeeping) {
-                                          $query->whereDate('date_from', '<=', $timekeeping->log_date)
-                                                ->whereDate('date_to', '>=', $timekeeping->log_date);
+                                          $query->where('date_from', '<=', $timekeeping->log_date)
+                                                ->where('date_to', '>=', $timekeeping->log_date);
                                       })
                                       ->first();
                                 // $lwop = $timekeeping->employee->approved_leaves()->whereDate("date_from", $timekeeping->log_date)->first();
