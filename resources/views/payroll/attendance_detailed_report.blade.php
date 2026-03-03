@@ -312,7 +312,11 @@
                             @endif  
                             
                             @if($leave)
-                                @if(date('Y-m-d', strtotime($leave->date_from)) == date('Y-m-d', strtotime($timekeeping->log_date)))
+                                {{-- @if(date('Y-m-d', strtotime($leave->date_from)) == date('Y-m-d', strtotime($timekeeping->log_date))) --}}
+                                @if(
+                                        date('Y-m-d', strtotime($timekeeping->log_date)) >= date('Y-m-d', strtotime($leave->date_from)) &&
+                                        date('Y-m-d', strtotime($timekeeping->log_date)) <= date('Y-m-d', strtotime($leave->date_to))
+                                    )
                                     @if($leave->leave_type == 13)
                                     {{ $leave->leave->leave_type }}
                                     @else
