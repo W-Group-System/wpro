@@ -52,7 +52,7 @@ class HomeController extends Controller
         ->orderByRaw("DAY(birth_date) >= ? DESC, DAY(birth_date)", [$current_day])
         ->get();
         
-        $employees_new_hire = Employee::where('original_date_hired',">=",date("Y-m-d", strtotime("-1 months")))->orderBy('original_date_hired','desc')->get();
+        $employees_new_hire = Employee::where('original_date_hired',">=",date("Y-m-d", strtotime("-1 months")))->orderBy('original_date_hired','desc')->where('status', '!=', 'Declined')->get();
         $sevendays = date('Y-m-d',strtotime("-7 days"));
         if(auth()->user()->employee){
             if(auth()->user()->employee->employee_number){
