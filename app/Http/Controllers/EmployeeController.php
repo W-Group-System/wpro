@@ -1694,6 +1694,7 @@ class EmployeeController extends Controller
         $attendance_controller = new AttendanceController;
         $employees = Employee::select('id','user_id','employee_number','first_name','last_name','employee_code','company_id')
                                 ->whereIn('company_id', $allowed_companies)
+                                ->where('status', '!=' ,'Declined')
                                 ->when($allowed_locations,function($q) use($allowed_locations){
                                     $q->whereIn('location',$allowed_locations);
                                 })
