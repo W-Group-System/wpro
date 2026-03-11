@@ -36,6 +36,7 @@
                                             <th>Action By</th>
                                             <th>Before</th>
                                             <th>After</th>
+                                            <th>Auditable Id</th>
                                             <th>Action Date</th>
                                         </tr>
                                     </thead>
@@ -74,7 +75,7 @@
                                                     @endif
                                                 </td>
 
-
+                                                <td>{{ $audit->id }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($audit->created_at)->format('F d, Y') }}</td>
                                             </tr>
                                         @endforeach
