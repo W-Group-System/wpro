@@ -9,7 +9,7 @@ class AuditLogsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Audit::where('auditable_type', 'App\Employee');
+        $query = Audit::where('auditable_type', 'App\Employee', 'App\EmployeeAllowance');
 
         // if ($request->range) {
 
