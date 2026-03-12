@@ -61,7 +61,7 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_prev_vl && $leave_type->code == 'PVL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
-                          @elseif($is_allowed_to_file_prev_sl && $leave_type->code == 'PSL')
+                          @elseif($is_allowed_to_file_prev_sl && $leave_type->code == 'PSL' && now()->between(now()->startOfYear(), now()->copy()->month(2)->endOfMonth()))
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
