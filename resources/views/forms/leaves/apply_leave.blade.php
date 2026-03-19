@@ -302,38 +302,38 @@
                 $("[name='date_from']").removeAttr('max');
                 $("[name='date_to']").removeAttr('max');
             } 
-            else if ($(this).val() == 2 || $(this).val() == 15) {
-                // $("[name='date_from']").attr({
-                //     'min': "{{date('Y-m-d', strtotime('-3 weekdays'))}}",
-                //     'max': "{{date('Y-m-d', strtotime('-1 days'))}}"
-                // });
+            // else if ($(this).val() == 2 || $(this).val() == 15) {
+            //     // $("[name='date_from']").attr({
+            //     //     'min': "{{date('Y-m-d', strtotime('-3 weekdays'))}}",
+            //     //     'max': "{{date('Y-m-d', strtotime('-1 days'))}}"
+            //     // });
 
-                // @php
-                // $("[name='date_from']").attr({
-                //     'min': "{{date('Y-m-d', strtotime($attendance_logs[1]->time_in))}}",
-                //     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
-                // });
+            //     // @php
+            //     // $("[name='date_from']").attr({
+            //     //     'min': "{{date('Y-m-d', strtotime($attendance_logs[1]->time_in))}}",
+            //     //     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
+            //     // });
 
-                // $("[name='date_to']").attr({
-                //     'min': "{{date('Y-m-d', strtotime($attendance_logs[1]->time_in))}}",
-                //     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
-                // });
-                // @endphp
-                  // Use PHP to format the date and pass it to JavaScript
-                  const formattedDate = "<?php echo date('Y-m-d', strtotime($last_logs)); ?>";
-                  console.log(formattedDate);
-                $("[name='date_from']").attr({
-                    // 'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
-                    'min': formattedDate,
-                    'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
-                });
-                // console.log({{!date('Y-m-d', strtotime($last_logs))}});
-                $("[name='date_to']").attr({
-                    // 'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
-                    'min': formattedDate,
-                    'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
-                });
-            }
+            //     // $("[name='date_to']").attr({
+            //     //     'min': "{{date('Y-m-d', strtotime($attendance_logs[1]->time_in))}}",
+            //     //     'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
+            //     // });
+            //     // @endphp
+            //       // Use PHP to format the date and pass it to JavaScript
+            //       const formattedDate = "<?php echo date('Y-m-d', strtotime($last_logs)); ?>";
+            //       console.log(formattedDate);
+            //     $("[name='date_from']").attr({
+            //         // 'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
+            //         'min': formattedDate,
+            //         'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
+            //     });
+            //     // console.log({{!date('Y-m-d', strtotime($last_logs))}});
+            //     $("[name='date_to']").attr({
+            //         // 'min': "{{!empty($last_logs) ? date('Y-m-d', strtotime($last_logs)) : date('Y-m-d', strtotime('-3 weekdays'))}}",
+            //         'min': formattedDate,
+            //         'max': "{{date('Y-m-d', strtotime('-1 day'))}}"
+            //     });
+            // }
             else {
             $("[name='date_from']").removeAttr('min max');
 
