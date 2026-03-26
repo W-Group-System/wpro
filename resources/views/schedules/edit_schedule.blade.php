@@ -7,13 +7,16 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+        @php
+          $scheduleData = $schedule->ScheduleData->keyBy('name');
+        @endphp
         <form  method='POST' action='edit-schedule/{{$schedule->id}}' onsubmit='show()' >
           @csrf
           <div class="modal-body">
               <div class="row">
                 <div class='col-md-12 form-group'>
                   Schedule Name
-                  <input value="{{$schedule->schedule_name}}" type="text" name='schedule_name' class="form-control" placeholder="Schedule Name/Type" required>
+                  <input value="{{$schedule->schedule_name}}" type="text" name='schedule_name' class="form-control" placeholder="Schedule Name/Type" >
                 </div>
               </div>
               <div class="row border text-center">
@@ -41,13 +44,13 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_from[Sunday]" class="form-control form-control-sm"  readonly>
+                      <input type="time" name="time_in_from[Sunday]" class="form-control form-control-sm" value="{{ $scheduleData['Sunday']->time_in_from ?? '' }}">
                     </div>
                   </div>
                   <div class="row">
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_to[Sunday" class="form-control form-control-sm"  readonly>
+                      <input type="time" name="time_in_to[Sunday]" class="form-control form-control-sm"  value="{{ $scheduleData['Sunday']->time_in_to ?? '' }}">
                     </div>
                   </div>
                 </div>
@@ -55,16 +58,16 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_from[Sunday]" class="form-control form-control-sm"  readonly>
+                      <input type="time" name="time_out_from[Sunday]" class="form-control form-control-sm"  value="{{ $scheduleData['Sunday']->time_out_from ?? '' }}">
                     </div>
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_to[Sunday]"  class="form-control form-control-sm"  readonly>
+                      <input type="time" name="time_out_to[Sunday]"  class="form-control form-control-sm"  value="{{ $scheduleData['Sunday']->time_out_to ?? '' }}">
                     </div>
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                    <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step='.5' placeholder="10.5" readonly>
+                    <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Sunday']->working_hours ?? '0' }}" >
                 </div>
             </div>
               <div class="row border text-center">
@@ -79,13 +82,13 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_from[Monday]" class="form-control form-control-sm" value='07:00'  required >
+                      <input type="time" name="time_in_from[Monday]" class="form-control form-control-sm" value="{{ $scheduleData['Monday']->time_in_from ?? '' }}"   >
                     </div>
                   </div>
                   <div class="row">
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_to[Monday]"  class="form-control form-control-sm" value='10:00' required>
+                      <input type="time" name="time_in_to[Monday]"  class="form-control form-control-sm" value="{{ $scheduleData['Monday']->time_in_to ?? '' }}" >
                     </div>
                   </div>
                 </div>
@@ -93,16 +96,16 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_from[Monday]" class="form-control form-control-sm" value='17:30'  required>
+                      <input type="time" name="time_out_from[Monday]" class="form-control form-control-sm" value="{{ $scheduleData['Monday']->time_out_from ?? '' }}"  >
                     </div>
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_to[Monday]" class="form-control form-control-sm"  value='20:30'  required>
+                      <input type="time" name="time_out_to[Monday]" class="form-control form-control-sm"  value="{{ $scheduleData['Monday']->time_out_to ?? '' }}"  >
                     </div>
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step='.5' placeholder="10.5" required>
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Monday']->working_hours ?? '0' }}" >
               </div>
             </div>
               <div class="row border text-center">
@@ -117,13 +120,13 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_from[Tuesday]" class="form-control form-control-sm" value='07:00' required >
+                      <input type="time" name="time_in_from[Tuesday]" class="form-control form-control-sm" value="{{ $scheduleData['Tuesday']->time_in_from ?? '' }}"  >
                     </div>
                   </div>
                   <div class="row">
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_to[Tuesday]"  class="form-control form-control-sm" value='10:00' required>
+                      <input type="time" name="time_in_to[Tuesday]"  class="form-control form-control-sm" value="{{ $scheduleData['Tuesday']->time_in_to ?? '' }}" >
                     </div>
                   </div>
                 </div>
@@ -131,16 +134,16 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_from[Tuesday]" class="form-control form-control-sm" value='17:30'  required>
+                      <input type="time" name="time_out_from[Tuesday]" class="form-control form-control-sm" value="{{ $scheduleData['Tuesday']->time_out_from ?? '' }}"  >
                     </div>
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_to[Tuesday]" class="form-control form-control-sm"  value='20:30'  required>
+                      <input type="time" name="time_out_to[Tuesday]" class="form-control form-control-sm"  value="{{ $scheduleData['Tuesday']->time_out_to ?? '' }}"  >
                     </div>
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step='.5' placeholder="10.5" required>
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Tuesday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -155,13 +158,13 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_from[Wednesday]" class="form-control form-control-sm" value='07:00' required >
+                      <input type="time" name="time_in_from[Wednesday]" class="form-control form-control-sm" value="{{ $scheduleData['Wednesday']->time_in_from ?? '' }}"  >
                     </div>
                   </div>
                   <div class="row">
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_to[Wednesday]"  class="form-control form-control-sm" value='10:00' required>
+                      <input type="time" name="time_in_to[Wednesday]"  class="form-control form-control-sm" value="{{ $scheduleData['Wednesday']->time_in_to ?? '' }}" >
                     </div>
                   </div>
                 </div>
@@ -169,16 +172,16 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_from[Wednesday]" class="form-control form-control-sm" value='17:30'  required>
+                      <input type="time" name="time_out_from[Wednesday]" class="form-control form-control-sm" value="{{ $scheduleData['Wednesday']->time_out_from ?? '' }}"  >
                     </div>
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_to[Wednesday]" class="form-control form-control-sm"  value='20:30'  required>
+                      <input type="time" name="time_out_to[Wednesday]" class="form-control form-control-sm"  value="{{ $scheduleData['Wednesday']->time_out_to ?? '' }}"  >
                     </div>
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step='.5' placeholder="10.5" required>
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Wednesday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -193,13 +196,13 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_from[Thursday]" class="form-control form-control-sm" value='07:00' required >
+                      <input type="time" name="time_in_from[Thursday]" class="form-control form-control-sm" value="{{ $scheduleData['Thursday']->time_in_from ?? '' }}"  >
                     </div>
                   </div>
                   <div class="row">
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_to[Thursday]"  class="form-control form-control-sm" value='10:00' required>
+                      <input type="time" name="time_in_to[Thursday]"  class="form-control form-control-sm" value="{{ $scheduleData['Thursday']->time_in_to ?? '' }}" >
                     </div>
                   </div>
                 </div>
@@ -207,16 +210,16 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_from[Thursday]" class="form-control form-control-sm" value='17:30'  required>
+                      <input type="time" name="time_out_from[Thursday]" class="form-control form-control-sm" value="{{ $scheduleData['Thursday']->time_out_from ?? '' }}"  >
                     </div>
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_to[Thursday]" class="form-control form-control-sm"  value='20:30'  required>
+                      <input type="time" name="time_out_to[Thursday]" class="form-control form-control-sm"  value="{{ $scheduleData['Thursday']->time_out_to ?? '' }}"  >
                     </div>
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step='.5' placeholder="10.5" required>
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Thursday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -231,13 +234,13 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_from[Friday]" class="form-control form-control-sm" value='07:00' required >
+                      <input type="time" name="time_in_from[Friday]" class="form-control form-control-sm" value="{{ $scheduleData['Friday']->time_in_from ?? '' }}"  >
                     </div>
                   </div>
                   <div class="row">
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_in_to[Friday]"  class="form-control form-control-sm" value='10:00' required>
+                      <input type="time" name="time_in_to[Friday]"  class="form-control form-control-sm" value="{{ $scheduleData['Friday']->time_in_to ?? '' }}" >
                     </div>
                   </div>
                 </div>
@@ -245,16 +248,16 @@
                   <div class="row mt-1 ">
                     <label  class="col-sm-2 col-form-label align-self-center">From</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_from[Friday]" class="form-control form-control-sm" value='17:30'  required>
+                      <input type="time" name="time_out_from[Friday]" class="form-control form-control-sm" value="{{ $scheduleData['Friday']->time_out_from ?? '' }}"  >
                     </div>
                     <label  class="col-sm-2 col-form-label align-self-center">To</label>
                     <div class="col-sm-10">
-                      <input type="time" name="time_out_to[Friday]" class="form-control form-control-sm"  value='20:30'  required>
+                      <input type="time" name="time_out_to[Friday]" class="form-control form-control-sm"  value="{{ $scheduleData['Friday']->time_out_to ?? '' }}"  >
                     </div>
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step='.5' placeholder="10.5" required>
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Friday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -269,13 +272,13 @@
                 <div class="row mt-1 ">
                   <label  class="col-sm-2 col-form-label align-self-center">From</label>
                   <div class="col-sm-10">
-                    <input type="time" name="time_in_from[Saturday]" class="form-control form-control-sm"  readonly>
+                    <input type="time" name="time_in_from[Saturday]" class="form-control form-control-sm"  value="{{ $scheduleData['Saturday']->time_in_from ?? '' }}">
                   </div>
                 </div>
                 <div class="row">
                   <label  class="col-sm-2 col-form-label align-self-center">To</label>
                   <div class="col-sm-10">
-                    <input type="time" name="time_in_to[Saturday]" class="form-control form-control-sm"  readonly>
+                    <input type="time" name="time_in_to[Saturday]" class="form-control form-control-sm"  value="{{ $scheduleData['Saturday']->time_in_to ?? '' }}">
                   </div>
                 </div>
               </div>
@@ -283,16 +286,16 @@
                 <div class="row mt-1 ">
                   <label  class="col-sm-2 col-form-label align-self-center">From</label>
                   <div class="col-sm-10">
-                    <input type="time" name="time_out_from[Saturday]" class="form-control form-control-sm"  readonly>
+                    <input type="time" name="time_out_from[Saturday]" class="form-control form-control-sm" value="{{ $scheduleData['Saturday']->time_out_from ?? '' }}" >
                   </div>
                   <label  class="col-sm-2 col-form-label align-self-center">To</label>
                   <div class="col-sm-10">
-                    <input type="time" name="time_out_to[Saturday]"  class="form-control form-control-sm"  readonly>
+                    <input type="time" name="time_out_to[Saturday]"  class="form-control form-control-sm" value="{{ $scheduleData['Saturday']->time_out_to ?? '' }}" >
                   </div>
                 </div>
               </div>
               <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step='.5' placeholder="10.5" readonly>
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Saturday']->working_hours ?? '0' }}" >
               </div>
             </div>
           </div>
