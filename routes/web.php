@@ -202,6 +202,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     //Schedules
     Route::get('schedules', 'ScheduleController@schedules');
     Route::post('new-schedule', 'ScheduleController@newSchedule');
+    Route::post('edit-schedule/{id}', 'ScheduleController@editSchedule');
 
 
     //Announcement

@@ -52,4 +52,35 @@ class ScheduleController extends Controller
         return back();
 
     }
+
+    public function editSchedule(Request $request, $id)
+    {
+
+        $new_schedule = Schedule::findOrFail($id);
+        $new_schedule->schedule_name = $request->schedule_name;
+        $new_schedule->created_by = auth()->user()->id;
+        $new_schedule->save();
+
+        ScheduleData::where('schedule_id', $new_schedule->id)->delete();
+
+        foreach ($request->time_in_from as $key => $time_in) {
+
+        
+            if (!empty($time_in)) {
+                $schedule_data = new ScheduleData;
+                $schedule_data->schedule_id = $new_schedule->id;
+                $schedule_data->name = $key;
+                $schedule_data->time_in_from = $time_in;
+                $schedule_data->time_in_to = $request->time_in_to[$key] ?? null;
+                $schedule_data->time_out_from = $request->time_out_from[$key] ?? null;
+                $schedule_data->time_out_to = $request->time_out_to[$key] ?? null;
+                $schedule_data->working_hours = $request->working_hours[$key] ?? null;
+                $schedule_data->save();
+            }
+        }
+      
+        Alert::success('Successfully Updated Schedule')->persistent('Dismiss');
+        return back();
+
+    }
 }
