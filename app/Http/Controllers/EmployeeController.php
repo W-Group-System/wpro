@@ -1856,9 +1856,10 @@ class EmployeeController extends Controller
         $allowed_locations = getUserAllowedLocations(auth()->user()->id);
         $allowed_projects = getUserAllowedProjects(auth()->user()->id);
 
-        $companies = Company::whereHas('employee_has_company')
-                                ->whereIn('id',$allowed_companies)
-                                ->get();
+        $companies = Company::whereIn('id', $allowed_companies)->get();
+        // $companies = Company::whereHas('employee_has_company')
+        //                         ->whereIn('id',$allowed_companies)
+        //                         ->get();
 
         $department_companies = Employee::where('company_id',$allowed_companies)
                                         ->groupBy('department_id')
