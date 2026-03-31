@@ -353,9 +353,11 @@
                               {
                                 // dd($absent_dat->shift);
                                 $shift = $absent_dat->shift;
-                                $shift = str_replace("(Semi-Flexi)", '', $shift);
-                                $shift = str_replace("(Semi - flexi)", '', $shift);
-                                $shift = str_replace("(Flexi)", '', $shift);
+                                // $shift = str_replace("(Semi-Flexi)", '', $shift);
+                                // $shift = str_replace("(Semi - flexi)", '', $shift);
+                                // $shift = str_replace("(Flexi)", '', $shift);
+                                $shift = str_replace(["(Semi-Flexi)","(Semi - flexi)","(Flexi)"], '', $shift);
+                                $shift = trim($shift); 
                                 // $shift = str_replace(" ", '', $shift);
                                 $shift = explode("-",$shift);
                                 $start = strtotime($absent_dat->log_date." ".$shift[0]);
