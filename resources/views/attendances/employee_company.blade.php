@@ -668,6 +668,9 @@
                                                 
                                                         $time_start_ts = strtotime($time_start);
                                                         $time_end_ts = strtotime($time_end);
+
+                                                        $lunch_start = strtotime(date('Y-m-d 12:00:00', $time_start_ts));
+                                                        $lunch_end   = strtotime(date('Y-m-d 13:00:00', $time_start_ts));
                                                         // if ($time_end_ts < $time_start_ts) {
                                                         //     $time_end_ts += 86400; `
                                                         // }
@@ -728,6 +731,11 @@
                                                                 }
                                                                
                                                                 
+                                                            } else {
+                                                                if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
+                                                                    $schedule_hours = $schedule_hours - 1;
+                                                                    $work = $work - 1;
+                                                                }
                                                             }
                                                             if($emp->employee_code == "A340612")//frosie
                                                             {
