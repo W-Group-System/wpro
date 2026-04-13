@@ -1130,6 +1130,20 @@
                                                     // else
                                                     // {
                                                     // }
+                                                    if ($emp->work_description == 'Non-Monthly') 
+                                                    {
+                                                        $prev = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
+                                                        if($prev)
+                                                        {
+                                                            $work = (strtotime($prev->time_out_to)-strtotime($prev->time_in_to))/3600;
+                                                                                $work = $work-1;
+                                                        }
+                                                        else
+                                                        {
+                                                            $work = 0; 
+                                                        }
+                                                    }
+                                                    else
                                                     $work = 0;
                                                   }
                                                   if($abs == 1)
