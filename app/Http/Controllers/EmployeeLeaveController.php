@@ -32,6 +32,16 @@ class EmployeeLeaveController extends Controller
         $to = isset($request->to) ? $request->to : date('Y-m-d',(strtotime ( '+1 month' , strtotime ( $today) ) ));
         $status = isset($request->status) ? $request->status : 'Pending';
 
+        // PVL Validity until march only
+        $isPVLvalidMonth = false;
+        $endOfMarch = Carbon::now()->startOfYear()->addMonths(2)->endOfMonth();
+        $today = Carbon::today();
+
+        if ($today->lt($endOfMarch)) {
+            $isPVLvalidMonth = true;
+        }
+        // PVL Validity until march only
+
         $employee_status = Employee::where('user_id',auth()->user()->id)->first();
         // dd($employee_status->ScheduleData);
         $used_vl = checkUsedSLVLSILLeave(auth()->user()->id,1,$employee_status->original_date_hired,$employee_status->ScheduleData);
@@ -185,6 +195,7 @@ class EmployeeLeaveController extends Controller
             'used_mc' => $used_mc,
             'used_pvl' => $used_pvl,
             'used_psl' => $used_psl,
+            'isPVLvalidMonth' => $isPVLvalidMonth
         ));
     }  
 
@@ -235,6 +246,19 @@ class EmployeeLeaveController extends Controller
                 if ($request->leave_type == 14 || $request->leave_type == 15)
                 {
                     $new_leave->is_previous_year = 1;
+                    
+                    // PVL Validity until march only
+                    if ($request->leave_type == 14) {
+                        $startDate = Carbon::parse($request->date_from);
+                        $endOfMarch = Carbon::now()->startOfYear()->addMonths(2)->endOfMonth();
+                        $endDate = Carbon::parse($request->date_to);
+
+                        if ($startDate->gt($endOfMarch) || $endDate->gt($endOfMarch)) {
+                            Alert::warning('Your requested dates to use previous vacation leave must be between January to March only.')->persistent('Dismiss');
+                            return back();
+                        }
+                    }
+                    // PVL Validity until march only
                 }
 
                 if($request->file('attachment')){

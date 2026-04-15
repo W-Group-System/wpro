@@ -872,7 +872,7 @@
                                             @php
                                                 $pvl_balance = $employee_leave_lists->where('year', date('Y', strtotime('-1 year')))->where('leave_id',1)->sum('earned_per_month') - $used_pvl;
                                                 $pvl_balance = number_format($pvl_balance, 2);
-                                                if ($pvl_balance >= 0.5)
+                                                if ($pvl_balance >= 0.5 && $isPVLvalidMonth)
                                                 {
                                                     $is_allowed_to_file_prev_vl = true;
                                                 }
