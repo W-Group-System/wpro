@@ -959,7 +959,14 @@
                                                         if($night_diff < 7)
                                                         {
                                                             $actual_night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
-                                                            $night_diff_ot = night_difference_per_company($time_start,$time_end)-$actual_night_diff;
+                                                            // $night_diff_ot = night_difference_per_company($time_start,$time_end)-$actual_night_diff;
+                                                            if ($employee_schedule) {
+                                                                $isNightShift = strtotime($employee_schedule->time_in_to) > strtotime($employee_schedule->time_out_to);
+
+                                                                if ($isNightShift) {
+                                                                    $night_diff_ot = night_difference_per_company($time_start,$time_end) - $total_night_diff;
+                                                                }
+                                                            }
                                                         }
                                                         
                                                     }
