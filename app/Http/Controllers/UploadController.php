@@ -70,7 +70,7 @@ class UploadController extends Controller
                                 $employeeOb->created_by = auth()->user()->id;
                                 $employeeOb->remarks = $row[9];
                                 $employeeOb->save();
-                            } 
+                            // } 
                             // else {
                             //     $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[3]))." ".date('H:i:s',strtotime($row[5]))));
                             //     $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[4]))." ".date('H:i:s',strtotime($row[6]))));
