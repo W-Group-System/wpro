@@ -964,7 +964,7 @@
                                                                 $isNightShift = strtotime($employee_schedule->time_in_to) > strtotime($employee_schedule->time_out_to);
 
                                                                 if ($isNightShift) {
-                                                                    $night_diff_ot = night_difference_per_company($time_start,$time_end) - $total_night_diff;
+                                                                    $night_diff_ot = night_difference_per_company($time_start,$time_end) - $actual_night_diff;
                                                                 }
                                                             }
                                                         }
