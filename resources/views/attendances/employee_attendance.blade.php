@@ -551,7 +551,20 @@
                                     {
                                         if ($employee_schedule)
                                         {
-                                            $schedule_hours = $employee_schedule->working_hours - 1;
+                                            // holiday reg hours
+                                            // $schedule_hours = $employee_schedule->working_hours - 1;
+
+                                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                            $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                if(($schedule_out) < ($schedule_in))
+                                                    { 
+                                                        $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                    }
+                                            $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                            if($schedule_hours > 8)
+                                                {
+                                                    $schedule_hours =  $schedule_hours-1;
+                                                }
                                             $work = $schedule_hours;
                                         }
                                     }
