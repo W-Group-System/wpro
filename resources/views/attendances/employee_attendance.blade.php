@@ -785,6 +785,7 @@
                                     }
 
                                     $sh_ot=0;
+                                    $sh_nd=0;
                                     $sh_ot_ge=0;
                                     $lh_ot=0;
                                     $lh_ot_ge=0;
@@ -813,6 +814,15 @@
                                             {
                                                 $sh_ot_ge = $approved_overtime_hrs-8;   
                                             }
+                                            $sh_nd =  night_difference_per_company(date('Y-m-d H:i',strtotime($time_start)),date('Y-m-d H:i',strtotime($time_end)));
+                                            if($sh_nd >=4.5 )
+                                                {   
+                                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                    if($schedule_hours > 8)
+                                                    {
+                                                        $sh_nd = $sh_nd-1;
+                                                    }
+                                                }
                                         }
                                         else
                                         {
@@ -917,7 +927,7 @@
                                     <td @if($lh_ot_nd_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_nd_over_eight]" value="{{ $lh_ot_nd_ge }}">{{ number_format($lh_ot_nd_ge,2) }}</td> {{-- LH ND > 8 --}}
                                     <td @if($sh_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_ot]" value="0.00">{{ number_format($sh_ot,2) }}</td> {{-- SH OT --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_ot_over_eight]" value="0.00">0.00</td> {{-- SH OT > 8 --}}
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_nd]" value="0.00">0.00</td> {{-- SH ND --}}
+                                    <td @if($sh_nd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_nd]" value="0.00">{{ number_format($sh_nd,2) }}</td> {{-- SH ND --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_nd_over_eight]" value="0.00">0.00</td> {{-- SH ND > 8 --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_ot]" value="0.00">0.00</td> {{-- RST LH OT --}}
                                     <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_ot_over_eight]" value="0.00">0.00</td> {{-- RST LH OT > 8 --}}
