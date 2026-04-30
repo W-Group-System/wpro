@@ -852,16 +852,20 @@
                                             
                                             if($time_end_string>=$schedule_out)
                                             {
-                                                $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',strtotime($time_start)),date('Y-m-d H:i',strtotime($time_end)));
-                                                $lh_ot_use = $lh_ot_nd;
-                                                if($lh_ot_nd >=4.5 )
-                                                {   
-                                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
-                                                    if($schedule_hours > 8)
-                                                    {
-                                                        $lh_ot_nd = $lh_ot_nd-1;
+                                                if ($check_if_holiday == "Regular Holiday")
+                                                {
+                                                    $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',strtotime($time_start)),date('Y-m-d H:i',strtotime($time_end)));
+                                                    $lh_ot_use = $lh_ot_nd;
+                                                    if($lh_ot_nd >=4.5 )
+                                                    {   
+                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                        if($schedule_hours > 8)
+                                                        {
+                                                            $lh_ot_nd = $lh_ot_nd-1;
+                                                        }
                                                     }
                                                 }
+                                                
                                                 
                                                 if ($rest == "RESTDAY")
                                                 {
