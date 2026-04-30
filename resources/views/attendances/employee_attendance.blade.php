@@ -798,10 +798,10 @@
                                         $undertime_hrs = 0;
                                         $overtime=0;
                                         $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
-                                        if ($approved_overtime_hrs > 2)
-                                        {
-                                            $approved_overtime_hrs = $approved_overtime_hrs-1;
-                                        }
+                                        // if ($approved_overtime_hrs > 2)
+                                        // {
+                                        //     $approved_overtime_hrs = $approved_overtime_hrs-1;
+                                        // }
                                         if ($check_if_holiday == "Special Holiday")
                                         {
                                             $sh_ot = 8;
