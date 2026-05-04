@@ -733,9 +733,15 @@
                                                                
                                                                 
                                                             } else {
-                                                                if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
-                                                                    $schedule_hours = $schedule_hours - 1;
-                                                                    $work = $work - 1;
+                                                                $day_of_week = date('N', strtotime($date_r)); 
+                                                                $is_weekend = ($day_of_week >= 6);
+
+                                                                $is_pbi = ($emp->company_id ?? '') === 10;
+                                                                if (!($is_pbi && $is_weekend)) {
+                                                                    if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
+                                                                        $schedule_hours = $schedule_hours - 1;
+                                                                        $work = $work - 1;
+                                                                    }
                                                                 }
                                                             }
                                                             if($emp->employee_code == "A340612")//frosie
