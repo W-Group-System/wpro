@@ -222,8 +222,8 @@ class EmployeeLeaveListController extends Controller
         foreach($employees as $employee)
         {
             // $sl = ($employee_leave_list)->where('leave_id', 2)->first();
-            $used_sl_this_yr = HelperClass::usedSlVlThisYear($employee->user_id,2,$employee->original_date_hired,$employee->ScheduleData);
-            $used_vl_this_yr = HelperClass::usedSlVlThisYear($employee->user_id,1,$employee->original_date_hired,$employee->ScheduleData);
+            $used_sl_this_yr = usedSlVlThisYear($employee->user_id,2,$employee->original_date_hired,$employee->ScheduleData);
+            $used_vl_this_yr = usedSlVlThisYear($employee->user_id,1,$employee->original_date_hired,$employee->ScheduleData);
 
             $total_earned_vl = ($employee->employee_leave_list)->where('leave_id', 1)->pluck('earned_per_month')->sum();
             $total_earned_sl = ($employee->employee_leave_list)->where('leave_id', 2)->pluck('earned_per_month')->sum();
