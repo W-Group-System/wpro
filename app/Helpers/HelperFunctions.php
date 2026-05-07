@@ -1448,12 +1448,24 @@ function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas)
                                 // else
                                 // {
                                 // }
-                                $dayName = date('l',strtotime($leave_Date)); // Get the day name (e.g., Monday, Tuesday)
-                                // dd($dayName);
-                                if (in_array($dayName, $workingDays)) {
-                                    $count++;
-                                    $all_days[]=$leave_Date;
-                                }
+                                 $daily = DailySchedule::where('employee_code', $employee->employee_code)
+                                    ->whereDate('log_date', $leave_Date)
+                                    ->first();
+
+                                    if ($daily && !is_null($daily->working_hours)) {
+
+                                        $count++;
+                                        $all_days[] = $leave_Date;
+
+                                    } else {
+
+                                        $dayName = date('l', strtotime($leave_Date));
+
+                                        if (in_array($dayName, $workingDays)) {
+                                            $count++;
+                                            $all_days[] = $leave_Date;
+                                        }
+                                    }
                             }
                         }
                     }
