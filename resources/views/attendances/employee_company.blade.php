@@ -738,7 +738,7 @@
 
                                                                 $is_pbi = ($emp->company_id ?? '') === 10;
                                                                 $is_wli_hbu = ($emp->company_id ?? '') === 13;
-                                                                if (!(($is_pbi && $is_weekend) || $is_wli_hbu)) {
+                                                                if (!(($is_pbi && $is_weekend) || $is_wli_hbu || ($is_pbi && $schedule_hours <= 8))) {
                                                                     if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
                                                                         $schedule_hours = $schedule_hours - 1;
                                                                         $work = $work - 1;
