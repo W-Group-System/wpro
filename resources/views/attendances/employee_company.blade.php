@@ -745,18 +745,18 @@
                                                                     }
                                                                 }
                                                             }
-                                                            if($emp->employee_code == "A340612")//frosie
-                                                            {
-                                                                $schedule_hours =  $schedule_hours-1;
-                                                                if($work >= ($schedule_hours/1.5))
-                                                                {
+                                                            // if($emp->employee_code == "A340612")//frosie
+                                                            // {
+                                                            //     $schedule_hours =  $schedule_hours-1;
+                                                            //     if($work >= ($schedule_hours/1.5))
+                                                            //     {
                                                                    
-                                                                    $work = $work-1;
+                                                            //         $work = $work-1;
                                                                    
                                                                     
-                                                                }
+                                                            //     }
                                                                 
-                                                            }
+                                                            // }
                                                             
                                                           
                                                             if($schedule_hours > $work)
