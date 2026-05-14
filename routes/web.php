@@ -261,6 +261,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('/generated-payroll','PayslipController@generatedPayroll');
     Route::get('/payslip','PayslipController@generatePayslip');
     Route::get('/payslip-employee','PayslipController@generatePayslipEmployee');
+    Route::get('/13th-month-payslip','ThirteenthMonthController@payslip');
 
     Route::get('pay-instruction', 'PayslipController@payroll_instruction');
     Route::post('deletePayRegInstruction/{id}', 'PayslipController@deletePayRegInstruction');
@@ -369,8 +370,10 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('ytd-report', 'PayslipController@ytd_report');
 
     //13th month
-    Route::get('13th-register','PayslipController@monthly_benefit');
-    Route::get('month-benefit', 'PayslipController@monthly_benefit');
+    Route::get('13th-register','ThirteenthMonthController@index');
+    Route::post('13th-register/post','ThirteenthMonthController@post');
+    Route::get('month-benefit', 'ThirteenthMonthController@generated');
+    Route::get('month-benefit-generated', 'ThirteenthMonthController@generated');
     
     // Employee Leave Credits
     Route::get('employee-leave-credits', 'LeaveCreditsController@index');

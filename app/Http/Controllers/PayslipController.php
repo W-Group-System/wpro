@@ -25,6 +25,7 @@ use App\PayregLoan;
 use App\PayregAllowance;
 use App\PayregInstruction;
 use App\ContributionSSS;
+use App\ThirteenthMonthPosting;
 use App\Department;
 use App\EmployeeAllowance;
 use App\SalaryAdjustment;
@@ -35,17 +36,26 @@ use App\Exports\AttendanceExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
 
 class PayslipController extends Controller
 {
-    //
+    
     public function view ()
     {
         $payslips = Payregs::where('employee_no',auth()->user()->employee->employee_code)->orderBy('id','desc')->get();
+        $thirteenth_month_payslips = Schema::hasTable('thirteenth_month_postings')
+            ? ThirteenthMonthPosting::where('employee_no', auth()->user()->employee->employee_code)
+                ->orderBy('year', 'desc')
+                ->orderBy('half', 'desc')
+                ->orderBy('id', 'desc')
+                ->get()
+            : collect();
         return view('payslips.payslips',
         array(
             'header' => 'payslips',
-            'payslips' => $payslips
+            'payslips' => $payslips,
+            'thirteenth_month_payslips' => $thirteenth_month_payslips
             
         ));
     }
