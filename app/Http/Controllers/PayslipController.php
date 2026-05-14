@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Schema;
 
 class PayslipController extends Controller
 {
-    //
+    
     public function view ()
     {
         $payslips = Payregs::where('employee_no',auth()->user()->employee->employee_code)->orderBy('id','desc')->get();
