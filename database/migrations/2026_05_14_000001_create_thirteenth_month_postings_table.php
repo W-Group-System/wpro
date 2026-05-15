@@ -19,6 +19,7 @@ class CreateThirteenthMonthPostingsTable extends Migration
             $table->integer('year')->index();
             $table->date('posting_cut_off')->nullable()->index();
             $table->decimal('monthly_salary', 15, 2)->default(0);
+            $table->decimal('subliq_amount', 15, 2)->default(0);
             $table->decimal('annual_thirteenth_month', 15, 2)->default(0);
             $table->decimal('first_half_released', 15, 2)->default(0);
             $table->decimal('release_amount', 15, 2)->default(0);
