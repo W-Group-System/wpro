@@ -108,6 +108,10 @@
                 <td class="text-right">{{ number_format($posting->monthly_salary, 2) }}</td>
             </tr>
             <tr>
+                <td>Subliq Included</td>
+                <td class="text-right">{{ number_format($posting->subliq_amount, 2) }}</td>
+            </tr>
+            <tr>
                 <td>Annual 13th Month</td>
                 <td class="text-right">{{ number_format($posting->annual_thirteenth_month, 2) }}</td>
             </tr>

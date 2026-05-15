@@ -85,12 +85,12 @@
                                         
                                         <!-- <th>Tax Status</th> -->
                                         <th>Pay Rate</th>
+                                        <th>Subliq</th>
                                         @for($i = 1; $i <= 12; $i++)
                                             <th>{{ date('M Y',strtotime($year."-".$i.'-01')) }}</th>
                                         @endfor
                                         <th>Total</th>
                                         <th>Salary Diff</th>
-                                        <th>For Release(WLI)</th>
                                         <th>Withholding Tax</th>
                                         <th>Thirteenth Month Pay Nontaxable</th>
                                         <th>Non Taxable Benefits Total</th>
@@ -114,11 +114,11 @@
 												<td>{{ $row['department'] }}</td>
 												<td>{{ $row['account_number'] }}</td>
 												<td>{{ number_format($row['monthly_salary'], 2) }}</td>
+												<td>{{ number_format($row['subliq_amount'], 2) }}</td>
 												@for($i = 1; $i <= 12; $i++)
 													<td>{{ number_format($row['monthly_amounts'][$i] ?? 0, 2) }}</td>
 												@endfor
 												<td>{{ number_format($row['annual_payroll'], 2) }}</td>
-												<td>{{ number_format(0, 2) }}</td>
 												<td>{{ number_format(0, 2) }}</td>
 												<td>{{ number_format(0, 2) }}</td>
 												<td class="{{ $releaseClass }}">{{ number_format($row['release_amount'], 2) }}</td>
@@ -154,6 +154,7 @@
                                         <td>{{$employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$employee->bank_account_number}}"></td>
                                         <!-- <td></td> -->
                                         <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
+                                        <td>{{number_format($employee->salary->subliq,2)}}</td>
                                     
                                         {{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
                                         {{-- <td>{{$employee->employee_code}}</td> --}}
@@ -341,7 +342,6 @@
                                         @endphp
                                         <td>{{number_format($total_Payroll,2)}}</td>
                                         <td>{{number_format($salary_diff,2)}}</td>
-                                        <td>{{number_format($for_release,2)}}</td>
                                         <td>{{number_format($tax,2)}}</td>
                                         <td>{{number_format($payroll,2)}}</td>
                                         <td>{{number_format($payroll,2)}}</td>
