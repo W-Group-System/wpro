@@ -153,6 +153,7 @@ class ThirteenthMonthController extends Controller
                     'department' => $row['department'],
                     'account_number' => $row['account_number'],
                     'monthly_salary' => $row['monthly_salary'],
+                    'subliq_amount' => $row['subliq_amount'],
                     'annual_thirteenth_month' => $row['annual_thirteenth'],
                     'first_half_released' => $row['first_released'],
                     'release_amount' => $row['release_amount'],
@@ -243,12 +244,11 @@ class ThirteenthMonthController extends Controller
             })
             ->where('original_date_hired','<=',date('Y-11-30', strtotime("$year-01-01")))
             ->where('company_id', $company)
-            ->where('classification','!=',8)
             ->when($company == 10, function($query) {
                 $query->where('classification', '!=', 1);
             })
             ->when($half == '1st', function($query) {
-                $query->where('classification', 2);
+                $query->whereIn('classification', [2, 8]);
             })
             ->where('status','Active')
             ->get();
@@ -271,6 +271,7 @@ class ThirteenthMonthController extends Controller
             $monthlySalary = $salary
                 ? (float) $salary->basic_salary + (float) $salary->de_minimis + (float) $salary->subliq + (float) $salary->other_allowance
                 : 0;
+            $subliqAmount = $salary ? (float) $salary->subliq : 0;
 
             if ($half == '1st') {
                 for ($i = 1; $i <= 12; $i++) {
@@ -287,6 +288,7 @@ class ThirteenthMonthController extends Controller
                     'account_number' => $employee->bank_account_number,
                     'name' => trim($employee->last_name . ', ' . $employee->first_name),
                     'monthly_salary' => $monthlySalary,
+                    'subliq_amount' => $subliqAmount,
                     'monthly_amounts' => $monthlyAmounts,
                     'annual_payroll' => 0,
                     'annual_thirteenth' => 0,
@@ -338,6 +340,7 @@ class ThirteenthMonthController extends Controller
                 'account_number' => $employee->bank_account_number,
                 'name' => trim($employee->last_name . ', ' . $employee->first_name),
                 'monthly_salary' => $monthlySalary,
+                'subliq_amount' => $subliqAmount,
                 'monthly_amounts' => $monthlyAmounts,
                 'annual_payroll' => $annualPayroll,
                 'annual_thirteenth' => $annualThirteenth,
