@@ -248,7 +248,7 @@ class ThirteenthMonthController extends Controller
                 $query->where('classification', '!=', 1);
             })
             ->when($half == '1st', function($query) {
-                $query->whereIn('classification', [2, 8]);
+                $query->whereIn('classification', [2, 7]);
             })
             ->where('status','Active')
             ->get();
