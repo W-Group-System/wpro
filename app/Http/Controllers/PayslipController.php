@@ -36,15 +36,14 @@ use App\Exports\AttendanceExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
 
 class PayslipController extends Controller
-use Illuminate\Support\Facades\Schema;
 {
-    //
+    
     public function view ()
     {
         $payslips = Payregs::where('employee_no',auth()->user()->employee->employee_code)->orderBy('id','desc')->get();
-        return view('payslips.payslips',
         $thirteenth_month_payslips = Schema::hasTable('thirteenth_month_postings')
             ? ThirteenthMonthPosting::where('employee_no', auth()->user()->employee->employee_code)
                 ->orderBy('year', 'desc')
@@ -52,6 +51,7 @@ use Illuminate\Support\Facades\Schema;
                 ->orderBy('id', 'desc')
                 ->get()
             : collect();
+        return view('payslips.payslips',
         array(
             'header' => 'payslips',
             'payslips' => $payslips,
