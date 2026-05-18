@@ -119,7 +119,7 @@
                                 </td>
                             @endif
                             <td align="center" id="tdActionId{{ $form_approval->id }}" data-id="{{ $form_approval->id }}">
-                                @if(Auth::id() == 875 && ($form_approval->is_review != 1 || $form_approval->is_review == NULL))
+                                @if((Auth::id() == 664 || Auth::id() == 607) && ($form_approval->is_review != 1 || $form_approval->is_review == NULL))
                                 <button type="button" class="btn btn-info btn-sm" data-id="{{ $form_approval->id }}" data-target="#employee-review-modal-{{ $form_approval->id }}" data-toggle="modal" title="Review">
                                   <i class="ti-eye btn-icon-prepend"></i>
                                 </button>
