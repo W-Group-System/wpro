@@ -1287,7 +1287,7 @@ function pending_employee_count($userId = null)
                    ->where('is_review', 1)
                    ->count();
     }
-    if ($userId == 875) {
+    if ($userId == 664 || $userId == 607) {
         // For user 875: count Pending with is_review = NULL
         return User::where('status', 'Pending')
                    ->whereNull('is_review')
