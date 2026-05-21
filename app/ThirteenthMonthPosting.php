@@ -16,6 +16,7 @@ class ThirteenthMonthPosting extends Model
         'year',
         'posting_cut_off',
         'monthly_salary',
+        'subliq_amount',
         'annual_thirteenth_month',
         'first_half_released',
         'release_amount',

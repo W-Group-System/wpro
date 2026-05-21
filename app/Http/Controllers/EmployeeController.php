@@ -33,11 +33,13 @@ use App\IclockTerminal;
 use App\AttPunch;
 use App\UserAllowedOvertime;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\AttendanceLog;
+use App\AttendanceDetailedReport;
 use App\DailySchedule;
 use App\EmployeeMovement;
 use App\Exports\EmployeesExport;
@@ -49,8 +51,10 @@ use App\EmployeeBenefits;
 use App\EmployeeTraining;
 use App\NteFile;
 use App\EmployeeDocument;
+use App\EmployeeLeaveSetting;
 use App\EmployeeSalary;
 use App\SalaryMovement;
+use App\TaxMapping;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
@@ -151,6 +155,7 @@ class EmployeeController extends Controller
                                     $q->where(function($w) use($search){
                                         $w->where('first_name', 'like' , '%' .  $search . '%')->orWhere('last_name', 'like' , '%' .  $search . '%')
                                         ->orWhere('employee_code', 'like' , '%' .  $search . '%')
+                                        ->orWhere('employee_number', 'like' , '%' .  $search . '%')
                                         ->orWhereRaw("CONCAT(`first_name`, ' ', `last_name`) LIKE ?", ["%{$search}%"])
                                         ->orWhereRaw("CONCAT(`last_name`, ' ', `first_name`) LIKE ?", ["%{$search}%"]);
                                     });
@@ -1102,7 +1107,12 @@ class EmployeeController extends Controller
     public function employeeSettingsHR(User $user)
     {
 
-        $user = User::where('id',$user->id)->with('allowed_overtime','employee.department','employee.payment_info','employee.contact_person','employee.beneficiaries','employee.employee_vessel','employee.classification_info','employee.level_info','employee.ScheduleData','employee.immediate_sup_data','approvers.approver_data','subbordinates')->first();
+        $employeeRelations = ['allowed_overtime','employee.department','employee.payment_info','employee.contact_person','employee.beneficiaries','employee.employee_vessel','employee.classification_info','employee.level_info','employee.ScheduleData','employee.immediate_sup_data','employee.tax_mapping','approvers.approver_data','subbordinates'];
+        if (Schema::hasTable('employee_leave_settings')) {
+            $employeeRelations[] = 'employee.leave_setting';
+        }
+
+        $user = User::where('id',$user->id)->with($employeeRelations)->first();
         // dd($user);
         $classifications = Classification::get();
 
@@ -1150,12 +1160,10 @@ class EmployeeController extends Controller
                             ->orWhere('name',$user->employee->level)
                             ->first();
 
-        $employeeBenefits = EmployeeBenefits::where('user_id', $user->id)->get();
-        
-        // $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->id)->get();
-        $employeeTraining = EmployeeTraining::where('employee_id', $user->employee->user_id)->get();
-        $employeeNte = NteFile::where('employee_id', $user->employee->id)->get();
-        $employeeDocument = EmployeeDocument::with('employee')->where('employee_id', $user->employee->id)->get();
+        $employeeBenefits = collect();
+        $employeeTraining = collect();
+        $employeeNte = collect();
+        $employeeDocument = collect();
         // dd($users);
         return view('employees.employee_settings_hr',
         array(
@@ -1181,6 +1189,78 @@ class EmployeeController extends Controller
             // 'hierarchy' => $hierarchy,
         ));
     
+    }
+
+    public function employeeSettingsHRTab(User $user, $tab)
+    {
+        $tabs = [
+            'employment' => 'employment',
+            'schedule' => 'schedule',
+            'contact' => 'contact',
+            'beneficiaries' => 'beneficiaries',
+            'history' => 'history',
+            'bank' => 'bank',
+            'benefits' => 'benefits',
+            'leave-settings' => 'leave_settings',
+            'government' => 'government',
+            'training' => 'training',
+            'nte' => 'nte',
+            'documents' => 'documents',
+            'org-chart' => 'org_chart',
+        ];
+
+        abort_unless(isset($tabs[$tab]), 404);
+
+        $employeeRelations = ['allowed_overtime','employee.department','employee.payment_info','employee.contact_person','employee.beneficiaries','employee.employee_vessel','employee.classification_info','employee.level_info','employee.ScheduleData','employee.immediate_sup_data','employee.tax_mapping','employee.employee_leave_list.leave','employee.employeeMovement','employee.salaryMovement','approvers.approver_data','subbordinates'];
+        if (Schema::hasTable('employee_leave_settings')) {
+            $employeeRelations[] = 'employee.leave_setting';
+        }
+
+        $user = User::where('id',$user->id)->with($employeeRelations)->first();
+        abort_unless($user && $user->employee, 404);
+
+        $data = [
+            'header' => 'employees',
+            'user' => $user,
+            'employeeBenefits' => collect(),
+            'employeeTraining' => collect(),
+            'employeeNte' => collect(),
+            'employeeDocuments' => collect(),
+        ];
+
+        if (in_array($tab, ['employment', 'history'])) {
+            $data['employee_movements'] = EmployeeMovement::with('department','immediate_sup_data', 'user_info', 'classification_info','level_info')->get();
+        }
+
+        if ($tab == 'benefits') {
+            $data['employeeBenefits'] = EmployeeBenefits::where('user_id', $user->id)->get();
+        }
+
+        if ($tab == 'leave-settings') {
+            $data['employeeLeaveSetting'] = Schema::hasTable('employee_leave_settings') ? $user->employee->leave_setting : null;
+            $data['employeeLeaveAccruals'] = $user->employee->employee_leave_list()
+                ->with('leave')
+                ->whereIn('leave_id', [1, 2])
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
+                ->orderBy('id', 'desc')
+                ->limit(24)
+                ->get();
+        }
+
+        if ($tab == 'training') {
+            $data['employeeTraining'] = EmployeeTraining::where('employee_id', $user->employee->user_id)->get();
+        }
+
+        if ($tab == 'nte') {
+            $data['employeeNte'] = NteFile::where('employee_id', $user->employee->id)->get();
+        }
+
+        if ($tab == 'documents') {
+            $data['employeeDocuments'] = EmployeeDocument::with('employee')->where('employee_id', $user->employee->id)->get();
+        }
+
+        return view('employees.profile_tabs.'.$tabs[$tab], $data);
     }
 
     public function updateInfoHR(Request $request, $id){
@@ -1331,6 +1411,69 @@ class EmployeeController extends Controller
         Alert::success('Successfully Updated')->persistent('Dismiss');
         return back();
 
+    }
+
+    public function updatePayrollComputationHR(Request $request, $id)
+    {
+        $request->validate([
+            'tax_percent' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        $employee = Employee::findOrFail($id);
+        $taxMapping = TaxMapping::where('employee_id', $employee->id)->first();
+
+        if (!$taxMapping) {
+            $taxMapping = new TaxMapping;
+            $taxMapping->employee_id = $employee->id;
+        }
+
+        $taxMapping->sss = $request->has('sss') ? 1 : 0;
+        $taxMapping->philhealth = $request->has('philhealth') ? 1 : 0;
+        $taxMapping->pagibig = $request->has('pagibig') ? 1 : 0;
+        $taxMapping->tin = $request->has('tin') ? 1 : 0;
+        $taxMapping->tax_percent = $request->tax_percent ? ($request->tax_percent / 100) : 0;
+        $taxMapping->save();
+
+        Alert::success('Payroll computation settings updated.')->persistent('Dismiss');
+        return back();
+    }
+
+    public function updateLeaveSettingsHR(Request $request, $id)
+    {
+        $request->validate([
+            'vl_annual_credit' => 'nullable|numeric|min:0|max:365',
+            'sl_annual_credit' => 'nullable|numeric|min:0|max:365',
+        ]);
+
+        if (!Schema::hasTable('employee_leave_settings')) {
+            Alert::warning('Employee leave settings table is missing. Please run php artisan migrate first.')->persistent('Dismiss');
+            return back();
+        }
+
+        $employee = Employee::findOrFail($id);
+
+        $vlAccumulative = $request->vl_policy == 'accumulative';
+        $slAccumulative = $request->sl_policy == 'accumulative';
+
+        EmployeeLeaveSetting::updateOrCreate(
+            ['employee_id' => $employee->id],
+            [
+                'user_id'           => $employee->user_id,
+                'vl_annual_credit'  => $request->vl_annual_credit ?: 0,
+                'vl_is_accumulative'=> $vlAccumulative ? 1 : 0,
+                'vl_credit_month'   => !$vlAccumulative ? ($request->vl_credit_month ?: null) : null,
+                'vl_credit_day'     => !$vlAccumulative ? ($request->vl_credit_day ?: null) : null,
+                'vl_accumulate_day' => $vlAccumulative  ? ($request->vl_accumulate_day ?: null) : null,
+                'sl_annual_credit'  => $request->sl_annual_credit ?: 0,
+                'sl_is_accumulative'=> $slAccumulative ? 1 : 0,
+                'sl_credit_month'   => !$slAccumulative ? ($request->sl_credit_month ?: null) : null,
+                'sl_credit_day'     => !$slAccumulative ? ($request->sl_credit_day ?: null) : null,
+                'sl_accumulate_day' => $slAccumulative  ? ($request->sl_accumulate_day ?: null) : null,
+            ]
+        );
+
+        Alert::success('Leave settings updated.')->persistent('Dismiss');
+        return back();
     }
 
     public function updateEmpMovementHR(Request $request, $id){
@@ -1885,73 +2028,73 @@ class EmployeeController extends Controller
         $company = isset($request->company) ? $request->company : "";
         $department = isset($request->department) ? $request->department : "";
         $location = isset($request->location) ? $request->location : "";
+        $employee_filter = $request->employee ?: [];
 
         $from_date = $request->from;
-        $date_from = date('Y-m-d', strtotime('-1 day', strtotime($from_date)));
         $to_date = $request->to;
         $date_range =  [];
         $schedules = [];
         $emp_data = [];
+        $attendance_groups = collect();
+        $posting_summary = [
+            'employees' => collect(),
+            'total_employees' => 0,
+            'posted_employees' => 0,
+            'total_days' => 0,
+            'posted_days' => 0,
+            'percent' => 0,
+        ];
         $attendances = [];
-        $employees = [];
+        $employees = Employee::select('employee_number','employee_code','first_name','last_name','company_id','department_id','location')
+                            ->whereIn('company_id', $allowed_companies)
+                            ->when($company, function ($query) use ($company) {
+                                $query->where('company_id', $company);
+                            })
+                            ->when($department, function ($query) use ($department) {
+                                $query->where('department_id', $department);
+                            })
+                            ->when($location, function ($query) use ($location) {
+                                $query->where('location', $location);
+                            })
+                            ->when($allowed_locations,function($q) use($allowed_locations){
+                                $q->whereIn('location',$allowed_locations);
+                            })
+                            ->when($allowed_projects,function($q) use($allowed_projects){
+                                $q->whereIn('project',$allowed_projects);
+                            })
+                            ->where('status','Active')
+                            ->orderBy('last_name','asc')
+                            ->orderBy('first_name','asc')
+                            ->get();
         
         if ($from_date != null) {
-            $emp_data = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired','level')
-                                ->with('company')
-                                ->with(['attendances' => function ($query) use ($date_from, $to_date) {
-                                    $query->whereBetween('time_in', [$date_from." 00:00:01", $to_date." 23:59:59"])
-                                    ->orWhereBetween('time_out', [$date_from." 00:00:01", $to_date." 23:59:59"])
-                                    ->orderBy('time_in','asc')
-                                    ->orderby('time_out','desc')
-                                    ->orderBy('id','asc');
-                                }])
-                                ->with(['approved_leaves' => function ($query) use ($date_from, $to_date) {
-                                    // $query->where(function ($q) use ($date_from, $to_date) {
-                                    //     $q->whereBetween('date_from', [$date_from, $to_date])
-                                    //       ->orWhereBetween('date_to', [$date_from, $to_date]);
-                                    // })
-                                    $query->where("date_from", "<=", $to_date)
-                                    ->where("date_to", ">=", $date_from)
-                                    ->where('status','Approved')
-                                    ->orderBy('id','asc');
-                                },'approved_leaves.leave'])
-                                ->with(['approved_wfhs' => function ($query) use ($date_from, $to_date) {
-                                    $query->whereBetween('applied_date', [$date_from, $to_date])
-                                    ->where('status','Approved')
-                                    ->orderBy('id','asc');
-                                }])
-                                ->with(['approved_obs' => function ($query) use ($date_from, $to_date) {
-                                    $query->whereBetween('applied_date', [$date_from, $to_date])
-                                    ->where('status','Approved')
-                                    ->orderBy('id','asc');
-                                }])
-                                ->with(['approved_dtrs' => function ($query) use ($date_from, $to_date) {
-                                    $query->whereBetween('dtr_date', [$date_from, $to_date])
-                                    ->where('status','Approved')
-                                    ->orderBy('id','asc');
-                                }])
+            $emp_data = Employee::select('id', 'employee_code', 'first_name', 'last_name', 'department_id')
+                                ->with('department')
                                 ->where('company_id', $company)
                                 ->when($allowed_locations,function($q) use($allowed_locations){
                                     $q->whereIn('location',$allowed_locations);
                                 })
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
-                                })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
+                                })
+                                ->where('classification','!=',8)
+                                ->where('original_date_hired','<=',$to_date)
                                 ->orderBy('last_name','asc')
-                                ->orderBy('first_name','asc')
-                                // ->where('employee_code','A189123')
-                                // ->where('employee_code','A3155322')
-                                ;
+                                ->orderBy('first_name','asc');
             if($department){
                 $emp_data = $emp_data->where('department_id', $department);
             }
             if($location){
                 $emp_data = $emp_data->where('location', $location);
             }
+            if($employee_filter){
+                $emp_data = $emp_data->whereIn('employee_code', $employee_filter);
+            }
 
             $emp_data =  $emp_data->where('status','Active')->get();
             
             $date_range =  $attendance_controller->dateRange($from_date, $to_date);
+            $posting_summary = $this->buildTimekeepingPostingSummary($emp_data, $date_range, $company, $from_date, $to_date);
 
             
         }
@@ -1970,11 +2113,156 @@ class EmployeeController extends Controller
                 'attendances' => $attendances,
                 'schedules' => $schedules,
                 'emp_data' => $emp_data,
+                'attendance_groups' => $attendance_groups,
                 'companies' => $companies,
                 'departments' => $departments,
                 'locations' => $locations,
+                'employees' => $employees,
+                'employee_filter' => $employee_filter,
+                'posting_summary' => $posting_summary,
             )
         );
+    }
+
+    private function buildTimekeepingPostingSummary($employees, $dateRange, $company, $fromDate, $toDate)
+    {
+        $totalDays = count($dateRange);
+        $employeeCodes = $employees->pluck('employee_code')->filter()->values();
+        $postedCounts = collect();
+
+        if ($employeeCodes->isNotEmpty() && $totalDays > 0) {
+            $postedCounts = AttendanceDetailedReport::select('employee_no', DB::raw('COUNT(DISTINCT log_date) as posted_days'))
+                ->where('company_id', $company)
+                ->whereBetween('log_date', [$fromDate, $toDate])
+                ->whereIn('employee_no', $employeeCodes)
+                ->groupBy('employee_no')
+                ->pluck('posted_days', 'employee_no');
+        }
+
+        $summaryEmployees = $employees->map(function ($employee) use ($postedCounts, $totalDays) {
+            $postedDays = (int) ($postedCounts[$employee->employee_code] ?? 0);
+            $percent = $totalDays > 0 ? round(min(100, ($postedDays / $totalDays) * 100)) : 0;
+
+            return [
+                'employee_code' => $employee->employee_code,
+                'name' => trim($employee->last_name . ', ' . $employee->first_name),
+                'department' => optional($employee->department)->name ?: 'No department',
+                'posted_days' => $postedDays,
+                'total_days' => $totalDays,
+                'percent' => $percent,
+                'is_posted' => $totalDays > 0 && $postedDays >= $totalDays,
+            ];
+        });
+
+        $totalEmployeeDays = max(0, $summaryEmployees->count() * $totalDays);
+        $postedEmployeeDays = $summaryEmployees->sum('posted_days');
+
+        return [
+            'employees' => $summaryEmployees,
+            'total_employees' => $summaryEmployees->count(),
+            'posted_employees' => $summaryEmployees->where('is_posted', true)->count(),
+            'total_days' => $totalDays,
+            'posted_days' => $postedEmployeeDays,
+            'percent' => $totalEmployeeDays > 0 ? round(min(100, ($postedEmployeeDays / $totalEmployeeDays) * 100)) : 0,
+        ];
+    }
+
+    public function perCompanyRows(Request $request)
+    {
+        ini_set('memory_limit', '-1');
+        @set_time_limit(0);
+
+        $limit = (int) $request->get('limit', 10);
+        $offset = (int) $request->get('offset', 0);
+        $limit = $limit > 0 ? min($limit, 50) : 10;
+
+        $attendance_controller = new AttendanceController;
+        $date_range = $attendance_controller->dateRange($request->from, $request->to);
+        $schedules = ScheduleData::all();
+        $employees = $this->perCompanyAttendanceEmployeeQuery($request)
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        $attendance_groups = attendanceDetailedRows($employees, $date_range, $schedules, $request->to);
+        $nextOffset = $offset + $employees->count();
+        $hasMore = $employees->count() == $limit;
+
+        return response()->json([
+            'html' => view('attendances.partials.detailed_rows', [
+                'attendance_groups' => $attendance_groups,
+                'show_company_column' => true,
+            ])->render(),
+            'next_offset' => $nextOffset,
+            'has_more' => $hasMore,
+        ]);
+    }
+
+    private function perCompanyAttendanceEmployeeQuery(Request $request)
+    {
+        $allowed_locations = getUserAllowedLocations(auth()->user()->id);
+        $allowed_projects = getUserAllowedProjects(auth()->user()->id);
+        $date_from = date('Y-m-d', strtotime('-1 day', strtotime($request->from)));
+
+        $query = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired','level')
+            ->with('company')
+            ->with(['attendances' => function ($query) use ($date_from, $request) {
+                $query->whereBetween('time_in', [$date_from." 00:00:01", $request->to." 23:59:59"])
+                    ->orWhereBetween('time_out', [$date_from." 00:00:01", $request->to." 23:59:59"])
+                    ->orderBy('time_in','asc')
+                    ->orderby('time_out','desc')
+                    ->orderBy('id','asc');
+            }])
+            ->with(['approved_leaves' => function ($query) use ($date_from, $request) {
+                $query->where("date_from", "<=", $request->to)
+                    ->where("date_to", ">=", $date_from)
+                    ->where('status','Approved')
+                    ->orderBy('id','asc');
+            },'approved_leaves.leave'])
+            ->with(['approved_wfhs' => function ($query) use ($date_from, $request) {
+                $query->whereBetween('applied_date', [$date_from, $request->to])
+                    ->where('status','Approved')
+                    ->orderBy('id','asc');
+            }])
+            ->with(['approved_obs' => function ($query) use ($date_from, $request) {
+                $query->whereBetween('applied_date', [$date_from, $request->to])
+                    ->where('status','Approved')
+                    ->orderBy('id','asc');
+            }])
+            ->with(['approved_dtrs' => function ($query) use ($date_from, $request) {
+                $query->whereBetween('dtr_date', [$date_from, $request->to])
+                    ->where('status','Approved')
+                    ->orderBy('id','asc');
+            }])
+            ->with(['approved_ots' => function ($query) use ($date_from, $request) {
+                $query->whereBetween('ot_date', [$date_from, $request->to])
+                    ->where('status','Approved')
+                    ->orderBy('id','asc');
+            }])
+            ->where('company_id', $request->company)
+            ->when($allowed_locations, function ($query) use ($allowed_locations) {
+                $query->whereIn('location', $allowed_locations);
+            })
+            ->when($allowed_projects, function ($query) use ($allowed_projects) {
+                $query->whereIn('project', $allowed_projects);
+            })
+            ->where('classification','!=',8)
+            ->where('original_date_hired','<=', $request->to)
+            ->where('status','Active')
+            ->orderBy('last_name','asc')
+            ->orderBy('first_name','asc');
+
+        if ($request->department) {
+            $query->where('department_id', $request->department);
+        }
+        if ($request->location) {
+            $query->where('location', $request->location);
+        }
+        if ($request->employee) {
+            $query->whereIn('employee_code', (array) $request->employee);
+        }
+
+        return $query;
     }
     
     public function biologs_per_location(Request $request)

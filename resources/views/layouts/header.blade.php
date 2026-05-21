@@ -53,7 +53,7 @@
             width: 100%;
             height: 100%;
             z-index: 9999;
-            background: url("{{ asset('login_css/images/loader.gif') }}") 50% 50% no-repeat white;
+            background: url("{{ asset('images/m.png') }}") 50% 50% no-repeat white;
             opacity: .8;
             background-size: 120px 120px;
         }
@@ -250,6 +250,95 @@
             padding: 20px;
         }
 
+        table.table,
+        table.dataTable,
+        .table {
+            width: 100% !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            border: 1px solid #d6dee8 !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            background: #ffffff !important;
+            box-shadow: 0 6px 18px rgba(31, 45, 61, 0.06) !important;
+        }
+
+        table.table th,
+        table.table td,
+        table.dataTable th,
+        table.dataTable td,
+        .table th,
+        .table td {
+            border-top: 0 !important;
+            border-left: 0 !important;
+            border-right: 1px solid #d6dee8 !important;
+            border-bottom: 1px solid #d6dee8 !important;
+            color: #2d3748 !important;
+            line-height: 1.35 !important;
+            padding: .7rem .85rem !important;
+            vertical-align: middle !important;
+        }
+
+        table.table th:last-child,
+        table.table td:last-child,
+        table.dataTable th:last-child,
+        table.dataTable td:last-child,
+        .table th:last-child,
+        .table td:last-child {
+            border-right: 0 !important;
+        }
+
+        table.table tbody tr:last-child td,
+        table.dataTable tbody tr:last-child td,
+        .table tbody tr:last-child td {
+            border-bottom: 0 !important;
+        }
+
+        table.table thead th,
+        table.dataTable thead th,
+        .table thead th {
+            background: #f4f7fb !important;
+            color: #24324b !important;
+            font-size: .78rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 0 !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+        }
+
+        table.table tbody tr:nth-child(even),
+        table.dataTable tbody tr:nth-child(even),
+        .table tbody tr:nth-child(even) {
+            background: #fbfcfe !important;
+        }
+
+        table.table tbody tr:hover,
+        table.dataTable tbody tr:hover,
+        .table tbody tr:hover {
+            background: #eef5ff !important;
+            transition: background-color .15s ease-in-out;
+        }
+
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select,
+        .dt-container .dt-search input,
+        .dt-container .dt-length select {
+            border: 1px solid #d6dee8 !important;
+            border-radius: 6px !important;
+            color: #2d3748 !important;
+            min-height: 34px !important;
+            padding: .35rem .6rem !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter input:focus,
+        .dataTables_wrapper .dataTables_length select:focus,
+        .dt-container .dt-search input:focus,
+        .dt-container .dt-length select:focus {
+            border-color: #4b8fef !important;
+            box-shadow: 0 0 0 3px rgba(75, 143, 239, .14) !important;
+            outline: 0 !important;
+        }
+
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -370,6 +459,8 @@
                         <div class="collapse @if ($header == 'forms') show @endif" id="forms">
                             <ul class="nav flex-column sub-menu @if ($header == 'forms') show @endif">
                                 <li class="nav-item "> <a class="nav-link active" href="{{ url('/file-leave') }}">Leave</a></li>
+                                <li class="nav-item "> <a class="nav-link" href="{{ url('/change-schedule') }}">Change Schedule</a></li>
+                                <li class="nav-item "> <a class="nav-link" href="{{ url('/file-offset') }}">Offset</a></li>
                                 @php
                                     $user_allowed_overtime = auth()->user()->allowed_overtime ? auth()->user()->allowed_overtime->allowed_overtime : "";
                                 @endphp
@@ -445,7 +536,7 @@
                     <li class="nav-item @if ($header == 'for-approval') active @endif">
                         <a class="nav-link" data-toggle="collapse" href="#for-approval" aria-expanded="false" aria-controls="ui-basic">
                             <i class="icon-check menu-icon"></i>
-                            <span class="menu-title">For Approval <span class="badge badge-warning">{{ pending_leave_count(auth()->user()->id)+pending_overtime_count(auth()->user()->id)+pending_ob_count(auth()->user()->id)+pending_employee_count(auth()->user()->id)+pending_hmo_count(auth()->user()->id)}}</span></span>
+                            <span class="menu-title">For Approval <span class="badge badge-warning">{{ pending_leave_count(auth()->user()->id)+pending_overtime_count(auth()->user()->id)+pending_ob_count(auth()->user()->id)+pending_employee_count(auth()->user()->id)+pending_hmo_count(auth()->user()->id)+pending_schedule_count(auth()->user()->id)+pending_offset_count(auth()->user()->id)}}</span></span>
                             <i class="menu-arrow"></i>
                         </a>
                         <div class="collapse @if ($header == 'for-approval') show @endif" id="for-approval">
@@ -454,6 +545,8 @@
                                 <li class="nav-item "><a class="nav-link " href="{{ url('/for-overtime') }}">Overtime <span class="badge badge-warning">{{ pending_overtime_count(auth()->user()->id) }}</span></a></li>
                                 {{-- <li class="nav-item "><a class="nav-link " href="{{ url('/for-work-from-home') }}">Work From Home <span class="badge badge-warning">{{ session('pending_wfh_count') }}</span></a></li> --}}
                                 <li class="nav-item "><a class="nav-link " href="{{ url('/for-official-business') }}">Official Business <span class="badge badge-warning">{{ pending_ob_count(auth()->user()->id) }}</span></a></li>
+                                <li class="nav-item "><a class="nav-link " href="{{ url('/for-schedule-change') }}">Schedule Change <span class="badge badge-warning">{{ pending_schedule_count(auth()->user()->id) }}</span></a></li>
+                                <li class="nav-item "><a class="nav-link " href="{{ url('/for-offset') }}">Offset <span class="badge badge-warning">{{ pending_offset_count(auth()->user()->id) }}</span></a></li>
                                 {{-- <li class="nav-item "><a class="nav-link"  href="{{ url('/for-dtr-correction') }}">DTR Correction <span class="badge badge-warning">{{ session('pending_dtr_count') }}</span></a></li> --}}
                                 @if(Auth::id() == 593 && $pendingEmployees > 0)
                                     <li class="nav-item">
@@ -477,6 +570,31 @@
                     <li class="nav-item">
                         <hr>
                         <h5>Super Admin</h5>
+                    </li>
+                    <li class="nav-item @if ($header == 'dashboard-hr') active @endif ">
+                        <a class="nav-link" href="{{ url('/dashboard-hr') }}" onclick='show()'>
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">HR Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @if ($header == 'hr-analytics') active @endif ">
+                        <a class="nav-link" href="{{ url('/hr-analytics') }}" onclick='show()'>
+                            <i class="icon-bar-graph menu-icon"></i>
+                            <span class="menu-title">HR Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @if ($header == 'kpi') active @endif">
+                        <a class="nav-link" data-toggle="collapse" href="#kpi" aria-expanded="@if ($header == 'kpi') true @else false @endif" aria-controls="ui-basic">
+                            <i class="icon-graph menu-icon"></i>
+                            <span class="menu-title">KPI</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse @if ($header == 'kpi') show @endif" id="kpi">
+                            <ul class="nav flex-column sub-menu">
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('kpi/probationary-regularization') }}">Probi Dashboard</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="{{ url('kpi/activity-history') }}">Activity History</a></li>
+                            </ul>
+                        </div>
                     </li>
                     
                     @if (checkUserPrivilege('timekeeping_dashboard',auth()->user()->id) == 'yes')
@@ -617,6 +735,38 @@
                     @endif
 
                     
+        @php
+            $businessNavModules = businessModules()->keyBy('slug');
+            $businessNavGroups = erpNavigationGroups();
+        @endphp
+        {{-- <li class="nav-item @if ($header == 'business_modules') active @endif">
+            <a class="nav-link" data-toggle="collapse" href="#businessModules" aria-expanded="@if ($header == 'business_modules') true @else false @endif" aria-controls="businessModules">
+                <i class="icon-briefcase menu-icon"></i>
+                <span class="menu-title">ERP / Trading</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse @if ($header == 'business_modules') show @endif" id="businessModules">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="{{ url('business-modules') }}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('business-modules/master/suppliers') }}">Suppliers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('business-modules/master/customers') }}">Customers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('business-modules/master/items') }}">Items / Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('business-modules/master/categories') }}">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('business-modules/master/tax-codes') }}">Tax Codes</a></li>
+                    @foreach($businessNavGroups as $groupName => $slugs)
+                        @if($groupName != 'Masters')
+                            @foreach($slugs as $slug)
+                                @php $module = $businessNavModules->get($slug); @endphp
+                                @if($module)
+                                    <li class="nav-item"><a class="nav-link" href="{{ url('business-modules/'.$module['slug']) }}">{{ $module['name'] }}</a></li>
+                                @endif
+                            @endforeach
+                        @endif
+                    @endforeach
+                </ul>
+            </div>
+        </li> --}}
+
         @if (checkUserPrivilege('masterfiles_companies',auth()->user()->id) == 'yes' || checkUserPrivilege('masterfiles_departments',auth()->user()->id) == 'yes' || checkUserPrivilege('masterfiles_loan_types',auth()->user()->id) == 'yes' || checkUserPrivilege('masterfiles_employee_leave_credits',auth()->user()->id) == 'yes')
         <li class="nav-item @if ($header == 'masterfiles') active @endif">
             <a class="nav-link" data-toggle="collapse" href="#masterfiles" aria-expanded="false" aria-controls="ui-basic">

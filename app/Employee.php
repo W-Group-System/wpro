@@ -151,6 +151,10 @@ class Employee extends Model implements Auditable
     {
         return $this->hasMany(PayInstruction::class,'site_id','employee_code');
     }
+    public function tax_mapping()
+    {
+        return $this->hasOne(TaxMapping::class, 'employee_id', 'id');
+    }
     public function attendance_generated()
     {
         return $this->hasMany(AttendanceDetailedReport::class,'employee_no','employee_code');
@@ -215,6 +219,10 @@ class Employee extends Model implements Auditable
     public function employee_leave_list() 
     {
         return $this->hasMany(EmployeeLeaveList::class,'user_id','user_id');
+    }
+    public function leave_setting()
+    {
+        return $this->hasOne(EmployeeLeaveSetting::class);
     }
     public function timekeeping_logs()
     {

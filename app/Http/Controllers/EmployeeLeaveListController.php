@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\EmployeeLeave;
 use App\EmployeeLeaveCredit;
 use App\EmployeeLeaveList;
 use App\Helpers\HelperClass;
@@ -20,9 +21,10 @@ class EmployeeLeaveListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $header = 'employee_leaves_list';
+        $search = trim($request->search);
         // $employee_leave_lists = EmployeeLeaveList::select('leave_id','user_id')
         //     ->whereHas('user.employee', function($q) {
         //         $q->where('status','Active');
@@ -30,10 +32,30 @@ class EmployeeLeaveListController extends Controller
         //     ->with('leave','user')
         //     ->groupBy('leave_id','user_id')
         //     ->get();
-        $employee_leave_lists = Employee::with('employee_leave_list.leave','user_info')
-            ->whereHas('employee_leave_list')
-            ->where('status','Active')
-            ->get();
+        $employee_leave_lists = collect();
+        if ($search) {
+            $employee_leave_lists = Employee::with('employee_leave_list.leave','employee_leave_credits','user_info','ScheduleData')
+                ->whereHas('employee_leave_list')
+                ->where('status','Active')
+                ->where(function($q) use ($search) {
+                    $q->where('employee_code', 'like', '%'.$search.'%')
+                    ->orWhere('first_name', 'like', '%'.$search.'%')
+                    ->orWhere('last_name', 'like', '%'.$search.'%')
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%'.$search.'%'])
+                    ->orWhereRaw("CONCAT(last_name, ', ', first_name) LIKE ?", ['%'.$search.'%']);
+                })
+                ->get();
+        }
+
+        $leave_usages = collect();
+        if ($employee_leave_lists->isNotEmpty()) {
+            $leave_usages = EmployeeLeave::whereIn('user_id', $employee_leave_lists->pluck('user_id')->toArray())
+                ->whereIn('status', ['Approved', 'Pending'])
+                ->where('status', '!=', 'Cancelled')
+                ->where('withpay', 1)
+                ->get()
+                ->groupBy('user_id');
+        }
         
         // Dropdown
         $employees = Employee::where('status', 'Active')->get();
@@ -46,6 +68,8 @@ class EmployeeLeaveListController extends Controller
                 'employees' => $employees,
                 'leaves' => $leaves,
                 'levels' => $levels,
+                'leave_usages' => $leave_usages,
+                'search' => $search,
                 'header' => $header,
             )
         );
@@ -209,24 +233,71 @@ class EmployeeLeaveListController extends Controller
 
     public function leaveReport(Request $request)
     {
-        // dd($request->all());
         $header = 'leave_report';
-        $employees = Employee::with('employee_leave_list')
+        $merge_arr = collect();
+
+        return view('employee_leave_list.leave_report', compact('header', 'merge_arr'));
+    }
+
+    public function leaveReportEmployees(Request $request)
+    {
+        $search = trim($request->get('term', $request->get('q', '')));
+
+        if (strlen($search) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $employees = Employee::select('id', 'employee_code', 'first_name', 'last_name')
             ->where('status','Active')
             ->whereHas('employee_leave_list')
-            // ->where('employee_code','A346512')
+            ->where(function ($query) use ($search) {
+                $query->where('employee_code', 'like', '%'.$search.'%')
+                    ->orWhere('first_name', 'like', '%'.$search.'%')
+                    ->orWhere('last_name', 'like', '%'.$search.'%')
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%'.$search.'%'])
+                    ->orWhereRaw("CONCAT(last_name, ', ', first_name) LIKE ?", ['%'.$search.'%']);
+            })
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->limit(25)
             ->get();
 
+        return response()->json([
+            'results' => $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'text' => trim($employee->employee_code.' - '.$employee->last_name.', '.$employee->first_name),
+                ];
+            })->values(),
+        ]);
+    }
+
+    public function leaveReportSearch(Request $request)
+    {
+        $employeeId = $request->get('employee_id');
+
+        if (empty($employeeId)) {
+            return response()->json([]);
+        }
+
+        $employees = Employee::with('employee_leave_list', 'ScheduleData')
+            ->where('status','Active')
+            ->whereHas('employee_leave_list')
+            ->where('id', $employeeId)
+            ->get();
+
+        return response()->json($this->buildLeaveReportRows($employees)->values());
+    }
+
+    private function buildLeaveReportRows($employees)
+    {
         $sl_leave_array = [];
         $vl_leave_array = [];
         foreach($employees as $employee)
         {
-            // $sl = ($employee_leave_list)->where('leave_id', 2)->first();
-            $used_sl_this_yr = usedSlVlThisYear($employee->user_id,2,$employee->original_date_hired,$employee->ScheduleData);
-            $used_vl_this_yr = usedSlVlThisYear($employee->user_id,1,$employee->original_date_hired,$employee->ScheduleData);
-
-            $total_earned_vl = ($employee->employee_leave_list)->where('leave_id', 1)->pluck('earned_per_month')->sum();
-            $total_earned_sl = ($employee->employee_leave_list)->where('leave_id', 2)->pluck('earned_per_month')->sum();
+            $leaveTallies = getEmployeeLeaveCreditTallies($employee)->keyBy('leave_id');
+            $slTally = $leaveTallies->get(2);
+            $vlTally = $leaveTallies->get(1);
             
             $obj = new stdClass;
             $obj->employee_id = $employee->employee_code;
@@ -234,8 +305,9 @@ class EmployeeLeaveListController extends Controller
             $obj->name = $employee->last_name .', '.$employee->first_name;
             $obj->leave_type = 'Sick Leave';
             $obj->leave_entitlement =  get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
-            $obj->used_leave = $used_sl_this_yr;
-            $obj->total_earned_sl = $total_earned_sl;
+            $obj->used_leave = optional($slTally)->used ?: 0;
+            $obj->total_earned_sl = optional($slTally)->total ?: 0;
+            $obj->balance = optional($slTally)->balance ?: 0;
             $sl_leave_array[] = $obj;
 
             $obj_vl = new stdClass;
@@ -244,14 +316,13 @@ class EmployeeLeaveListController extends Controller
             $obj_vl->name = $employee->last_name .', '.$employee->first_name;
             $obj_vl->leave_type = 'Vacation Leave';
             $obj_vl->leave_entitlement =  get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
-            $obj_vl->used_leave = $used_vl_this_yr;
-            $obj_vl->total_earned_vl = $total_earned_vl;
+            $obj_vl->used_leave = optional($vlTally)->used ?: 0;
+            $obj_vl->total_earned_vl = optional($vlTally)->total ?: 0;
+            $obj_vl->balance = optional($vlTally)->balance ?: 0;
             $vl_leave_array[] = $obj_vl;
         }
 
-        $merge_arr = collect($vl_leave_array)->merge($sl_leave_array);
-
-        return view('employee_leave_list.leave_report', compact('header', 'merge_arr'));
+        return collect($vl_leave_array)->merge($sl_leave_array)->sortBy('lastname');
     }
 
     public function refreshLeaveCredit(Request $request)

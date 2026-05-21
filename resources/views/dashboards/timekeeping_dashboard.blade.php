@@ -5,6 +5,9 @@
 @section('content')
 <div class="main-panel">
     <div class="content-wrapper">
+        @php
+            $lastCutOffDate = optional($getLastCutOffDate)->cut_off_date;
+        @endphp
         <div class="row">
             <div class="col-md-12 mb-4  stretch-card transparent">
                 <div class="card">
@@ -83,7 +86,7 @@
                                             <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                             <small>{{$item->user->employee->company->company_name}}</small>
                                             
-                                            @if($item->date_from >= $getLastCutOffDate->cut_off_date)
+                                            @if(!$lastCutOffDate || $item->date_from >= $lastCutOffDate)
                                             <div class="buttons">
                                                 @if ($item->status == 'Pending')
                                                 <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#leave-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
@@ -187,7 +190,7 @@
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
                                         
-                                        @if(date('Y-m-d', strtotime($item->date_from)) >= $getLastCutOffDate->cut_off_date)
+                                        @if(!$lastCutOffDate || date('Y-m-d', strtotime($item->date_from)) >= $lastCutOffDate)
                                         <div class="buttons">
                                             @if ($item->status == 'Pending')
                                                 <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#ob-approved-remarks-{{ $item->id }}" data-toggle="modal" title="Approve">
@@ -364,7 +367,7 @@
                                         {{-- <small>User ID : {{$item->user->id}}</small> <br> --}}
                                         <small>Employee Code: {{$item->employee->employee_code}}</small><br>
                                         <small>{{$item->user->employee->company->company_name}}</small>
-                                        @if($item->ot_date >= $getLastCutOffDate->cut_off_date)
+                                        @if(!$lastCutOffDate || $item->ot_date >= $lastCutOffDate)
                                         <div class="buttons">
                                             @if ($item->status == 'Pending')
                                                 <button type="button" class="btn btn-success btn-sm" id="{{ $item->id }}" data-target="#approve-ot-hrs-{{ $item->id }}" data-toggle="modal" title="Approve">
