@@ -394,6 +394,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('ob-report-export', 'OfficialbusinessController@export');
     Route::get('dtr-report', 'DailytimerecordController@dtr_report');
     Route::get('dtr-report-export', 'DailytimerecordController@export');
+    
     Route::get('ytd-report', 'YtdReportController@index');
 
     //13th month
