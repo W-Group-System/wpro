@@ -23,7 +23,8 @@ class Kernel extends ConsoleKernel
         // Commands\AutoEarnedLeave::class,
         Commands\EmailAttendance::class,
         Commands\EarnedVacationLeave::class,
-        Commands\RefreshPreviousVL::class
+        Commands\RefreshPreviousVL::class,
+        Commands\VacationLeaveTurnoverReminder::class,
     ];
 
     /**
@@ -43,6 +44,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('command:work_from_home_approval')->everyMinute();
         // $schedule->command('command:dtr_approval')->everyMinute();
         $schedule->command('command:email_attendance')->dailyAt('8:00');
+        $schedule->command('command:vacation_leave_turnover_reminder')->dailyAt('8:00');
         $schedule->command('command:auto_earned_leaves')->monthly();
         // $schedule->command('command:refresh_previous_vl')->cron('0 0 1 4 *');
         // $schedule->command('command:auto_earned_leave')->dailyAt('8:00');

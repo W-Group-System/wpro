@@ -1,6 +1,7 @@
 @extends('layouts.header')
 
 @section('content')
+
 <div class="main-panel">
     <div class="content-wrapper">
         <div class='row'>
@@ -142,6 +143,7 @@
                                             'LH ND GE' => 'lh_nd_ge_amount',
                                             'LH ND OT' => 'lh_ot_amount',
                                             'LH ND OT GE' => 'lh_ot_ge_amount',
+                                            'SH OT' => 'sh_ot_amount',
                                             'SH' => 'sh_amount',
                                             'SH ND' => 'sh_nd_amount',
                                             'SH GE' => 'sh_ot_ge_amount',
@@ -184,17 +186,35 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                                <tr >
-                                    <td >SALARY ADJUSTMENT</td>
-                                    
+                                @forelse($salary_adjustments as $salary_adjustment)
+                                <tr>
+                                    <td>SALARY ADJUSTMENT - {{ strtoupper($salary_adjustment->name) }}</td>
+                                    @for ($i = 1; $i <= 12; $i++)
+                                    @php
+                                        $salary_adjustment_month_total = $emp_data->whereBetween('cut_off_date', [
+                                            date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                            date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
+                                        ])->flatMap(function($emp) use ($salary_adjustment) {
+                                            return $emp->salary_adjustments_data->where('name', $salary_adjustment->name);
+                                        })->sum('amount');
+                                        $taxable["taxable".$i] = $taxable["taxable".$i] + $salary_adjustment_month_total;
+                                    @endphp
+                                        <td>{{ number_format($salary_adjustment_month_total, 2) }}</td>
+                                    @endfor
+                                    <td>{{ number_format($salary_adjustments_data->where('name', $salary_adjustment->name)->sum('amount'), 2) }}</td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td>SALARY ADJUSTMENT</td>
                                     @for ($i = 1; $i <= 12; $i++)
                                     @php
                                         $taxable["taxable".$i] = $taxable["taxable".$i]+$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment');
                                     @endphp
                                         <td>{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment'),2)}}</td>
-                                        @endfor
-                                        <td>{{number_format($emp_data->sum('salary_adjustment'),2)}}</td>
+                                    @endfor
+                                    <td>{{number_format($emp_data->sum('salary_adjustment'),2)}}</td>
                                 </tr>
+                                @endforelse
                                     <tr style="background-color: #e0e0e0;">
                                         <td colspan="1"><strong>Taxable Income</strong></td>
                                         @for ($i = 1; $i <= 12; $i++)
@@ -259,6 +279,23 @@
                                         <td>{{$allowances_data->where('allowance_id',$allowance->allowance_id)->sum('amount')}}</td>
                                     </tr>
                                     @endforeach
+                                    @php
+                                        $employeeThirteenthMonthPostings = $thirteenth_month_postings->get($empDetail->employee_code, collect());
+                                    @endphp
+                                    <tr>
+                                        <td>13TH MONTH GENERATED</td>
+                                        @for ($i = 1; $i <= 12; $i++)
+                                            @php
+                                                $thirteenthMonthAmount = $employeeThirteenthMonthPostings->filter(function($posting) use ($i, $from_date) {
+                                                    return date('Y', strtotime($posting->created_at)) == $from_date
+                                                        && date('n', strtotime($posting->created_at)) == $i;
+                                                })->sum('release_amount');
+                                                $value["nontaxable_".$i] = $value["nontaxable_".$i] + $thirteenthMonthAmount;
+                                            @endphp
+                                            <td>{{ number_format($thirteenthMonthAmount, 2) }}</td>
+                                        @endfor
+                                        <td>{{ number_format($employeeThirteenthMonthPostings->sum('release_amount'), 2) }}</td>
+                                    </tr>
                                     <tr style="background-color: #e0e0e0;">
                                         <td colspan="1"><strong>Non-Taxable Income</strong></td>
                                         @for ($i = 1; $i <= 12; $i++)
@@ -478,11 +515,17 @@
                                     <tr style="background-color: #e0e0e0;">
                                         <td colspan="1"><strong>Net Pay</strong></td>
                                         @for ($i = 1; $i <= 12; $i++)
+                                        @php
+                                            $thirteenthMonthNetAmount = $employeeThirteenthMonthPostings->filter(function($posting) use ($i, $from_date) {
+                                                return date('Y', strtotime($posting->created_at)) == $from_date
+                                                    && date('n', strtotime($posting->created_at)) == $i;
+                                            })->sum('release_amount');
+                                        @endphp
                                         <td>
-                                        {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('netpay'),2)}}
+                                        {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('netpay') + $thirteenthMonthNetAmount,2)}}
                                         </td>
                                         @endfor
-                                        <td>{{number_format($emp_data->sum('netpay'),2)}}</td>
+                                        <td>{{number_format($emp_data->sum('netpay') + $employeeThirteenthMonthPostings->sum('release_amount'),2)}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -621,17 +664,35 @@
                                          </td>
                                      </tr>
                                  @endforeach
-                                 <tr >
+                                 @forelse($salary_adjustments as $salary_adjustment)
+                                 <tr>
+                                     <td>SALARY ADJUSTMENT - {{ strtoupper($salary_adjustment->name) }}</td>
+                                     @for ($i = 1; $i <= 12; $i++)
+                                     @php
+                                         $salary_adjustment_month_total = $emp_data->whereBetween('cut_off_date', [
+                                             date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),
+                                             date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))
+                                         ])->flatMap(function($emp) use ($salary_adjustment) {
+                                             return $emp->salary_adjustments_data->where('name', $salary_adjustment->name);
+                                         })->sum('amount');
+                                         $taxable["taxable".$i] = $taxable["taxable".$i] + $salary_adjustment_month_total;
+                                     @endphp
+                                         <td class="text-right">{{ number_format($salary_adjustment_month_total, 2) }}</td>
+                                     @endfor
+                                     <td class="text-right">{{ number_format($salary_adjustments_data->where('name', $salary_adjustment->name)->sum('amount'), 2) }}</td>
+                                 </tr>
+                                 @empty
+                                 <tr>
                                      <td>SALARY ADJUSTMENT</td>
-                                     
                                      @for ($i = 1; $i <= 12; $i++)
                                      @php
                                          $taxable["taxable".$i] = $taxable["taxable".$i]+$emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment');
                                      @endphp
                                          <td class="text-right">{{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('salary_adjustment'),2)}}</td>
-                                         @endfor
-                                         <td class="text-right">{{number_format($emp_data->sum('salary_adjustment'),2)}}</td>
+                                     @endfor
+                                     <td class="text-right">{{number_format($emp_data->sum('salary_adjustment'),2)}}</td>
                                  </tr>
+                                 @endforelse
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Taxable Income</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
@@ -722,6 +783,23 @@
                                             <td class="text-right"><strong>{{ number_format($non_instructions_data->where('instruction_name', $non_instruction->instruction_name)->sum('amount'), 2) }}</strong></td>
                                         </tr>
                                     @endforeach
+                                    @php
+                                        $employeeThirteenthMonthPostings = $thirteenth_month_postings->get($empD->employee_code, collect());
+                                    @endphp
+                                    <tr>
+                                        <td>13TH MONTH GENERATED</td>
+                                        @for ($i = 1; $i <= 12; $i++)
+                                            @php
+                                                $thirteenthMonthAmount = $employeeThirteenthMonthPostings->filter(function($posting) use ($i, $from_date) {
+                                                    return date('Y', strtotime($posting->created_at)) == $from_date
+                                                        && date('n', strtotime($posting->created_at)) == $i;
+                                                })->sum('release_amount');
+                                                $value["nontaxable_".$i] = $value["nontaxable_".$i] + $thirteenthMonthAmount;
+                                            @endphp
+                                            <td class="text-right">{{ number_format($thirteenthMonthAmount, 2) }}</td>
+                                        @endfor
+                                        <td class="text-right"><strong>{{ number_format($employeeThirteenthMonthPostings->sum('release_amount'), 2) }}</strong></td>
+                                    </tr>
                                     <tr style="background-color: #e0e0e0;">
                                         <td colspan="1"><strong>Non-Taxable Income</strong></td>
                                         @for ($i = 1; $i <= 12; $i++)
@@ -941,11 +1019,17 @@
                                      <tr style="background-color: #e0e0e0;">
                                          <td colspan="1"><strong>Net Pay</strong></td>
                                          @for ($i = 1; $i <= 12; $i++)
+                                         @php
+                                             $thirteenthMonthNetAmount = $employeeThirteenthMonthPostings->filter(function($posting) use ($i, $from_date) {
+                                                 return date('Y', strtotime($posting->created_at)) == $from_date
+                                                     && date('n', strtotime($posting->created_at)) == $i;
+                                             })->sum('release_amount');
+                                         @endphp
                                          <td class="text-right">
-                                         {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('netpay'),2)}}
+                                         {{number_format($emp_data->whereBetween('cut_off_date',[date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-01', strtotime($from_date."-01-01")),date('Y-' . str_pad($i, 2, '0', STR_PAD_LEFT) . '-t', strtotime($from_date."-01-01"))])->sum('netpay') + $thirteenthMonthNetAmount,2)}}
                                          </td>
                                          @endfor
-                                         <td class="text-right">{{number_format($emp_data->sum('netpay'),2)}}</td>
+                                         <td class="text-right">{{number_format($emp_data->sum('netpay') + $employeeThirteenthMonthPostings->sum('release_amount'),2)}}</td>
                                      </tr>
                                  </tbody>
                              </table>

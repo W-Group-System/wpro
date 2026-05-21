@@ -12,7 +12,7 @@
         width: 100%;
         height: 100%;
         z-index: 9999;
-        background: url("{{ asset('login_css/images/loader.gif') }}") 50% 50% no-repeat white;
+        background: url("{{ asset('images/m.png') }}") 50% 50% no-repeat white;
         opacity: .8;
         background-size: 120px 120px;
     }

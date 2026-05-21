@@ -29,10 +29,39 @@
 									</div>
 								</div>
 								<div class='col-md-2'>
+									<div class="form-group">
+										<select data-placeholder="Select Half" class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="half" required>
+											@forelse($available_halves as $halfValue => $halfLabel)
+												<option value="{{ $halfValue }}" @if(($half ?? '1st') == $halfValue) selected @endif>{{ $halfLabel }}</option>
+											@empty
+												<option value="">All halves posted</option>
+											@endforelse
+										</select>
+									</div>
+								</div>
+								<div class='col-md-2'>
 									<button type="submit" class="form-control form-control-sm btn btn-primary mb-2 btn-sm">Generate</button>
 								</div>
 							</div>
 						</form>
+						@if($company)
+							<form method="post" action="{{ url('13th-register/post') }}" onsubmit="return confirm('Post 13th month {{ $half }} half payslips for {{ $year }}?');">
+								@csrf
+								<input type="hidden" name="company" value="{{ $company }}">
+								<input type="hidden" name="year" value="{{ $year }}">
+								<input type="hidden" name="half" value="{{ $half }}">
+								<button type="submit" class="btn btn-success btn-sm" @if(count($available_halves) == 0) disabled @endif>
+									Post {{ $half }} Half to Payslip
+								</button>
+								@if(count($available_halves) == 0)
+									<small class="text-muted ml-2">1st Half and 2nd Half are already posted for {{ $year }}.</small>
+								@endif
+							</form>
+							<div class="mt-2">
+								<strong>People included:</strong>
+								{{ isset($thirteenth_month_rows) ? $thirteenth_month_rows->count() : $employees->count() }}
+							</div>
+						@endif
 						</p>
 					</div>
 				</div>
@@ -56,12 +85,12 @@
                                         
                                         <!-- <th>Tax Status</th> -->
                                         <th>Pay Rate</th>
+                                        <th>Subliq</th>
                                         @for($i = 1; $i <= 12; $i++)
                                             <th>{{ date('M Y',strtotime($year."-".$i.'-01')) }}</th>
                                         @endfor
                                         <th>Total</th>
                                         <th>Salary Diff</th>
-                                        <th>For Release(WLI)</th>
                                         <th>Withholding Tax</th>
                                         <th>Thirteenth Month Pay Nontaxable</th>
                                         <th>Non Taxable Benefits Total</th>
@@ -71,6 +100,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+									@if(isset($thirteenth_month_rows))
+										@foreach($thirteenth_month_rows as $row)
+											@php
+												$releaseClass = $row['release_amount'] < 0 ? 'text-danger' : '';
+											@endphp
+											<tr>
+												<td>{{ $row['company'] }}</td>
+												<td>{{ $row['employee_code'] }}</td>
+												<td>{{ $row['last_name'] }}</td>
+												<td>{{ $row['first_name'] }}</td>
+												<td>{{ $row['middle_name'] }}</td>
+												<td>{{ $row['department'] }}</td>
+												<td>{{ $row['account_number'] }}</td>
+												<td>{{ number_format($row['monthly_salary'], 2) }}</td>
+												<td>{{ number_format($row['subliq_amount'], 2) }}</td>
+												@for($i = 1; $i <= 12; $i++)
+													<td>{{ number_format($row['monthly_amounts'][$i] ?? 0, 2) }}</td>
+												@endfor
+												<td>{{ number_format($row['annual_payroll'], 2) }}</td>
+												<td>{{ number_format(0, 2) }}</td>
+												<td>{{ number_format(0, 2) }}</td>
+												<td class="{{ $releaseClass }}">{{ number_format($row['release_amount'], 2) }}</td>
+												<td class="{{ $releaseClass }}">{{ number_format($row['release_amount'], 2) }}</td>
+												<td class="{{ $releaseClass }}">{{ number_format($row['release_amount'], 2) }}</td>
+												<td>{{ number_format($row['first_released'], 2) }}</td>
+												<td class="{{ $releaseClass }}">{{ number_format($row['release_amount'], 2) }}</td>
+											</tr>
+										@endforeach
+									@else
                                     @foreach($employees->sortBy('last_name') as $key => $employee)
                                     @php
                                         $total_Payroll = 0;
@@ -96,6 +154,7 @@
                                         <td>{{$employee->bank_account_number}} <input type='hidden' name='bank_account_number[{{$key+1}}]' value="{{$employee->bank_account_number}}"></td>
                                         <!-- <td></td> -->
                                         <td>{{number_format($pay_rate,2)}}<input type='hidden' name='pay_rate[{{$key+1}}]' value="{{$pay_rate}}"></td>
+                                        <td>{{number_format($employee->salary->subliq,2)}}</td>
                                     
                                         {{-- <td>{{$employee->last_name}}, {{$employee->first_name}}</td> --}}
                                         {{-- <td>{{$employee->employee_code}}</td> --}}
@@ -283,7 +342,6 @@
                                         @endphp
                                         <td>{{number_format($total_Payroll,2)}}</td>
                                         <td>{{number_format($salary_diff,2)}}</td>
-                                        <td>{{number_format($for_release,2)}}</td>
                                         <td>{{number_format($tax,2)}}</td>
                                         <td>{{number_format($payroll,2)}}</td>
                                         <td>{{number_format($payroll,2)}}</td>
@@ -330,6 +388,7 @@
                                         <td>{{number_format($final_gross_pay,2)}}</td>
                                     </tr>
                                     @endforeach
+									@endif
                                     
                                 </tbody>
 							</table>

@@ -8,6 +8,8 @@ use App\Employee;
 use App\EmployeeLeave;
 use App\EmployeeEarnedLeave;
 use App\EmployeeLeaveCredit;
+use App\EmployeeLeaveList;
+use App\EmployeeLeaveSetting;
 use App\Holiday;
 use App\Attendance;
 use App\Classification;
@@ -75,21 +77,44 @@ function roleValidationAsAdministrator(){
 }
 
 
-function get_count_days_leave($data,$date_from,$date_to)
+function getLeaveIncrementForDay($date, $scheduleDatas, $dailySchedules = null)
+{
+    // Priority 1: daily schedule override
+    if ($dailySchedules && count($dailySchedules) > 0) {
+        $dailySchedule = leaveDailyScheduleForDate($dailySchedules, $date);
+        if ($dailySchedule) {
+            $hours = $dailySchedule->working_hours ?? null;
+            return ($hours !== null && (float)$hours == 4.0) ? 0.5 : 1;
+        }
+    }
+    // Priority 2: default weekly schedule
+    if ($scheduleDatas && count($scheduleDatas) > 0) {
+        $dayName = date('l', strtotime($date));
+        foreach ($scheduleDatas as $schedule) {
+            $name = $schedule->name ?? ($schedule['name'] ?? null);
+            if ($name == $dayName) {
+                $hours = $schedule->working_hours ?? null;
+                return ($hours !== null && (float)$hours == 4.0) ? 0.5 : 1;
+            }
+        }
+    }
+    return 1;
+}
+
+function get_count_days_leave($data,$date_from,$date_to,$location = null)
  {
-    $data = ($data->pluck('name'))->toArray();
     $count = 0;
     $startTime = strtotime($date_from);
     $endTime = strtotime($date_to);
 
     for ( $i = $startTime; $i <= $endTime; $i = $i + 86400 ) {
-      $thisDate = date( 'l', $i ); // 2010-05-01, 2010-05-02, etc
-      if(in_array($thisDate,$data)){
-          $count= $count+1;
+      $thisDate = date('Y-m-d', $i);
+      if(isLeaveCountableDay($thisDate, collect(), $data, $location)){
+          $count += getLeaveIncrementForDay($thisDate, $data);
       }
     }
     return($count);
- } 
+ }
  
 function dateRangeHelper( $first, $last, $step = '+1 day', $format = 'Y-m-d' ) {
     $dates = [];
@@ -291,18 +316,19 @@ function employeeHasWFHDetails($employee_wfhs = array(), $check_date){
 }
 
 function employeeHasOTDetails($employee_ots = array(), $check_date){
+    $total_approved_overtime = 0;
     if(count($employee_ots) > 0){
-        $total_approved_overtime = 0;
         foreach($employee_ots as $item){
             if(date('Y-m-d',strtotime($item['ot_date'])) == date('Y-m-d',strtotime($check_date))){
 
                 $total =(float) $item['ot_approved_hrs'] - (float)$item['break_hrs'];
 
-                $total_approved_overtime += $total;
+                $total_approved_overtime += max(0, $total);
             }
         }
-        return $total_approved_overtime;
     }
+
+    return $total_approved_overtime;
 }
 
 function employeeHasDTRDetails($employee_dtrs = array(), $check_date){
@@ -344,12 +370,78 @@ function getUserAllowedProjects($user_id){
 }
 
 function checkUserPrivilege($field,$user_id){
+    if (!\Illuminate\Support\Facades\Schema::hasColumn('user_privileges', $field)) {
+        return 'no';
+    }
+
     $user_privilege = UserPrivilege::select('id')->where($field,'on')->where('user_id',$user_id)->first();
     if($user_privilege){
         return 'yes';
     }else{
         return 'no';
     }
+}
+
+function businessModules()
+{
+    return collect([
+        ['no' => 1, 'slug' => 'supplier-master', 'permission' => 'module_supplier_master', 'name' => 'Supplier Master', 'purpose' => 'Maintain supplier/vendor details, payment terms, tax details, bank details, and contact information.'],
+        ['no' => 2, 'slug' => 'customer-master', 'permission' => 'module_customer_master', 'name' => 'Customer Master', 'purpose' => 'Maintain client/customer details, billing address, delivery address, credit terms, tax details, and contact information.'],
+        ['no' => 3, 'slug' => 'item-product-master', 'permission' => 'module_item_product_master', 'name' => 'Item / Product Master', 'purpose' => 'Maintain products being traded, item codes, descriptions, units, cost price, selling price, category, and tax codes.'],
+        ['no' => 4, 'slug' => 'purchase-requisition', 'permission' => 'module_purchase_requisition', 'name' => 'Purchase Requisition', 'purpose' => 'Internal request to purchase goods from suppliers.'],
+        ['no' => 5, 'slug' => 'purchase-approval', 'permission' => 'module_purchase_approval', 'name' => 'Purchase Approval', 'purpose' => 'Approval of purchase requests based on budget, amount, product type, or management authority.'],
+        ['no' => 6, 'slug' => 'supplier-quotation-rfq', 'permission' => 'module_supplier_quotation_rfq', 'name' => 'Supplier Quotation / RFQ', 'purpose' => 'Request and compare supplier prices, delivery terms, and availability.'],
+        ['no' => 7, 'slug' => 'purchase-order', 'permission' => 'module_purchase_order', 'name' => 'Purchase Order', 'purpose' => 'Official order sent to supplier for goods to be purchased.'],
+        ['no' => 8, 'slug' => 'goods-receipt-grn', 'permission' => 'module_goods_receipt_grn', 'name' => 'Goods Receipt / GRN', 'purpose' => 'Record goods received from supplier.'],
+        ['no' => 9, 'slug' => 'quality-quantity-check', 'permission' => 'module_quality_quantity_check', 'name' => 'Quality / Quantity Check', 'purpose' => 'Check if received goods match the PO in terms of quantity, quality, and specifications.'],
+        ['no' => 10, 'slug' => 'inventory-stock-management', 'permission' => 'module_inventory_stock_management', 'name' => 'Inventory / Stock Management', 'purpose' => 'Update stock after receiving goods. Tracks available, reserved, damaged, and sold stock.'],
+        ['no' => 11, 'slug' => 'supplier-invoice', 'permission' => 'module_supplier_invoice', 'name' => 'Supplier Invoice', 'purpose' => 'Record invoice received from supplier.'],
+        ['no' => 12, 'slug' => 'purchase-invoice-matching', 'permission' => 'module_purchase_invoice_matching', 'name' => 'Purchase Invoice Matching', 'purpose' => 'Match supplier invoice with PO and goods receipt.'],
+        ['no' => 13, 'slug' => 'accounts-payable', 'permission' => 'module_accounts_payable', 'name' => 'Accounts Payable', 'purpose' => 'Record liability to supplier and prepare supplier payment.'],
+        ['no' => 14, 'slug' => 'supplier-payment', 'permission' => 'module_supplier_payment', 'name' => 'Supplier Payment', 'purpose' => 'Pay supplier based on agreed payment terms.'],
+        ['no' => 15, 'slug' => 'sales-inquiry', 'permission' => 'module_sales_inquiry', 'name' => 'Sales Inquiry', 'purpose' => 'Client asks for product availability, price, or quotation.'],
+        ['no' => 16, 'slug' => 'sales-quotation', 'permission' => 'module_sales_quotation', 'name' => 'Sales Quotation', 'purpose' => 'Send price quotation to client, including product, quantity, price, tax, delivery date, and payment terms.'],
+        ['no' => 17, 'slug' => 'sales-order', 'permission' => 'module_sales_order', 'name' => 'Sales Order', 'purpose' => 'Confirm client order after quotation acceptance.'],
+        ['no' => 18, 'slug' => 'sales-approval-credit-check', 'permission' => 'module_sales_approval_credit_check', 'name' => 'Sales Approval / Credit Check', 'purpose' => 'Check customer credit limit, overdue invoices, pricing approval, or management approval before dispatch.'],
+        ['no' => 19, 'slug' => 'stock-reservation', 'permission' => 'module_stock_reservation', 'name' => 'Stock Reservation', 'purpose' => 'Reserve available stock for the confirmed customer order.'],
+        ['no' => 20, 'slug' => 'picking-and-packing', 'permission' => 'module_picking_and_packing', 'name' => 'Picking and Packing', 'purpose' => 'Warehouse prepares the goods for delivery based on the sales order.'],
+        ['no' => 21, 'slug' => 'dispatch-delivery-to-client', 'permission' => 'module_dispatch_delivery_to_client', 'name' => 'Dispatch / Delivery to Client', 'purpose' => 'Goods are dispatched to the customer using a delivery note, dispatch note, or delivery challan.'],
+        ['no' => 22, 'slug' => 'proof-of-delivery', 'permission' => 'module_proof_of_delivery', 'name' => 'Proof of Delivery', 'purpose' => 'Customer confirms receipt of goods through signed delivery note, receipt confirmation, or system update.'],
+        ['no' => 23, 'slug' => 'sales-invoice', 'permission' => 'module_sales_invoice', 'name' => 'Sales Invoice', 'purpose' => 'Invoice is issued to the customer for the delivered goods.'],
+        ['no' => 24, 'slug' => 'accounts-receivable', 'permission' => 'module_accounts_receivable', 'name' => 'Accounts Receivable', 'purpose' => 'Record customer receivable and monitor outstanding balances.'],
+        ['no' => 25, 'slug' => 'customer-payment-collection', 'permission' => 'module_customer_payment_collection', 'name' => 'Customer Payment Collection', 'purpose' => 'Receive payment from customer by bank transfer, cash, check, card, or other method.'],
+        ['no' => 26, 'slug' => 'receipt-reconciliation', 'permission' => 'module_receipt_reconciliation', 'name' => 'Receipt Reconciliation', 'purpose' => 'Match customer payment with sales invoice and close the receivable.'],
+        ['no' => 27, 'slug' => 'sales-return-credit-note', 'permission' => 'module_sales_return_credit_note', 'name' => 'Sales Return / Credit Note', 'purpose' => 'Handle returned goods, damaged items, wrong deliveries, or customer claims.'],
+        ['no' => 28, 'slug' => 'purchase-return-debit-note', 'permission' => 'module_purchase_return_debit_note', 'name' => 'Purchase Return / Debit Note', 'purpose' => 'Return damaged or incorrect goods to supplier and adjust supplier balance.'],
+        ['no' => 29, 'slug' => 'reporting-and-analytics', 'permission' => 'module_reporting_and_analytics', 'name' => 'Reporting and Analytics', 'purpose' => 'Reports for purchases, sales, stock, profit margin, supplier aging, customer aging, and inventory movement.'],
+    ]);
+}
+
+function userBusinessModules($user_id)
+{
+    return businessModules();
+}
+
+function canAccessBusinessModule($slug, $user_id)
+{
+    return businessModules()->where('slug', $slug)->isNotEmpty();
+}
+
+function erpNavigationGroups()
+{
+    return [
+        'Masters' => ['supplier-master', 'customer-master', 'item-product-master'],
+        'Purchasing' => ['purchase-requisition', 'purchase-approval', 'supplier-quotation-rfq', 'purchase-order', 'goods-receipt-grn', 'quality-quantity-check', 'supplier-invoice', 'purchase-invoice-matching', 'accounts-payable', 'supplier-payment'],
+        'Sales' => ['sales-inquiry', 'sales-quotation', 'sales-order', 'sales-approval-credit-check', 'stock-reservation', 'picking-and-packing', 'dispatch-delivery-to-client', 'proof-of-delivery', 'sales-invoice', 'accounts-receivable', 'customer-payment-collection', 'receipt-reconciliation'],
+        'Inventory' => ['inventory-stock-management'],
+        'Returns' => ['sales-return-credit-note', 'purchase-return-debit-note'],
+        'Reports' => ['reporting-and-analytics'],
+    ];
+}
+
+function businessModuleBySlug($slug)
+{
+    return businessModules()->firstWhere('slug', $slug);
 }
 
 function checkUserAllowedOvertime($user_id){
@@ -518,7 +610,7 @@ function night_difference_per_company_per_employee($start_work, $end_work, $date
 //     }
 // }
 
-function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday,$withpay = 0)
+function get_count_days($dailySchedules, $scheduleDatas, $date_from, $date_to, $halfday,$withpay = 0, $location = null)
 {
     if($withpay == 0)
 {
@@ -532,27 +624,14 @@ else
     // Initialize count
     $count = 0;
     
-    // Generate list of day names from scheduleDatas
-    $workingDays = $scheduleDatas->pluck('name')->toArray();
     // Create DateTime objects from string dates
     $dateFromObj = new DateTime($date_from);
     $dateToObj = new DateTime($date_to);
     
     // Loop over each day in the date range
     while ($dateFromObj <= $dateToObj) {
-        $dailySchedule = $dailySchedules->firstWhere('log_date', $dateFromObj->format('Y-m-d'));
-        
-        if ($dailySchedule) {
-            // If a daily schedule exists, check if working_hours is set
-            if (!is_null($dailySchedule->working_hours)) {
-                $count++;
-            }
-        } else {
-            // If no daily schedule, check weekly schedule (scheduleDatas)
-            $dayName = $dateFromObj->format('l'); // Get the day name (e.g., Monday, Tuesday)
-            if (in_array($dayName, $workingDays)) {
-                $count++;
-            }
+        if (isLeaveCountableDay($dateFromObj->format('Y-m-d'), $dailySchedules, $scheduleDatas, $location)) {
+            $count++;
         }
     
         // Increment the date by one day
@@ -616,7 +695,7 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired,$scheduleDatas
         if ($employee_vl) {
             foreach ($employee_vl as $leave) {
                 if ($leave->withpay == 1 && $leave->halfday == 1) {
-                    if (date('Y-m-d', strtotime($leave->date_from))) {
+                    if (isLeaveCountableDay($leave->date_from, collect(), $scheduleDatas, $employee->location)) {
                         $count += 0.5;
                     }
                 } else {
@@ -634,36 +713,9 @@ function checkUsedSLVLSILLeave($user_id, $leave_type, $date_hired,$scheduleDatas
                             $leave_Date = date('Y-m-d', strtotime($date_r));
                             // Check if withpay is 1 and leave_Date is valid
                             if ($leave->withpay == 1) {
-                                // Check if log_date exists in dailySchedules
-                                $d = $dailySchedules->where('log_date',$leave_Date)->first();
-                            
-                                if($d != null)
-                                {
-                                    foreach ($dailySchedules as $schedule) {
-                                        $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
-                                        
-                                        if ($log_date === $leave_Date) {
-                                            if (is_null($schedule->working_hours)) {
-    
-                                            } else {
-                                                $count++; 
-                                                $all_days[]=$leave_Date;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                              
-                                    $dayName = date('l',strtotime($leave_Date)); // Get the day name (e.g., Monday, Tuesday)
-                              
-                                    if (in_array($dayName, $workingDays)) {
-                                        // dd($dayName);
-                                        
-                                        $count++;
-                                        $all_days[]=$leave_Date;
-                                    }
-
+                                if (isLeaveCountableDay($leave_Date, $dailySchedules, $scheduleDatas, $employee->location)) {
+                                    $count += getLeaveIncrementForDay($leave_Date, $scheduleDatas, $dailySchedules);
+                                    $all_days[]=$leave_Date;
                                 }
                             }
                         }
@@ -755,6 +807,7 @@ function checkEarnedLeave($user_id,$leave_type,$date_hired){
 }
 
 function checkUsedSickLeave($user_id){
+    $employee = Employee::with('ScheduleData')->where('user_id',$user_id)->first();
     $employee_sl = EmployeeLeave::where('user_id',$user_id)
                                     ->where('leave_type','2')
                                     ->where('status','Approved')
@@ -764,12 +817,15 @@ function checkUsedSickLeave($user_id){
     if($employee_sl){
         foreach($employee_sl as $leave){
             if($leave->withpay == 1 && $leave->halfday == 1){
-                $count += 0.5;
+                if (!$employee || isLeaveCountableDay($leave->date_from, collect(), $employee->ScheduleData, $employee->location)) {
+                    $count += 0.5;
+                }
             }else{
                 $date_range = dateRangeHelper($leave->date_from,$leave->date_to);
                 if($date_range){
                     foreach($date_range as $date_r){
-                        if($leave->withpay == 1){
+                        if($leave->withpay == 1
+                            && (!$employee || isLeaveCountableDay($date_r, collect(), $employee->ScheduleData, $employee->location))){
                             $count += 1;
                         }
                     }
@@ -782,6 +838,7 @@ function checkUsedSickLeave($user_id){
 }
 
 function checkUsedServiceIncentiveLeave($user_id){
+    $employee = Employee::with('ScheduleData')->where('user_id',$user_id)->first();
     $employee_sil = EmployeeLeave::where('user_id',$user_id)
                                     ->where('leave_type','10')
                                     ->where('status','Approved')
@@ -791,12 +848,15 @@ function checkUsedServiceIncentiveLeave($user_id){
     if($employee_sil){
         foreach($employee_sil as $leave){
             if($leave->withpay == 1 && $leave->halfday == 1){
-                $count += 0.5;
+                if (!$employee || isLeaveCountableDay($leave->date_from, collect(), $employee->ScheduleData, $employee->location)) {
+                    $count += 0.5;
+                }
             }else{
                 $date_range = dateRangeHelper($leave->date_from,$leave->date_to);
                 if($date_range){
                     foreach($date_range as $date_r){
-                        if($leave->withpay == 1){
+                        if($leave->withpay == 1
+                            && (!$employee || isLeaveCountableDay($date_r, collect(), $employee->ScheduleData, $employee->location))){
                             $count += 1;
                         }
                     }
@@ -809,6 +869,7 @@ function checkUsedServiceIncentiveLeave($user_id){
 }
 
 function checkUsedLeave($user_id,$leave_type){
+    $employee = Employee::with('ScheduleData')->where('user_id',$user_id)->first();
     $employee_leave = EmployeeLeave::where('user_id',$user_id)
                                     ->where('leave_type',$leave_type)
                                     ->whereIn('status',['Approved','Pending'])
@@ -820,12 +881,15 @@ function checkUsedLeave($user_id,$leave_type){
     if($employee_leave){
         foreach($employee_leave as $leave){
             if($leave->withpay == 1 && $leave->halfday == 1){
-                $count += 0.5;
+                if (!$employee || isLeaveCountableDay($leave->date_from, collect(), $employee->ScheduleData, $employee->location)) {
+                    $count += 0.5;
+                }
             }else{
                 $date_range = dateRangeHelper($leave->date_from,$leave->date_to);
                 if($date_range){
                     foreach($date_range as $date_r){
-                        if($leave->withpay == 1 || $leave->withpay == 0){
+                        if(($leave->withpay == 1 || $leave->withpay == 0)
+                            && (!$employee || isLeaveCountableDay($date_r, collect(), $employee->ScheduleData, $employee->location))){
                             $count += 1;
                         }
                     }
@@ -1045,16 +1109,73 @@ function isRestDayBySchedule($schedule_for_day) {
         return 0;
     }
 
+    $time_in_from = $schedule_for_day->time_in_from ?? ($schedule_for_day['time_in_from'] ?? null);
+    $time_in_to = $schedule_for_day->time_in_to ?? ($schedule_for_day['time_in_to'] ?? null);
+    $time_out_from = $schedule_for_day->time_out_from ?? ($schedule_for_day['time_out_from'] ?? null);
+    $time_out_to = $schedule_for_day->time_out_to ?? ($schedule_for_day['time_out_to'] ?? null);
+
     if (
-        empty($schedule_for_day->time_in_from) &&
-        empty($schedule_for_day->time_in_to) &&
-        empty($schedule_for_day->time_out_from) &&
-        empty($schedule_for_day->time_out_to)
+        empty($time_in_from) &&
+        empty($time_in_to) &&
+        empty($time_out_from) &&
+        empty($time_out_to)
     ) {
         return 1; 
     }
 
     return 0; 
+}
+
+function leaveDailyScheduleForDate($dailySchedules, $date)
+{
+    if (!$dailySchedules) {
+        return null;
+    }
+
+    if (method_exists($dailySchedules, 'firstWhere')) {
+        return $dailySchedules->firstWhere('log_date', $date);
+    }
+
+    foreach ($dailySchedules as $schedule) {
+        if (isset($schedule->log_date) && date('Y-m-d', strtotime($schedule->log_date)) == $date) {
+            return $schedule;
+        }
+        if (isset($schedule['log_date']) && date('Y-m-d', strtotime($schedule['log_date'])) == $date) {
+            return $schedule;
+        }
+    }
+
+    return null;
+}
+
+function isLeaveCountableDay($date, $dailySchedules = null, $scheduleDatas = null, $location = null)
+{
+    $date = date('Y-m-d', strtotime($date));
+
+    if (checkIfHoliday($date, $location)) {
+        return false;
+    }
+
+    $dailySchedule = leaveDailyScheduleForDate($dailySchedules, $date);
+    if ($dailySchedule) {
+        return !is_null($dailySchedule->working_hours ?? null)
+            && isRestDayBySchedule($dailySchedule) == 0;
+    }
+
+    if ($scheduleDatas && count($scheduleDatas) > 0) {
+        $dayName = date('l', strtotime($date));
+
+        foreach ($scheduleDatas as $schedule) {
+            $name = $schedule->name ?? ($schedule['name'] ?? null);
+            if ($name == $dayName) {
+                return isRestDayBySchedule($schedule) == 0;
+            }
+        }
+
+        return false;
+    }
+
+    return isRestDay($date) == 0;
 }
 
 function checkEmployeeLeaveCredits($user_id, $leave_type){
@@ -1067,6 +1188,615 @@ function checkEmployeeLeaveCredits($user_id, $leave_type){
         return 0;
     }
 }
+
+function attendanceDetailedRows($employees = array(), $dateRange = array(), $schedules = array(), $cutOffDate = null)
+{
+    $groups = collect();
+    $context = attendanceDetailedBuildContext($employees, $dateRange, $schedules);
+
+    foreach ($employees as $employee) {
+        $state = [
+            'previous_abs' => 0,
+        ];
+        $rows = collect();
+        $subtotal = attendanceDetailedEmptyTotals();
+
+        foreach ($dateRange as $date) {
+            $row = attendanceDetailedRow($employee, $date, $schedules, $cutOffDate, $state, $context);
+            $rows->push($row);
+
+            foreach (attendanceDetailedTotalKeys() as $key) {
+                $subtotal[$key] += $row[$key];
+            }
+        }
+
+        $groups->push([
+            'employee' => $employee,
+            'rows' => $rows,
+            'subtotal' => $subtotal,
+        ]);
+    }
+
+    return $groups;
+}
+
+function attendanceDetailedBuildContext($employees = array(), $dateRange = array(), $schedules = array())
+{
+    $employeeCodes = collect($employees)->pluck('employee_code')->filter()->values();
+    $from = count($dateRange) ? min($dateRange) : null;
+    $to = count($dateRange) ? max($dateRange) : null;
+    $dailySchedules = collect();
+    $holidays = collect();
+
+    if ($from && $to) {
+        $dailySchedules = DailySchedule::whereIn('employee_code', $employeeCodes)
+            ->whereBetween('log_date', [$from, $to])
+            ->orderBy('id', 'DESC')
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->employee_code . '|' . $item->log_date;
+            });
+
+        $holidayFrom = date('Y-m-d', strtotime('-7 days', strtotime($from)));
+        $holidays = Holiday::whereBetween('holiday_date', [$holidayFrom, $to])
+            ->get()
+            ->groupBy('holiday_date');
+    }
+
+    $scheduleData = collect($schedules)->groupBy(function ($item) {
+        return $item->schedule_id . '|' . $item->name;
+    });
+
+    return [
+        'daily_schedules' => $dailySchedules,
+        'schedule_data' => $scheduleData,
+        'holidays' => $holidays,
+    ];
+}
+
+function attendanceDetailedRow($employee, $date, $schedules = array(), $cutOffDate = null, &$state = array(), $context = null)
+{
+    $schedule = attendanceDetailedSchedule($schedules, $date, $employee->schedule_id, $employee->employee_code, $context);
+    $shift = ($schedule && $schedule->time_in_to)
+        ? date('h:i A', strtotime($schedule->time_in_to)) . '-' . date('h:i A', strtotime($schedule->time_out_to))
+        : 'RESTDAY';
+
+    $timeWindowStart = date('Y-m-d 00:00:00', strtotime($date));
+    if ($schedule && $schedule->time_in_from) {
+        $timeWindowStart = date('Y-m-d H:i:s', strtotime('-6 hours', strtotime($date . ' ' . $schedule->time_in_from)));
+    }
+
+    $attendance = $employee->attendances
+        ->whereBetween('time_in', [$timeWindowStart, $date . ' 23:59:59'])
+        ->sortBy('time_in')
+        ->first();
+
+    $timeOutOnly = null;
+    $timeIn = '';
+    $timeOut = '';
+    if ($attendance) {
+        $timeIn = $attendance->time_in;
+        $timeOut = $attendance->time_out;
+    } else {
+        $timeOutOnly = $employee->attendances
+            ->whereBetween('time_out', [$date . ' 00:00:00', $date . ' 23:59:59'])
+            ->where('time_in', null)
+            ->first();
+        if ($timeOutOnly) {
+            $timeOut = $timeOutOnly->time_out;
+        }
+    }
+
+    $ob = employeeHasOBDetails($employee->approved_obs, date('Y-m-d', strtotime($date)));
+    $dtr = employeeHasDTRDetails($employee->approved_dtrs, date('Y-m-d', strtotime($date)));
+
+    $timeStart = $timeIn ? date('Y-m-d h:i A', strtotime($timeIn)) : '';
+    $timeEnd = $timeOut ? date('Y-m-d h:i A', strtotime($timeOut)) : '';
+
+    if ($ob) {
+        if ($timeIn) {
+            $timeStart = strtotime($ob->date_from) < strtotime($timeIn)
+                ? date('Y-m-d h:i A', strtotime($ob->date_from))
+                : date('Y-m-d h:i A', strtotime($timeIn));
+        } else {
+            $timeStart = date('Y-m-d h:i A', strtotime($ob->date_from));
+        }
+
+        if ($timeOut) {
+            $timeEnd = strtotime($ob->date_to) > strtotime($timeOut)
+                ? date('Y-m-d h:i A', strtotime($ob->date_to))
+                : date('Y-m-d h:i A', strtotime($timeOut));
+        } else {
+            $timeEnd = date('Y-m-d h:i A', strtotime($ob->date_to));
+        }
+    }
+
+    if ($dtr) {
+        $timeStart = date('Y-m-d h:i A', strtotime($dtr->dtr_date . ' ' . $dtr->time_in));
+        $timeEnd = date('Y-m-d h:i A', strtotime($dtr->dtr_date . ' ' . $dtr->time_out));
+    }
+
+    $isRestday = (!$schedule || !$schedule->time_in_from);
+    $holiday = attendanceDetailedHoliday(date('Y-m-d', strtotime($date)), $employee->location, $context);
+    $leave = employeeHasLeave($employee->approved_leaves, date('Y-m-d', strtotime($date)), $schedule);
+    $leaveCount = 0;
+    $absHalf = 0;
+    if ($leave) {
+        $leaveParts = explode('-', $leave);
+        $leaveCount = isset($leaveParts[1]) ? (double) $leaveParts[1] : 0;
+        if (strpos($leave, 'Without') !== false) {
+            $absHalf = $leaveCount;
+            $leaveCount = 0;
+        }
+    }
+
+    $abs = ($timeStart && $timeEnd) ? 0 : 1;
+    if ($isRestday) {
+        $abs = 0;
+        $leaveCount = 0;
+    }
+    if ($leaveCount > 0 && $abs == 1) {
+        $abs = $leaveCount;
+    }
+    if ($absHalf > 0) {
+        $abs = $absHalf;
+    }
+    if (!empty($employee->original_date_hired) && date('Y-m-d', strtotime($date)) < $employee->original_date_hired) {
+        $abs = 1;
+    }
+
+    $scheduleHours = attendanceDetailedScheduleHours($schedule, $date, $employee);
+    $work = 0;
+    $late = 0;
+    $undertimeMinutes = 0;
+    $overtime = 0;
+    $nightDiff = 0;
+    $nightDiffOt = 0;
+    $restdayOt = 0;
+    $restdayOtGe = 0;
+    $restNd = 0;
+    $restNdGe = 0;
+    $lhOt = 0;
+    $lhOtGe = 0;
+    $lhNd = 0;
+    $lhNdGe = 0;
+    $shOt = 0;
+    $shOtGe = 0;
+    $shNd = 0;
+    $shNdGe = 0;
+    $rstLhOt = 0;
+    $rstLhOtGe = 0;
+    $rstLhNd = 0;
+    $rstLhNdGe = 0;
+    $rstShOt = 0;
+    $rstShOtGe = 0;
+    $rstShNd = 0;
+    $rstShNdGe = 0;
+
+    if ($timeStart && $timeEnd && $schedule && $schedule->time_in_from) {
+        $timeStartTs = strtotime($timeStart);
+        $timeEndTs = strtotime($timeEnd);
+        $scheduleIn = strtotime($date . ' ' . $schedule->time_in_to);
+        $scheduleOut = strtotime($date . ' ' . $schedule->time_out_to);
+        if ($scheduleOut < $scheduleIn) {
+            $scheduleOut += 86400;
+        }
+
+        $effectiveStart = max($timeStartTs, strtotime($date . ' ' . $schedule->time_in_from));
+        $effectiveEnd = min($timeEndTs, $scheduleOut);
+        $rawWork = max(0, round(($effectiveEnd - $effectiveStart) / 3600, 2));
+        $workOt = max(0, round(($timeEndTs - $effectiveStart) / 3600, 2));
+        $originalSchedule = max(0, round(($scheduleOut - $scheduleIn) / 3600, 2));
+        $work = attendanceDetailedDeductLunch($rawWork, $effectiveStart, $effectiveEnd, $originalSchedule, $employee, $date);
+        $work = min($work, $scheduleHours);
+
+        if ($leaveCount == .5 || $absHalf == .5) {
+            $work = min($work, $scheduleHours / 2);
+        }
+
+        $lateHours = 0;
+        if ($timeStartTs > $scheduleIn) {
+            $lateHours = round(($timeStartTs - $scheduleIn) / 3600, 2);
+        }
+        $late = max(0, $lateHours * 60);
+
+        $undertimeHours = max(0, $scheduleHours - $work);
+        if ($lateHours > 0) {
+            $undertimeHours = max(0, $undertimeHours - $lateHours);
+        }
+        $undertimeMinutes = max(0, $undertimeHours * 60);
+
+        $overtime = max(0, $workOt - $originalSchedule);
+        $approvedOt = $employee->approved_ots ? employeeHasOTDetails($employee->approved_ots, date('Y-m-d', strtotime($date))) : 0;
+        $overtime = attendanceDetailedPayableOt($overtime, $approvedOt);
+
+        $nightStart = max($effectiveStart, $scheduleIn);
+        $nightEnd = min($timeEndTs, $scheduleOut);
+        if ($nightEnd > $nightStart) {
+            $nightDiff = night_difference_per_company(date('Y-m-d H:i', $nightStart), date('Y-m-d H:i', $nightEnd));
+            if ($originalSchedule > 8 && $nightDiff >= 5) {
+                $nightDiff -= 1;
+            }
+        }
+
+        if ($timeEndTs > $scheduleOut && strtotime($schedule->time_in_to) > strtotime($schedule->time_out_to)) {
+            $nightDiffOt = max(0, night_difference_per_company($timeStart, $timeEnd) - $nightDiff);
+        }
+    }
+
+    if ($timeStart && $timeEnd && $isRestday) {
+        $workRest = max(0, round((strtotime($timeEnd) - strtotime($timeStart)) / 3600, 2));
+        if ($workRest > 8) {
+            $workRest -= 1;
+        }
+        $approvedOt = $employee->approved_ots ? employeeHasOTDetails($employee->approved_ots, date('Y-m-d', strtotime($date))) : 0;
+        $workRest = attendanceDetailedPayableOt($workRest, $approvedOt);
+        $restdayOt = min($workRest, 8);
+        $restdayOtGe = max(0, $workRest - 8);
+        $restNd = night_difference_per_company($timeStart, $timeEnd);
+        $work = 0;
+        $late = 0;
+        $undertimeMinutes = 0;
+    }
+
+    if ($holiday && $timeStart && $timeEnd) {
+        $approvedOt = $employee->approved_ots ? employeeHasOTDetails($employee->approved_ots, date('Y-m-d', strtotime($date))) : 0;
+        $renderedHolidayOt = attendanceDetailedRenderedOt($timeStart, $timeEnd);
+        $payableHolidayOt = attendanceDetailedPayableOt($renderedHolidayOt, $approvedOt);
+        $late = 0;
+        $nightDiff = 0;
+        $nightDiffOt = 0;
+        $undertimeMinutes = 0;
+        $overtime = 0;
+
+        if ($holiday == 'Special Holiday') {
+            $shOt = min($payableHolidayOt ?: $work, 8);
+            $shOtGe = max(0, ($payableHolidayOt ?: $work) - 8);
+            $shNd = night_difference_per_company($timeStart, $timeEnd);
+        } else {
+            $lhOt = min($payableHolidayOt ?: $work, 8);
+            $lhOtGe = max(0, ($payableHolidayOt ?: $work) - 8);
+            $lhNd = night_difference_per_company($timeStart, $timeEnd);
+            if ($lhNd >= 4.5 && $scheduleHours > 8) {
+                $lhNd -= 1;
+            }
+        }
+    }
+
+    if ($work > 0) {
+        $abs = 0;
+    }
+    if ($leaveCount > 0 && $abs == 0) {
+        $abs = $leaveCount;
+    }
+    if ($isRestday) {
+        $abs = 0;
+        $leaveCount = 0;
+    }
+
+    $remarks = trim(($leave ?: '') . ($ob ? ' OB' : '') . ($dtr ? ' DTR' : ''));
+
+    return [
+        'company_id' => $employee->company_id,
+        'company_code' => $employee->company ? $employee->company->company_code : '',
+        'employee_no' => $employee->employee_code,
+        'name' => trim($employee->last_name . ', ' . $employee->first_name . ' ' . $employee->middle_name),
+        'display_name' => trim($employee->first_name . ' ' . $employee->last_name),
+        'log_date' => date('Y-m-d', strtotime($date)),
+        'shift' => $shift,
+        'in' => $timeStart ? date('h:i A', strtotime($timeStart)) : '',
+        'out' => $timeEnd ? date('h:i A', strtotime($timeEnd)) : '',
+        'abs' => round($abs, 2),
+        'lv_w_pay' => round($leaveCount, 2),
+        'reg_hrs' => round(max(0, $work), 2),
+        'late_min' => round(max(0, $late), 2),
+        'undertime_min' => round(max(0, $undertimeMinutes), 2),
+        'reg_ot' => round(max(0, $overtime), 2),
+        'reg_nd' => round(max(0, $nightDiff), 2),
+        'reg_ot_nd' => round(max(0, $nightDiffOt), 2),
+        'rst_ot' => round(max(0, $restdayOt), 2),
+        'rst_ot_over_eight' => round(max(0, $restdayOtGe), 2),
+        'rst_nd' => round(max(0, $restNd), 2),
+        'rst_nd_over_eight' => round(max(0, $restNdGe), 2),
+        'lh_ot' => round(max(0, $lhOt), 2),
+        'lh_ot_over_eight' => round(max(0, $lhOtGe), 2),
+        'lh_nd' => round(max(0, $lhNd), 2),
+        'lh_nd_over_eight' => round(max(0, $lhNdGe), 2),
+        'sh_ot' => round(max(0, $shOt), 2),
+        'sh_ot_over_eight' => round(max(0, $shOtGe), 2),
+        'sh_nd' => round(max(0, $shNd), 2),
+        'sh_nd_over_eight' => round(max(0, $shNdGe), 2),
+        'rst_lh_ot' => round(max(0, $rstLhOt), 2),
+        'rst_lh_ot_over_eight' => round(max(0, $rstLhOtGe), 2),
+        'rst_lh_nd' => round(max(0, $rstLhNd), 2),
+        'rst_lh_nd_over_eight' => round(max(0, $rstLhNdGe), 2),
+        'rst_sh_ot' => round(max(0, $rstShOt), 2),
+        'rst_sh_ot_over_eight' => round(max(0, $rstShOtGe), 2),
+        'rst_sh_nd' => round(max(0, $rstShNd), 2),
+        'rst_sh_nd_over_eight' => round(max(0, $rstShNdGe), 2),
+        'remarks' => $remarks,
+        'cut_off_date' => $cutOffDate,
+        'has_ob' => (bool) $ob,
+    ];
+}
+
+function attendanceDetailedPayableOt($renderedOt, $approvedOt)
+{
+    $renderedOt = max(0, (double) $renderedOt);
+
+    if ($approvedOt === '' || $approvedOt === null) {
+        return $renderedOt;
+    }
+
+    $approvedOt = max(0, (double) $approvedOt);
+
+    if ($approvedOt <= 0) {
+        return 0;
+    }
+
+    return min($renderedOt, $approvedOt);
+}
+
+function attendanceDetailedRenderedOt($timeStart, $timeEnd)
+{
+    if (!$timeStart || !$timeEnd) {
+        return 0;
+    }
+
+    $renderedOt = max(0, round((strtotime($timeEnd) - strtotime($timeStart)) / 3600, 2));
+
+    if ($renderedOt > 8) {
+        $renderedOt -= 1;
+    }
+
+    return $renderedOt;
+}
+
+function attendanceDetailedSchedule($schedules = array(), $checkDate, $scheduleId, $employeeCode = '', $context = null)
+{
+    if ($context) {
+        $daily = $context['daily_schedules']->get($employeeCode . '|' . $checkDate);
+        if ($daily && $daily->first()) {
+            return $daily->first();
+        }
+
+        $scheduleName = date('l', strtotime($checkDate));
+        $schedule = $context['schedule_data']->get($scheduleId . '|' . $scheduleName);
+        if ($schedule && $schedule->first()) {
+            return $schedule->first();
+        }
+
+        return null;
+    }
+
+    return employeeSchedule($schedules, $checkDate, $scheduleId, $employeeCode);
+}
+
+function attendanceDetailedHoliday($date, $location, $context = null)
+{
+    if (!$context) {
+        return checkIfHoliday($date, $location);
+    }
+
+    $holidays = $context['holidays']->get($date, collect());
+    foreach ($holidays as $holiday) {
+        if (!$holiday->location || $holiday->location == $location) {
+            return $holiday->holiday_type;
+        }
+    }
+
+    return '';
+}
+
+function attendanceDetailedScheduleHours($schedule, $date, $employee = null)
+{
+    if (!$schedule || !$schedule->time_in_from) {
+        return 0;
+    }
+
+    $scheduleIn = strtotime($date . ' ' . $schedule->time_in_to);
+    $scheduleOut = strtotime($date . ' ' . $schedule->time_out_to);
+    if ($scheduleOut < $scheduleIn) {
+        $scheduleOut += 86400;
+    }
+
+    $hours = max(0, ($scheduleOut - $scheduleIn) / 3600);
+    if ($hours > 8) {
+        $hours -= 1;
+    }
+    if ($employee && $employee->employee_code == 'A340612') {
+        $hours -= 1;
+    }
+
+    return max(0, round($hours, 2));
+}
+
+function attendanceDetailedDeductLunch($work, $start, $end, $originalSchedule, $employee = null, $date = null)
+{
+    if ($originalSchedule > 8) {
+        return $work >= (($originalSchedule - 1) / 1.5) ? max(0, $work - 1) : $work;
+    }
+
+    $lunchStart = strtotime(date('Y-m-d 12:00:00', $start));
+    $lunchEnd = strtotime(date('Y-m-d 13:00:00', $start));
+    $dayOfWeek = $date ? date('N', strtotime($date)) : date('N', $start);
+    $isWeekend = $dayOfWeek >= 6;
+    $isPbi = $employee && $employee->company_id == 10;
+    $isWliHbu = $employee && $employee->company_id == 13;
+
+    if (!(($isPbi && $isWeekend) || $isWliHbu || ($isPbi && $originalSchedule <= 8))) {
+        if ($start <= $lunchStart && $end >= $lunchEnd) {
+            return max(0, $work - 1);
+        }
+    }
+
+    return $work;
+}
+
+function attendanceDetailedTotalKeys()
+{
+    return [
+        'abs',
+        'lv_w_pay',
+        'reg_hrs',
+        'late_min',
+        'undertime_min',
+        'reg_ot',
+        'reg_nd',
+        'reg_ot_nd',
+        'rst_ot',
+        'rst_ot_over_eight',
+        'rst_nd',
+        'rst_nd_over_eight',
+        'lh_ot',
+        'lh_ot_over_eight',
+        'lh_nd',
+        'lh_nd_over_eight',
+        'sh_ot',
+        'sh_ot_over_eight',
+        'sh_nd',
+        'sh_nd_over_eight',
+        'rst_lh_ot',
+        'rst_lh_ot_over_eight',
+        'rst_lh_nd',
+        'rst_lh_nd_over_eight',
+        'rst_sh_ot',
+        'rst_sh_ot_over_eight',
+        'rst_sh_nd',
+        'rst_sh_nd_over_eight',
+    ];
+}
+
+function attendanceDetailedEmptyTotals()
+{
+    return array_fill_keys(attendanceDetailedTotalKeys(), 0);
+}
+
+function getEmployeeLeaveCreditTallies($employee)
+{
+    if (!$employee) {
+        return collect();
+    }
+
+    $leave_lists = EmployeeLeaveList::with('leave')
+        ->where('user_id', $employee->user_id)
+        ->get();
+    $leave_credits = EmployeeLeaveCredit::with('leave')
+        ->where('user_id', $employee->user_id)
+        ->get();
+    $leave_setting = null;
+    if (\Illuminate\Support\Facades\Schema::hasTable('employee_leave_settings')) {
+        $leave_setting = $employee->leave_setting ?: EmployeeLeaveSetting::where('employee_id', $employee->id)->first();
+    }
+
+    $leave_ids = $leave_lists->pluck('leave_id')
+        ->merge($leave_credits->pluck('leave_type'))
+        ->merge($leave_setting ? collect([1, 2]) : collect())
+        ->unique()
+        ->values();
+
+    return $leave_ids->map(function ($leave_id) use ($employee, $leave_lists, $leave_credits, $leave_setting) {
+        $leave = optional($leave_lists->where('leave_id', $leave_id)->first())->leave
+            ?: optional($leave_credits->where('leave_type', $leave_id)->first())->leave
+            ?: Leave::find($leave_id);
+
+        $is_accumulative = false;
+        if ($leave_setting && $leave_id == 1) {
+            $is_accumulative = $leave_setting->vl_is_accumulative == 1;
+        } elseif ($leave_setting && $leave_id == 2) {
+            $is_accumulative = $leave_setting->sl_is_accumulative == 1;
+        }
+
+        $earned_total = $leave_lists->where('leave_id', $leave_id);
+        if (!$is_accumulative) {
+            $earned_total = $earned_total->where('year', date('Y'));
+        }
+        $earned_total = $earned_total->sum('earned_per_month');
+
+        $beginning_total = $leave_credits->where('leave_type', $leave_id)->sum('count');
+        $total = $beginning_total + $earned_total;
+
+        if ($leave_id == 1) {
+            $used = $is_accumulative
+                ? checkUsedSLVLSILLeave($employee->user_id, 1, $employee->original_date_hired, $employee->ScheduleData)
+                : usedSlVlThisYear($employee->user_id, 1, $employee->original_date_hired, $employee->ScheduleData);
+        } elseif ($leave_id == 2) {
+            $used = $is_accumulative
+                ? checkUsedSLVLSILLeave($employee->user_id, 2, $employee->original_date_hired, $employee->ScheduleData)
+                : usedSlVlThisYear($employee->user_id, 2, $employee->original_date_hired, $employee->ScheduleData);
+        } elseif ($leave_id == 10) {
+            $used = checkUsedSLVLSILLeave($employee->user_id, 10, $employee->original_date_hired, $employee->ScheduleData);
+        } else {
+            $used = checkUsedLeave($employee->user_id, $leave_id);
+        }
+
+        $balance = $total - $used;
+
+        return (object) [
+            'leave_id' => $leave_id,
+            'leave_type' => optional($leave)->leave_type ?: 'Leave ' . $leave_id,
+            'beginning' => round($beginning_total, 3),
+            'earned' => round($earned_total, 3),
+            'total' => round($total, 3),
+            'used' => round($used, 3),
+            'balance' => round(max($balance, 0), 3),
+        ];
+    })->sortBy('leave_type')->values();
+}
+
+function addWorkingDays($date, $days)
+{
+    $current = Carbon::parse($date);
+    $added = 0;
+
+    while ($added < $days) {
+        $current->addDay();
+        if (!$current->isWeekend()) {
+            $added++;
+        }
+    }
+
+    return $current;
+}
+
+function employeeLeaveMinimumFileDate($workingDays = 3)
+{
+    return addWorkingDays(date('Y-m-d'), $workingDays)->format('Y-m-d');
+}
+
+function employeeCanFileVacationLeaveDate($date, $workingDays = 3)
+{
+    return Carbon::parse($date)->gte(addWorkingDays(date('Y-m-d'), $workingDays)->startOfDay());
+}
+
+function payrollScheduledItems($items, $isFirstCutoff, $scheduleField = 'schedule')
+{
+    if (empty($items)) {
+        return collect();
+    }
+
+    $cutoffSchedule = $isFirstCutoff ? 'Every 1st cut off' : 'Every 2nd cut off';
+
+    return collect($items)->filter(function ($item) use ($scheduleField, $cutoffSchedule) {
+        $schedule = $item->{$scheduleField} ?? null;
+        return in_array($schedule, ['Every cut off', 'This cut off', $cutoffSchedule]);
+    })->values();
+}
+
+function payrollLoanBalance($loan)
+{
+    if (!$loan) {
+        return 0;
+    }
+
+    return max(($loan->initial_amount ?? 0) - ($loan->pay)->sum('amount'), 0);
+}
+
+function payrollLoanDeductionAmount($loan)
+{
+    return min($loan->monthly_ammort_amt ?? 0, payrollLoanBalance($loan));
+}
+
 function compute_tax($employee_salary,$level) {
     if($level == 4)
     {
@@ -1277,6 +2007,22 @@ function pending_ob_count($approver_id){
                                 ->count();
 }
 
+function pending_schedule_count($approver_id){
+    return \App\ScheduleChangeRequest::whereHas('approver', function($q) use($approver_id) {
+                $q->where('approver_id', $approver_id);
+            })
+            ->where('status', 'Pending')
+            ->count();
+}
+
+function pending_offset_count($approver_id){
+    return \App\OffsetRequest::whereHas('approver', function($q) use($approver_id) {
+                $q->where('approver_id', $approver_id);
+            })
+            ->where('status', 'Pending')
+            ->count();
+}
+
 // Employee
 function pending_employee_count($userId = null)
 {
@@ -1408,7 +2154,7 @@ function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas)
             {
                 if ($leave->withpay == 1 && $leave->halfday == 1) 
                 {
-                    if (date('Y-m-d', strtotime($leave->date_from))) 
+                    if (isLeaveCountableDay($leave->date_from, collect(), $scheduleDatas, $employee->location)) 
                     {
                         $count += 0.5;
                     }
@@ -1428,31 +2174,13 @@ function usedSlVlThisYear($user_id, $leave_type, $date_hired,$scheduleDatas)
                             $leave_Date = date('Y-m-d', strtotime($date_r));
                             // // Check if withpay is 1 and leave_Date is valid
                             if ($leave->withpay == 1) {
-                                // Check if log_date exists in dailySchedules
-                                // $d = $dailySchedules->where('log_date',$leave_Date)->first();
-                                // if($d)
-                                // {
-                                //     foreach ($dailySchedules as $schedule) {
-                                //         $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
-                                        
-                                //         if ($log_date === $leave_Date) {
-                                //             if (is_null($schedule->working_hours)) {
-    
-                                //             } else {
-                                //                 $count++; 
-                                //                 $all_days[]=$leave_Date;
-                                //             }
-                                //         }
-                                //     }
-                                // }
-                                // else
-                                // {
-                                // }
-                                $dayName = date('l',strtotime($leave_Date)); // Get the day name (e.g., Monday, Tuesday)
-                                // dd($dayName);
-                                if (in_array($dayName, $workingDays)) {
-                                    $count++;
-                                    $all_days[]=$leave_Date;
+                                $daily = DailySchedule::where('employee_code', $employee->employee_code)
+                                    ->whereDate('log_date', $leave_Date)
+                                    ->first();
+
+                                if (isLeaveCountableDay($leave_Date, collect($daily ? [$daily] : []), $scheduleDatas, $employee->location)) {
+                                    $count += getLeaveIncrementForDay($leave_Date, $scheduleDatas, collect($daily ? [$daily] : []));
+                                    $all_days[] = $leave_Date;
                                 }
                             }
                         }
@@ -1497,7 +2225,7 @@ function countPreviousVLUsed($user_id, $leave_type, $date_hired,$scheduleDatas =
         if ($employee_sl) {
             foreach ($employee_sl as $leave) {
                 if ($leave->withpay == 1 && $leave->halfday == 1) {
-                    if (date('Y-m-d', strtotime($leave->date_from))) {
+                    if (isLeaveCountableDay($leave->date_from, collect(), $scheduleDatas, $employee->location)) {
                         $count += 0.5;
                     }
                 } else {
@@ -1515,36 +2243,9 @@ function countPreviousVLUsed($user_id, $leave_type, $date_hired,$scheduleDatas =
                             $leave_Date = date('Y-m-d', strtotime($date_r));
                             // Check if withpay is 1 and leave_Date is valid
                             if ($leave->withpay == 1) {
-                                // Check if log_date exists in dailySchedules
-                                $d = $dailySchedules->where('log_date',$leave_Date)->first();
-                            
-                                if($d != null)
-                                {
-                                    foreach ($dailySchedules as $schedule) {
-                                        $log_date = $schedule->log_date ? Carbon::parse($schedule->log_date)->format('Y-m-d') : null;
-                                        
-                                        if ($log_date === $leave_Date) {
-                                            if (is_null($schedule->working_hours)) {
-    
-                                            } else {
-                                                $count++; 
-                                                $all_days[]=$leave_Date;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                              
-                                    $dayName = date('l',strtotime($leave_Date)); // Get the day name (e.g., Monday, Tuesday)
-                                    
-                                    if (in_array($dayName, $workingDays)) {
-                                        // dd($dayName);
-                                        
-                                        $count++;
-                                        $all_days[]=$leave_Date;
-                                    }
-
+                                if (isLeaveCountableDay($leave_Date, $dailySchedules, $scheduleDatas, $employee->location)) {
+                                    $count++;
+                                    $all_days[]=$leave_Date;
                                 }
                             }
                         }
@@ -1958,7 +2659,9 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
     {
         if ($pvl->halfday == 1 && $pvl->withpay == 1)
         {
-            $count += 0.5;
+            if (isLeaveCountableDay($pvl->date_from, collect(), $scheduleData, optional($pvl->employee)->location)) {
+                $count += 0.5;
+            }
         }
         else 
         {
@@ -1968,6 +2671,9 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
             {
                 foreach ($dateRanges as $dateRange) {
                     $leaveDate = date('Y-m-d', strtotime($dateRange));
+                    if (!isLeaveCountableDay($leaveDate, $dailySchedules, $scheduleData, optional($pvl->employee)->location)) {
+                        continue;
+                    }
                     if($pvl->withpay == 1)
                     {
                         $d = $dailySchedules->where('log_date',$leaveDate)->first();
@@ -2011,7 +2717,9 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
     {
         if ($pvl->halfday == 1)
         {
-            $count_pvl += 0.5;
+            if (isLeaveCountableDay($pvl->date_from, collect(), $scheduleData, optional($pvl->employee)->location)) {
+                $count_pvl += 0.5;
+            }
         }
         else 
         {
@@ -2025,6 +2733,9 @@ function checkUsedPvl($id, $vl,$prev_vl,$scheduleData)
             {
                 foreach ($dateRanges as $dateRange) {
                     $leaveDate = date('Y-m-d', strtotime($dateRange));
+                    if (!isLeaveCountableDay($leaveDate, $dailySchedules, $scheduleData, optional($pvl->employee)->location)) {
+                        continue;
+                    }
                     if($pvl->withpay == 1)
                     {
                         $d = $dailySchedules->where('log_date',$leaveDate)->first();
@@ -2096,7 +2807,9 @@ function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
     {
         if ($psl->halfday == 1 && $psl->withpay == 1)
         {
-            $count += 0.5;
+            if (isLeaveCountableDay($psl->date_from, collect(), $scheduleData, optional($psl->employee)->location)) {
+                $count += 0.5;
+            }
         }
         else 
         {
@@ -2106,6 +2819,9 @@ function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
             {
                 foreach ($dateRanges as $dateRange) {
                     $leaveDate = date('Y-m-d', strtotime($dateRange));
+                    if (!isLeaveCountableDay($leaveDate, $dailySchedules, $scheduleData, optional($psl->employee)->location)) {
+                        continue;
+                    }
                     if($psl->withpay == 1)
                     {
                         $d = $dailySchedules->where('log_date',$leaveDate)->first();
@@ -2145,13 +2861,17 @@ function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
     {
         if ($psl->halfday == 1)
         {
-            $count_psl += 0.5;
+            if (isLeaveCountableDay($psl->date_from, collect(), $scheduleData, optional($psl->employee)->location)) {
+                $count_psl += 0.5;
+            }
         }
         else 
         {
             $dateRanges = dateRangeHelperLeaveCount($psl->date_from, $psl->date_to);
             foreach ($dateRanges as $dateRange) {
-                $count_psl++;
+                if (isLeaveCountableDay($dateRange, collect(), $scheduleData, optional($psl->employee)->location)) {
+                    $count_psl++;
+                }
             }
         }
     }

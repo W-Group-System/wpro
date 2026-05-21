@@ -53,12 +53,12 @@ class UploadController extends Controller
                     
                     
                     if ($request->type == "OB") {
-                        $employeeOb = EmployeeOb::whereIn('user_id', $user_id)
-                            ->where('applied_date',date('Y-m-d',strtotime($row[3])))
-                            ->first();
+                        // $employeeOb = EmployeeOb::whereIn('user_id', $user_id)
+                        //     ->where('applied_date',date('Y-m-d',strtotime($row[3])))
+                        //     ->first();
                         // dd($row[5]);
                         foreach ($user_id as $uid) {
-                            if (empty($employeeOb)) {
+                            // if (empty($employeeOb)) {
                                 $employeeOb = new EmployeeOb;
                                 $employeeOb->user_id = $uid;
                                 $employeeOb->applied_date = date('Y-m-d',strtotime($row[3]));
@@ -70,15 +70,16 @@ class UploadController extends Controller
                                 $employeeOb->created_by = auth()->user()->id;
                                 $employeeOb->remarks = $row[9];
                                 $employeeOb->save();
-                            } else {
-                                $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[3]))." ".date('H:i:s',strtotime($row[5]))));
-                                $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[4]))." ".date('H:i:s',strtotime($row[6]))));
-                                $employeeOb->approved_date = date('Y-m-d',strtotime($row[4]));
-                                $employeeOb->status =  $row[10];
-                                $employeeOb->created_by = auth()->user()->id;
-                                $employeeOb->remarks = $row[9];
-                                $employeeOb->save();
-                            }
+                            // } 
+                            // else {
+                            //     $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[3]))." ".date('H:i:s',strtotime($row[5]))));
+                            //     $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[4]))." ".date('H:i:s',strtotime($row[6]))));
+                            //     $employeeOb->approved_date = date('Y-m-d',strtotime($row[4]));
+                            //     $employeeOb->status =  $row[10];
+                            //     $employeeOb->created_by = auth()->user()->id;
+                            //     $employeeOb->remarks = $row[9];
+                            //     $employeeOb->save();
+                            // }
                         }
                     } else if ($request->type == "OT") {
                         $employeeOt = EmployeeOvertime::whereIn('user_id', $user_id)->where('ot_date',  date('Y-m-d', strtotime($row[3])))->first();

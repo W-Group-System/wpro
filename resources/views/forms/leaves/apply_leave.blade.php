@@ -61,7 +61,7 @@
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_prev_vl && $leave_type->code == 'PVL')
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
-                          @elseif($is_allowed_to_file_prev_sl && $leave_type->code == 'PSL')
+                          @elseif($is_allowed_to_file_prev_sl && $leave_type->code == 'PSL' && now()->between(now()->startOfYear(), now()->copy()->month(2)->endOfMonth()))
                             <option value="{{$leave_type->id}}">{{$leave_type->leave_type}}</option>
                           @endif
                         @endforeach
@@ -92,6 +92,9 @@
                                 </select>
                             </div>
                         </label>
+                          <div id="four-hour-notice" style="display:none;" class="mt-1">
+                              <small class="text-info"><i class="ti-info-alt"></i> 4-hour schedule detected. This day counts as 0.5 automatically — half-day filing is not allowed.</small>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -126,7 +129,15 @@
                     <div class='col-md-10'>
                       <input type="file" name="attachment" class="form-control"  placeholder="Upload Supporting Documents" multiple>
                     </div>
-                  
+                  </div>
+                  <div class="form-group row" v-show="leave_type == '1'">
+                    <div class='col-md-2'>
+                      Turnover List
+                    </div>
+                    <div class='col-md-10'>
+                      <input type="file" name="turnover_list" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                      <small class="text-muted">Required for Vacation Leave. Upload your work handover document (PDF, Word, or image).</small>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -293,11 +304,41 @@
           },
   });
 
+    var employeeScheduleData = @json($employee_status->ScheduleData ?? []);
+
+    function isFourHourDay(dateStr) {
+        if (!dateStr || !employeeScheduleData.length) return false;
+        var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        var dayName  = dayNames[new Date(dateStr + 'T00:00:00').getDay()];
+        for (var i = 0; i < employeeScheduleData.length; i++) {
+            if (employeeScheduleData[i].name === dayName) {
+                return parseFloat(employeeScheduleData[i].working_hours) === 4;
+            }
+        }
+        return false;
+    }
+
+    function applyFourHourRule() {
+        var leaveType = $('#leave_type').val();
+        var dateFrom  = $('[name="date_from"]').val();
+        if ((leaveType === '1' || leaveType === '2') && isFourHourDay(dateFrom)) {
+            $('#leaveHalfday').prop('checked', false).prop('disabled', true);
+            $('.halfDayStatus').hide();
+            $('#four-hour-notice').show();
+        } else {
+            $('#leaveHalfday').prop('disabled', false);
+            $('#four-hour-notice').hide();
+        }
+    }
+
     $(document).ready(function() {
+        $('[name="date_from"]').on('change', applyFourHourRule);
+
         $("#leave_type").on('change', function() {
+            applyFourHourRule();
             if ($(this).val() == 1 || $(this).val() == 14) {
-                $("[name='date_from']").attr('min', "{{date('Y-m-d', strtotime('+3 days'))}}");
-                $("[name='date_to']").attr('min', "{{date('Y-m-d', strtotime('+3 days'))}}");
+                $("[name='date_from']").attr('min', "{{$vl_min_file_date}}");
+                $("[name='date_to']").attr('min', "{{$vl_min_file_date}}");
 
                 $("[name='date_from']").removeAttr('max');
                 $("[name='date_to']").removeAttr('max');
