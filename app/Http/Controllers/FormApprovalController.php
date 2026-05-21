@@ -982,7 +982,7 @@ class FormApprovalController extends Controller
                         ->where('is_review', 1);
                 });
             })
-            ->when($userId == 875, function ($q) {
+            ->when($userId == 664 || $userId == 607, function ($q) {
                 return $q->whereHas('user', function ($query) {
                     $query->where('status', 'Pending')
                         ->whereNull('is_review');
