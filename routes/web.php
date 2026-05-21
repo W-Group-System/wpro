@@ -39,6 +39,17 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('', 'HomeController@index');
     // Route::get('/', 'HomeController@index');
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/dashboard-hr', 'HomeController@hrDashboard');
+    Route::get('/hr-analytics', 'HrAnalyticsController@index');
+    Route::get('kpi/probationary-regularization', 'KpiController@probationaryRegularization');
+    Route::post('kpi/probationary-regularization/{movement}/upload-nopa', 'KpiController@uploadNopa');
+    Route::get('kpi/activity-history', 'KpiController@activityHistory');
+    Route::get('business-modules', 'BusinessModuleController@index');
+    Route::get('business-modules/master/{master}', 'BusinessModuleController@master');
+    Route::post('business-modules/master/{master}', 'BusinessModuleController@storeMaster');
+    Route::post('business-modules/master/{master}/{id}', 'BusinessModuleController@updateMaster');
+    Route::post('business-modules/master/{master}/{id}/delete', 'BusinessModuleController@destroyMaster');
+    Route::get('business-modules/{slug}', 'BusinessModuleController@show');
     //approvers
     Route::get('/dashboard-manager', 'HomeController@managerDashboard');
     //admin
@@ -46,6 +57,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('attendances', 'AttendanceController@index');
     Route::get('attendance-report', 'AttendanceController@reports')->name('reports');
     Route::post('/store_attendance', 'AttendanceController@storeAttendance')->name('attendance.store');
+    Route::post('/unpost_attendance', 'AttendanceController@unpostAttendance')->name('attendance.unpost');
     Route::get('get-attendance-bio', 'AttendanceController@get_attendances');
     Route::post('sync_attendance','AttendanceController@syncAttendance');
     // Route::get('/fetch-log-dates/{company_id}', 'AttendanceController@checkLogDate');
@@ -64,6 +76,10 @@ Route::get('audit_logs', 'AuditLogsController@index');
     //Leaves
     Route::get('file-leave', 'EmployeeLeaveController@leaveBalances');
     Route::post('new-leave','EmployeeLeaveController@new');
+    Route::get('change-schedule', 'ScheduleChangeController@index');
+    Route::post('new-schedule-change', 'ScheduleChangeController@store');
+    Route::get('file-offset', 'OffsetController@index');
+    Route::post('new-offset', 'OffsetController@store');
     Route::post('edit-leave/{id}', 'EmployeeLeaveController@edit_leave');
     Route::post('hr-edit-leave/{id}', 'EmployeeLeaveController@hr_edit_leave');
     Route::post('disable-leave/{id}', 'EmployeeLeaveController@disable_leave');
@@ -72,6 +88,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('approve-request-to-cancel-leave/{id}', 'EmployeeLeaveController@approve_request_to_cancel');
     Route::get('decline-request-to-cancel-leave/{id}', 'EmployeeLeaveController@decline_request_to_cancel');
     Route::post('upload-attachment/{id}', 'EmployeeLeaveController@upload_attachment');
+    Route::post('upload-turnover-list/{id}', 'EmployeeLeaveController@upload_turnover_list');
 
     Route::post('approve-leave-all','FormApprovalController@approveLeaveAll');
     Route::post('disapprove-leave-all','FormApprovalController@disapproveLeaveAll');
@@ -140,6 +157,12 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('for-official-business','FormApprovalController@form_ob_approval');
     Route::post('approve-ob/{id}','FormApprovalController@approveOb');
     Route::post('decline-ob/{id}','FormApprovalController@declineOb');
+    Route::get('for-schedule-change','ScheduleChangeController@forApproval');
+    Route::post('approve-schedule-change/{id}','ScheduleChangeController@approve');
+    Route::post('decline-schedule-change/{id}','ScheduleChangeController@decline');
+    Route::get('for-offset','OffsetController@forApproval');
+    Route::post('approve-offset/{id}','OffsetController@approve');
+    Route::post('decline-offset/{id}','OffsetController@decline');
 
     Route::get('for-dtr-correction','FormApprovalController@form_dtr_approval');
     Route::post('approve-dtr/{id}','FormApprovalController@approveDtr');
@@ -166,9 +189,12 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('employees-export', 'EmployeeController@export');
     Route::get('employees-export-hr', 'EmployeeController@export_hr');
     Route::post('new-employee', 'EmployeeController@new');
+    Route::get('account-setting-hr/{user}/tab/{tab}', 'EmployeeController@employeeSettingsHRTab');
     Route::get('account-setting-hr/{user}', 'EmployeeController@employeeSettingsHR');
     Route::post('account-setting-hr/updateInfoHR/{id}', 'EmployeeController@updateInfoHR');
     Route::post('account-setting-hr/updateEmpInfoHR/{id}', 'EmployeeController@updateEmpInfoHR');
+    Route::post('account-setting-hr/updatePayrollComputationHR/{id}', 'EmployeeController@updatePayrollComputationHR');
+    Route::post('account-setting-hr/updateLeaveSettingsHR/{id}', 'EmployeeController@updateLeaveSettingsHR');
     Route::post('account-setting-hr/updateEmpMovementHR/{id}', 'EmployeeController@updateEmpMovementHR');
     Route::post('account-setting-hr/updateEmpSalaryMovementHR/{id}', 'EmployeeController@updateEmpSalaryMovementHR');
     Route::post('account-setting-hr/updateEmpSalary/{id}', 'EmployeeController@updateEmpSalary');
@@ -242,6 +268,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('bio-per-location-export', 'EmployeeController@biologs_per_location_export');
     Route::get('pmi-local', 'EmployeeController@localbio');
     Route::get('biometrics-per-company', 'EmployeeController@perCompany');
+    Route::get('biometrics-per-company/rows', 'EmployeeController@perCompanyRows');
     Route::get('sync-biometrics','EmployeeController@sync');
     Route::post('sync-bio','EmployeeController@syncBio');
     Route::get('sync-biometric-per-employee','EmployeeController@sync_per_employee');
@@ -367,7 +394,7 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('ob-report-export', 'OfficialbusinessController@export');
     Route::get('dtr-report', 'DailytimerecordController@dtr_report');
     Route::get('dtr-report-export', 'DailytimerecordController@export');
-    Route::get('ytd-report', 'PayslipController@ytd_report');
+    Route::get('ytd-report', 'YtdReportController@index');
 
     //13th month
     Route::get('13th-register','ThirteenthMonthController@index');
@@ -522,6 +549,8 @@ Route::get('audit_logs', 'AuditLogsController@index');
     Route::get('refresh_leave', 'EmployeeLeaveListController@refreshLeave');
     Route::post('refresh_leave_credit', 'EmployeeLeaveListController@refreshLeaveCredit');
     Route::get('leave_report', 'EmployeeLeaveListController@leaveReport');
+    Route::get('leave_report/employees', 'EmployeeLeaveListController@leaveReportEmployees');
+    Route::get('leave_report/search', 'EmployeeLeaveListController@leaveReportSearch');
     Route::get('refresh_sick_leave', 'EmployeeLeaveListController@refreshSickLeave');
 
     // HOLD EMPLOYEE

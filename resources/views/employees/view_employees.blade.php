@@ -1,262 +1,617 @@
 @extends('layouts.header')
 @section('content')
+@php
+    $selectedCompany = $companies->firstWhere('id', $company);
+    $selectedDepartment = $departments->firstWhere('id', $department);
+    $activeFilters = collect([
+        $search ? 'Search: '.$search : null,
+        $selectedCompany ? 'Company: '.$selectedCompany->company_code : null,
+        $selectedDepartment ? 'Department: '.$selectedDepartment->code : null,
+        $status ? 'Status: '.$status : null,
+        request('classification') ? 'Classification: '.request('classification') : null,
+        request('gender') ? 'Gender: '.request('gender') : null,
+    ])->filter();
+@endphp
 <div class="main-panel">
     <div class="content-wrapper">
-        <div class='row'>
-            <div class="col-lg-6 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Employee Classification(Active)</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($employees_classification as $item)
-                                    <tr>
-                                        <td>{{$item->classification_info ? $item->classification_info->name : $item->classification}}</td>
-                                        <td>
-                                            @if($item->classification_info)
-                                                <a href="{{url('/employees?classification=' . $item->classification_info->id)}}">{{$item->total}}</a>
-                                            @else
-                                                <a href="{{url('/employees?classification=' . 'N/A' )}}">{{$item->total}}</a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th>Employee Gender(Active)</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($employees_gender as $item)
-                                    <tr>
-                                        <td>{{$item->gender ? $item->gender : ""}}</td>
-                                        <td>
-                                            @if($item->gender)
-                                                <a href="{{url('/employees?gender=' . $item->gender)}}">{{$item->total}}</a>
-                                            @else
-                                                <a href="{{url('/employees?gender=' . 'N/A' )}}">{{$item->total}}</a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            <table class="table table-hover">
-                               
-                            </table>
+        <div class="employees-page">
+            <div class="employees-hero">
+                <div>
+                    <span class="employees-kicker">People Directory</span>
+                    <h2>Employees</h2>
+                    <p>Search, filter, export, and open employee HR records from one workspace.</p>
+                    <div class="employees-filter-tags">
+                        @forelse($activeFilters as $filter)
+                            <span>{{$filter}}</span>
+                        @empty
+                            <span>No filters applied</span>
+                        @endforelse
+                    </div>
+                </div>
+                <div class="employees-actions">
+                    @if (checkUserPrivilege('employees_add',auth()->user()->id) == 'yes')
+                        <button type="button" class="btn btn-success btn-sm btn-icon-text employees-new-btn" data-toggle="modal" data-target="#newEmployee"><i class="ti-plus btn-icon-prepend"></i> New Employee</button>
+                    @endif
+                    @if(in_array(auth()->user()->id, [875, 17, 272, 781]))
+                        <button type="button" class="btn btn-outline-primary btn-sm btn-icon-text" title="Export Template Employees Salaries" onclick="window.location.href='{{ route('export.salaries') }}'"><i class="ti-download btn-icon-prepend"></i> Salary Template</button>
+                    @endif
+                    @if (checkUserPrivilege('employees_export_hr',auth()->user()->id) == 'yes')
+                        <a href="/employees-export-hr?company={{$company}}&department={{$department}}&status={{$status}}" class="btn btn-outline-primary btn-sm btn-icon-text" title="Export HR Details"><i class="ti-arrow-down btn-icon-prepend"></i> HR Export</a>
+                    @endif
+                    @if (checkUserPrivilege('employees_export',auth()->user()->id) == 'yes')
+                        <a href="/employees-export?company={{$company}}&department={{$department}}&status={{$status}}" class="btn btn-outline-danger btn-sm btn-icon-text" title="Export OTPMS"><i class="ti-arrow-down btn-icon-prepend"></i> OTPMS</a>
+                        @if(auth()->user()->id == '660' || auth()->user()->id == '1' || auth()->user()->id == '1202')
+                            <a href="/associate-employees-export?company={{$company}}&department={{$department}}&status={{$status}}" class="btn btn-outline-warning btn-sm btn-icon-text" title="Export Employee Associates"><i class="ti-arrow-down btn-icon-prepend"></i> Associates</a>
+                        @endif
+                    @endif
+                </div>
+            </div>
+
+            <div class="employees-metrics">
+                <div class="employees-metric-card is-active">
+                    <span class="employees-metric-icon"><i class="fa fa-users"></i></span>
+                    <small>Active Employees</small>
+                    <strong>{{$employees_active}}</strong>
+                    <p>Across allowed companies</p>
+                </div>
+                <div class="employees-metric-card">
+                    <span class="employees-metric-icon"><i class="fa fa-address-card"></i></span>
+                    <small>Current Results</small>
+                    <strong>{{$employees->total()}}</strong>
+                    <p>{{$employees->count()}} shown on this page</p>
+                </div>
+                <div class="employees-metric-card">
+                    <span class="employees-metric-icon"><i class="fa fa-building"></i></span>
+                    <small>Companies</small>
+                    <strong>{{$companies->count()}}</strong>
+                    <p>Available to your access</p>
+                </div>
+                <div class="employees-metric-card">
+                    <span class="employees-metric-icon"><i class="fa fa-filter"></i></span>
+                    <small>Filter State</small>
+                    <strong>{{$status ?: 'All'}}</strong>
+                    <p>{{$activeFilters->count()}} active filters</p>
+                </div>
+            </div>
+
+            <div class="employees-insights">
+                <div class="employees-insight-card">
+                    <div class="employees-card-header">
+                        <div>
+                            <span class="employees-kicker">Breakdown</span>
+                            <h4>Classification</h4>
                         </div>
+                    </div>
+                    <div class="employees-breakdown">
+                        @forelse($employees_classification as $item)
+                            @php
+                                $classificationLabel = $item->classification_info ? $item->classification_info->name : ($item->classification ?: 'N/A');
+                                $classificationValue = $item->classification_info ? $item->classification_info->id : 'N/A';
+                            @endphp
+                            <a href="{{url('/employees?classification=' . $classificationValue)}}" class="employees-breakdown-row">
+                                <span>{{$classificationLabel}}</span>
+                                <strong>{{$item->total}}</strong>
+                            </a>
+                        @empty
+                            <p class="employees-empty">No classification data found.</p>
+                        @endforelse
+                    </div>
+                </div>
+                <div class="employees-insight-card">
+                    <div class="employees-card-header">
+                        <div>
+                            <span class="employees-kicker">Breakdown</span>
+                            <h4>Gender</h4>
+                        </div>
+                    </div>
+                    <div class="employees-breakdown is-chips">
+                        @forelse($employees_gender as $item)
+                            @php
+                                $genderLabel = $item->gender ?: 'N/A';
+                            @endphp
+                            <a href="{{url('/employees?gender=' . ($item->gender ?: 'N/A'))}}" class="employees-gender-chip">
+                                <span>{{$genderLabel}}</span>
+                                <strong>{{$item->total}}</strong>
+                            </a>
+                        @empty
+                            <p class="employees-empty">No gender data found.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
-            <div class='col-lg-2 grid-margin'>
-                <div class="card card-tale">
-                    <div class="card-body">
-                        <div class="media">
 
-                            <div class="media-body">
-                                <h4 class="mb-4">For Clearance</h4>
-                                <h2 class="card-text">0</h2>
-                            </div>
+            <div class="employees-filter-card">
+                <div class="employees-card-header">
+                    <div>
+                        <span class="employees-kicker">Refine</span>
+                        <h4>Find Employees</h4>
+                    </div>
+                    <a href="/employees" class="btn btn-light btn-sm">Reset</a>
+                </div>
+                <form method="get" onsubmit="show();" enctype="multipart/form-data">
+                    <div class="employees-filter-grid">
+                        <div class="form-group">
+                            <label>Search</label>
+                            <input type="text" class="form-control" name="search" placeholder="Name, employee code, biometric code" value="{{$search}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Company</label>
+                            <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="company">
+                                <option value="">All Companies</option>
+                                @foreach($companies as $comp)
+                                    <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_code}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select data-placeholder="Select Department" class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="department">
+                                <option value="">All Departments</option>
+                                @foreach($departments as $dep)
+                                    <option value="{{$dep->id}}" @if ($dep->id == $department) selected @endif>{{$dep->name}} - {{$dep->code}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select data-placeholder="Select Status" class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="status">
+                                <option value="">-- Select Status --</option>
+                                <option value="Active" @if ($status == 'Active') selected @endif>Active</option>
+                                <option value="Inactive" @if ($status == 'Inactive') selected @endif>Inactive</option>
+                                <option value="Resigned" @if ($status == 'Resigned') selected @endif>Resigned</option>
+                                <option value="Terminated" @if ($status == 'Terminated') selected @endif>Terminated</option>
+                                <option value="HBU" @if ($status == 'HBU') selected @endif>HBU</option>
+                                <option value="Pending" @if ($status == 'Pending') selected @endif>Pending</option>
+                            </select>
+                        </div>
+                        <div class="employees-filter-submit">
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-search"></i> Filter</button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
-            <div class='col-lg-2 grid-margin'>
-                <div class="card card-light-danger">
-                    <div class="card-body">
-                        <div class="media">
 
-                            <div class="media-body">
-                                <h4 class="mb-4">Cleared</h4>
-                                <h2 class="card-text">0</h2>
-                            </div>
-                        </div>
+            <div class="employees-directory-card">
+                <div class="employees-card-header">
+                    <div>
+                        <span class="employees-kicker">Directory</span>
+                        <h4>{{$employees->total()}} employees found</h4>
                     </div>
+                    <small>Page {{$employees->currentPage()}} of {{$employees->lastPage()}}</small>
                 </div>
-            </div>
-            <div class='col-lg-2'>
-                <div class="card text-success">
-                    <div class="card-body">
-                        <div class="media">
-
-                            <div class="media-body">
-                                <h4 class="mb-4">Active</h4>
-                                <h2 class="card-text">{{$employees_active}}</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class='row'>
-            <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Employees 
-                            @if (checkUserPrivilege('employees_add',auth()->user()->id) == 'yes')
-                                <button type="button" class="btn btn-outline-success btn-icon-text btn-sm text-center" data-toggle="modal" data-target="#newEmployee"><i class="ti-plus btn-icon-prepend"></i></button>
-                                @if(auth()->user()->id == '353' || auth()->user()->id == '1')
-                                    <button type="button" class="btn btn-outline-warning btn-icon-text btn-sm text-center" data-toggle="modal" data-target="#uploadEmployee" title="Upload Employees"><i class="ti-arrow-up btn-icon-prepend"></i></button>
-                                @endif
-                                @if(auth()->user()->id == '1')
-                                    <button type="button" class="btn btn-outline-primary btn-icon-text btn-sm text-center" data-toggle="modal" data-target="#uploadEmployeeRevertRate" title="Upload Rate Employees"><i class="ti-arrow-up btn-icon-prepend"></i></button>
-                                @endif
-                            @endif
-                            @if(in_array(auth()->user()->id, [875, 17, 272, 781]))
-                                <button type="button" class="btn btn-outline-primary btn-icon-text btn-sm text-center"title="Export Template Employees Salaries"onclick="window.location.href='{{ route('export.salaries') }}'"><i class="ti-download btn-icon-prepend"></i></button>
-                                <button type="button" class="btn btn-outline-info btn-icon-text btn-sm text-center"title="Import Template Employees Salaries" data-toggle="modal" data-target="#uploadSalaries"><i class="ti-upload btn-icon-prepend"></i></button>
-                            @endif
-                            @if (checkUserPrivilege('employees_export',auth()->user()->id) == 'yes')
-                                <a href="/employees-export?company={{$company}}&department={{$department}}&status={{$status}}" class="btn btn-outline-danger btn-icon-text btn-sm text-center float-right" title="Export OTPMS"><i class="ti-arrow-down btn-icon-prepend"></i></a>
-                                @if(auth()->user()->id == '660' || auth()->user()->id == '1' || auth()->user()->id == '1202')
-                                    <a href="/associate-employees-export?company={{$company}}&department={{$department}}&status={{$status}}" class="btn btn-outline-warning btn-icon-text btn-sm text-center float-right mr-2" title="Export Employee Associates"><i class="ti-arrow-down btn-icon-prepend"></i></a>
-                                @endif
-                            @endif
-                            @if (checkUserPrivilege('employees_export_hr',auth()->user()->id) == 'yes')
-                                <a href="/employees-export-hr?company={{$company}}&department={{$department}}&status={{$status}}" class="btn btn-outline-primary btn-icon-text btn-sm text-center float-right mr-2" title="Export HR Details"><i class="ti-arrow-down btn-icon-prepend"></i></a>
-                            @endif
-                        </h4>
-
-                        <h4 class="card-title">Filter</h4>
-						<p class="card-description">
-						<form method='get' onsubmit='show();' enctype="multipart/form-data">
-							<div class=row>
-                                <div class='col-md-3'>
-									<div class="form-group">
-                                        <input type="text" class="form-control" name="search" placeholder="Search Name / Biometric Code" value="{{$search}}">
-                                    </div>
+                <div class="employees-grid">
+                    @forelse($employees as $employee)
+                        @php
+                            $employeeName = trim($employee->last_name.', '.$employee->first_name);
+                            $companyCode = optional($employee->company)->company_code ?: '-';
+                            $departmentName = optional($employee->department)->name ?: 'No department';
+                            $classificationName = optional($employee->classification_info)->name ?: 'Unclassified';
+                            $statusClass = $employee->status == 'Active' ? 'success' : ($employee->status == 'Pending' ? 'warning' : 'secondary');
+                        @endphp
+                        <div class="employee-card">
+                            <div class="employee-card-top">
+                                <img class="employee-avatar" src="{{URL::asset($employee->avatar)}}" onerror="this.src='{{URL::asset('/images/no_image.png')}}';">
+                                <div class="employee-title">
+                                    <h5>{{$employeeName}}</h5>
+                                    <span>{{$companyCode}} · {{$departmentName}}</span>
                                 </div>
-								<div class='col-md-2'>
-									<div class="form-group">
-										
-                                        <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company'>
-                                            <option value="">-- Select Company --</option>
-                                            @foreach($companies as $comp)
-                                            <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_code}}</option>
-                                            @endforeach
-                                        </select>
-										
-									</div>
-								</div>
-								<div class='col-md-2'>
-									<div class="form-group">
-										
-                                        <select data-placeholder="Select Department" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='department'>
-                                            <option value="">-- Select Department --</option>
-                                            @foreach($departments as $dep)
-                                            <option value="{{$dep->id}}" @if ($dep->id == $department) selected @endif>{{$dep->name}} - {{$dep->code}}</option>
-                                            @endforeach
-                                        </select>
-										
-									</div>
-								</div>
-								<div class='col-md-2'>
-									<div class="form-group">
-										
-                                        <select data-placeholder="Select Status" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='status'>
-                                            <option value="">-- Select Status --</option>
-                                            <option value="Active" @if ($status == 'Active') selected @endif>Active</option>
-                                            <option value="Inactive" @if ($status == 'Inactive') selected @endif>Inactive</option>
-                                            <option value="Resigned" @if ($status == 'Resigned') selected @endif>Resigned</option>
-                                            <option value="Terminated" @if ($status == 'Terminated') selected @endif>Terminated</option>
-                                            <option value="HBU" @if ($status == 'HBU') selected @endif>HBU</option>
-                                            <option value="Pending" @if ($status == 'Pending') selected @endif>Pending</option>
-                                        </select>
-										
-									</div>
-								</div>
-								<div class='col-md-3'>
-									<button type="submit" class="btn btn-primary">Filter</button>
-                                    <a href="/employees" class="btn btn-warning">Reset Filter</a>
-								</div>
-							</div>
-							
-						</form>
-						</p>
-
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered" id="">
-                                <thead>
-                                    <tr>
-                                        <th>Employee Code</th>
-                                        {{-- <th>Biometric Code</th> --}}
-                                        <th>User ID</th>
-                                        <th>Employee</th>
-                                        <th>Company</th>
-                                        <th>Department</th>
-                                        <th>Classification</th>
-                                        <th>Immediate Supervisor</th>
-                                        <th>Status</th>
-                                        @if (checkUserPrivilege('employees_availment',auth()->user()->id) == 'yes')
-                                        <th>HMO</th>
-                                        @endif
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($employees as $employee)
-                                    <tr>
-                                        
-                                        <td>
-                                            @if (checkUserPrivilege('employees_view',auth()->user()->id) == 'yes')
-                                                <a href="/account-setting-hr/{{$employee->user_id}}" class="text-success btn-sm text-center">
-                                                    <i class="ti-pencil btn-icon-prepend"></i>
-                                                </a>
-                                            @endif
-                                            {{$employee->employee_code}}
-                                        </td>
-                                        <td>{{$employee->user_id}} </td>
-                                        <td>
-                                            <small><img class="rounded-circle" style='width:34px;height:34px;' src='{{URL::asset($employee->avatar)}}' onerror="this.src='{{URL::asset('/images/no_image.png')}}';"></small>
-                                            {{$employee->last_name}}, {{$employee->first_name}}  </small>
-                                        </td>
-                                        <td>
-                                            @if($employee->company){{$employee->company->company_code}}@endif
-                                        </td>
-                                        <td>@if($employee->department){{$employee->department->name}}@endif</td>
-                                        <td>{{$employee->classification_info ? $employee->classification_info->name : ""}}</td>
-                                        <td>@if($employee->immediate_sup_data)
-                                            <small><img class="rounded-circle" style='width:34px;height:34px;' src='{{URL::asset($employee->immediate_sup_data->employee->avatar)}}' onerror="this.src='{{URL::asset('/images/no_image.png')}}';"></small>
-                                            {{$employee->immediate_sup_data->name}}@endif</td>
-                                        <td>{{$employee->status}} </td>
-                                        @if (checkUserPrivilege('employees_availment',auth()->user()->id) == 'yes')
-                                        <td>
-                                            <!-- <a href="{{ route('send.hmo', $employee->id) }}" class="btn btn-sm btn-info" title="Send Email Notification" onclick="show();">
-                                                <i class="fa fa-envelope"></i>
-                                            </a> -->
-                                            <button type="button" 
-                                                class="btn btn-sm btn-info" 
-                                                title="Send Email Notification"
-                                                data-toggle="modal" 
-                                                data-target="#sendEmailModal" 
-                                                data-id="{{ $employee->id }}"
-                                                data-name="{{ $employee->first_name }}"
-                                                data-email="{{ $employee->email ?? ($employee->user->email ?? '') }}">
-                                                <i class="fa fa-envelope"></i>
-                                            </button>
-                                        </td>
-                                        @endif
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                <span class="badge badge-{{$statusClass}}">{{$employee->status}}</span>
+                            </div>
+                            <div class="employee-card-details">
+                                <div>
+                                    <small>Employee Code</small>
+                                    <strong>{{$employee->employee_code ?: '-'}}</strong>
+                                </div>
+                                <div>
+                                    <small>Biometric Code</small>
+                                    <strong>{{$employee->employee_number ?: '-'}}</strong>
+                                </div>
+                                <div>
+                                    <small>User ID</small>
+                                    <strong>{{$employee->user_id ?: '-'}}</strong>
+                                </div>
+                                <div>
+                                    <small>Classification</small>
+                                    <strong>{{$classificationName}}</strong>
+                                </div>
+                            </div>
+                            <div class="employee-supervisor">
+                                <small>Immediate Supervisor</small>
+                                @if($employee->immediate_sup_data)
+                                    <div>
+                                        <img src="{{URL::asset(optional($employee->immediate_sup_data->employee)->avatar)}}" onerror="this.src='{{URL::asset('/images/no_image.png')}}';">
+                                        <span>{{$employee->immediate_sup_data->name}}</span>
+                                    </div>
+                                @else
+                                    <span>No supervisor set</span>
+                                @endif
+                            </div>
+                            <div class="employee-card-actions">
+                                @if (checkUserPrivilege('employees_view',auth()->user()->id) == 'yes')
+                                    <a href="/account-setting-hr/{{$employee->user_id}}" class="btn btn-outline-success btn-sm"><i class="ti-pencil"></i> View Profile</a>
+                                @endif
+                                @if (checkUserPrivilege('employees_availment',auth()->user()->id) == 'yes')
+                                    <button type="button"
+                                        class="btn btn-outline-info btn-sm"
+                                        title="Send Email Notification"
+                                        data-toggle="modal"
+                                        data-target="#sendEmailModal"
+                                        data-id="{{ $employee->id }}"
+                                        data-name="{{ $employee->first_name }}"
+                                        data-email="{{ $employee->email ?? ($employee->user->email ?? '') }}">
+                                        <i class="fa fa-envelope"></i> HMO
+                                    </button>
+                                @endif
+                            </div>
                         </div>
-                        <div class="mt-3">
-                            {{ $employees->appends(request()->only(['department', 'company', 'status','search']))->links() }} <!-- This will display the pagination links -->
+                    @empty
+                        <div class="employees-empty-state">
+                            <i class="fa fa-search"></i>
+                            <h4>No employees found</h4>
+                            <p>Try another search term or reset the filters.</p>
+                            <a href="/employees" class="btn btn-primary btn-sm">Reset Filters</a>
                         </div>
-                    </div>
+                    @endforelse
+                </div>
+                <div class="employees-pagination">
+                    {{ $employees->appends(request()->only(['department', 'company', 'status','search', 'classification', 'gender']))->links() }}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .employees-page {
+        display: grid;
+        gap: 18px;
+    }
+    .employees-hero,
+    .employees-filter-card,
+    .employees-directory-card,
+    .employees-insight-card,
+    .employees-metric-card {
+        border: 1px solid #e4ebf3;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(31, 45, 61, .06);
+    }
+    .employees-hero {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 24px;
+        border: 0;
+        color: #fff;
+        background: linear-gradient(120deg, #184a81, #248afd);
+    }
+    .employees-hero h2 {
+        margin: 6px 0;
+        color: #fff;
+        font-size: 1.9rem;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+    .employees-hero p {
+        margin: 0;
+        color: rgba(255,255,255,.84);
+        font-weight: 600;
+    }
+    .employees-kicker {
+        display: block;
+        color: #248afd;
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+    .employees-hero .employees-kicker {
+        color: rgba(255,255,255,.78);
+    }
+    .employees-filter-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+    }
+    .employees-filter-tags span,
+    .employees-gender-chip,
+    .employee-card-details > div {
+        border: 1px solid #dbe7f5;
+        border-radius: 8px;
+        background: #f8fbff;
+    }
+    .employees-filter-tags span {
+        padding: .35rem .6rem;
+        border-color: rgba(255,255,255,.32);
+        background: rgba(255,255,255,.14);
+        color: #fff;
+        font-size: .78rem;
+        font-weight: 700;
+    }
+    .employees-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+        max-width: 520px;
+    }
+    .employees-actions .btn {
+        background: #fff;
+    }
+    .employees-actions .employees-new-btn {
+        color: #000 !important;
+    }
+    .employees-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+    .employees-metric-card {
+        position: relative;
+        min-height: 132px;
+        padding: 18px;
+        overflow: hidden;
+    }
+    .employees-metric-card small,
+    .employee-card-details small,
+    .employee-supervisor small {
+        display: block;
+        color: #7b8794;
+        font-size: .72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+    .employees-metric-card strong {
+        display: block;
+        margin-top: 8px;
+        color: #172033;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+    .employees-metric-card p {
+        margin: 10px 0 0;
+        color: #667085;
+        font-weight: 600;
+    }
+    .employees-metric-card.is-active {
+        border-color: #b9defa;
+        background: #f4faff;
+    }
+    .employees-metric-icon {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        color: #248afd;
+        background: #eaf4ff;
+    }
+    .employees-insights {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(280px, .7fr);
+        gap: 14px;
+    }
+    .employees-insight-card,
+    .employees-filter-card,
+    .employees-directory-card {
+        padding: 18px;
+    }
+    .employees-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+    .employees-card-header h4 {
+        margin: 3px 0 0;
+        color: #172033;
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+    .employees-breakdown {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .employees-breakdown-row,
+    .employees-gender-chip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 42px;
+        padding: .65rem .75rem;
+        color: #334155;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    .employees-breakdown-row {
+        border-bottom: 1px solid #edf2f7;
+    }
+    .employees-breakdown-row:hover,
+    .employees-gender-chip:hover {
+        color: #0f62b5;
+        text-decoration: none;
+        background: #eef7ff;
+    }
+    .employees-breakdown-row strong,
+    .employees-gender-chip strong {
+        color: #248afd;
+        font-size: 1rem;
+    }
+    .employees-breakdown.is-chips {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .employees-filter-grid {
+        display: grid;
+        grid-template-columns: minmax(240px, 1.4fr) repeat(3, minmax(170px, 1fr)) minmax(130px, .6fr);
+        gap: 12px;
+        align-items: end;
+    }
+    .employees-filter-grid .form-group {
+        margin-bottom: 0;
+    }
+    .employees-filter-grid label {
+        color: #475467;
+        font-size: .74rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+    .employees-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+    .employee-card {
+        display: grid;
+        gap: 14px;
+        padding: 16px;
+        border: 1px solid #e3ebf5;
+        border-radius: 8px;
+        background: #fff;
+    }
+    .employee-card-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .employee-avatar {
+        flex: 0 0 52px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #fff;
+        box-shadow: 0 6px 18px rgba(31, 45, 61, .16);
+    }
+    .employee-title {
+        min-width: 0;
+        flex: 1;
+    }
+    .employee-title h5 {
+        margin: 0 0 4px;
+        color: #172033;
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.25;
+        word-break: break-word;
+    }
+    .employee-title span,
+    .employee-supervisor span {
+        color: #667085;
+        font-weight: 600;
+        word-break: break-word;
+    }
+    .employee-card-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .employee-card-details > div {
+        min-height: 62px;
+        padding: .65rem .75rem;
+    }
+    .employee-card-details strong {
+        display: block;
+        margin-top: 4px;
+        color: #263238;
+        font-weight: 800;
+        line-height: 1.25;
+        word-break: break-word;
+    }
+    .employee-supervisor {
+        padding-top: 2px;
+    }
+    .employee-supervisor div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+    }
+    .employee-supervisor img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .employee-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 2px;
+    }
+    .employees-pagination {
+        margin-top: 18px;
+    }
+    .employees-empty,
+    .employees-empty-state {
+        color: #667085;
+        font-weight: 600;
+    }
+    .employees-empty-state {
+        grid-column: 1 / -1;
+        padding: 42px 18px;
+        text-align: center;
+        border: 1px dashed #cbd8e6;
+        border-radius: 8px;
+        background: #fbfdff;
+    }
+    .employees-empty-state i {
+        color: #248afd;
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
+    @media (max-width: 1199.98px) {
+        .employees-metrics,
+        .employees-filter-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .employees-filter-submit {
+            grid-column: span 2;
+        }
+    }
+    @media (max-width: 991.98px) {
+        .employees-hero,
+        .employees-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .employees-actions {
+            justify-content: flex-start;
+            max-width: none;
+        }
+        .employees-insights,
+        .employees-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 767.98px) {
+        .employees-metrics,
+        .employees-filter-grid,
+        .employees-breakdown,
+        .employees-breakdown.is-chips,
+        .employee-card-details {
+            grid-template-columns: 1fr;
+        }
+        .employees-filter-submit {
+            grid-column: auto;
+        }
+        .employees-hero {
+            padding: 20px;
+        }
+        .employee-card-top {
+            align-items: flex-start;
+        }
+    }
+</style>
 
 <div class="modal fade" id="sendEmailModal" tabindex="-1" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -299,8 +654,8 @@
 <script>
     function show() {
         Swal.fire({
-            title: 'Sending...',
-            text: 'Please wait while the email is being sent.',
+            title: 'Processing...',
+            text: 'Please wait while the request is being processed.',
             allowOutsideClick: false,
             didOpen: () => {
                 Swal.showLoading();

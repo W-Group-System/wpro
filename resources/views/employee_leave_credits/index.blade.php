@@ -68,10 +68,14 @@
 										<th>Department</th>
 										<th>Date Hired</th>
 										<th>Leave Credits</th>
+										<th>Leave Credits Tally</th>
 									</tr>
 								</thead>
 								<tbody>
 									@foreach ($employees as $employee)
+										@php
+											$leave_credit_tallies = getEmployeeLeaveCreditTallies($employee);
+										@endphp
 										@if(count($employee->employee_leave_credits) > 0)
 											<tr>
 												{{-- <td>{{ $employee->user_id}}</td> --}}
@@ -86,6 +90,36 @@
 															<li>{{$leave_credit->leave->leave_type . ' : ' . $leave_credit->count}}</li>
 														@endforeach
 													</ul>
+												</td>
+												<td>
+													@if(count($leave_credit_tallies) > 0)
+														<table class="table table-sm table-bordered mb-0">
+															<thead>
+																<tr>
+																	<th>Leave</th>
+																	<th>Beginning</th>
+																	<th>Earned</th>
+																	<th>Total</th>
+																	<th>Used</th>
+																	<th>Balance</th>
+																</tr>
+															</thead>
+															<tbody>
+																@foreach ($leave_credit_tallies as $tally)
+																	<tr>
+																		<td>{{ $tally->leave_type }}</td>
+																		<td>{{ number_format($tally->beginning, 3) }}</td>
+																		<td>{{ number_format($tally->earned, 3) }}</td>
+																		<td>{{ number_format($tally->total, 3) }}</td>
+																		<td>{{ number_format($tally->used, 3) }}</td>
+																		<td>{{ number_format($tally->balance, 3) }}</td>
+																	</tr>
+																@endforeach
+															</tbody>
+														</table>
+													@else
+														No tally available
+													@endif
 												</td>
 											</tr>
 										@endif

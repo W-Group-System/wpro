@@ -62,6 +62,7 @@
                                         <th>Department</th>
                                         <th>Account No</th>
                                         <th>Monthly Salary</th>
+                                        <th>Subliq</th>
                                         <th>Annual 13th Month</th>
                                         <th>1st Half Released</th>
                                         <th>Release Amount</th>
@@ -83,6 +84,7 @@
                                             <td>{{ $posting->department }}</td>
                                             <td>{{ $posting->account_number }}</td>
                                             <td>{{ number_format($posting->monthly_salary, 2) }}</td>
+                                            <td>{{ number_format($posting->subliq_amount, 2) }}</td>
                                             <td>{{ number_format($posting->annual_thirteenth_month, 2) }}</td>
                                             <td>{{ number_format($posting->first_half_released, 2) }}</td>
                                             <td class="{{ $releaseClass }}">{{ number_format($posting->release_amount, 2) }}</td>
@@ -96,7 +98,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="13" class="text-center">No generated 13th month records yet.</td>
+                                            <td colspan="14" class="text-center">No generated 13th month records yet.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
