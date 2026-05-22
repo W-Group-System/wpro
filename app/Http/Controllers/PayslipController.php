@@ -21,6 +21,7 @@ use App\Location;
 use App\PayrollRecord;
 use App\ScheduleData;
 use App\Payregs;
+use App\PayregInstruction;
 use App\PayregLoan;
 use App\PayregAllowance;
 use App\ContributionSSS;
