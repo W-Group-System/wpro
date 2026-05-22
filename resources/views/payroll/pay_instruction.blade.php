@@ -36,6 +36,23 @@
                 </h4>
                 <form method='get' onsubmit='show();' enctype="multipart/form-data">
                     <div class=row>
+                        <div class="col-lg-4 form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control form-control-sm" name="name" value="{{ $name_filter }}" placeholder="Search name">
+                        </div>
+                        <div class="col-lg-4 form-group">
+                            <label>Company</label>
+                            <select class="form-control form-control-sm" name="company">
+                                <option value="">All Companies</option>
+                                @foreach($instruction_companies as $instruction_company)
+                                    <option value="{{ $instruction_company }}" @if($company_filter == $instruction_company) selected @endif>{{ $instruction_company }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-4 form-group d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-sm mr-2">Filter</button>
+                            <a href="{{ url('pay-instruction') }}" class="btn btn-secondary btn-sm">Reset</a>
+                        </div>
                     </div>
                   </form>
                   <button id="btnExport" onclick="fnExcelReport();"> EXPORT </button>
@@ -82,6 +99,9 @@
                         @endforeach
                     </tbody>
                   </table>
+                </div>
+                <div class="mt-3">
+                    {{ $names->appends(request()->query())->links() }}
                 </div>
               </div>
             </div>

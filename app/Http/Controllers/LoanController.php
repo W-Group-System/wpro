@@ -101,7 +101,7 @@ class LoanController extends Controller
         // $loans->employee_id = $request->employee;
         // $loans->amount = $request->amount;
         $loans->monthly_ammort_amt = $request->monthly_ammort_amt;
-        $loans->initial_amount = $request->initial_amount;
+        // $loans->initial_amount = $request->initial_amount;
         $loans->start_date = $request->start_date;
         $loans->expiry_date = $request->expiry_date;
         $loans->schedule = $request->frequency;

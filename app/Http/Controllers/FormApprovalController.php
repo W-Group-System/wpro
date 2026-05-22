@@ -97,6 +97,12 @@ class FormApprovalController extends Controller
                                             ->first();
 
         if($employee_leave){
+
+            if($employee_leave->leave_type == 1 && empty($employee_leave->turnover_list)){
+                Alert::error('Cannot approve Vacation Leave. The employee has not yet uploaded a turnover list.')->persistent('Dismiss');
+                return back();
+            }
+
             $level = '';
             if($employee_leave->level == 0){
                 $employee_approver = EmployeeApprover::where('user_id', $employee_leave->user_id)->where('approver_id', auth()->user()->id)->first();
@@ -165,6 +171,9 @@ class FormApprovalController extends Controller
             foreach($ids as $id){
                 $employee_dtr = EmployeeLeave::where('id', $id)->first();
                 if($employee_dtr){
+                    if($employee_dtr->leave_type == 1 && empty($employee_dtr->turnover_list)){
+                        continue;
+                    }
                     $level = '';
                     $employee_approver = EmployeeApprover::where('user_id', $employee_dtr->user_id)->where('approver_id', auth()->user()->id)->first();
                     if($employee_dtr->level == 0){
@@ -973,7 +982,7 @@ class FormApprovalController extends Controller
                         ->where('is_review', 1);
                 });
             })
-            ->when($userId == 875, function ($q) {
+            ->when($userId == 664 || $userId == 607, function ($q) {
                 return $q->whereHas('user', function ($query) {
                     $query->where('status', 'Pending')
                         ->whereNull('is_review');

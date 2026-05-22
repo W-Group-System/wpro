@@ -10,6 +10,13 @@
             <form method='POST' action='approve-leave/{{$leave->id}}' onsubmit="btnApprove.disabled = true; return true;" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
+                    @if($leave->leave_type == 1 && empty($leave->turnover_list))
+                    <div class="alert alert-danger">
+                        <strong><i class="ti-alert"></i> Turnover List Required</strong><br>
+                        This Vacation Leave cannot be approved until the employee uploads a turnover list.
+                        Please ask the employee to upload it first.
+                    </div>
+                    @endif
                     <div class="row">
                         <div class="col-md-12">
                             <h4 class="badge badge-success mt-1">Approved</h4>
@@ -23,7 +30,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" name="btnApprove" class="btn btn-success">Approve</button>
+                    @if($leave->leave_type == 1 && empty($leave->turnover_list))
+                        <button type="submit" name="btnApprove" class="btn btn-success" disabled title="Upload turnover list first">Approve</button>
+                    @else
+                        <button type="submit" name="btnApprove" class="btn btn-success">Approve</button>
+                    @endif
                 </div>
             </form>
         </div>

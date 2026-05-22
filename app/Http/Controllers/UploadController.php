@@ -16,6 +16,8 @@ use Shuchkin\SimpleXLSX;
 use App\EmployeeLeave;
 use App\EmployeeOb;
 use App\EmployeeOvertime;
+use DateTime;
+
 class UploadController extends Controller
 {
     public function index()
@@ -29,6 +31,21 @@ class UploadController extends Controller
                 'uploadTypes' => $uploadTypes
             )
         );
+    }
+
+    private function countWorkdays($from, $to) {
+        $start   = new DateTime($from);
+        $end     = new DateTime($to);
+        $count   = 0;
+        $current = clone $start;
+
+        while ($current <= $end) {
+            if ((int) $current->format('N') < 6) {
+                $count++;
+            }
+            $current->modify('+1 day');
+        }
+        return $count;
     }
 
     public function upload(Request $request)
@@ -53,12 +70,12 @@ class UploadController extends Controller
                     
                     
                     if ($request->type == "OB") {
-                        $employeeOb = EmployeeOb::whereIn('user_id', $user_id)
-                            ->where('applied_date',date('Y-m-d',strtotime($row[3])))
-                            ->first();
+                        // $employeeOb = EmployeeOb::whereIn('user_id', $user_id)
+                        //     ->where('applied_date',date('Y-m-d',strtotime($row[3])))
+                        //     ->first();
                         // dd($row[5]);
                         foreach ($user_id as $uid) {
-                            if (empty($employeeOb)) {
+                            // if (empty($employeeOb)) {
                                 $employeeOb = new EmployeeOb;
                                 $employeeOb->user_id = $uid;
                                 $employeeOb->applied_date = date('Y-m-d',strtotime($row[3]));
@@ -70,15 +87,16 @@ class UploadController extends Controller
                                 $employeeOb->created_by = auth()->user()->id;
                                 $employeeOb->remarks = $row[9];
                                 $employeeOb->save();
-                            } else {
-                                $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[3]))." ".date('H:i:s',strtotime($row[5]))));
-                                $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[4]))." ".date('H:i:s',strtotime($row[6]))));
-                                $employeeOb->approved_date = date('Y-m-d',strtotime($row[4]));
-                                $employeeOb->status =  $row[10];
-                                $employeeOb->created_by = auth()->user()->id;
-                                $employeeOb->remarks = $row[9];
-                                $employeeOb->save();
-                            }
+                            // } 
+                            // else {
+                            //     $employeeOb->date_from =date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[3]))." ".date('H:i:s',strtotime($row[5]))));
+                            //     $employeeOb->date_to = date("Y-m-d H:i:s",strtotime(date('Y-m-d',strtotime($row[4]))." ".date('H:i:s',strtotime($row[6]))));
+                            //     $employeeOb->approved_date = date('Y-m-d',strtotime($row[4]));
+                            //     $employeeOb->status =  $row[10];
+                            //     $employeeOb->created_by = auth()->user()->id;
+                            //     $employeeOb->remarks = $row[9];
+                            //     $employeeOb->save();
+                            // }
                         }
                     } else if ($request->type == "OT") {
                         $employeeOt = EmployeeOvertime::whereIn('user_id', $user_id)->where('ot_date',  date('Y-m-d', strtotime($row[3])))->first();
@@ -147,32 +165,65 @@ class UploadController extends Controller
                         }
                         
                         $startDate = date('Y-m-d',strtotime($row[3]));
-                        $endDate = date('Y-m-d',strtotime($row[4]));;
-                        $approved_date = date('Y-m-d',strtotime($row[7]));;
-        
-                        $leaves = EmployeeLeave::whereIn('user_id', $user_id)
-                            ->where('date_from', $startDate)
-                            ->where('date_to', $endDate)
-                            ->first();
+                        $endDate = date('Y-m-d',strtotime($row[4]));
+                        $approved_date = date('Y-m-d',strtotime($row[7]));
+                        $filed_date    = date('Y-m-d', strtotime($row[2]));
+                        
+                        
+
+                        if ($types == 1 || $types == 14) { 
+                            if ($filed_date >= $startDate) {
+                                $errors[] = "Skipped [{$startDate}]: VL must be filed before the leave date.";
+                                continue;
+                            }
+
+                            $workdaysBefore = $this->countWorkdays($filed_date, $startDate) - 1;
+                            if ($workdaysBefore < 3) {
+                                $errors[] = "Skipped [{$startDate}]: VL must be filed at least 3 workdays before leave. Only {$workdaysBefore} workday(s) gap found.";
+                                continue;
+                            }
+                        }
+
+                        if ($types == 2 || $types == 15) { 
+                            if ($filed_date <= $startDate) {
+                                $errors[] = "Skipped [{$startDate}]: SL cannot be filed before the leave date. Filed: {$filed_date}";
+                                continue;
+                            }
+                            $workdaysAfter = $this->countWorkdays($startDate, $filed_date) - 1;
+                            if ($workdaysAfter > 3) {
+                                $errors[] = "Skipped [{$startDate}]: SL must be filed within 3 workdays after leave. Filed {$workdaysAfter} workday(s) late.";
+                                continue;
+                            }
+                        }
+                        // $leaves = EmployeeLeave::whereIn('user_id', $user_id)
+                        //     ->where('date_from', $startDate)
+                        //     ->where('date_to', $endDate)
+                        //     ->first();
         
                         foreach ($user_id as $uid) {
-                            if (!empty($leaves)) {
-                                $leaves = $leaves->delete();
+
+                            $existing = EmployeeLeave::where('user_id', $uid)
+                                ->where('date_from', $startDate)
+                                ->where('date_to', $endDate)
+                                ->first();
+
+                            if ($existing) {
+                                $existing->delete();
                             }
         
-                            $leaves = new EmployeeLeave;
-                            $leaves->user_id = $uid;
-                            $leaves->leave_type = $types;
-                            $leaves->date_from =$startDate;
-                            $leaves->date_to = $endDate;
-                            $leaves->withpay = $pay;
-                            $leaves->halfday = $halfday;
-                            $leaves->is_previous_year = $is_last_year;
-                            $leaves->approved_date = $approved_date;
-                            $leaves->status = $row[10];
-                            $leaves->created_by = auth()->user()->id;
-                            $leaves->created_at = date('Y-m-d', strtotime($row[2]));
-                            $leaves->save();
+                            $leave = new EmployeeLeave;
+                            $leave->user_id = $uid;
+                            $leave->leave_type = $types;
+                            $leave->date_from =$startDate;
+                            $leave->date_to = $endDate;
+                            $leave->withpay = $pay;
+                            $leave->halfday = $halfday;
+                            $leave->is_previous_year = $is_last_year;
+                            $leave->approved_date = $approved_date;
+                            $leave->status = $row[10];
+                            $leave->created_by = auth()->user()->id;
+                            $leave->created_at = date('Y-m-d', strtotime($row[2]));
+                            $leave->save();
                         }
                     }
                     else if ($request->type == "DTR") {
@@ -218,7 +269,13 @@ class UploadController extends Controller
         $uploadData->type = $request->type;
         $uploadData->save();
 
-        Alert::success('Successfully Uploaded')->persistent('Dismiss');
+        if (!empty($errors)) {
+            $errorMessage = implode('<br>', $errors);
+            Alert::error('Some records were skipped:<br>' . $errorMessage)
+                ->persistent('Dismiss');
+        } else {
+            Alert::success('Successfully Uploaded')->persistent('Dismiss');
+        }
         return back();
     }
 

@@ -9,7 +9,8 @@ class AuditLogsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Audit::where('auditable_type', 'App\Employee');
+        $query = Audit::where('auditable_type', 'App\Employee')
+                        ->orWhere('auditable_type', 'App\EmployeeAllowance');
 
         // if ($request->range) {
 
@@ -21,7 +22,7 @@ class AuditLogsController extends Controller
         //     ]);
         // }
 
-        $audits = $query->whereBetween('created_at', ['2025-10-11 00:00:00', '2025-11-25 23:59:59'])->get();
+        $audits = $query->whereBetween('created_at', ['2025-05-01 00:00:00', '2025-11-25 23:59:59'])->get();
 
         return view('audits.index', [
             'header' => 'audits',

@@ -3,7 +3,7 @@
 <div class="main-panel">
     <div class="content-wrapper">
         <div class='row'>
-          <div class="col-lg-6 grid-margin stretch-card">
+          <div class="col-lg-6 grid-margin stretch-card d-none">
             <div class="card">
               <div class="card-body">
                 <div class="table-responsive">
@@ -818,7 +818,7 @@
                 
                   <div class="media-body">
                     <h4 class="mb-4">Pending</h4>
-                    <h2 class="card-text">{{($employee_leaves_all->where('status','Pending'))->count()}}</h2>
+                    <h2 class="card-text">{{ $employee_leave_status_counts['Pending'] ?? 0 }}</h2>
                   </div>
                 </div>
               </div>
@@ -831,7 +831,7 @@
                 
                   <div class="media-body">
                     <h4 class="mb-4">Declined/Cancelled</h4>
-                    <h2 class="card-text">{{($employee_leaves_all->where('status','Cancelled'))->count() + ($employee_leaves_all->where('status','Declined'))->count()}}</h2>
+                    <h2 class="card-text">{{ ($employee_leave_status_counts['Cancelled'] ?? 0) + ($employee_leave_status_counts['Declined'] ?? 0) }}</h2>
                   </div>
                 </div>
               </div>
@@ -843,12 +843,51 @@
                 <div class="media">
                   <div class="media-body">
                     <h4 class="mb-4">Approved</h4>
-                    <h2 class="card-text">{{($employee_leaves_all->where('status','Approved'))->count()}}</h2>
+                    <h2 class="card-text">{{ $employee_leave_status_counts['Approved'] ?? 0 }}</h2>
                   </div>
                 </div>
               </div>
             </div>
           </div> 
+        </div>
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Leave Credits Tally</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Leave Type</th>
+                                        <th>Beginning</th>
+                                        <th>Earned</th>
+                                        <th>Total</th>
+                                        <th>Used</th>
+                                        <th>Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($leave_credit_tallies as $tally)
+                                        <tr>
+                                            <td>{{ $tally->leave_type }}</td>
+                                            <td>{{ number_format($tally->beginning, 3) }}</td>
+                                            <td>{{ number_format($tally->earned, 3) }}</td>
+                                            <td>{{ number_format($tally->total, 3) }}</td>
+                                            <td>{{ number_format($tally->used, 3) }}</td>
+                                            <td>{{ number_format($tally->balance, 3) }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center">No leave credit tally available.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         {{-- @if(auth()->user()->employee->department_id == 6 || auth()->user()->employee->department_id == 26) --}}
         <div class="row">
@@ -872,7 +911,7 @@
                                             @php
                                                 $pvl_balance = $employee_leave_lists->where('year', date('Y', strtotime('-1 year')))->where('leave_id',1)->sum('earned_per_month') - $used_pvl;
                                                 $pvl_balance = number_format($pvl_balance, 2);
-                                                if ($pvl_balance >= 0.5)
+                                                if ($pvl_balance >= 0.5 && $isPVLvalidMonth)
                                                 {
                                                     $is_allowed_to_file_prev_vl = true;
                                                 }
@@ -985,6 +1024,7 @@
                         <th>Status </th>
                         <th>Approvers </th>
                         <th>Uploaded File</th>
+                        <th>Turnover List</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1043,7 +1083,7 @@
                                 <i class="ti-upload"></i>
                             </button>
 
-                            @if(!in_array($employee_leave->date_from, $attendance_report) || !in_array($employee_leave->date_to, $attendance_report))
+                            @if(!isset($attendance_report[$employee_leave->date_from]) || !isset($attendance_report[$employee_leave->date_to]))
                             
 
                                 @if(date('Y-m-d', strtotime($employee_leave->date_from)) > date('Y-m-d'))
@@ -1075,7 +1115,7 @@
                           {{ $employee_leave->reason }}
                         </p>
                       </td>
-                      <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->employee->ScheduleData, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday,$employee_leave->withpay) }}</td>
+                      <td>{{ get_count_days($employee_leave->dailySchedules, $employee_leave->employee->ScheduleData, $employee_leave->date_from, $employee_leave->date_to, $employee_leave->halfday,$employee_leave->withpay, $employee_leave->employee->location ?? null) }}</td>
 
                       <td id="tdStatus{{ $employee_leave->id }}">
                         @if ($employee_leave->status == 'Pending')
@@ -1130,6 +1170,25 @@
                           No file uploaded
                         @endif
                       </td>
+                      <td>
+                        @if($employee_leave->leave_type == 1)
+                          @if($employee_leave->turnover_list)
+                            <a href="{{ url('storage'.$employee_leave->turnover_list) }}" target="_blank">
+                              <span class="badge badge-success">Uploaded</span>
+                            </a>
+                          @else
+                            <span class="badge badge-danger">Not Uploaded</span>
+                            @if(in_array($employee_leave->status, ['Pending']))
+                              <button type="button" class="btn btn-warning btn-sm mt-1"
+                                data-target="#upload_turnover_list{{ $employee_leave->id }}" data-toggle="modal" title="Upload Turnover List">
+                                <i class="ti-upload"></i> Upload
+                              </button>
+                            @endif
+                          @endif
+                        @else
+                          <span class="text-muted">N/A</span>
+                        @endif
+                      </td>
                     </tr>
                     @endforeach                      
                     </tbody>
@@ -1143,13 +1202,51 @@
     </div>
 </div> 
 
+@php
+    $tallyBalances = collect($leave_credit_tallies)->keyBy('leave_id');
+    $tallyBalanceFor = function ($leaveId) use ($tallyBalances) {
+        return (float) optional($tallyBalances->get($leaveId))->balance;
+    };
+    $monthsFromHire = 0;
+    if (!empty($employee_status->original_date_hired)) {
+        $date_from = new DateTime($employee_status->original_date_hired);
+        $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
+        $monthsFromHire = (($date_diff->y) * 12) + $date_diff->m;
+    }
+
+    $vl_balance = $tallyBalanceFor(1);
+    $sl_balance = $tallyBalanceFor(2);
+    $ml_balance = $tallyBalanceFor(3);
+    $pl_balance = $tallyBalanceFor(4);
+    $spl_balance = $tallyBalanceFor(5);
+    $el_balance = $tallyBalanceFor(6);
+    $splw_balance = $tallyBalanceFor(7);
+    $splvv_balance = $tallyBalanceFor(9);
+    $bl_balance = $tallyBalanceFor(11);
+    $mc_balance = $tallyBalanceFor(12);
+
+    $is_allowed_to_file_vl = $vl_balance >= 0.5 && $monthsFromHire > 11;
+    $is_allowed_to_file_sl = $sl_balance >= 0.5 && $monthsFromHire > 11;
+    $is_allowed_to_file_ml = $ml_balance >= 0.5;
+    $is_allowed_to_file_pl = $pl_balance >= 0.5;
+    $is_allowed_to_file_spl = $spl_balance >= 0.5;
+    $is_allowed_to_file_el = $el_balance >= 0.5;
+    $is_allowed_to_file_splw = $splw_balance >= 0.5;
+    $is_allowed_to_file_splvv = $splvv_balance >= 0.5;
+    $is_allowed_to_file_bl = $bl_balance >= 0.5;
+    $is_allowed_to_file_mc = $mc_balance >= 0.5;
+@endphp
+
 @include('forms.leaves.apply_leave') 
 
 @foreach ($employee_leaves as $leave)
   @include('forms.leaves.edit_leave')
-  @include('forms.leaves.view_leave') 
-  @include('forms.leaves.request_to_cancel') 
-  @include('forms.leaves.leave_file') 
+  @include('forms.leaves.view_leave')
+  @include('forms.leaves.request_to_cancel')
+  @include('forms.leaves.leave_file')
+  @if($employee_leave->leave_type == 1 && !$employee_leave->turnover_list)
+    @include('forms.leaves.turnover_list_upload')
+  @endif
 @endforeach
 
 @endsection
@@ -1198,7 +1295,7 @@
     $("#editLeaveType").on('change', function() {
         if ($(this).val() == 1)
         {
-            var threeDays = "<?php echo(date('Y-m-d', strtotime('+3 weekdays'))) ?>"
+            var threeDays = "{{$vl_min_file_date}}"
             
             $("[name='date_from']").prop('min', threeDays)
             $("[name='date_to']").prop('min', threeDays)
