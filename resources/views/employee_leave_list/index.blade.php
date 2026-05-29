@@ -15,17 +15,6 @@
                                     New Leave Credit
                                 </button>
                             </p>
-                            <form method="get" onsubmit="show();" class="mb-3">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <input type="text" name="search" class="form-control form-control-sm" value="{{ $search }}" placeholder="Search name or employee code">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <button type="submit" class="btn btn-primary btn-sm">Search</button>
-                                        <a href="{{ url('employee_leaves_list') }}" class="btn btn-secondary btn-sm">Reset</a>
-                                    </div>
-                                </div>
-                            </form>
     
                             @if ($errors->any())
                                 @foreach ($errors->all() as $error)
@@ -74,15 +63,6 @@
                                                 <td>{{ get_leave_entitlement($emp->level, $emp->original_date_hired, $emp->company_id) }}</td>
                                             </tr>
                                         @endforeach
-                                        @if(!$search)
-                                            <tr>
-                                                <td colspan="3" class="text-center">Search an employee name or code to view leave credits.</td>
-                                            </tr>
-                                        @elseif($employee_leave_lists->isEmpty())
-                                            <tr>
-                                                <td colspan="3" class="text-center">No employee leave credits found.</td>
-                                            </tr>
-                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -95,11 +75,9 @@
 </div>
 
 @include('employee_leave_list.new_employee_leave_list')
-@if($search)
-    @foreach ($employee_leave_lists as $emp)
-        @include('employee_leave_list.details')
-    @endforeach
-@endif
+@foreach ($employee_leave_lists as $emp)
+@include('employee_leave_list.details')
+@endforeach
 <script>
     $(document).ready(function() {
         $('#tablewithSearch').DataTable({

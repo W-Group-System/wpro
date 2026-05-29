@@ -10,7 +10,7 @@ class PayregInstruction  extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
-        'employee_code', 'instruction_name', 'amount','created_by','payreg_id','remarks',
+        'employee_code', 'instruction_name', 'amount','created_by','payreg_id',
     ];
 
     public function pay_reg()

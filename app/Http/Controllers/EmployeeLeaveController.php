@@ -42,9 +42,7 @@ class EmployeeLeaveController extends Controller
         }
         // PVL Validity until march only
 
-        $employee_status = Employee::with('ScheduleData', 'employeeMovement')
-            ->where('user_id', auth()->user()->id)
-            ->first();
+        $employee_status = Employee::where('user_id',auth()->user()->id)->first();
         // dd($employee_status->ScheduleData);
         $used_vl = checkUsedSLVLSILLeave(auth()->user()->id,1,$employee_status->original_date_hired,$employee_status->ScheduleData);
         $used_sl = checkUsedSLVLSILLeave(auth()->user()->id,2,$employee_status->original_date_hired,$employee_status->ScheduleData);
@@ -67,28 +65,20 @@ class EmployeeLeaveController extends Controller
 
         
         $leave_types = Leave::all(); //masterfile
-        $employee_leaves = EmployeeLeave::with([
-                                                'user:id,name',
-                                                'leave:id,leave_type',
-                                                'employee:user_id,employee_code,schedule_id',
-                                                'employee.ScheduleData',
-                                                'approver.approver_info:id,name',
-                                                'approveBy:id,name',
-                                                'dailySchedules' => function ($query) use ($from, $to) {
-                                                    $query->select('daily_schedules.employee_code', 'daily_schedules.log_date', 'daily_schedules.working_hours')
-                                                        ->whereBetween('daily_schedules.log_date', [$from, $to]);
-                                                },
-                                            ])
+        $employee_leaves = EmployeeLeave::with('user','leave','schedule', 'dailySchedules')
                                             ->where('user_id',auth()->user()->id)
                                             ->where('status',$status)
+                                            // ->where(function($q)use($from, $to) {
+                                            //     $q->where('date_from', $from)
+                                            //         ->where('date_to', $to);
+                                            // })
                                             ->whereBetween('date_from', [$from, $to])
                                             ->orderBy('created_at','DESC')
                                             ->get();
         // dd($employee_leaves);
-        $employee_leave_status_counts = EmployeeLeave::where('user_id', auth()->user()->id)
-                                            ->selectRaw('status, COUNT(*) as total')
-                                            ->groupBy('status')
-                                            ->pluck('total', 'status');
+        $employee_leaves_all = EmployeeLeave::with('user','leave','schedule', 'dailySchedules')
+                                            ->where('user_id',auth()->user()->id)
+                                            ->get();
 
         $get_leave_balances = new LeaveBalanceController;
         $get_approvers = new EmployeeApproverController;
@@ -152,10 +142,8 @@ class EmployeeLeaveController extends Controller
         // }
         // dd($last_logs);
         $attendance_report = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
-            ->whereBetween('log_date', [$from, $to])
-            ->distinct()
             ->pluck('log_date')
-            ->flip();
+            ->toArray();
 
         $cut_off_date = AttendanceDetailedReport::where('employee_no', auth()->user()->employee->employee_code)
             ->orderBy('id', 'desc')
@@ -166,12 +154,8 @@ class EmployeeLeaveController extends Controller
         $used_sl_this_yr = usedSlVlThisYear(auth()->user()->id,2,$employee_status->original_date_hired,$employee_status->ScheduleData);
         $used_vl_this_yr = usedSlVlThisYear(auth()->user()->id,1,$employee_status->original_date_hired,$employee_status->ScheduleData);
         $count_previous_vl_used = countPreviousVLUsed(auth()->user()->id,1,$employee_status->original_date_hired,$employee_status->ScheduleData);
-        $vl_min_file_date = employeeLeaveMinimumFileDate(3);
         
-        $employee_leave_lists = EmployeeLeaveList::with('leave:id,leave_type')
-            ->where('user_id', auth()->user()->id)
-            ->get();
-        $leave_credit_tallies = getEmployeeLeaveCreditTallies($employee_status);
+        $employee_leave_lists = EmployeeLeaveList::where('user_id', auth()->user()->id)->get();
 
         return view('forms.leaves.leaves',
         array(
@@ -179,7 +163,7 @@ class EmployeeLeaveController extends Controller
             'leave_balances' => $leave_balances,
             'all_approvers' => $all_approvers,
             'employee_leaves' => $employee_leaves,
-            'employee_leave_status_counts' => $employee_leave_status_counts,
+            'employee_leaves_all' => $employee_leaves_all,
             'leave_types' => $leave_types,
             'employee_status' => $employee_status,
             'used_vl' => $used_vl,
@@ -208,31 +192,21 @@ class EmployeeLeaveController extends Controller
             'used_vl_this_yr' => $used_vl_this_yr,
             'count_previous_vl_used' => $count_previous_vl_used,
             'employee_leave_lists' => $employee_leave_lists,
-            'leave_credit_tallies' => $leave_credit_tallies,
             'used_mc' => $used_mc,
             'used_pvl' => $used_pvl,
             'used_psl' => $used_psl,
-            'isPVLvalidMonth' => $isPVLvalidMonth,
-            'vl_min_file_date' => $vl_min_file_date
+            'isPVLvalidMonth' => $isPVLvalidMonth
         ));
     }  
 
 
     public function new(Request $request)
     {
-        $employee = Employee::with('ScheduleData')->where('user_id',Auth::user()->id)->first();
-        $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to,$employee->location);
-        $leave_credit_tally = getEmployeeLeaveCreditTallies($employee)->firstWhere('leave_id', (int) $request->leave_type);
-        $available_leave_balance = in_array((int) $request->leave_type, [14, 15])
-            ? (float) $request->leave_balances
-            : (float) optional($leave_credit_tally)->balance;
+        $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
         if ($request->date_from > $request->date_to)
         {
             Alert::warning('Date From is cannot be greater than Date To')->persistent('Dismiss');
-            return back();
-        }
-        if (in_array($request->leave_type, [1, 14]) && !employeeCanFileVacationLeaveDate($request->date_from, 3)) {
-            Alert::warning('Vacation Leave must be filed at least 3 working days before the leave date.')->persistent('Dismiss');
             return back();
         }
         if($request->withpay == 'on'){
@@ -257,7 +231,7 @@ class EmployeeLeaveController extends Controller
                     $count_days = 0.5;
                 }
             }
-            if($available_leave_balance >= $count_days){
+            if($request->leave_balances >= $count_days){
                 $new_leave = new EmployeeLeave;
                 $new_leave->user_id = Auth::user()->id;
                 $emp = Employee::where('user_id',auth()->user()->id)->first();
@@ -294,16 +268,6 @@ class EmployeeLeaveController extends Controller
                     $logo->move(public_path() . '/images/', $name);
                     $file_name = '/images/' . $name;
                     $new_leave->attachment = $file_name;
-                }
-
-                if((int)$request->leave_type === 1 && $request->file('turnover_list')){
-                    $tlFile = $request->file('turnover_list');
-                    $tlName = time() . '_' . $tlFile->getClientOriginalName();
-                    if(!file_exists(public_path('storage/turnover_lists'))){
-                        mkdir(public_path('storage/turnover_lists'), 0755, true);
-                    }
-                    $tlFile->move(public_path('storage/turnover_lists'), $tlName);
-                    $new_leave->turnover_list = '/turnover_lists/' . $tlName;
                 }
 
                 $new_leave->status = 'Pending';
@@ -375,16 +339,8 @@ class EmployeeLeaveController extends Controller
     public function edit_leave(Request $request, $id)
     {
         // dd($request->all());
-        $employee = Employee::with('ScheduleData')->where('user_id',Auth::user()->id)->first();
-        $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to,$employee->location);
-        $leave_credit_tally = getEmployeeLeaveCreditTallies($employee)->firstWhere('leave_id', (int) $request->leave_type);
-        $available_leave_balance = in_array((int) $request->leave_type, [14, 15])
-            ? (float) $request->leave_balances
-            : (float) optional($leave_credit_tally)->balance;
-        if (in_array($request->leave_type, [1, 14]) && !employeeCanFileVacationLeaveDate($request->date_from, 3)) {
-            Alert::warning('Vacation Leave must be filed at least 3 working days before the leave date.')->persistent('Dismiss');
-            return back();
-        }
+        $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
         if($request->withpay == 'on'){
 
             if($count_days == 1){
@@ -393,7 +349,7 @@ class EmployeeLeaveController extends Controller
                 }
             }
 
-            if($available_leave_balance >= $count_days){
+            if($request->leave_balances >= $count_days){
                 $new_leave = EmployeeLeave::findOrFail($id);
                 $new_leave->user_id = Auth::user()->id;
                 $new_leave->leave_type = $request->leave_type;
@@ -536,6 +492,7 @@ class EmployeeLeaveController extends Controller
 
         $file = $request->file('leave_file');
         $fileName = time().'_'.$file->getClientOriginalName();
+        // $filePath = $file->storeAs('leaves', $fileName, 'public');
         $file->move(public_path('storage/leaves'),$fileName);
 
         $attachment = EmployeeLeave::findOrFail($id);
@@ -543,27 +500,5 @@ class EmployeeLeaveController extends Controller
         $attachment->save();
 
         return response()->json(['success' => 'File uploaded successfully']);
-    }
-
-    public function upload_turnover_list(Request $request, $id)
-    {
-        $request->validate([
-            'turnover_list' => 'required|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120'
-        ]);
-
-        $file = $request->file('turnover_list');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-
-        if (!file_exists(public_path('storage/turnover_lists'))) {
-            mkdir(public_path('storage/turnover_lists'), 0755, true);
-        }
-
-        $file->move(public_path('storage/turnover_lists'), $fileName);
-
-        $leave = EmployeeLeave::findOrFail($id);
-        $leave->turnover_list = '/turnover_lists/' . $fileName;
-        $leave->save();
-
-        return response()->json(['success' => 'Turnover list uploaded successfully']);
     }
 }

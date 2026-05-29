@@ -3,22 +3,6 @@
 @section('css_header')
 <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css">
-<style>
-    .leave-report-filter .select2-container {
-        width: 100% !important;
-    }
-    .select2-search--dropdown {
-        display: block !important;
-        padding: 8px !important;
-    }
-    .select2-search--dropdown .select2-search__field {
-        width: 100% !important;
-        min-height: 36px;
-        border: 1px solid #d6dee8 !important;
-        border-radius: 6px;
-        padding: .45rem .65rem;
-    }
-</style>
 @endsection
 
 @section('content')
@@ -36,14 +20,8 @@
                                     New Leave Credit
                                 </button>
                             </p> --}}
-
-                            <div class="leave-report-filter mb-4">
-                                <label for="employeeFilter" class="font-weight-bold mb-2">Filter Employee</label>
-                                <select id="employeeFilter" class="form-control" style="width: 100%;"></select>
-                                <small class="text-muted d-block mt-2">Type at least 2 letters to search employees, then select one to show leave records.</small>
-                            </div>
     
-                            <div class="table-responsive" id="leaveReportResult" style="display: none;">
+                            <div class="table-responsive">
                                 <table class="table table-hover table-bordered " id="leaveReportTable">
                                     <thead>
                                         <tr>
@@ -55,7 +33,34 @@
                                             <th>Leave Balance</th>
                                         </tr>
                                     </thead>
-                                    <tbody></tbody>
+                                    <tbody>
+                                        @foreach ($merge_arr->sortBy('lastname') as $employee)
+                                            <tr>
+                                                <td>{{ $employee->employee_id }}</td>
+                                                <td>{{ $employee->name }}</td>
+                                                <td>{{ $employee->leave_type }}</td>
+                                                <td>{{$employee->leave_entitlement }}</td>
+                                                <td>{{ $employee->used_leave }}</td>
+                                                <td>
+                                                    {{-- 15 > 15 --}}
+                                                    @if($employee->leave_type == 'Sick Leave')
+                                                        @if($employee->total_earned_sl > $employee->used_leave)
+                                                            {{ round($employee->total_earned_sl - $employee->used_leave, 2) }}
+                                                        @else
+                                                            0
+                                                        @endif
+                                                    @else
+                                                        {{-- @dd($employee->total_earned_vl) --}}
+                                                        @if($employee->total_earned_vl > $employee->used_leave)
+                                                            {{ round($employee->total_earned_vl - $employee->used_leave, 2) }}
+                                                        @else
+                                                            0
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -75,22 +80,9 @@
 <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js"></script>
 <script>
     $(document).ready(function() {
-        var leaveReportTable = $("#leaveReportTable").DataTable({
+        $("#leaveReportTable").DataTable({
             paginate: false,
-            searching: false,
-            sDom: 'Brtip',
-            processing: true,
-            data: [],
-            columns: [
-                { data: 'employee_id' },
-                { data: 'name' },
-                { data: 'leave_type' },
-                { data: 'leave_entitlement' },
-                { data: 'used_leave' },
-                {
-                    data: 'balance'
-                }
-            ],
+            sDom: 'Bfrtip',
             buttons: [
                 {
                     extend: 'copy',
@@ -106,75 +98,7 @@
                 "defaultContent": "-",
                 "targets": "_all"
             }],
-            language: {
-                emptyTable: 'Select an employee first to show leave records.',
-                processing: 'Loading leave records...'
-            },
             order: []
-        });
-
-        $('#employeeFilter').select2({
-            placeholder: 'Search employee name or code',
-            allowClear: true,
-            minimumResultsForSearch: 0,
-            minimumInputLength: 2,
-            ajax: {
-                url: "{{ url('leave_report/employees') }}",
-                dataType: 'json',
-                delay: 350,
-                data: function(params) {
-                    return {
-                        term: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return data;
-                },
-                cache: true
-            },
-            language: {
-                inputTooShort: function() {
-                    return 'Type at least 2 letters to search employees.';
-                },
-                noResults: function() {
-                    return 'No employees found.';
-                },
-                searching: function() {
-                    return 'Searching employees...';
-                }
-            }
-        });
-
-        $('#employeeFilter').on('change', function() {
-            var employeeId = $(this).val();
-
-            leaveReportTable.clear().draw();
-
-            if (!employeeId) {
-                $('#leaveReportResult').hide();
-                return;
-            }
-
-            $('#leaveReportResult').show();
-
-            $.ajax({
-                url: "{{ url('leave_report/search') }}",
-                data: {
-                    employee_id: employeeId
-                },
-                success: function(response) {
-                    leaveReportTable.clear().rows.add(response).draw();
-                },
-                error: function() {
-                    leaveReportTable.clear().draw();
-                }
-            });
-        });
-
-        $('#employeeFilter').on('select2:open', function() {
-            setTimeout(function() {
-                $('.select2-container--open .select2-search__field').focus();
-            }, 0);
         });
     })
 </script>

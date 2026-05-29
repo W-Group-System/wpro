@@ -7,7 +7,6 @@ use App\EmployeeEarnedLeave;
 use App\EmployeeLeaveList;
 use DateTime;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Schema;
 
 class EarnedVacationLeave extends Command
 {
@@ -84,15 +83,10 @@ class EarnedVacationLeave extends Command
         //     }
         // }
 
-        if (!Schema::hasTable('employee_leave_settings')) {
-            info('Employee leave settings table is missing. Auto earned leaves skipped.');
-            return;
-        }
-
-        $employees = Employee::with(['employee_leave_list', 'leave_setting'])
+        $employees = Employee::with('employee_leave_list')
             ->where('status','Active')
+            ->whereHas('employee_leave_list')
             ->where('department_id','!=', 21)
-            ->whereHas('leave_setting')
             ->get();
         
         $f_d = date('Y-m-01');
@@ -102,15 +96,12 @@ class EarnedVacationLeave extends Command
         $month = date('m');
         foreach($employees as $employee)
         {
-            $leaveSetting = $employee->leave_setting;
-            if (empty($leaveSetting)) {
-                continue;
-            }
+            $leave_entitlement = get_leave_entitlement($employee->level, $employee->original_date_hired, $employee->company_id);
+            $total_earned_month = intval($leave_entitlement) / 12;
 
-            $leave_entitlement = (float) $leaveSetting->vl_annual_credit;
-            $total_earned_month = $leave_entitlement / 12;
-
-            if($leave_entitlement > 0)
+            $leave_credits = ($employee->employee_leave_list)->where('leave_id',1)->sortByDesc('id')->first();
+            // dd($leave_credits);
+            if($leave_credits != null)
             {
                 $check_if_exist_vl = EmployeeLeaveList::where('user_id', $employee->user_id)
                     ->where(function($q) use($month,$year){
@@ -131,27 +122,6 @@ class EarnedVacationLeave extends Command
                     $earned_leave->earned_date = date('Y-m-d');
                     // $earned_leave->earned_per_month = $leave_credits->earned_per_month;
                     $earned_leave->earned_per_month = number_format($total_earned_month, 3);
-                    $earned_leave->save();
-                }
-            }
-
-            $sl_entitlement = $leaveSetting ? (float) $leaveSetting->sl_annual_credit : 0;
-            if($sl_entitlement > 0 && $month == '01')
-            {
-                $check_if_exist_sl = EmployeeLeaveList::where('user_id', $employee->user_id)
-                    ->where('year', $year)
-                    ->whereNotNull('earned_date')
-                    ->where('leave_id',2)
-                    ->first();
-
-                if(empty($check_if_exist_sl)){
-                    $earned_leave = new EmployeeLeaveList;
-                    $earned_leave->leave_id = 2;
-                    $earned_leave->user_id = $employee->user_id;
-                    $earned_leave->month = '01';
-                    $earned_leave->year = $year;
-                    $earned_leave->earned_date = $year . '-01-01';
-                    $earned_leave->earned_per_month = number_format($sl_entitlement, 3);
                     $earned_leave->save();
                 }
             }

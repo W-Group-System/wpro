@@ -22,7 +22,6 @@ use App\Exports\AttendanceSeabasedExport;
 use App\Imports\EmployeeSeabasedAttendanceImport;
 use App\Imports\HikAttLogAttendanceImport;
 use App\AttendanceDetailedReport;
-use App\Payregs;
 use App\Vms;
 use Excel;
 
@@ -45,52 +44,24 @@ class AttendanceController extends Controller
         $to_date = $request->to;
         $date_range =  [];
         $attendances = [];
-        $attendance_groups = collect();
-        $emp_data = collect();
         if($from_date != null)
         {
         $date_range =  $this->dateRange( $from_date, $to_date);
         $attendances =  $this->get_attendances($from_date,$to_date,auth()->user()->employee->employee_number);
+        }
         $schedules = ScheduleData::all();
         // dd($attendances);
-        $date_from = $from_date ? date('Y-m-d', strtotime('-1 day', strtotime($from_date))) : $from_date;
-        $emp_data = Employee::select('id','user_id','employee_code','first_name','last_name','middle_name','schedule_id','location','employee_number','company_id','work_description','original_date_hired','level')
-                                ->with('company')
-                                ->with(['schedule_info','attendances' => function ($query) use ($date_from, $to_date) {
-                                        $query->whereBetween('time_in', [$date_from." 00:00:01", $to_date." 23:59:59"])
-                                        ->orWhereBetween('time_out', [$date_from." 00:00:01", $to_date." 23:59:59"])
+        $emp_data = Employee::select('id','user_id','employee_code','first_name','last_name','schedule_id','location','employee_number')
+                                ->with(['schedule_info','attendances' => function ($query) use ($from_date, $to_date) {
+                                        $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
+                                        ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
                                         ->orderBy('time_in','asc')
                                         ->orderby('time_out','desc')
-                                        ->orderBy('id','asc');
-                                }])
-                                ->with(['approved_leaves' => function ($query) use ($date_from, $to_date) {
-                                    $query->where("date_from", "<=", $to_date)
-                                        ->where("date_to", ">=", $date_from)
-                                        ->where('status','Approved')
-                                        ->orderBy('id','asc');
-                                },'approved_leaves.leave'])
-                                ->with(['approved_obs' => function ($query) use ($date_from, $to_date) {
-                                    $query->whereBetween('applied_date', [$date_from, $to_date])
-                                        ->where('status','Approved')
-                                        ->orderBy('id','asc');
-                                }])
-                                ->with(['approved_dtrs' => function ($query) use ($date_from, $to_date) {
-                                    $query->whereBetween('dtr_date', [$date_from, $to_date])
-                                        ->where('status','Approved')
-                                        ->orderBy('id','asc');
-                                }])
-                                ->with(['approved_ots' => function ($query) use ($date_from, $to_date) {
-                                    $query->whereBetween('ot_date', [$date_from, $to_date])
-                                        ->where('status','Approved')
                                         ->orderBy('id','asc');
                                 }])
                                 ->where('employee_number', auth()->user()->employee->employee_number)
                                 ->whereIn('status',['Active','HBU','Resigned'])
                                 ->get();
-            $attendance_groups = attendanceDetailedRows($emp_data, $date_range, $schedules, $to_date);
-        } else {
-            $schedules = ScheduleData::all();
-        }
         return view('attendances.view_attendance',
         array(
             'header' => 'attendances',
@@ -100,7 +71,6 @@ class AttendanceController extends Controller
             'attendances' => $attendances,
             'schedules' => $schedules,
             'emp_data' => $emp_data,
-            'attendance_groups' => $attendance_groups,
         ));
     }
     public function subordinates(Request $request)
@@ -114,38 +84,14 @@ class AttendanceController extends Controller
         $emp_code = $request->employee;
         $schedule_id = null;
         $emp_data = [];
-        $attendance_groups = collect();
         if ($from_date != null) {
-            $date_from = date('Y-m-d', strtotime('-1 day', strtotime($from_date)));
-            $emp_data = Employee::select('id','user_id','employee_number','first_name','last_name','middle_name','schedule_id','employee_code','company_id','location','work_description','original_date_hired','level')
-                                    ->with('company')
-                                    ->with(['schedule_info','attendances' => function ($query) use ($date_from, $to_date) {
-                                            $query->whereBetween('time_in', [$date_from." 00:00:01", $to_date." 23:59:59"])
-                                                    ->orWhereBetween('time_out', [$date_from." 00:00:01", $to_date." 23:59:59"])
+            $emp_data = Employee::select('id','user_id','employee_number','first_name','last_name','schedule_id','employee_code')
+                                    ->with(['schedule_info','attendances' => function ($query) use ($from_date, $to_date) {
+                                            $query->whereBetween('time_in', [$from_date." 00:00:01", $to_date." 23:59:59"])
+                                                    ->orWhereBetween('time_out', [$from_date." 00:00:01", $to_date." 23:59:59"])
                                                     ->orderBy('time_in','asc')
                                                     ->orderby('time_out','desc')
                                                     ->orderBy('id','asc');
-                                    }])
-                                    ->with(['approved_leaves' => function ($query) use ($date_from, $to_date) {
-                                        $query->where("date_from", "<=", $to_date)
-                                            ->where("date_to", ">=", $date_from)
-                                            ->where('status','Approved')
-                                            ->orderBy('id','asc');
-                                    },'approved_leaves.leave'])
-                                    ->with(['approved_obs' => function ($query) use ($date_from, $to_date) {
-                                        $query->whereBetween('applied_date', [$date_from, $to_date])
-                                            ->where('status','Approved')
-                                            ->orderBy('id','asc');
-                                    }])
-                                    ->with(['approved_dtrs' => function ($query) use ($date_from, $to_date) {
-                                        $query->whereBetween('dtr_date', [$date_from, $to_date])
-                                            ->where('status','Approved')
-                                            ->orderBy('id','asc');
-                                    }])
-                                    ->with(['approved_ots' => function ($query) use ($date_from, $to_date) {
-                                        $query->whereBetween('ot_date', [$date_from, $to_date])
-                                            ->where('status','Approved')
-                                            ->orderBy('id','asc');
                                     }])
                                     ->whereIn('employee_number', $request->employee)
                                     ->where('status','Active')
@@ -155,9 +101,6 @@ class AttendanceController extends Controller
            
         }
         $schedules = ScheduleData::all();
-        if ($from_date != null) {
-            $attendance_groups = attendanceDetailedRows($emp_data, $date_range, $schedules, $to_date);
-        }
         
         return view(
             'attendances.subordinates_attendances',
@@ -171,7 +114,6 @@ class AttendanceController extends Controller
                 'schedules' => $schedules,
                 'emp_code' => $emp_code,
                 'emp_data' => $emp_data,
-                'attendance_groups' => $attendance_groups,
             )
         );
 
@@ -635,37 +577,18 @@ class AttendanceController extends Controller
     public function fetchDisabledDates($companyId)
     {
         try {
-            $payregs = Payregs::select('pay_period_from', 'pay_period_to', 'cut_off_date')
-                ->where('company_id', $companyId)
-                ->get();
+            // Retrieve log dates for the given company from the attendanceDetailedReport
+            $logDates = AttendanceDetailedReport::where('company_id', $companyId)
+                ->orderBy('log_date')
+                ->pluck('log_date')
+                ->toArray();
 
-            $disabledDates = [];
-            $latestPayregDate = null;
-            foreach ($payregs as $payreg) {
-                $startDate = $payreg->pay_period_from ?: $payreg->cut_off_date;
-                $endDate = $payreg->pay_period_to ?: $payreg->cut_off_date;
+            // Format dates to 'Y-m-d' format
+            $formattedLogDates = array_map(function($date) {
+                return Carbon::parse($date)->format('Y-m-d');
+            }, $logDates);
 
-                if (empty($startDate) || empty($endDate)) {
-                    continue;
-                }
-
-                $date = Carbon::parse($startDate)->startOfDay();
-                $end = Carbon::parse($endDate)->startOfDay();
-                if ($latestPayregDate === null || $end->gt($latestPayregDate)) {
-                    $latestPayregDate = $end->copy();
-                }
-
-                while ($date->lte($end)) {
-                    $disabledDates[] = $date->format('Y-m-d');
-                    $date->addDay();
-                }
-            }
-
-            return response()->json([
-                'log_dates' => array_values(array_unique($disabledDates)),
-                'latest_payreg_date' => $latestPayregDate ? $latestPayregDate->format('Y-m-d') : null,
-                'next_available_date' => $latestPayregDate ? $latestPayregDate->copy()->addDay()->format('Y-m-d') : null,
-            ]);
+            return response()->json(['log_dates' => $formattedLogDates]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -674,31 +597,12 @@ class AttendanceController extends Controller
     public function storeAttendance(Request $request)
     {        
         ini_set('memory_limit', '-1');
-        @set_time_limit(0);
-
-        $originalEmployeeFilter = (array) $request->input('employee', []);
-        $selectedEmployees = array_values(array_filter((array) $request->input('post_employee_codes', [])));
-        if (empty($selectedEmployees)) {
-            Alert::warning('No employees selected', 'Select at least one unlocked employee to post.')->persistent('Dismiss');
-            return redirect()->back()->withInput();
-        }
-
-        $request->merge([
-            'employee' => $selectedEmployees,
-        ]);
-
-        $rows = $this->attendanceRowsForPosting($request);
-        if ($rows->isEmpty()) {
-            Alert::warning('No rows to post', 'No timekeeping rows were found for the selected employees.')->persistent('Dismiss');
-            return redirect()->back()->withInput();
-        }
-
-        foreach ($rows as $employee) {
-                AttendanceDetailedReport::updateOrCreate([
-                    'company_id' => $employee['company_id'],
-                    'employee_no' => $employee['employee_no'] ?? null,
-                    'log_date' => $employee['log_date'] ?? null,
-                ], [
+        
+        $employees = $request->input('employees'); // Get all employee data
+        // dd($request->all());
+        foreach ($employees as $employee_code => $dates) {
+            foreach ($dates as $date => $employee) {
+                AttendanceDetailedReport::create([
                     'company_id' => $employee['company_id'],
                     'employee_no' => $employee['employee_no'] ?? null,
                     'name' => $employee['name'],
@@ -729,124 +633,19 @@ class AttendanceController extends Controller
                     'rst_lh_ot' => $employee['rst_lh_ot'] ?? 0.00,
                     'rst_lh_ot_over_eight' => $employee['rst_lh_ot_over_eight'] ?? 0.00,
                     'rst_lh_nd' => $employee['rst_lh_nd'] ?? 0.00,
-                    'rst_lh_nd_over_eight' => $employee['rst_lh_nd_over_eight'] ?? ($employee['rst_lh_nd_gt_8'] ?? 0.00),
+                    'rst_lh_nd_over_eight' => $employee['rst_lh_nd_gt_8'] ?? 0.00,
                     'rst_sh_ot' => $employee['rst_sh_ot'] ?? 0.00,
-                    'rst_sh_ot_over_eight' => $employee['rst_sh_ot_over_eight'] ?? ($employee['rst_sh_ot_gt_8'] ?? 0.00),
+                    'rst_sh_ot_over_eight' => $employee['rst_sh_ot_gt_8'] ?? 0.00,
                     'rst_sh_nd' => $employee['rst_sh_nd'] ?? 0.00,
                     'rst_sh_nd_over_eight' => $employee['rst_sh_nd_over_eight'] ?? 0.00,
-                    'cut_off_date' => $employee['cut_off_date'] ?? $request->to,
+                    'cut_off_date' => $employee['to'] ?? 0.00,
                 ]);
+            }
         }
         
         // Redirect back with a success message
-        Alert::success('Successfully Posted', count($selectedEmployees).' employee(s) posted to timekeeping.')->persistent('Dismiss');
-        return redirect('/biometrics-per-company?'.http_build_query([
-            'company' => $request->company,
-            'department' => $request->department,
-            'location' => $request->location,
-            'employee' => $originalEmployeeFilter,
-            'from' => $request->from,
-            'to' => $request->to,
-        ]));
-    }
-
-    public function unpostAttendance(Request $request)
-    {
-        $employeeCode = $request->input('employee_code');
-        $originalEmployeeFilter = (array) $request->input('employee', []);
-
-        if (empty($request->company) || empty($request->from) || empty($request->to) || empty($employeeCode)) {
-            Alert::warning('Unable to unpost', 'Company, date range, and employee are required.')->persistent('Dismiss');
-            return redirect()->back()->withInput();
-        }
-
-        $deletedRows = AttendanceDetailedReport::where('company_id', $request->company)
-            ->where('employee_no', $employeeCode)
-            ->whereBetween('log_date', [$request->from, $request->to])
-            ->delete();
-
-        Alert::success('Employee Unposted', $deletedRows.' attendance row(s) were removed from posting.')->persistent('Dismiss');
-        return redirect('/biometrics-per-company?'.http_build_query([
-            'company' => $request->company,
-            'department' => $request->department,
-            'location' => $request->location,
-            'employee' => $originalEmployeeFilter,
-            'from' => $request->from,
-            'to' => $request->to,
-        ]));
-    }
-
-    private function attendanceRowsForPosting(Request $request)
-    {
-        $company = $request->company;
-        $fromDate = $request->from;
-        $toDate = $request->to;
-        $department = $request->department;
-        $location = $request->location;
-        $employeeFilter = $request->employee ?: [];
-        $dateFrom = date('Y-m-d', strtotime('-1 day', strtotime($fromDate)));
-        $allowedLocations = getUserAllowedLocations(auth()->user()->id);
-        $allowedProjects = getUserAllowedProjects(auth()->user()->id);
-
-        $employees = Employee::select('employee_number','user_id','first_name','last_name','middle_name','location','schedule_id','employee_code','company_id','work_description','original_date_hired','level')
-            ->with('company')
-            ->with(['attendances' => function ($query) use ($dateFrom, $toDate) {
-                $query->whereBetween('time_in', [$dateFrom." 00:00:01", $toDate." 23:59:59"])
-                    ->orWhereBetween('time_out', [$dateFrom." 00:00:01", $toDate." 23:59:59"])
-                    ->orderBy('time_in','asc')
-                    ->orderby('time_out','desc')
-                    ->orderBy('id','asc');
-            }])
-            ->with(['approved_leaves' => function ($query) use ($dateFrom, $toDate) {
-                $query->where("date_from", "<=", $toDate)
-                    ->where("date_to", ">=", $dateFrom)
-                    ->where('status','Approved')
-                    ->orderBy('id','asc');
-            },'approved_leaves.leave'])
-            ->with(['approved_obs' => function ($query) use ($dateFrom, $toDate) {
-                $query->whereBetween('applied_date', [$dateFrom, $toDate])
-                    ->where('status','Approved')
-                    ->orderBy('id','asc');
-            }])
-            ->with(['approved_dtrs' => function ($query) use ($dateFrom, $toDate) {
-                $query->whereBetween('dtr_date', [$dateFrom, $toDate])
-                    ->where('status','Approved')
-                    ->orderBy('id','asc');
-            }])
-            ->with(['approved_ots' => function ($query) use ($dateFrom, $toDate) {
-                $query->whereBetween('ot_date', [$dateFrom, $toDate])
-                    ->where('status','Approved')
-                    ->orderBy('id','asc');
-            }])
-            ->where('company_id', $company)
-            ->when($department, function ($query) use ($department) {
-                $query->where('department_id', $department);
-            })
-            ->when($location, function ($query) use ($location) {
-                $query->where('location', $location);
-            })
-            ->when($employeeFilter, function ($query) use ($employeeFilter) {
-                $query->whereIn('employee_code', (array) $employeeFilter);
-            })
-            ->when($allowedLocations, function ($query) use ($allowedLocations) {
-                $query->whereIn('location', $allowedLocations);
-            })
-            ->when($allowedProjects, function ($query) use ($allowedProjects) {
-                $query->whereIn('project', $allowedProjects);
-            })
-            ->where('classification','!=',8)
-            ->where('original_date_hired','<=', $toDate)
-            ->where('status','Active')
-            ->orderBy('last_name','asc')
-            ->orderBy('first_name','asc')
-            ->get();
-
-        $dateRange = $this->dateRange($fromDate, $toDate);
-        $groups = attendanceDetailedRows($employees, $dateRange, ScheduleData::all(), $toDate);
-
-        return $groups->flatMap(function ($group) {
-            return $group['rows'];
-        });
+        Alert::success('Successfully Posted')->persistent('Dismiss');
+        return redirect('/biometrics-per-company');
     }
 
     public function reports(Request $request)

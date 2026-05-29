@@ -124,7 +124,6 @@
                         <th>Approvers</th> 
                         <th>Reason/Remarks</th> 
                         <th>Attachment</th>
-                        <th>Turnover List</th>
                         <th>Approved Date</th>
                       </tr>
                     </thead>
@@ -226,19 +225,6 @@
                           @endif
                           @if($form_approval->leave_file)
                           <a href="{{url('storage/'.$form_approval->leave_file)}}" target='_blank' class="text-start"><button type="button" class="btn btn-outline-info btn-sm ">View Attachment</button></a>
-                          @endif
-                        </td>
-                        <td>
-                          @if($form_approval->leave_type == 1)
-                            @if($form_approval->turnover_list)
-                              <a href="{{ url('storage'.$form_approval->turnover_list) }}" target="_blank">
-                                <span class="badge badge-success">Uploaded</span>
-                              </a>
-                            @else
-                              <span class="badge badge-danger">Not Uploaded</span>
-                            @endif
-                          @else
-                            <span class="text-muted">N/A</span>
                           @endif
                         </td>
                         <td>

@@ -1,591 +1,369 @@
 @extends('layouts.header')
-
 @section('css_header')
-<style>
-  .home-dashboard {
-    background: #f5f7fb;
-  }
-
-  .home-hero {
-    align-items: center;
-    background: #ffffff;
-    border: 1px solid #e1e7ef;
-    border-radius: 8px;
-    box-shadow: 0 8px 22px rgba(31, 45, 61, .05);
-    display: flex;
-    gap: 18px;
-    justify-content: space-between;
-    margin-bottom: 18px;
-    padding: 22px 24px;
-  }
-
-  .home-hero h3 {
-    color: #172033;
-    font-size: 1.45rem;
-    font-weight: 800;
-    margin: 0 0 5px;
-  }
-
-  .home-hero p {
-    color: #64748b;
-    margin: 0;
-  }
-
-  .home-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
-  .home-stat-grid {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-bottom: 18px;
-  }
-
-  .home-stat {
-    background: #fff;
-    border: 1px solid #e1e7ef;
-    border-left: 4px solid #248afd;
-    border-radius: 8px;
-    box-shadow: 0 8px 22px rgba(31, 45, 61, .05);
-    min-height: 120px;
-    padding: 16px;
-  }
-
-  .home-stat.success { border-left-color: #19a974; }
-  .home-stat.warning { border-left-color: #ffb020; }
-  .home-stat.danger { border-left-color: #ef476f; }
-
-  .home-label {
-    color: #718096;
-    display: block;
-    font-size: .72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-
-  .home-value {
-    color: #1f2d3d;
-    display: block;
-    font-size: 1.7rem;
-    font-weight: 900;
-    line-height: 1.15;
-    margin-top: 8px;
-    overflow-wrap: anywhere;
-  }
-
-  .home-note {
-    color: #64748b;
-    display: block;
-    font-size: .78rem;
-    font-weight: 700;
-    margin-top: 8px;
-  }
-
-  .home-layout {
-    display: block;
-  }
-
-  .home-panel {
-    background: #fff;
-    border: 1px solid #e1e7ef;
-    border-radius: 8px;
-    box-shadow: 0 8px 22px rgba(31, 45, 61, .05);
-    margin-bottom: 18px;
-  }
-
-  .home-panel-body {
-    padding: 18px;
-  }
-
-  .home-panel-title {
-    align-items: flex-start;
-    display: flex;
-    gap: 12px;
-    justify-content: space-between;
-    margin-bottom: 14px;
-  }
-
-  .home-panel-title h4 {
-    color: #1f2d3d;
-    font-size: 1rem;
-    font-weight: 900;
-    margin: 3px 0 0;
-  }
-
-  .home-panel-title span {
-    color: #248afd;
-    display: block;
-    font-size: .7rem;
-    font-weight: 900;
-    text-transform: uppercase;
-  }
-
-  .home-list {
-    display: grid;
-    gap: 10px;
-    margin: 0;
-    padding: 0;
-  }
-
-  .home-list-item {
-    align-items: center;
-    border: 1px solid #e5ebf2;
-    border-radius: 8px;
-    display: flex;
-    gap: 12px;
-    justify-content: space-between;
-    min-height: 58px;
-    padding: 10px 12px;
-  }
-
-  .home-list-main {
-    min-width: 0;
-  }
-
-  .home-list-main strong,
-  .home-list-main small {
-    display: block;
-  }
-
-  .home-list-main strong {
-    color: #24324b;
-    font-weight: 850;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .home-list-main small {
-    color: #718096;
-    font-weight: 700;
-    margin-top: 2px;
-  }
-
-  .home-avatar {
-    border: 2px solid #edf4ff;
-    border-radius: 50%;
-    flex: 0 0 auto;
-    height: 42px;
-    object-fit: cover;
-    width: 42px;
-  }
-
-  .home-person {
-    display: flex;
-    gap: 10px;
-    min-width: 0;
-  }
-
-  .home-badge {
-    border-radius: 999px;
-    display: inline-flex;
-    flex: 0 0 auto;
-    font-size: .72rem;
-    font-weight: 800;
-    padding: 5px 9px;
-    white-space: nowrap;
-  }
-
-  .home-badge.success {
-    background: #e8f8f1;
-    color: #0f7a54;
-  }
-
-  .home-badge.warning {
-    background: #fff4d8;
-    color: #8a5a00;
-  }
-
-  .home-badge.neutral {
-    background: #edf2f7;
-    color: #475569;
-  }
-
-  .home-badge.info {
-    background: #e8f2ff;
-    color: #1d4ed8;
-  }
-
-  .home-split {
-    display: grid;
-    gap: 14px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-calendar-head,
-  .home-calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-  }
-
-  .home-calendar-head {
-    border-bottom: 1px solid #e5ebf2;
-    color: #718096;
-    font-size: .72rem;
-    font-weight: 900;
-    margin-bottom: 8px;
-    padding-bottom: 8px;
-    text-align: center;
-    text-transform: uppercase;
-  }
-
-  .home-calendar-grid {
-    gap: 8px;
-  }
-
-  .home-calendar-day {
-    background: #f8fafc;
-    border: 1px solid #e5ebf2;
-    border-radius: 8px;
-    min-height: 104px;
-    padding: 8px;
-  }
-
-  .home-calendar-day.muted {
-    background: #ffffff;
-    opacity: .45;
-  }
-
-  .home-calendar-day.today {
-    border-color: #248afd;
-    box-shadow: 0 0 0 3px rgba(36, 138, 253, .12);
-  }
-
-  .home-calendar-number {
-    align-items: center;
-    color: #24324b;
-    display: flex;
-    font-size: .78rem;
-    font-weight: 900;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-
-  .home-calendar-event {
-    border: 0;
-    border-radius: 5px;
-    color: #24324b;
-    display: block;
-    font-size: .68rem;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-top: 4px;
-    overflow: hidden;
-    padding: 4px 6px;
-    text-align: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-  }
-
-  .home-calendar-event:hover {
-    filter: brightness(.97);
-  }
-
-  .home-calendar-event.holiday { background: #e8f8f1; color: #0f7a54; }
-  .home-calendar-event.birthday { background: #e8f2ff; color: #1d4ed8; }
-  .home-calendar-event.anniversary { background: #fff4d8; color: #8a5a00; }
-  .home-calendar-event.new-hire { background: #f1ecff; color: #5b21b6; }
-  .home-calendar-event.request { background: #ffe9ef; color: #b4234c; }
-
-  .home-calendar-more {
-    background: transparent;
-    border: 0;
-    color: #64748b;
-    display: block;
-    font-size: .68rem;
-    font-weight: 900;
-    margin-top: 5px;
-    padding: 0;
-  }
-
-  .home-calendar-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .home-calendar-legend span {
-    align-items: center;
-    color: #64748b;
-    display: inline-flex;
-    font-size: .72rem;
-    font-weight: 800;
-    gap: 5px;
-  }
-
-  .home-calendar-legend i {
-    border-radius: 50%;
-    display: inline-block;
-    height: 8px;
-    width: 8px;
-  }
-
-  .legend-holiday { background: #19a974; }
-  .legend-birthday { background: #248afd; }
-  .legend-anniversary { background: #ffb020; }
-  .legend-new-hire { background: #7c3aed; }
-  .legend-request { background: #ef476f; }
-
-  .home-modal-events {
-    display: grid;
-    gap: 10px;
-  }
-
-  .home-modal-event {
-    border: 1px solid #e5ebf2;
-    border-radius: 8px;
-    padding: 10px 12px;
-  }
-
-  .home-modal-event strong,
-  .home-modal-event small {
-    display: block;
-  }
-
-  .home-modal-event strong {
-    color: #24324b;
-    font-weight: 850;
-  }
-
-  .home-modal-event small {
-    color: #64748b;
-    font-weight: 800;
-    margin-top: 3px;
-  }
-
-  .home-mini-table {
-    margin-bottom: 0;
-  }
-
-  .home-empty {
-    background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    border-radius: 8px;
-    color: #64748b;
-    font-weight: 700;
-    margin: 0;
-    padding: 14px;
-  }
-
-  @media (max-width: 1199.98px) {
-    .home-stat-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 767.98px) {
-    .home-hero {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-    .home-actions {
-      justify-content: flex-start;
-    }
-    .home-stat-grid,
-    .home-split {
-      grid-template-columns: 1fr;
-    }
-    .home-calendar-grid {
-      gap: 6px;
-    }
-    .home-calendar-day {
-      min-height: 78px;
-      padding: 6px;
-    }
-    .home-calendar-event {
-      font-size: .62rem;
-      padding: 3px 4px;
-    }
-  }
-</style>
+<link rel="stylesheet" href="{{asset('./body_css/vendors/fullcalendar/fullcalendar.min.css')}}">
 @endsection
-
 @section('content')
-@php
-  $employee = auth()->user()->employee;
-  $pendingTotal = collect($personal_pending_requests)->sum();
-  $todayTimeIn = $attendance_now && $attendance_now->time_in ? date('h:i A', strtotime($attendance_now->time_in)) : null;
-  $todayTimeOut = $attendance_now && $attendance_now->time_out ? date('h:i A', strtotime($attendance_now->time_out)) : null;
-@endphp
-
 <div class="main-panel">
-  @if($employee->status != "Inactive")
-    <div class="content-wrapper home-dashboard">
-      <div class="home-hero">
-        <div>
-          <h3>Welcome, {{ $employee->first_name }}</h3>
-          <p>{{ date('l, F d, Y') }} snapshot for your attendance, requests, team, and people updates.</p>
-        </div>
-        <div class="home-actions">
-          <a href="{{ url('/file-leave') }}" class="btn btn-primary btn-sm">File Leave</a>
-          @if(checkUserAllowedOvertime(auth()->user()->id) == 'yes' || optional(auth()->user()->allowed_overtime)->allowed_overtime == 'on')
-            <a href="{{ url('/overtime') }}" class="btn btn-outline-primary btn-sm">Overtime</a>
-          @endif
-          <a href="{{ url('/official-business') }}" class="btn btn-outline-primary btn-sm">Official Business</a>
-        </div>
-      </div>
-
-      <div class="home-stat-grid">
-        <div class="home-stat success">
-          <span class="home-label">Today</span>
-          <strong class="home-value">{{ $personal_attendance_summary['today_status'] }}</strong>
-          <span class="home-note">
-            @if($todayTimeIn)
-              In {{ $todayTimeIn }}@if($todayTimeOut) - Out {{ $todayTimeOut }}@endif
-            @else
-              No attendance log yet
-            @endif
-          </span>
-        </div>
-        <div class="home-stat">
-          <span class="home-label">Last 7 Days</span>
-          <strong class="home-value">{{ $personal_attendance_summary['days_present'] }}/{{ count($date_ranges) }}</strong>
-          <span class="home-note">{{ $personal_attendance_summary['completed_logs'] }} completed logs, {{ $personal_attendance_summary['missing_days'] }} missing days</span>
-        </div>
-        <div class="home-stat warning">
-          <span class="home-label">Leave Balance</span>
-          <strong class="home-value">VL {{ number_format(data_get($personal_leave_balances, 'vl', 0), 2) }}</strong>
-          <span class="home-note">SL {{ number_format(data_get($personal_leave_balances, 'sl', 0), 2) }} available</span>
-        </div>
-        <div class="home-stat danger">
-          <span class="home-label">Pending Requests</span>
-          <strong class="home-value">{{ $pendingTotal }}</strong>
-          <span class="home-note">Leave {{ $personal_pending_requests['Leaves'] }}, OT {{ $personal_pending_requests['Overtime'] }}, OB {{ $personal_pending_requests['Official Business'] }}</span>
-        </div>
-      </div>
-
-      <div class="home-layout">
-          <div class="home-panel">
-            <div class="home-panel-body">
-              <div class="home-panel-title">
-                <div>
-                  <span>Calendar</span>
-                  <h4>{{ date('F Y') }}</h4>
-                </div>
-                <div class="home-calendar-legend">
-                  <span><i class="legend-holiday"></i>Holiday</span>
-                  <span><i class="legend-birthday"></i>Birthday</span>
-                  <span><i class="legend-anniversary"></i>Anniversary</span>
-                  <span><i class="legend-new-hire"></i>New Hire</span>
-                  <span><i class="legend-request"></i>Request</span>
+  @if(auth()->user()->employee->status != "Inactive")
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-12 grid-margin">
+              <div class="row">
+                <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                  <h3 class="font-weight-bold">Welcome {{auth()->user()->employee->first_name}},</h3>
                 </div>
               </div>
-              <div class="home-calendar-head">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-              </div>
-              <div class="home-calendar-grid">
-                @foreach($calendarDays as $calendarDay)
-                  <div class="home-calendar-day {{ $calendarDay->is_current_month ? '' : 'muted' }} {{ $calendarDay->is_today ? 'today' : '' }}">
-                    <div class="home-calendar-number">
-                      <span>{{ $calendarDay->day }}</span>
-                      @if($calendarDay->is_today)
-                        <span class="home-badge info">Today</span>
-                      @endif
+            </div>
+        </div>
+          <div class="row">
+              <div class="col-md-4 transparent">
+                <div class="row">
+                    <div class="col-md-12 mb-4 transparent">
+                        <div class="card">
+                          <div class="card-body">
+                            <h3 class="card-title">{{date('M d, Y')}} </h3>
+                            <div class="media">
+                                <i class="ti-time icon-md text-info d-flex align-self-center mr-3"></i>
+                                <div class="media-body">
+                                  <p class="card-text">Time In : 
+                                    @if($attendance_now != null){{date('h:i A',strtotime($attendance_now->time_in))}} <br>
+                                    @php
+                                          $employee_schedule = employeeSchedule($schedules,$attendance_now->time_in,$schedules[0]->schedule_id);
+                                          $estimated_out = "";
+                                          $halfday_out = "";
+                                          $schedule_hours = 0;
+                                          if($employee_schedule != null)
+                                          {
+                                            $schedule_out = strtotime(date('Y-m-d')." ".$employee_schedule->time_out_to);
+                                            $schedule_in = strtotime(date('Y-m-d')." ".$employee_schedule->time_in_to);
+                                            if(($schedule_out) < ($schedule_in))
+                                            {
+                                                
+                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                // dd(date('Y-m-d H:i',$schedule_out)." ".date('Y-m-d H:i',$schedule_in));
+                                            }
+                                            $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                            // dd(date('Y-m-d',strtotime($date_r)));
+                                            if($schedule_hours > 8)
+                                            {
+                                                $schedule_hours =  $schedule_hours-1;
+                                                
+                                                
+                                            }
+                                            if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) < strtotime(date('h:i A',strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from']))))
+                                            {
+                                          
+                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime(date('Y-m-d')." ".$employee_schedule['time_in_from'])));
+                                                $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_from']));
+                                            }
+                                            else
+                                            {
+                                              // dd($schedule_hours/2);
+                                           
+                                              $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($attendance_now->time_in)));
+                                              // dd($halfday_out);
+                                                $hours = intval($employee_schedule['working_hours']);
+                                                $minutes = ($employee_schedule['working_hours']-$hours)*60;
+                                                $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($attendance_now->time_in)));
+                                                $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
+                                            }
+                                            if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) > strtotime(date('h:i A',strtotime($employee_schedule['time_in_to']))))
+                                            {
+                                                $estimated_out = date('h:i A',strtotime($employee_schedule['time_out_to']));
+                                                $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($attendance_now->time_in)));
+                                            }
+
+                                          }
+                                          else {
+                                            $estimated_out = "No Schedule";
+                                            $halfday_out = "No Schedule";
+                                          }
+                                          
+                                        @endphp
+                                    @if($attendance_now->time_out == null )
+                                        <hr>
+                                        <small>
+                                        Estimated Halfday Out : {{$halfday_out}} <br>
+                                        Estimated Out : {{$estimated_out}} 
+                                      </small>
+                                    @else
+                                    Time Out : {{date('h:i A',strtotime($attendance_now->time_out))}} <br>
+                                    <hr>
+                                    <small>
+                                    Estimated Halfday Out : {{$halfday_out}} <br>
+                                    Estimated Out : {{$estimated_out}} 
+                                  </small>
+                                    @endif
+                                  @else NO TIME IN 
+                                  @endif</p>
+                                  {{-- <button type="button" class="btn btn-outline-danger btn-fw btn-sm">Time Out</button> --}}
+                                </div>
+                              </div>
+                          </div>
+                        </div>
+                        @if(count(auth()->user()->subbordinates) > 0)
+                        <div class="card mt-2">
+                          <div class="card-body">
+                            <p class="card-title ">Subordinates </p>
+                              <div class="table-responsive" >
+                                <table class="table table-hover table-bordered tablewithSearchonly" >
+                                  <thead>
+                                    <tr>
+                                      <th>Name</th>
+                                      <th>In</th>
+                                      <th>Out</th>
+                                      <th>Leave Balances</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                      
+                                    @foreach(auth()->user()->subbordinates as $emp)
+                                    <tr>
+                                      <td>{{$emp->first_name}} {{$emp->last_name}} </td>
+                                      @php
+                                          // dd($attendance_employees);
+                                          $time_in = $attendance_employees->where('employee_code',$emp->employee_number)->where('time_in','!=',null)->first();
+                                          $leave_with_pay = $emp ? $emp->approved_leaves_with_pay->where('date_from', date('Y-m-d'))->first() : null;
+                                      @endphp
+                                      <td>
+                                        @if($leave_with_pay)
+                                            Leave-With-Pay
+                                        @elseif($time_in && $time_in->time_in)
+                                            {{ date('h:i A', strtotime($time_in->time_in)) }}
+                                        @else
+                                            Absent
+                                        @endif
+                                      </td>
+                                      <td>
+                                        @if($time_in)
+                                            @if($time_in->time_out)
+                                                {{ date('h:i a', strtotime($time_in->time_out)) }}
+                                            @else
+                                                Absent
+                                            @endif
+                                        @else
+                                            Absent
+                                        @endif
+                                    </td> 
+                                        <td>
+                                            @php
+                                                $total_vl_credits = $employee_leave_list->where('user_id', $emp->user_id)->where('leave_id', 1)->sum('earned_per_month');
+                                                $used_vl = usedSlVlThisYear($emp->user_id,1,$emp->original_date_hired,$emp->ScheduleData);
+                                                $vl_balance = floatval($total_vl_credits) - floatval($used_vl);
+
+                                                $total_sl_credits = $employee_leave_list->where('user_id', $emp->user_id)->where('leave_id', 2)->sum('earned_per_month');
+                                                $used_sl = usedSlVlThisYear($emp->user_id,2,$emp->original_date_hired,$emp->ScheduleData);
+                                                $sl_balance = floatval($total_sl_credits) - floatval($used_sl);
+                                            @endphp
+                                            VL = {{number_format($vl_balance,2)}}
+                                            <br>
+                                            SL = {{number_format($sl_balance,2)}}
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                    
+                                  </tbody>
+                              </table>
+                              </div>
+                          </div>
+                        </div>
+                        @endif
                     </div>
-                    @foreach($calendarDay->events as $event)
-                      <button type="button" class="home-calendar-event {{ $event->type }}" data-toggle="modal" data-target="#calendar_day_{{ str_replace('-', '', $calendarDay->date) }}" title="{{ $event->label }}: {{ $event->title }}">
-                        {{ $event->title }}
-                      </button>
-                    @endforeach
-                    @if($calendarDay->extra_events > 0)
-                      <button type="button" class="home-calendar-more" data-toggle="modal" data-target="#calendar_day_{{ str_replace('-', '', $calendarDay->date) }}">+{{ $calendarDay->extra_events }} more</button>
-                    @endif
-                  </div>
-                @endforeach
-              </div>
-            </div>
-          </div>
-
-          @if(count($employees_under) > 0)
-            <div class="home-panel">
-              <div class="home-panel-body">
-                <div class="home-panel-title">
-                  <div>
-                    <span>Manager View</span>
-                    <h4>Subordinates Today</h4>
-                  </div>
-                  <span class="home-badge info">{{ count($employees_under) }} employee(s)</span>
                 </div>
-                <div class="table-responsive">
-                  <table class="table table-hover table-bordered home-mini-table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>In</th>
-                        <th>Out</th>
-                        <th>Leave Balance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach($employees_under as $emp)
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-body">
+                        <p class="card-title ">Holidays:&nbsp;<i style="font-weight: normal"><small>{{date('M 01')}} - {{date('M t')}}</small></i></p>
+                        <div class="table-responsive">
+                          <table class="table table-striped table-borderless">
+                            <thead>
+                              <tr>
+                                <th>Holiday Name</th>
+                                <th>Location</th>
+                                <th>Date</th>
+                              </tr>  
+                            </thead>
+                            <tbody>
+                              @foreach($holidays as $holiday)
+                              <tr>
+                                <td>{{$holiday->holiday_name}}</td>
+                                <td>{{$holiday->location}}</td>
+                                <td class="font-weight-medium"><div class="badge badge-success">{{date('M d',strtotime($holiday->holiday_date))}}</div></td>
+                              </tr>
+                              @endforeach
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>   
+              <div class="col-md-4">
+              <div class='row'>
+                <div class="col-md-12">
+                  <div class="card ">
+                    <div class="card-body " >
+                      <p class="card-title">Birthday Celebrants</p>
+                      <ul class="icon-data-list w-100"  style="overflow-y: scroll; height:300px;">
+                        @foreach($employee_birthday_celebrants as $celebrant)
+                        <li>
+                          <div class="d-flex">
+                            <img src="{{URL::asset($celebrant->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
+                            <div>
+                              <p class="text-info mb-1"><small>{{$celebrant->first_name}} {{$celebrant->last_name}} - ({{$celebrant->company->company_code}})</small></p>
+                              <small>{{date('M d',strtotime($celebrant->birth_date))}}</small>
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              @if (checkUserPrivilege('allow_prob',auth()->user()->id) == 'yes')
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="card mt-2">
+                        <div class="card-body">
+                          <div class="card-title">Probationary Employee</div>
+                          <ul class="icon-data-list w-100"  style="overflow-y: scroll; height:300px;">
+                            @foreach($probationary_employee as $prob_emp)
+                            <li>
+                              <div class="d-flex">
+                                <img src="{{URL::asset($prob_emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
+                                <div>
+                                  <div>
+                                    <p class="text-info mb-1"><small>{{$prob_emp->first_name}} {{$prob_emp->last_name}}</small><a id="edit{{ $prob_emp->id }}" 
+                                      data-target="#edit_prob{{ $prob_emp->id }}" data-toggle="modal" title='Edit'>
+                                      <i class="ti-pencil-alt"></i>
+                                    </a></p>
+                                  </div>
+                                  <p class="mb-0"><small>{{optional($prob_emp->company)->company_name}}</small></p>
+                                  <p class="mb-0"><small>{{$prob_emp->position}}</small></p>
+                                  <p class="mb-0"><small>{{date('M d, Y',strtotime($prob_emp->original_date_hired))}}</small></p>
+                                  <p class="mb-0"><small>
+                                    @php
+                                      $date_from = new DateTime($prob_emp->original_date_hired);
+                                      $date_diff = $date_from->diff(new DateTime(date('Y-m-d')));
+                                      $y_s = $date_diff->format('%y') > 1 ? 's' : '';
+                                      $m_s = $date_diff->format('%m') > 1 ? 's' : '';
+                                      $d_s = $date_diff->format('%d') > 1 ? 's' : '';
+                                    @endphp
+                                    {{$date_diff->format('%y Year'.$y_s.' %m month'.$m_s.' %d day'.$d_s.'')}}</small>
+                                  </p>
+                                </div>
+                              </div>
+                            </li>
+                            @endforeach
+                          </ul>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              @endif
+              </div>
+            <div class="col-md-4 ">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card" >
+                    <div class="card-body">
+                      <div class="card-title">
+                        Employee Anniversaries
+                      </div>
+                      <ul class="icon-data-list w-100" style="overflow-y: scroll; height:300px;" >
+                        @foreach($employee_anniversaries->sortBy('original_date_hired') as $emp)
                         @php
-                          $attendance = $attendance_employees_by_code->get($emp->employee_number);
-                          $leaveWithPay = $emp->approved_leaves_with_pay->where('date_from', date('Y-m-d'))->first();
-                          $leaveBalance = $subordinate_leave_balances->get($emp->user_id, ['vl' => 0, 'sl' => 0]);
+                          $original_date_hired = new DateTime($emp->original_date_hired);
+                          $current_date = new DateTime();
+                          $current_anniversary = new DateTime($current_date->format('Y') . '-' . $original_date_hired->format('m-d'));
+                          $s = $current_date->diff($original_date_hired)->format('%y') > 1 ? 's' : '';
+                          
+                          if ($current_anniversary >= $current_date) {
+                            $anniv_year = $current_date->diff($original_date_hired)->y + 1;
+                          }
+                          else {
+                            $anniv_year = $current_date->diff($original_date_hired)->y;
+                          }
+                          
                         @endphp
-                        <tr>
-                          <td>{{ $emp->first_name }} {{ $emp->last_name }}</td>
-                          <td>
-                            @if($leaveWithPay)
-                              <span class="home-badge warning">Leave</span>
-                            @elseif($attendance && $attendance->time_in)
-                              {{ date('h:i A', strtotime($attendance->time_in)) }}
-                            @else
-                              <span class="text-muted">No log</span>
-                            @endif
-                          </td>
-                          <td>{{ $attendance && $attendance->time_out ? date('h:i A', strtotime($attendance->time_out)) : '-' }}</td>
-                          <td>VL {{ number_format($leaveBalance['vl'], 2) }} / SL {{ number_format($leaveBalance['sl'], 2) }}</td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
+                        <li>
+                          <div class="d-flex">
+                            <img src="{{URL::asset($emp->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
+                            <div>
+                              <p class="text-info mb-1"><small>{{$emp->first_name}} {{$emp->last_name}}</small> <i>(<small class='text-danger'>{{$anniv_year.' year'.$s.' of service'}}</small>)</i></p>
+                              <p class="mb-0"><small>{{$emp->company->company_code}}</small> - <small>{{$emp->department->name}}</small></p>
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class='row'>
+                <div class="col-md-12">
+                  <div class="card mt-2">
+                    <div class="card-body " >
+                      <p class="card-title">Welcome new Hires</p>
+                      <ul class="icon-data-list w-100"  style="overflow-y: scroll; height:300px;">
+                        @foreach($employees_new_hire as $employee)
+                        <li>
+                          <div class="d-flex">
+                            <img src="{{URL::asset($employee->avatar)}}"  onerror="this.src='{{URL::asset('/images/no_image.png')}}';" alt="user">
+                            <div>
+                              <p class="text-info mb-1"><small>{{$employee->first_name}} {{$employee->last_name}}</small> <i>(<small>{{date('M. d',strtotime($employee->original_date_hired))}}</small>)</i> - <small>{{$employee->company->company_code}}</small></p>
+                          
+                              <p class="mb-0"><small>{{$employee->position}}</small> - <small>{{$employee->department->name}}</small></p>
+                             
+                            </div>
+                          </div>
+                        </li>
+                        @endforeach
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          @endif
-      </div>
-    </div>
-  @endif
-</div>
-
-@foreach($calendarDays->where('event_count', '>', 0) as $calendarDay)
-  <div class="modal fade" id="calendar_day_{{ str_replace('-', '', $calendarDay->date) }}" tabindex="-1" role="dialog" aria-labelledby="calendar_day_label_{{ str_replace('-', '', $calendarDay->date) }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="calendar_day_label_{{ str_replace('-', '', $calendarDay->date) }}">{{ date('F d, Y', strtotime($calendarDay->date)) }}</h5>
-          <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="home-modal-events">
-            @foreach($calendarDay->all_events as $event)
-              <div class="home-modal-event">
-                <span class="home-badge {{ $event->type == 'holiday' ? 'success' : ($event->type == 'request' ? 'warning' : 'info') }}">{{ $event->label }}</span>
-                <strong class="mt-2">{{ $event->title }}</strong>
-                <small>{{ date('M d, Y', strtotime($calendarDay->date)) }}</small>
-              </div>
-            @endforeach
+          </div>    
+          <div class='row'>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light btn-sm" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
-        </div>
+    </div>
+    @endif
+</div>
+<div class="modal fade" id="event_data" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         Description : <span id='modalBody'>
+        </span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
+</div>
+
+@endsection
+@section('footer')
+
+<script src="{{asset('./body_css/js/tooltips.js')}}"></script>
+<script src="{{asset('./body_css/js/popover.js')}}"></script>
+<script src="{{asset('./body_css/vendors/moment/moment.min.js')}}"></script>
+
+@foreach ($probationary_employee as $prob_emp)
+@include('dashboards_modal.edit_prob')
 @endforeach
 @endsection

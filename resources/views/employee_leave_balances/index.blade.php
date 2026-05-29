@@ -57,9 +57,6 @@
 								</thead>
 								<tbody>
 									@foreach ($employees as $employee)
-									@php
-										$leave_credit_tallies = getEmployeeLeaveCreditTallies($employee);
-									@endphp
                                     <tr>
                                         {{-- <td>{{ $employee->user_id}}</td> --}}
                                         <td>{{$employee->employee_code}}</td>
@@ -71,34 +68,50 @@
                                         <td>{{ $employee->company->company_name}}</td>
                                         <td>{{ $employee->department->name}}</td>
                                         <td>
-											@if(count($leave_credit_tallies) > 0)
-												<table class="table table-sm table-bordered mb-0">
-													<thead>
-														<tr>
-															<th>Leave</th>
-															<th>Beginning</th>
-															<th>Earned</th>
-															<th>Total</th>
-															<th>Used</th>
-															<th>Balance</th>
-														</tr>
-													</thead>
-													<tbody>
-														@foreach($leave_credit_tallies as $tally)
-															<tr>
-																<td>{{ $tally->leave_type }}</td>
-																<td>{{ number_format($tally->beginning, 3) }}</td>
-																<td>{{ number_format($tally->earned, 3) }}</td>
-																<td>{{ number_format($tally->total, 3) }}</td>
-																<td>{{ number_format($tally->used, 3) }}</td>
-																<td>{{ number_format($tally->balance, 3) }}</td>
-															</tr>
-														@endforeach
-													</tbody>
-												</table>
-											@else
-												No leave credit tally available.
-											@endif
+                                            @php
+                                                $used_vl = checkUsedSLVLSILLeave($employee->user_id,1,$employee->original_date_hired,$employee->ScheduleData);
+                                                $used_sl = checkUsedSLVLSILLeave($employee->user_id,2,$employee->original_date_hired,$employee->ScheduleData);
+                                                $used_sil = checkUsedSLVLSILLeave($employee->user_id,10,$employee->original_date_hired,$employee->ScheduleData);
+                                                $used_ml = checkUsedLeave($employee->user_id,3);
+                                                $used_pl = checkUsedLeave($employee->user_id,4);
+                                                $used_spl = checkUsedLeave($employee->user_id,5);
+                                                $used_splw = checkUsedLeave($employee->user_id,7);
+                                                $used_splvv = checkUsedLeave($employee->user_id,9);
+                                            
+                                                $earned_vl = checkEarnedLeave($employee->user_id,1,$employee->original_date_hired);
+                                                $earned_sl = checkEarnedLeave($employee->user_id,2,$employee->original_date_hired);
+                                                $earned_sil = checkEarnedLeave($employee->user_id,10,$employee->original_date_hired);
+
+                                              
+
+                                              
+                                                // if($total_months > 11){ //
+                                                
+                                                //     $original_date_hired_m_d = date('m-d',strtotime($employee->original_date_hired));
+                                                //     $original_date_hired_m = date('m',strtotime($employee->original_date_hired));
+                                                //     $today = date('Y-m-d');
+                                                //     $last_year = date('Y', strtotime('-1 year', strtotime($today)) );
+                                                //     $original_date_hired = $last_year . '-' . $original_date_hired_m_d;
+
+                                                //     if($last_year == 2022){
+                                                //         $vl_beginning_balance = checkEmployeeLeaveCredits($employee->user_id,1);
+                                                //         $sl_beginning_balance = checkEmployeeLeaveCredits($employee->user_id,2);
+                                                //     }
+                                                // }
+                                                // else{
+                                                    $vl_beginning_balance = checkEmployeeLeaveCredits($employee->user_id,1);
+                                                    $sl_beginning_balance = checkEmployeeLeaveCredits($employee->user_id,2);
+                                                // }
+
+                                                
+                                                $total_vl = $vl_beginning_balance + $earned_vl;
+                                                $total_sl = $sl_beginning_balance + $earned_sl;
+
+                                            @endphp
+                                            Total VL : {{ ($total_vl) }} Used : {{$used_vl}} Remaining Balance : {{ ($total_vl) - $used_vl }} <br>
+                                            Total SL : {{ ($total_sl) }} Used : {{$used_sl}} Remaining Balance : {{ ($total_sl) - $used_sl }} <br> 
+
+
                                         </td>
                                     </tr>
                                     @endforeach

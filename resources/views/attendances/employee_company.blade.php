@@ -12,9 +12,9 @@
                         <p class="card-description">
                         <form method="get" onsubmit="show();" enctype="multipart/form-data">
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <select data-placeholder="Select Company" class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="company" id="companySelect" required>
+                                        <select data-placeholder="Select Company" onchange='clear();' class="form-control form-control-sm required js-example-basic-single" style="width:100%;" name="company" id="companySelect" required>
                                             <option value="">-- Select Company --</option>
                                             @foreach($companies as $comp)
                                             <option value="{{$comp->id}}" @if ($comp->id == $company) selected @endif>{{$comp->company_code}}</option>
@@ -32,7 +32,7 @@
                                         <input type="text" class="form-control" id="toDate" name="to" value="{{$to_date}}" placeholder="To Date" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <button type="submit" class="btn btn-primary">Filter</button>
                                     <a href="{{ url('/biometrics-per-company') }}" class="btn btn-warning">Reset Filter</a>
                                 </div>
@@ -68,103 +68,11 @@
                                 </div>
                             </form> -->
                         </p>
-                        <form method="POST" action="{{ route('attendance.store', ['company' => $company, 'from' => $from_date, 'to' => $to_date, 'department' => $department, 'location' => $location, 'employee' => $employee_filter]) }}" id="attendanceForm" onsubmit="return showConfirmation()" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('attendance.store') }}" id="attendanceForm" onsubmit="return showConfirmation()" enctype="multipart/form-data">
                             @csrf
                             @if($date_range)
-                                @php
-                                    $remainingEmployees = $posting_summary['total_employees'] - $posting_summary['posted_employees'];
-                                @endphp
-                                <div class="timekeeping-posting-board">
-                                    <div class="posting-board-header">
-                                        <div>
-                                            <span class="posting-kicker">Posting Control</span>
-                                            <h4>Employee Posting Lock</h4>
-                                            <p>Post selected employees in batches. Completed employees are locked and available for pay-reg generation.</p>
-                                        </div>
-                                        <div class="posting-actions">
-                                            <a href="attendance-per-company-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" class="btn btn-info btn-sm" id="exportButton">
-                                                Export {{ $posting_summary['total_employees'] }} Employees
-                                            </a>
-                                            <button type="submit" class="btn btn-success btn-sm" id="postButton" disabled>
-                                                Post Selected
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="posting-metrics">
-                                        <div>
-                                            <small>Total Employees</small>
-                                            <strong>{{ $posting_summary['total_employees'] }}</strong>
-                                        </div>
-                                        <div>
-                                            <small>Posted</small>
-                                            <strong>{{ $posting_summary['posted_employees'] }}</strong>
-                                        </div>
-                                        <div>
-                                            <small>Remaining</small>
-                                            <strong>{{ $remainingEmployees }}</strong>
-                                        </div>
-                                        <div>
-                                            <small>Completion</small>
-                                            <strong>{{ $posting_summary['percent'] }}%</strong>
-                                        </div>
-                                    </div>
-                                    <div class="posting-progress">
-                                        <div style="width: {{ $posting_summary['percent'] }}%;"></div>
-                                    </div>
-                                    <div class="posting-status-line">
-                                        @if($posting_summary['percent'] >= 100)
-                                            <span class="posting-ready"><i class="fa fa-check-circle"></i> 100% posted. This cutoff is ready for pay-reg generation.</span>
-                                        @else
-                                            <span><i class="fa fa-lock"></i> Pay-reg readiness unlocks when all employees reach 100% posted.</span>
-                                        @endif
-                                        <span id="selectedPostingCount">0 selected</span>
-                                    </div>
-                                    <div class="posting-search-wrap">
-                                        <i class="fa fa-search"></i>
-                                        <input type="text" class="form-control" id="postingEmployeeSearch" placeholder="Search employee, code, or department">
-                                    </div>
-                                    <div class="posting-employee-grid">
-                                        @foreach($posting_summary['employees'] as $postingEmployee)
-                                            <div class="posting-employee-card @if($postingEmployee['is_posted']) is-locked @endif">
-                                                <div class="posting-employee-check">
-                                                    <input type="checkbox"
-                                                        name="post_employee_codes[]"
-                                                        value="{{ $postingEmployee['employee_code'] }}"
-                                                        class="posting-checkbox"
-                                                        @if($postingEmployee['is_posted']) disabled @endif>
-                                                    <span>
-                                                        @if($postingEmployee['is_posted'])
-                                                            <i class="fa fa-lock"></i>
-                                                        @else
-                                                            <i class="fa fa-unlock"></i>
-                                                        @endif
-                                                    </span>
-                                                </div>
-                                                <div class="posting-employee-info">
-                                                    <strong>{{ $postingEmployee['name'] }}</strong>
-                                                    <small>{{ $postingEmployee['employee_code'] }} · {{ $postingEmployee['department'] }}</small>
-                                                </div>
-                                                <div class="posting-employee-percent">
-                                                    <strong>{{ $postingEmployee['percent'] }}%</strong>
-                                                    <small>{{ $postingEmployee['posted_days'] }}/{{ $postingEmployee['total_days'] }} days</small>
-                                                    @if($postingEmployee['is_posted'])
-                                                        <button type="button"
-                                                            class="btn btn-outline-danger btn-xs posting-unpost-btn"
-                                                            data-code="{{ $postingEmployee['employee_code'] }}"
-                                                            data-name="{{ $postingEmployee['name'] }}">
-                                                            Unpost
-                                                        </button>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    @if($remainingEmployees > 0)
-                                        <button type="button" class="btn btn-outline-primary btn-sm mt-3" id="selectAllUnlocked">
-                                            Select all remaining employees
-                                        </button>
-                                    @endif
-                                </div>
+                                <a href="attendance-per-company-export?company={{$company}}&from={{$from_date}}&to={{$to_date}}" class='btn btn-info mb-1'>Export {{count($emp_data)}} Employees</a>
+                                <button type="submit" class="btn btn-success mb-1" id="postButton">Post</button>
                             @endif
                             <div class="table-responsive">
                                 <table border="1" class="table table-hover table-bordered employee_attendance" id='employee_attendance'>
@@ -213,29 +121,1441 @@
                                     </thead>
 
                                     
-                                    <tbody id="attendanceRows">
-                                        @if($date_range)
-                                            <tr id="attendanceLoadingRow">
-                                                <td colspan="36" class="text-center text-muted">Select employees to preview attendance rows.</td>
+                                    <tbody>
+                                        @foreach($emp_data as $emp)
+                                            @php
+                                                $work =0;
+                                                $lates =0;
+                                                $undertimes =0;
+                                                $overtimes =0;
+                                                $approved_overtimes =0;
+                                                $night_diffs =0;
+                                                $night_diff_ot =0;
+
+                                                $subtotal_abs = 0;
+                                                $subtotal_leave_w_pay=0;
+                                                $subtotal_reg_hrs = 0;
+                                                $subtotal_late = 0;
+                                                $subtotal_undertime = 0;
+                                                $subtotal_overtimes = 0;
+                                                $subtotal_nd = 0;
+                                                $subtotal_ot_nd = 0;
+                                                $subtotal_rd_ot = 0;
+                                                $subtotal_rd_ot_ge = 0;
+                                                $subtotal_rd_nd = 0;
+                                                $subtotal_rd_nd_ge = 0;
+                                                
+                                                $previous_abs = 0;
+                                            @endphp
+
+                                            @foreach($date_range as $date_r)
+                                            
+                                            @php
+                                                $final_time_in = "";
+                                                $time_in = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
+                                                if($time_in == null)
+                                                    {
+                                                    
+                                                        $time_out = ($emp->attendances)->whereBetween('time_out',[$date_r." 00:00:00", $date_r." 23:59:59"])->where('time_in',null)->first();
+                                                        if($time_out)
+                                                        {
+                                                            $final_time_out = $time_out->time_out;
+                                                        }
+                                                    }
+                                                    else {
+                                                        $final_time_in =   $time_in->time_in;
+                                                        $final_time_out =   $time_in->time_out;
+                                                    }
+                                                $employee_schedule = employeeSchedule($schedules,$date_r,$emp->schedule_id, $emp->employee_code);
+                                                $rest = "";
+                                                $if_leave = "";
+                                                $if_has_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
+                                            @endphp
+                                            <tr>
+                                                <input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][to]" value="{{$to_date}}">
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][company_id]" value="{{$emp->company->id}}">{{$emp->company->company_code}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][employee_no]" value="{{$emp->employee_code}}">{{$emp->employee_code}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][name]" value="{{$emp->last_name .', '. $emp->first_name . ' ' . $emp->middle_name}}">{{$emp->last_name . ', ' . $emp->first_name}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][log_date]" value="{{date('Y-m-d',strtotime($date_r))}}">{{date('d/m/Y',strtotime($date_r))}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][shift]" value="{{$employee_schedule && $employee_schedule->time_in_to != null ? date('h:i A', strtotime($employee_schedule->time_in_to)) . '-' . date('h:i A', strtotime($employee_schedule->time_out_to)) : 'RESTDAY'}}">
+                                                    @if($employee_schedule != null)
+                                                        @if($employee_schedule->time_in_from)
+                                                        <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                        @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                            <small>(Flexi)</small>
+                                                        @endif
+                                                        @else 
+                                                        <small>RESTDAY</small>
+                                                        @php
+                                                            $rest = "RESTDAY";
+                                                        @endphp
+                                                        @endif
+                                                    @else
+                                                    <small>RESTDAY</small>
+                                                        @php
+                                                            $rest = "RESTDAY";
+                                                        @endphp
+
+                                                    @endif
+                                                    {{-- @if($employee_schedule)
+                                                        <small>{{$emp->schedule_info->schedule_name}}</small>
+                                                    @endif --}}
+                                                </td>
+                                                <!-- <td> 
+                                                @if($employee_schedule != null)
+                                                    @if($employee_schedule->time_in_from != '00:00')
+                                                    <small>{{date('h:i A', strtotime($employee_schedule->time_in_to)).'-'.date('h:i A', strtotime($employee_schedule->time_out_to))}}</small>
+                                                    @if ($employee_schedule->time_in_from != $employee_schedule->time_in_to)
+                                                        <small>(Flexi)</small>
+                                                    @endif
+                                                    @else 
+                                                    <small>RESTDAY</small>
+                                                    @php
+                                                        $rest = "RESTDAY";
+                                                    @endphp
+                                                    @endif
+                                                @else
+                                                <small>RESTDAY</small>
+                                                    @php
+                                                        $rest = "RESTDAY";
+                                                    @endphp
+
+                                                @endif
+                                                {{-- @if($employee_schedule)
+                                                    <small>{{$emp->schedule_info->schedule_name}}</small>
+                                                @endif --}}
+                                                </td> -->
+                                                @php
+                                                    $if_has_ob = employeeHasOBDetails($emp->approved_obs,date('Y-m-d',strtotime($date_r)));
+                                                @endphp
+                                                @php
+                                                    $cenvertedTime = date('Y-m-d 00:00:00',strtotime($date_r));
+                                                    if($employee_schedule != null)
+                                                    {
+                                                        if($employee_schedule->time_in_from)
+                                                        {
+                                                            $cenvertedTime = date('Y-m-d H:i:s',strtotime('-6 hours',strtotime($date_r." ".$employee_schedule->time_in_from)));
+                                                            // dd($cenvertedTime);
+                                                        }
+                                                    }
+                                                   
+                                                  
+                                                    $time_in = ($emp->attendances)->whereBetween('time_in',[$cenvertedTime,$date_r." 23:59:59"])->sortBy('time_in')->first();
+                                                  
+                                                    $time_out = null;
+                                                    $final_time_in = "";
+                                                    $final_time_out = "";
+                                                    if($time_in == null)
+                                                    {
+                                                    
+                                                        $time_out = ($emp->attendances)->whereBetween('time_out',[$date_r." 00:00:00", $date_r." 23:59:59"])->where('time_in',null)->first();
+                                                        if($time_out)
+                                                        {
+                                                            $final_time_out = $time_out->time_out;
+                                                        }
+                                                    }
+                                                    else {
+                                                        $final_time_in =   $time_in->time_in;
+                                                        $final_time_out =   $time_in->time_out;
+                                                    }
+                                                @endphp
+                                                @php
+                                                $time_start = "";
+                                                $time_end = "";
+
+                                                if($final_time_in)
+                                                {
+                                                    $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
+                                                }
+
+                                                if($final_time_out)
+                                                {
+                                                    $time_end = date('Y-m-d  h:i A',strtotime($final_time_out));
+                                                }
+                                                if($if_has_ob)
+                                                {
+                                                    
+                                                    if($final_time_in != null)
+                                                    {
+                                                        if($if_has_ob->date_from < $final_time_in)
+                                                        {
+                                                            $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
+                                                        }
+                                                        else {
+                                                            $time_start = date('Y-m-d h:i A',strtotime($final_time_in));
+                                                        }
+                                                    }
+                                                    else {
+                                                        
+                                                        $time_start = date('Y-m-d h:i A',strtotime($if_has_ob->date_from));
+                                                    }
+                                                
+                                                    if($final_time_out != null){
+                                                        // if(strtotime($if_has_ob->date_to) > strtotime($final_time_out))
+                                                        if($if_has_ob->date_to > $final_time_out)
+                                                        {
+                                                        
+                                                        $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
+                                                        }
+                                                        else {
+                                                            
+                                                            $time_end = date('Y-m-d h:i A',strtotime($final_time_out));
+                                                        }
+                                                    }
+                                                    else {
+                                                        
+                                                        $time_end = date('Y-m-d h:i A',strtotime($if_has_ob->date_to));
+                                                    }
+                                                }
+                                                @endphp
+
+                                                @php
+                                                    $abs = 1;
+                                                @endphp
+
+                                                @if(($time_start) && ($time_end))
+                                                    @php
+                                                        $abs = 0;
+                                                    @endphp
+                                                @endif
+                                                @if($abs == 1)
+                                                    @if($employee_schedule)
+                                                        @php 
+                                                            $is_absent = '';
+                                                            $if_leave = '';
+                                                            $if_attendance_holiday = '';
+                                                            $if_restday = '';
+                                                            $count_days_before = '';
+                                                            $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                                            // dd($check_if_holiday);
+                                                            $if_attendance_holiday_status = '';
+                                                            
+                                                          
+                                                            if($check_if_holiday){
+                                                                   
+                                                              
+                                                                    $if_attendance_holiday = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
+                                                                $if_approved_obs = checkHasAttendanceHoliday(date('Y-m-d',strtotime($date_r)), $emp->employee_number,$emp->location);
+                                                               
+                                                                    $check_sched_yesterday_if_restday = employeeSchedule($schedules,date('Y-m-d',strtotime($date_r."-1 day")),$emp->schedule_id, $emp->employee_code);
+                                                                    if ($check_sched_yesterday_if_restday)
+                                                                    {
+                                                                        $count_days_before = "-1 day";
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $count_days_before = "-3 days";
+                                                                    }
+
+                                                                    $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r.$count_days_before)),$employee_schedule);
+                                                                    // dd($if_attendance_holiday);
+                                                                    if($check_leave){
+                                                                        $if_attendance_holiday_status = 'With-Pay';
+                                                                        $abs =0;
+                                                                        $previous_abs = 0;
+                                                                        if($check_leave){
+                                                                            // dd($check_leave);
+                                                                            if(str_contains($check_leave,"Without")){
+                                                                                // dd($check_leave);
+                                                                                $if_attendance_holiday_status = 'Without-Pay';
+                                                                                $abs = 1;
+                                                                                $previous_abs = 1;
+                                                                                if(str_contains($check_leave,".5"))
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                    $previous_abs = 0;
+                                                                                }
+                                                                            }else{
+                                                                                $if_attendance_holiday_status = 'With-Pay';
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else{
+                                                                        $check_attendance = checkHasAttendanceHolidayStatus($emp->attendances,$if_attendance_holiday);
+                                                                        // dd($emp->attendances);
+                                                                        // dd(date('Y-m-d H:i',strtotime($date_r." 00:00:00")-86400));
+                                                                        $time_in = ($emp->attendances)->whereBetween('time_in',[date('Y-m-d H:i',strtotime($date_r." 00:00:00")-86400),date('Y-m-d H:i',strtotime($date_r." 23:59:59")-86400)])->sortBy('time_in')->first();
+                                                                        $time_in_ob = ($emp->approved_obs)->where('applied_date',date('Y-m-d',strtotime($date_r." 00:00:00")-86400))->sortBy('applied_date')->first();
+                                                                   
+                                                                        if(empty($check_attendance)){
+                                                                            $is_absent = 'Absent';
+                                                                            $abs =1;
+                                                                        }else{
+                                                                            $if_attendance_holiday_status = 'With-Pay';
+                                                                            $abs =0;
+                                                                        }
+                                                                        if($time_in != null)
+                                                                        {
+                                                                            if(($time_in->time_out) && ($time_in->time_in))
+                                                                            {
+                                                                                if((strtotime($time_in->time_out) - strtotime($time_in->time_in)/3600) >= 4)
+                                                                                {
+                                                                                    $abs =0;
+                                                                                }
+                                                                            }
+                                                                           
+                                                                        }
+                                                                        if($time_in_ob != null)
+                                                                        {
+                                                                            $abs =0;
+                                                                        }
+                                                                    }
+                                                                 
+                                                     
+                                                                    $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
+                                                                    $check_if_holiday_before = checkIfHoliday(date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->location);
+                                                                
+                                                                  
+                                                                
+                                                                    if($check_if_holiday_before)
+                                                                    {
+                                                                        $abs = 0;
+                                                                        
+                                                                        $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($if_attendance_holiday)),$employee_schedule);
+                                                                        if ($check_leave) {
+                                                                            $if_attendance_holiday_status = 'With-Pay';
+                                                                            $abs =0;
+                                                                            $previous_abs = 0;
+                                                                            if(str_contains($check_leave,"Without")){
+                                                                                // dd($check_leave);
+                                                                                $if_attendance_holiday_status = 'Without-Pay';
+                                                                                $abs = 1;
+                                                                                $previous_abs = 1;
+                                                                                if(str_contains($check_leave,".5"))
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                    $previous_abs = 0;
+                                                                                }
+                                                                            }else{
+                                                                                $if_attendance_holiday_status = 'With-Pay';
+                                                                            }
+                                                                        }
+                                                                        else {
+                                                                            $checkAttendanceBeforeHoliday = checkHasAttendanceHolidayStatus($emp->attendances,$if_attendance_holiday);
+                                                                            if(empty($checkAttendanceBeforeHoliday)){
+                                                                                $is_absent = 'Absent';
+                                                                                $abs =1;
+                                                                            }else{
+                                                                                $if_attendance_holiday_status = 'With-Pay';
+                                                                                $abs =0;
+                                                                            }
+                                                                            $timeInObBeforeHoliday = ($emp->approved_obs)->where('applied_date',date('Y-m-d',strtotime($if_attendance_holiday)))->sortBy('applied_date')->first();
+                                                                            if($timeInObBeforeHoliday != null)
+                                                                            {
+                                                                                $abs =0;
+                                                                            }
+                                                                            
+                                                                            $employeeScheduleBeforeHoliday = employeeSchedule($schedules,date('Y-m-d',strtotime($if_attendance_holiday)),$emp->schedule_id, $emp->employee_code);
+                                                                            // dd($employeeScheduleBeforeHoliday);
+                                                                            if($employeeScheduleBeforeHoliday == null)
+                                                                            {
+                                                                                $attendance = ($emp->attendances)->whereBetween('time_in',[$if_attendance_holiday.' 00:00:00', $if_attendance_holiday." 23:59:59"]);
+                                                                                if(count($attendance) == 0)
+                                                                                {
+                                                                                    $abs=1;
+                                                                                }
+                                                                                else 
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
+                                                                            
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                if($employeeScheduleBeforeHoliday->time_in_from == '00:00')
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
+                                                                                if($employeeScheduleBeforeHoliday->time_in_from == null)
+                                                                                {
+                                                                                    $abs = 0;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    if($employee_schedule_before == null)
+                                                                    {
+                                                                        // $abs = 0;
+                                                                        $attendance = ($emp->attendances)->whereBetween('time_in',[$if_attendance_holiday.' 00:00:00', $if_attendance_holiday." 23:59:59"]);
+                                                                        if(count($attendance) == 0)
+                                                                        {
+                                                                            $abs=1;
+                                                                        }
+                                                                        else 
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
+                                                                    
+                                                                    }
+                                                                    else {
+                                                                        if($employee_schedule_before->time_in_from == '00:00')
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
+                                                                        if($employee_schedule_before->time_in_from == null)
+                                                                        {
+                                                                            $abs = 0;
+                                                                        }
+
+                                                                        
+                                                                        }
+                                                                        // dd($if_attendance_holiday);
+                                                                        // if($if_attendance_holiday)
+                                                                        // {
+                                                                        //     $abs=0;
+                                                                        // }
+                                                                  
+                                                                    if($emp->work_description == "Non-Monthly")
+                                                                    {
+                                                                        $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                    
+                                                                        if(empty($if_leave)){
+                                                                            if($employee_schedule->time_in_from) {
+                                                                            if(empty($if_has_dtr)){
+                                                                                    if($time_out == null){
+                                                                                        $is_absent = 'Absent';
+                                                                                    }
+                                                                            }
+                                                                            }
+                                                                            else {
+                                                                                $abs = 0;
+                                                                                $if_restday = 'Restday';
+                                                                            }
+                                                                        } 
+                                                                        else {
+                                                                            $abs = 1;
+                                                                        }
+                                                                        if($check_if_holiday == "Special Holiday")
+                                                                        {
+                                                                            $abs = 1;
+                                                                        }
+
+                                                                    }
+                                                                
+                                                                    if(date('Y-m-d',strtotime($date_r)) < $emp->original_date_hired)
+                                                                    {
+                                                                        $abs = 1;
+                                                                    }
+                                                                    // if($previous_abs == 1)
+                                                                    // {
+                                                                    //     $abs = 1;
+                                                                    // }
+                                                                    // $previous_abs = $abs;
+                                                                    if ($check_if_holiday != "Special Holiday") {
+                                                                        if ($previous_abs == 1) {
+                                                                            $abs = 1;
+                                                                        }
+                                                                    }
+                                                                    if ($check_if_holiday != "Special Holiday") {
+                                                                        $previous_abs = $abs;
+                                                                    }
+                                                                    
+                                                            }else{
+                                                              
+                                                                $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                                
+                                                                if(empty($if_leave)){
+                                                                    if($employee_schedule->time_in_from) {
+                                                                    if(empty($if_has_dtr)){
+                                                                            if($time_out == null){
+                                                                                $is_absent = 'Absent';
+                                                                            }
+                                                                    }
+                                                                    }
+                                                                    else {
+                                                                        $abs = 0;
+                                                                        $if_restday = 'Restday';
+                                                                    }
+                                                                } 
+                                                                if($date_r < $emp->original_date_hired)
+                                                                {
+                                                                    $abs = 1;
+                                                                }
+                                                            }
+                                                               
+                                                        @endphp
+                                                    @else
+                                                    @endif
+                                                @else
+                                                    @php
+                                                        $is_absent = '';
+                                                        $if_restday = '';
+                                                        
+                                                        $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
+                                                    
+                                                        // $abs=0;
+                                                    @endphp  
+                                                @endif
+                                                <td @if($if_has_ob) class='bg-info'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][in]" value="@if($time_start){{date('h:i A',strtotime($time_start))}}@endif">@if($time_start){{date('h:i A',strtotime($time_start))}}@endif</td>
+                                                <td @if($if_has_ob) class='bg-info'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][out]" value="@if($time_end){{date('h:i A',strtotime($time_end))}}@endif">@if($time_end){{date('h:i A',strtotime($time_end))}}@endif</td>
+                                                @php
+                                                    $leave_count = 0;
+                                                    $abs_half = 0;
+                                                    if($if_leave)
+                                                    {
+                                                        $l = explode('-',$if_leave);
+                                                        $leave_count = (double) $l[1];
+                                                        if(str_contains($if_leave,"Without"))
+
+                                                        {
+                                                            $leave_count = 0;
+                                                            $abs_half = $l[1];
+                                                        }
+                                                        // dd($leave_count);
+                                                    }
+                                                @endphp
+                                            
+                                                @php
+                                                    $work =0;
+                                                    $work_ot =0;
+                                                    $undertime_hrs = 0;
+                                                    $undertime = 0;
+                                                    $original_sched = 0;
+                                                    $overtime = 0;
+                                                    $schedule_hours = 0;
+                                                    if($employee_schedule)
+                                                    {
+                                                     
+                                                        $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                        $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                        if(($schedule_out) < ($schedule_in))
+                                                        {
+                                                            
+                                                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                            // dd(date('Y-m-d H:i',$schedule_out)." ".date('Y-m-d H:i',$schedule_in));
+                                                        }
+                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                        // dd(date('Y-m-d',strtotime($date_r)));
+                                                        // if ($emp->employee_code == "A10199")//abanes
+                                                        // {
+                                                        //     if ($schedule_hours >= 7)
+                                                        //     {
+                                                        //         $schedule_hours =  $schedule_hours-1;
+                                                        //         if($work >= ($schedule_hours/1.5))
+                                                        //         {
+                                                        //             $work = $work-1;
+                                                        //         }
+                                                        //     }
+                                                        // }
+                                                        if($schedule_hours > 8)
+                                                        {
+                                                            $schedule_hours =  $schedule_hours-1;
+                                                            
+                                                            
+                                                        }
+                                                        if($emp->employee_code == "A340612") //frosie
+                                                        {
+                                                            $schedule_hours =  $schedule_hours-1;
+                                                            
+                                                            
+                                                        }
+                                                       
+                                                    
+                                                    
+                                                }
+                                                @endphp
+                                                @if((($time_start)&&($time_end)) && $employee_schedule)    
+                                                    @php
+                                                        $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                        $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                        
+                                                        if(($schedule_out) < ($schedule_in))
+                                                        {
+                                                            
+                                                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                            // dd(date('Y-m-d H:i',$schedule_out)." ".date('Y-m-d H:i',$schedule_in));
+                                                        }
+                                                        $original_sched = ((($schedule_out)-($schedule_in))/3600);
+                                                
+                                                        $time_start_ts = strtotime($time_start);
+                                                        $time_end_ts = strtotime($time_end);
+
+                                                        $lunch_start = strtotime(date('Y-m-d 12:00:00', $time_start_ts));
+                                                        $lunch_end   = strtotime(date('Y-m-d 13:00:00', $time_start_ts));
+                                                        // if ($time_end_ts < $time_start_ts) {
+                                                        //     $time_end_ts += 86400; `
+                                                        // }
+                                                        if(strtotime($date_r." ".$employee_schedule->time_in_from) > $time_start_ts)
+                                                        {
+                                                            $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
+                                                        }
+                                                        $work_ot =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                    
+                                                        if($time_end_ts > $schedule_out)
+                                                        {
+                                                            $time_end_ts =  $schedule_out;
+                                                          
+                                                        }
+                                                        $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        
+                                                     
+                                                        $schedule_hours = 0;
+                                                        
+                                                        if($employee_schedule->time_in_from)
+                                                        {
+                                                            $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                          
+                                                            // if ($emp->employee_code == "A10199")//abanes
+                                                            // {
+                                                            //     if ($schedule_hours >= 7)
+                                                            //     {
+                                                            //         $schedule_hours =  $schedule_hours-1;
+                                                            //         if($work >= ($schedule_hours/1.5))
+                                                            //         {
+                                                            //             $work = $work-1;
+                                                            //         }
+                                                            //     }
+                                                            // }
+
+                                                            // if ($emp->employee_code == "A197326")//lacaran
+                                                            // {
+                                                            //     if ($schedule_hours >= 4)
+                                                            //     {
+                                                            //         $schedule_hours =  $schedule_hours-1;
+                                                            //         if($work >= ($schedule_hours/1.5))
+                                                            //         {
+                                                            //             $work = $work-1;
+                                                            //         }
+                                                            //     }
+                                                            // }
+                                                          
+                                                            if($schedule_hours > 8)
+                                                            {
+                                                                $schedule_hours =  $schedule_hours-1;
+                                                              
+                                                                if($work >= ($schedule_hours/1.5))
+                                                                {
+                                                                   
+                                                                    $work = $work-1;
+                                                                   
+                                                                    
+                                                                }
+                                                               
+                                                                
+                                                            } else {
+                                                                $day_of_week = date('N', strtotime($date_r)); 
+                                                                $is_weekend = ($day_of_week >= 6);
+
+                                                                $is_pbi = ($emp->company_id ?? '') === 10;
+                                                                $is_wli_hbu = ($emp->company_id ?? '') === 13;
+                                                                if (!(($is_pbi && $is_weekend) || $is_wli_hbu || ($is_pbi && $schedule_hours <= 8))) {
+                                                                    if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
+                                                                        $schedule_hours = $schedule_hours - 1;
+                                                                        $work = $work - 1;
+                                                                    }
+                                                                }
+                                                            }
+                                                            // if($emp->employee_code == "A340612")//frosie
+                                                            // {
+                                                            //     $schedule_hours =  $schedule_hours-1;
+                                                            //     if($work >= ($schedule_hours/1.5))
+                                                            //     {
+                                                                   
+                                                            //         $work = $work-1;
+                                                                   
+                                                                    
+                                                            //     }
+                                                                
+                                                            // }
+                                                            
+                                                          
+                                                            if($schedule_hours > $work)
+                                                            {
+                                                                $undertime = (double) number_format($schedule_hours - $work,2);
+                                                                // dd($undertime);
+                                                            }
+                                                           if($work_ot > $original_sched)
+                                                           {
+                                                            $overtime = (double) number_format($work_ot - $original_sched,2);
+                                                            
+                                                           }
+                                                        //    if($date_r == "2024-07-10")
+                                                        //    {
+                                                        //     dd($original_sched);
+                                                        //    }
+                                                            
+                                                            
+                                                          
+                                                            if($work > $schedule_hours)
+                                                            {
+                                                                $work = $schedule_hours;
+                                                            }
+                                                            if($leave_count == .5)
+                                                            {
+                                                                if($work > $schedule_hours)
+                                                                {
+
+                                                                    $work = $schedule_hours/2;
+                                                                }
+                                                            }
+                                                            if($abs_half == .5)
+                                                            {
+                                                                if($work > $schedule_hours)
+                                                                {
+                                                                    $work = $schedule_hours/2;
+                                                                }
+                                                            }
+                                                        }
+
+                                                    @endphp                                            
+                                                @endif
+                                                @php
+                                                $late_diff_hours=0;
+                                                if($time_start && $time_end && $employee_schedule)
+                                                {
+                                                    $time_in_data_full =  date('Y-m-d H:i:s',strtotime($time_start));
+                                                    $time_in_data_date =  date('Y-m-d',strtotime($time_start));
+                                                    $schedule_time_in =  $time_in_data_date . ' ' . $employee_schedule['time_in_to'];
+                                                    $schedule_time_out =  $time_in_data_date . ' ' . $employee_schedule['time_out_to'];
+                                                    $schedule_time_in =  date('Y-m-d H:i:s',strtotime($schedule_time_in));
+                                                    $schedule_time_in_final =  new DateTime($schedule_time_in);
+                                                    if(date('Y-m-d H:i',strtotime($time_in_data_full)) > date('Y-m-d H:i',strtotime($schedule_time_in))){
+                                                        $late_diff = $schedule_time_in_final->diff(new DateTime($time_in_data_full));
+                                                        $late_diff_hours = round($late_diff->s / 3600 + $late_diff->i / 60 + $late_diff->h + $late_diff->days * 24, 2);
+                                                    }   
+                                                    
+                                                    if($undertime > 0){
+                                                        if($late_diff_hours > 0){
+                                                            $undertime_hrs = $undertime - ($late_diff_hours);
+
+                                                            if($late_diff_hours >= ($schedule_hours/2.25))
+                                                            {
+                                                                $undertime_hrs = $undertime - ($late_diff_hours-1);
+                                                            }
+                                                      
+                                                        }else{
+                                                            $undertime_hrs = $undertime;
+                                                        }
+                                                    }  
+                                                }
+                                                @endphp
+                                                @if($work > 0)
+                                                    @php
+                                                        $abs = 0;
+                                                    @endphp
+                                                @endif
+                                                @if(($leave_count != 0) && ($abs == 0))
+                                                    @php
+                                                        $abs = $leave_count;
+                                                    @endphp
+                                                @endif
+                                                @if($rest)
+                                                    @php
+                                                        $abs =0;
+                                                        $leave_count =0;
+                                                        $previous_abs = $abs;
+                                                    @endphp
+                                                @endif
+                                                @php
+                                                    $late = $late_diff_hours*60;
+                                                  
+                                                    if($late/60 > (($schedule_hours)/2.25))
+                                                    {
+                                                        // dd($late);
+                                                        $late = $late-60;
+                                                        
+                                                    }
+                                                    if($undertime_hrs/60 > ($schedule_hours/2))
+
+                                                    {
+                                                        $undertime_hrs = $undertime_hrs -60;
+                                                    }
+                                                    if($leave_count == .5)
+                                                    {
+                                                        if($work < ($schedule_hours/2))
+                                                        {
+                                                            $late = ($schedule_hours/2)-$work;
+                                                            if($work < $schedule_hours/2)
+                                                            {
+                                                                $late = 0;
+                                                                $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
+                                                            } 
+                                                        }
+                                                        else{
+                                                            $work = ($schedule_hours/2);
+                                                            $late = 0;
+                                                            $undertime_hrs = 0;
+                                                        }
+                                                    }
+
+                                                    if($abs_half == .5)
+                                                    {
+                                                        $abs = .5;
+                                                        if($work < ($schedule_hours/2))
+                                                            {
+                                                                $late = ($schedule_hours/2)-$work;
+                                                                if($work < $schedule_hours/2)
+                                                                {
+                                                                    $default_halfday_hrs = 4;
+                                                                    if ($schedule_hours <= $default_halfday_hrs)
+                                                                    {
+                                                                        $late = 0;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $late = (double) number_format(($schedule_hours/2 - $work),2) *60;
+                                                                    }
+                                                                    
+                                                                    $undertime_hrs = 0;
+                                                                } 
+                                                            }
+                                                            else{
+                                                                $work = ($schedule_hours/2);
+                                                                $late = 0;
+                                                                $undertime_hrs = 0;
+                                                            }
+                                                    }
+                                                    
+                                                    $overtime = $overtime+$late_diff_hours;
+                                                @endphp
+                                                @php
+                                                if($work <0)
+                                                {
+                                                    $work = 0;
+                                                }
+                                                if($late <0)
+                                                {
+                                                    $late = 0;
+                                                }
+                                                if($undertime_hrs <0)
+                                                {
+                                                    $undertime_hrs = 0;
+                                                }
+                                          
+                                                @endphp
+                                                @php
+                                                $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
+                                               
+                                                $night_diff = 0;
+                                                $night_diff_ot = 0;
+                                                if(($time_start!=null )&& ($time_end!=null))
+                                                {
+                                                        $nightdiff_start = $time_start;
+                                                        $nightdiff_end = $time_end;
+                                                    
+                                                    if($employee_schedule)
+                                                    {
+                                                        
+                                                        $start_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_in_to);
+                                                        $end_schedule = (date('Y-m-d',strtotime($time_start))." ".$employee_schedule->time_out_to);
+
+                                                        if(strtotime($start_schedule) > strtotime($end_schedule))
+                                                        {
+                                                            $s = date('Y-m-d', strtotime($time_start . ' +1 day'));
+                                                            $end_schedule = date('Y-m-d H:i', strtotime($s." ".$employee_schedule->time_out_to));
+                                                        }
+                                                   
+                                                        if(strtotime($start_schedule) > strtotime($time_start))
+                                                        {   
+                                                            $nightdiff_start = $start_schedule;
+                                                        }
+                                                        if(strtotime($end_schedule) < strtotime($time_end))
+                                                        {   
+                                                            $nightdiff_end = $end_schedule;
+                                                        }
+                                                        $night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                        if((strtotime($end_schedule)-strtotime($start_schedule))/3600 > 8)
+                                                        {
+
+                                                        
+                                                        if($night_diff >= 5)
+                                                        {
+                                                            $night_diff = $night_diff - 1;
+                                                        }
+                                                        }
+                                                        if($night_diff < 7)
+                                                        {
+                                                            $actual_night_diff = night_difference_per_company($nightdiff_start,$nightdiff_end);
+                                                            // $night_diff_ot = night_difference_per_company($time_start,$time_end)-$actual_night_diff;
+                                                            if ($employee_schedule) {
+                                                                $isNightShift = strtotime($employee_schedule->time_in_to) > strtotime($employee_schedule->time_out_to);
+
+                                                                if ($isNightShift) {
+                                                                    $night_diff_ot = night_difference_per_company($time_start,$time_end) - $actual_night_diff;
+                                                                }
+                                                            }
+                                                        }
+                                                        
+                                                    }
+                                                     
+                                                    
+                                                    
+                                                }
+                                                if($night_diff_ot < .5)
+                                                {
+                                                    $night_diff_ot = 0;
+                                                }
+                                                if($overtime <1)
+                                                {
+                                                    $overtime =0;
+                                                }
+                                                if($overtime < $approved_overtime_hrs)
+                                                {
+                                                    $overtime = ($overtime);
+                                                }
+                                                else
+                                                {
+                                                    $overtime = ($approved_overtime_hrs);
+                                                }
+                                                if($overtime > 0)
+                                                {
+                                                    if($overtime < $night_diff_ot)
+                                                    {
+                                                        $night_diff_ot = $overtime;
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    $night_diff_ot = 0;
+                                                }
+                                                    // $subtotal_overtimes =  $subtotal_overtimes + $overtime;
+                                                    $restday_ot = 0;
+                                                    $restday_ot_ge = 0;
+                                                    $restday_nd = 0;
+                                                    $work_rest = 0;
+                                                    $restnd = 0;
+                                                    $restnd_ge = 0;
+                                                    $rest = "";
+                                                
+                                                    if($employee_schedule != null)
+                                                    {
+                                                            if(empty($employee_schedule->time_in_from))
+                                                            {
+                                                                $rest = "RESTDAY";
+                                                            }
+                                                            if($employee_schedule->time_in_from == '')
+                                                            {
+                                                                $rest = "RESTDAY";
+                                                                
+                                                       
+                                                            }
+                                                            if($employee_schedule->time_in_from == null)
+                                                            {
+                                                                $rest = "RESTDAY";
+                                                               
+                                                            }
+                                                       
+                                                    }
+                                                    else {
+                                                        
+                                                        $rest = "RESTDAY";
+                                                    }
+                                                   
+                                                    if($rest == "RESTDAY")
+                                                    {
+                                                        $overtime = 0;
+                                                        $night_diff = 0;
+                                                        $night_diff_ot = 0;
+                                                        if(($time_start) && ($time_end) && ($approved_overtime_hrs >0))
+                                                        {
+                                                            
+                                                            $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
+                                                            $restnd =  night_difference_per_company($time_start,$time_end);
+                                                            if($work_rest >9 )
+                                                            { 
+                                                                $restnd =  round(night_difference_per_company($time_start,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($time_start)))));
+                                                                $restnd_ge = night_difference_per_company($time_start,$time_end);
+                                                                $restnd_ge = $restnd_ge - $restnd;
+                                                                $restnd = $restnd-1;
+                                                                if($restnd <0)
+                                                                {
+                                                                    $restnd = 0;
+                                                                }
+                                                                if($restnd_ge <0)
+                                                                {
+                                                                    $restnd_ge = 0;
+                                                                }
+                                                            }
+                                                          
+                                                            
+                                                        }
+                                                        $late = 0;
+                                                        $undertime = 0;
+                                                        if($work_rest > 0)
+                                                        {
+                                                            if($work_rest > $approved_overtime_hrs)
+                                                            {
+                                                                $work_rest = $approved_overtime_hrs;
+                                                            }
+                                                            
+                                                            if($work_rest >2)
+                                                            {
+                                                                $restday_ot = $work_rest;
+                                                                if($work_rest >= 8)
+                                                                {
+                                                                    $restday_ot = 8;
+                                                                    $restday_ot_ge = $work_rest-8;
+                                                                }
+                                                            }
+                                                        }
+                                                       
+                                                    }
+                                                if($overtime == null)
+                                                {
+                                                    $overtime = 0;
+                                                }
+                                                $lh_ot = 0;
+                                                $sh_ot = 0;
+                                                $lh_ot_ge = 0;
+                                                $sh_ot_ge = 0;
+                                                $sh_ot_nd = 0;
+                                                $sh_ot_nd_ge = 0;
+                                                $lh_ot_nd = 0;
+                                                $lh_ot_nd_ge = 0;
+                                                
+                                                $rst_lh_ot = 0;
+                                                $rst_lh_ot_ge = 0;
+                                                $rst_lh_nd = 0;
+                                                $rst_lh_nd_ge =0;
+                                                
+                                                $rst_sh_ot = 0;
+                                                $rst_sh_ot_ge = 0;
+                                                $rst_sh_nd = 0;
+                                                $rst_sh_nd_ge =0;
+                                                
+                                                $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                                if($check_if_holiday)
+                                                {
+                                                    $restnd_ge=0;
+                                                    $restday_ot= 0;
+                                                    $restday_ot_ge= 0;
+                                                    // dd($check_if_holiday);
+                                                  $work = $schedule_hours;
+
+                                                  if ($emp->employee_code == "A197326")//lacaran
+                                                    {
+                                                        if ($schedule_hours >= 4)
+                                                        {
+                                                            $schedule_hours =  $schedule_hours-1;
+                                                            if($work >= ($schedule_hours/1.5))
+                                                            {
+                                                                $work = $work-1;
+                                                            }
+                                                        }
+                                                    }
+                                                //   if ($work >= 7)
+                                                //   {
+                                                //     $work = $work-1;
+                                                //   }
+                                                //   dd($schedule_hours);
+                                                $att = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
+                                                  if($rest == "RESTDAY")
+                                                  {
+                                                    // if($att)
+                                                    // {
+                                                    //     if ($att->time_in && $att->time_out != null)
+                                                    //     {
+                                                    //         $work_hrs = round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
+                                                    //         $work = $work_hrs;
+                                                    //     }
+                                                    // }
+                                                    // else
+                                                    // {
+                                                    // }
+                                                    if ($emp->work_description == 'Non-Monthly') 
+                                                    {   
+                                                        if($emp->level == 5)
+                                                        {
+                                                            $work=0;
+                                                        }
+                                                        else{
+                                                            $prev = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
+                                                            if($prev)
+                                                            {
+                                                                $work = (strtotime($prev->time_out_to)-strtotime($prev->time_in_to))/3600;
+                                                                                    $work = $work-1;
+                                                            }
+                                                            else
+                                                            {
+                                                                $work = 0; 
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    $work = 0;
+                                                  }
+                                                  if($abs == 1)
+                                                  {
+                                                    $work = 0;
+                                                  }
+
+                                                  $late = 0;
+                                                  $undertime_hrs = 0;
+                                                  $overtime = 0;
+                                                  $night_diff = 0;
+                                                  $night_diff_ot = 0;
+                                                  $restnd = 0;
+                                                  
+                                                    $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
+                                                    if(strtotime($time_end) - strtotime($time_start) > 2)
+                                                    {
+                                                        if($approved_overtime_hrs > 2 || ($approved_overtime_hrs > 0 && $emp->company_id == 11))
+                                                    {
+                                                        if($check_if_holiday == "Special Holiday")
+                                                        {
+                                                            if ($rest == "RESTDAY") 
+                                                            {
+                                                                $rst_sh_ot=8;
+                                                                if($approved_overtime_hrs <= 8)
+                                                                {
+                                                                    $rst_sh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $rst_sh_ot_ge = $approved_overtime_hrs-8;
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                $sh_ot = 8;
+                                                                if($approved_overtime_hrs <= 8)
+                                                                {
+                                                                    $sh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $sh_ot_ge = $approved_overtime_hrs-8;
+                                                                }
+                                                            }
+
+                                                            $sh_ot_nd =  night_difference_per_company($time_start,$time_end);
+                                                            if($sh_ot_nd >=4.5 )
+                                                            {
+                                                                $sh_ot_nd = $sh_ot_nd-1;
+                                                            }
+                                                            if($sh_ot_nd > $sh_ot)
+                                                            {
+                                                                $sh_ot_nd = $sh_ot;
+                                                            }
+
+                                                            if($employee_schedule)
+                                                            {
+                                                                $time_start_string = strtotime($time_start);
+                                                                $time_end_string = strtotime($time_end);
+                                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                                
+                                                                if(($schedule_out) < ($schedule_in))
+                                                                {
+                                                                    
+                                                                    $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                                }
+                                                               
+                                                                if($time_end_string>$schedule_out)
+                                                                {
+                                                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                    $sh_ot_use = $sh_ot_nd;
+                                                                    if($sh_ot_nd >=4.5 )
+                                                                    {   
+                                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                                        if($schedule_hours > 8)
+                                                                        {
+                                                                            $sh_ot_nd = $sh_ot_nd-1;
+                                                                        }
+                                                                    }
+
+                                                                    if($rest == "RESTDAY")
+                                                                    {
+                                                                        $rst_sh_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
+                                                                        $rst_sh_nd_ge = $rst_sh_nd_ge;
+                                                                        if($rst_sh_nd_ge <0)
+                                                                        {
+                                                                            $rst_sh_nd_ge=0;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        $sh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$sh_ot_use;
+                                                                        $sh_ot_nd_ge = $sh_ot_nd_ge;
+                                                                        if($sh_ot_nd_ge <0)
+                                                                        {
+                                                                            $sh_ot_nd_ge=0;
+                                                                        }
+                                                                    }
+                                                                   
+                                                                }
+                                                                else {
+                                                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
+                                                                    if($sh_ot_nd >=4.5 )
+                                                                    {   
+                                                                        if($schedule_hours > 8)
+                                                                        {
+                                                                        $sh_ot_nd = $sh_ot_nd-1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                             
+                                                            }
+                                                           
+                                                        }
+                                                        else 
+                                                        {
+                                                            if ($rest == "RESTDAY")
+                                                            {
+                                                                $rst_lh_ot = 8;
+                                                                
+                                                                if($approved_overtime_hrs <= 8)
+                                                                {
+                                                                    $rst_lh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $rst_lh_ot_ge = $approved_overtime_hrs-8;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                $lh_ot = 8;
+                                                                if($approved_overtime_hrs <= 8)
+                                                                {
+                                                                    $lh_ot = $approved_overtime_hrs;
+                                                                }
+                                                                else
+                                                                {
+                                                                    $lh_ot_ge = $approved_overtime_hrs-8;
+                                                                }
+                                                            }
+
+                                                            if($employee_schedule)
+                                                            {
+                                                                $time_start_string = strtotime($time_start);
+                                                                $time_end_string = strtotime($time_end);
+                                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                                                
+                                                                if(($schedule_out) < ($schedule_in))
+                                                                {
+                                                                    
+                                                                    $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                                }
+                                                                if($time_end_string>$schedule_out)
+                                                                {
+                                                                    $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                    $lh_ot_use = $lh_ot_nd;
+                                                                    if($lh_ot_nd >=4.5 )
+                                                                    {   
+                                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                                        if($schedule_hours > 8)
+                                                                        {
+                                                                        $lh_ot_nd = $lh_ot_nd-1;
+                                                                        }
+                                                                    }
+                                                                    
+                                                                    if ($rest == "RESTDAY")
+                                                                    {
+                                                                        $lh_ot_nd = 0;
+                                                                        $rst_lh_nd_ge = night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_use;
+                                                                        if($rst_lh_nd_ge <0)
+                                                                        {
+                                                                            $rst_lh_nd_ge=0;
+                                                                        }
+                                                                    }
+                                                                    else 
+                                                                    {
+                                                                        $rst_lh_nd_ge = 0;
+                                                                        $lh_ot_nd_ge =night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end)-$lh_ot_use;
+                                                                        if($lh_ot_nd_ge <0)
+                                                                        {
+                                                                            $lh_ot_nd_ge=0;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    $lh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),$time_end);
+                                                                    if($lh_ot_nd >=4.5 )
+                                                                    {   
+                                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                                        if($schedule_hours > 8)
+                                                                        {
+                                                                        $lh_ot_nd = $lh_ot_nd-1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                             
+                                                            }
+                                                        }
+                                                    }
+                                                    else 
+                                                    {
+                                                        if ($emp->work_description == 'Non-Monthly')
+                                                        {
+                                                            if ($employee_schedule)
+                                                            {
+                                                                $time_start_string = strtotime($time_start);
+                                                                $time_end_string = strtotime($time_end);
+                                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                                                $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+    
+                                                                $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                if($time_end_string>$schedule_out)
+                                                                {
+                                                                    $sh_ot_nd =  night_difference_per_company(date('Y-m-d H:i',$schedule_in),date('Y-m-d H:i',$schedule_out));
+                                                                    $sh_ot_use = $sh_ot_nd;
+                                                                    if($sh_ot_nd >=4.5 )
+                                                                    {   
+                                                                        $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                                                        if($schedule_hours > 8)
+                                                                        {
+                                                                            $sh_ot_nd = $sh_ot_nd-1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    }
+                                                  
+                                                    // Paid Legal Holiday for Daily Rate Employee
+                                                    if($emp->work_description == "Non-Monthly")
+                                                    {
+                                                        if($check_if_holiday != "Special Holiday")
+                                                        {
+                                                            if($time_in)
+                                                            {
+                                                                if ($time_in->time_in != null)
+                                                                {
+                                                                    $employee_schedule_before = employeeSchedule($schedules,date('Y-m-d',strtotime("-1 day",strtotime($date_r))),$emp->schedule_id, $emp->employee_code);
+                                                                    
+                                                                    if ($employee_schedule_before->time_in_to > $employee_schedule_before->time_out_to)
+                                                                    {
+                                                                        $schedule_in = strtotime($date_r." ".$employee_schedule_before->time_in_to);
+                                                                        $schedule_out = strtotime($date_r." ".$employee_schedule_before->time_out_to)+86400;
+                                                                        // dd($schedule_in, $schedule_out);
+                                                                        if ($employee_schedule_before->time_in_to != null)
+                                                                        {
+                                                                            $work = ($schedule_out-$schedule_in)/3600;
+                                                                            $work = $work-1;
+                                                                        }
+                                                                    }
+                                                                    else 
+                                                                    {
+                                                                        if ($employee_schedule_before->time_in_to != null)
+                                                                        {
+                                                                            // if consultant 0hrs in legal holiday
+                                                                            if($emp->level == 5)
+                                                                            {
+                                                                                $work=0;
+                                                                            }
+                                                                            else 
+                                                                            {
+                                                                                $work = (strtotime($employee_schedule_before->time_out_to)-strtotime($employee_schedule_before->time_in_to))/3600;
+                                                                                $work = $work-1;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } else 
+                                                            {
+                                                                if($emp->level == 5)
+                                                                    {
+                                                                        $work=0;
+                                                                    }
+
+                                                            } 
+                                                        }
+                                                    }
+
+                                                }
+
+                                                if($abs == 1)
+                                                {
+                                                    $work = 0;
+                                                    $late = 0;
+                                                    $undertime_hrs = 0;
+                                                }
+                                                $subtotal_abs += $abs;
+                                                $subtotal_leave_w_pay += $leave_count;
+                                                $subtotal_reg_hrs += $work;
+                                                $subtotal_late += ($late);
+                                                $subtotal_undertime += ($undertime_hrs*60);
+                                                $subtotal_overtimes +=$overtime;
+                                                $subtotal_nd += $night_diff;
+                                                $subtotal_ot_nd += $night_diff_ot;
+                                                $subtotal_rd_ot += $restday_ot;
+                                                $subtotal_rd_ot_ge += $restday_ot_ge;
+                                                $subtotal_rd_nd += $restnd;
+                                                $subtotal_rd_nd_ge += 0;
+                                               
+                                                @endphp
+                                                <td @if($abs-$leave_count>0) class='bg-danger'@endif ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
+                                                <td ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
+                                                <td @if($late>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
+                                                <td  @if($undertime_hrs>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{number_format($undertime_hrs*60,2)}}</td>
+                                                <td @if($overtime>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="{{$overtime}}">{{number_format($overtime,2)}}</td> {{-- REG OT --}}
+                                                <td @if($night_diff>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_nd]" value="{{$night_diff}}">{{number_format($night_diff,2)}}</td> {{-- REG ND --}}
+                                                <td @if($night_diff_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot_nd]" value="{{$night_diff_ot}}">{{number_format($night_diff_ot,2)}}</td> {{-- REG OT ND --}}
+                                                <td @if($restday_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot]" value="{{$restday_ot}}">{{number_format($restday_ot,2)}}</td>  {{-- RST OT --}}
+                                                <td @if($restday_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_ot_over_eight]" value="{{$restday_ot_ge}}">{{number_format($restday_ot_ge,2)}}</td> {{-- RST OT > 8 --}}
+                                                <td @if($restnd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd]" value="{{$restnd}}">{{number_format($restnd,2)}}</td> {{-- RST ND --}}
+                                                <td  @if($restnd_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_nd_over_eight]" value="{{$restnd_ge}}">{{number_format($restnd_ge,2)}}</td> {{-- RST ND > 8 --}}
+                                                <td @if($lh_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot]" value="{{$lh_ot}}">{{number_format($lh_ot,2)}}</td> {{-- LH OT --}}
+                                                <td @if($lh_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_ot_over_eight]" value="{{$lh_ot_ge}}">{{number_format($lh_ot_ge,2)}}</td> {{-- LH OT > 8 --}}
+                                                <td @if($lh_ot_nd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_nd]" value="{{$lh_ot_nd}}">{{number_format($lh_ot_nd,2)}}</td> {{-- LH ND --}}
+                                                <td @if($lh_ot_nd_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lh_nd_over_eight]" value="{{$lh_ot_nd_ge}}">{{number_format($lh_ot_nd_ge,2)}}</td> {{-- LH ND > 8 --}}
+                                                <td @if($sh_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_ot]" value="{{$sh_ot}}">{{number_format($sh_ot,2)}}</td> {{-- SH OT --}}
+                                                <td @if($sh_ot_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_ot_over_eight]" value="{{$sh_ot_ge}}">{{number_format($sh_ot_ge,2)}}</td> {{-- SH OT > 8 --}}
+                                                <td @if($sh_ot_nd>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_nd]" value="{{$sh_ot_nd}}">{{number_format($sh_ot_nd,2)}}</td> {{-- SH ND --}}
+                                                <td @if($sh_ot_nd_ge>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][sh_nd_over_eight]" value="{{$sh_ot_nd_ge}}">{{number_format($sh_ot_nd_ge,2)}}</td> {{-- SH ND > 8 --}}
+                                                <td  @if($rst_lh_ot>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_ot]" value="{{ $rst_lh_ot }}">{{ number_format($rst_lh_ot,2) }}</td> {{-- RST LH OT --}}
+                                                <td @if($rst_lh_ot_ge>0) class="bg-warning"@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_ot_over_eight]" value="{{ $rst_lh_ot_ge }}">{{ number_format($rst_lh_ot_ge,2) }}</td> {{-- RST LH OT > 8 --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_nd]" value="0.00">0.00</td> {{-- RST LH ND --}}
+                                                <td @if($rst_lh_nd_ge>0) class="bg-warning"@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_lh_nd_gt_8]" value="{{ $rst_lh_nd_ge }}">{{ number_format($rst_lh_nd_ge,2) }}</td> {{-- RST LH ND > 8 --}}
+                                                <td @if($rst_sh_ot>0) class="bg-warning"@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot]" value="{{ $rst_sh_ot }}">{{ number_format($rst_sh_ot,2) }}</td> {{-- RST SH OT --}}
+                                                <td @if($rst_sh_ot_ge >0) class="bg-warning" @endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_ot_gt_8]" value="{{ $rst_sh_ot_ge }}">{{ number_format($rst_sh_ot_ge,2) }}</td> {{-- RST SH OT > 8 --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_nd]" value="0.00">0.00</td> {{--RST SH ND--}}
+                                                <td @if($rst_sh_nd_ge >0) class="bg-warning" @endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][rst_sh_nd_over_eight]" value="{{ $rst_sh_nd_ge }}">{{ number_format($rst_sh_nd_ge,2) }}</td> {{-- RST SH ND > 8 --}}
+                                                <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][remarks]" value="{{$if_leave}} {{$if_has_ob ? 'OB' : ''}}">
+                                                    {{$if_leave}} {{$if_has_ob ? 'OB' : ''}}
+                                                </td>
+                                          
+                                                        
                                             </tr>
-                                        @else
-                                            @include('attendances.partials.detailed_rows', ['attendance_groups' => $attendance_groups, 'show_company_column' => true])
-                                        @endif
+                                            @endforeach
+                                            <tr>
+                                                <td><strong>Subtotal</strong></td>
+                                                <td><strong>{{ $emp->employee_code }}</strong></td>
+                                                <td><strong>{{$emp->last_name . ' ' . $emp->first_name}}</strong></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td><strong>{{ number_format($subtotal_abs,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_leave_w_pay,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_reg_hrs,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_late,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_undertime,2) }}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_overtimes,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_nd,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_ot_nd,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_ot,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_ot_ge,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_nd,2)}}</strong></td>
+                                                <td><strong>{{ number_format($subtotal_rd_nd_ge,2)}}</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                                <td><strong>0.00</strong></td>
+                                               <td></td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                        </form>
-                        <form method="POST" action="{{ route('attendance.unpost') }}" id="unpostAttendanceForm" style="display: none;">
-                            @csrf
-                            <input type="hidden" name="company" value="{{ $company }}">
-                            <input type="hidden" name="from" value="{{ $from_date }}">
-                            <input type="hidden" name="to" value="{{ $to_date }}">
-                            <input type="hidden" name="department" value="{{ $department }}">
-                            <input type="hidden" name="location" value="{{ $location }}">
-                            <input type="hidden" name="employee_code" id="unpostEmployeeCode">
-                            @foreach((array) $employee_filter as $filteredEmployee)
-                                <input type="hidden" name="employee[]" value="{{ $filteredEmployee }}">
-                            @endforeach
                         </form>
                     </div>
                 </div>
@@ -243,196 +1563,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .timekeeping-posting-board {
-        margin: 12px 0 18px;
-        padding: 18px;
-        border: 1px solid #dfe8f3;
-        border-radius: 8px;
-        background: #fbfdff;
-        box-shadow: 0 8px 24px rgba(31, 45, 61, .06);
-    }
-    .posting-board-header,
-    .posting-status-line,
-    .posting-employee-card {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-    }
-    .posting-kicker {
-        display: block;
-        color: #248afd;
-        font-size: .72rem;
-        font-weight: 800;
-        text-transform: uppercase;
-    }
-    .posting-board-header h4 {
-        margin: 4px 0;
-        color: #172033;
-        font-weight: 800;
-    }
-    .posting-board-header p,
-    .posting-status-line,
-    .posting-employee-info small,
-    .posting-employee-percent small {
-        margin: 0;
-        color: #667085;
-        font-weight: 600;
-    }
-    .posting-actions {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 8px;
-    }
-    .posting-metrics {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 16px;
-    }
-    .posting-metrics > div {
-        min-height: 76px;
-        padding: 12px;
-        border: 1px solid #e4ebf3;
-        border-radius: 8px;
-        background: #fff;
-    }
-    .posting-metrics small {
-        display: block;
-        color: #7b8794;
-        font-size: .72rem;
-        font-weight: 800;
-        text-transform: uppercase;
-    }
-    .posting-metrics strong {
-        display: block;
-        margin-top: 6px;
-        color: #172033;
-        font-size: 1.45rem;
-        font-weight: 800;
-        line-height: 1;
-    }
-    .posting-progress {
-        height: 10px;
-        margin: 14px 0 10px;
-        overflow: hidden;
-        border-radius: 999px;
-        background: #e8eef7;
-    }
-    .posting-progress > div {
-        height: 100%;
-        border-radius: 999px;
-        background: #28a745;
-    }
-    .posting-ready {
-        color: #16833a;
-        font-weight: 800;
-    }
-    .posting-employee-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
-        max-height: 360px;
-        margin-top: 14px;
-        overflow: auto;
-        padding-right: 4px;
-    }
-    .posting-search-wrap {
-        position: relative;
-        margin-top: 14px;
-    }
-    .posting-search-wrap i {
-        position: absolute;
-        top: 50%;
-        left: 12px;
-        color: #7b8794;
-        transform: translateY(-50%);
-    }
-    .posting-search-wrap input {
-        padding-left: 36px;
-    }
-    .posting-employee-card {
-        min-height: 78px;
-        padding: 12px;
-        border: 1px solid #dfe8f3;
-        border-radius: 8px;
-        background: #fff;
-        cursor: pointer;
-    }
-    .posting-employee-card:hover {
-        border-color: #9bc9ff;
-        background: #f4faff;
-    }
-    .posting-employee-card.is-locked {
-        cursor: default;
-        background: #f3f6f9;
-    }
-    .posting-employee-check {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .posting-employee-check span {
-        width: 30px;
-        height: 30px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        color: #248afd;
-        background: #eaf4ff;
-    }
-    .posting-employee-card.is-locked .posting-employee-check span {
-        color: #667085;
-        background: #e6ebf1;
-    }
-    .posting-employee-info {
-        min-width: 0;
-        flex: 1;
-    }
-    .posting-employee-info strong,
-    .posting-employee-info small {
-        display: block;
-        word-break: break-word;
-    }
-    .posting-employee-percent {
-        text-align: right;
-    }
-    .posting-employee-percent strong {
-        display: block;
-        color: #172033;
-        font-weight: 800;
-    }
-    .posting-unpost-btn {
-        margin-top: 8px;
-        padding: 3px 10px;
-        font-size: .72rem;
-        font-weight: 800;
-    }
-    @media (max-width: 1199.98px) {
-        .posting-employee-grid,
-        .posting-metrics {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
-    @media (max-width: 767.98px) {
-        .posting-board-header,
-        .posting-status-line {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-        .posting-actions {
-            justify-content: flex-start;
-        }
-        .posting-employee-grid,
-        .posting-metrics {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
 
 @php
     function night_difference($start_work,$end_work) {
@@ -537,7 +1667,6 @@
     $(document).ready(function() {
         var fromDateInput = document.getElementById('fromDate');
         var toDateInput = document.getElementById('toDate');
-        var companyMinDate = null;
 
         // Initialize Flatpickr on date inputs
         var fromFlatpickr = flatpickr(fromDateInput, {
@@ -549,8 +1678,6 @@
             dateFormat: "Y-m-d",
             disable: [] // Initialize with an empty array of disabled dates
         });
-
-        var initialCompanyId = $("#companySelect").val();
 
         // Event listener for company select change
         $("#companySelect").on('change', function() {
@@ -564,27 +1691,16 @@
                 fromDateInput.style.backgroundColor = 'transparent';
                 toDateInput.style.backgroundColor = 'transparent';
 
-                // Fetch dates that are locked because pay-reg was already generated.
+                // Fetch disabled dates via AJAX
                 $.ajax({
                     url: "{{ url('/fetch-disabled-dates') }}/" + selectedCompanyId,
                     type: 'GET',
                     success: function(response) {
                         var logDates = response.log_dates;
-                        companyMinDate = response.next_available_date || null;
 
-                        // Update Flatpickr options to allow only dates after generated pay-reg.
+                        // Update Flatpickr options to disable fetched dates
                         fromFlatpickr.set('disable', logDates);
                         toFlatpickr.set('disable', logDates);
-                        fromFlatpickr.set('minDate', companyMinDate);
-                        toFlatpickr.set('minDate', companyMinDate);
-
-                        if (companyMinDate && (!fromDateInput.value || fromDateInput.value < companyMinDate)) {
-                            fromFlatpickr.setDate(companyMinDate, true);
-                        }
-
-                        if (companyMinDate && (!toDateInput.value || toDateInput.value < companyMinDate)) {
-                            toFlatpickr.setDate(companyMinDate, true);
-                        }
 
                         // Check if any log_date matches the fromDate and toDate
                         checkButtonStatus(logDates, fromDateInput.value, toDateInput.value);
@@ -601,9 +1717,6 @@
                 // Reset Flatpickr options if no company is selected
                 fromFlatpickr.set('disable', []);
                 toFlatpickr.set('disable', []);
-                fromFlatpickr.set('minDate', null);
-                toFlatpickr.set('minDate', null);
-                companyMinDate = null;
 
                 // Enable buttons if no company is selected
                 enableButtons();
@@ -612,11 +1725,6 @@
 
         // Event listener for date changes
         fromFlatpickr.config.onChange.push(function(selectedDates, dateStr, instance) {
-            var toMinDate = dateStr || companyMinDate;
-            toFlatpickr.set('minDate', toMinDate);
-            if (toDateInput.value && dateStr && toDateInput.value < dateStr) {
-                toFlatpickr.setDate(dateStr, true);
-            }
             checkButtonStatus(instance.config.disable, dateStr, toDateInput.value);
         });
 
@@ -626,85 +1734,37 @@
 
         // Function to check and disable/enable buttons based on conditions
         function checkButtonStatus(logDates, fromDate, toDate) {
-            updatePostingButton();
+            var disable = logDates.includes(fromDate) && logDates.includes(toDate);
+            if (disable) {
+                disableButtons();
+            } else {
+                enableButtons();
+            }
         }
 
         // Function to disable buttons
         function disableButtons() {
-            updatePostingButton();
+            $('#exportButton').prop('disabled', true);
+            $('#postButton').prop('disabled', true);
         }
 
         // Function to enable buttons
         function enableButtons() {
-            updatePostingButton();
+            $('#exportButton').prop('disabled', false);
+            $('#postButton').prop('disabled', false);
         }
-
+        function clear()
+    {
+        alert('renz');
+        document.getElementById('fromDate').value = "";
+        document.getElementById('toDate').value = "";
+    }
         // Initialize with the selected company (if any)
         var selectedCompanyId = $("#companySelect").val();
         if (selectedCompanyId) {
             // Trigger change event to fetch and disable dates for initially selected company
             $("#companySelect").trigger('change');
         }
-
-        function updatePostingButton() {
-            var selectedCount = $('.posting-checkbox:checked').length;
-            $('#selectedPostingCount').text(selectedCount + (selectedCount === 1 ? ' selected' : ' selected'));
-            $('#postButton').prop('disabled', selectedCount === 0);
-            if (typeof applyPostingTableFilter === 'function') {
-                applyPostingTableFilter();
-            }
-        }
-
-        $(document).on('change', '.posting-checkbox', updatePostingButton);
-        $(document).on('click', '.posting-employee-card', function(e) {
-            if ($(e.target).is('input, button, a') || $(e.target).closest('button, a').length) {
-                return;
-            }
-
-            var checkbox = $(this).find('.posting-checkbox:not(:disabled)');
-            if (checkbox.length) {
-                checkbox.prop('checked', !checkbox.prop('checked'));
-                updatePostingButton();
-            }
-        });
-
-        $(document).on('click', '.posting-unpost-btn', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            var employeeCode = $(this).data('code');
-            var employeeName = $(this).data('name');
-
-            Swal.fire({
-                title: 'Unpost employee?',
-                text: 'This will remove posted attendance for ' + employeeName + ' in the selected date range.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, unpost'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById("loader").style.display = "flex";
-                    $('#unpostEmployeeCode').val(employeeCode);
-                    document.getElementById('unpostAttendanceForm').submit();
-                }
-            });
-        });
-
-        $('#selectAllUnlocked').on('click', function() {
-            $('.posting-employee-card:visible .posting-checkbox:not(:disabled)').prop('checked', true);
-            updatePostingButton();
-        });
-
-        $('#postingEmployeeSearch').on('input', function() {
-            var query = $(this).val().toLowerCase();
-            $('.posting-employee-card').each(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(query) !== -1);
-            });
-        });
-
-        updatePostingButton();
     });
 
 
@@ -713,15 +1773,9 @@
     }
 
     function showConfirmation() {
-        var selectedCount = $('.posting-checkbox:checked').length;
-        if (selectedCount === 0) {
-            Swal.fire('No employees selected', 'Select at least one unlocked employee to post.', 'warning');
-            return false;
-        }
-
         Swal.fire({
             title: 'Are you sure?',
-            text: "Post timekeeping for " + selectedCount + " selected employee(s)?",
+            text: "Do you want to submit this form?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -800,50 +1854,13 @@
 <script>
     $(document).ready(function() 
     {
-        window.hasAttendanceRowsToLoad = @json((bool) $date_range);
-        window.postingSelectedEmployeeCodes = [];
-        window.postingFilterActive = $('.timekeeping-posting-board').length > 0;
-        window.attendanceRowsLoadedFor = '';
-        window.attendanceRowsLoading = false;
-
-        if ($.fn.dataTable && !window.postingTableFilterRegistered) {
-            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                if (settings.nTable.id !== 'employee_attendance') {
-                    return true;
-                }
-
-                if (!window.postingFilterActive) {
-                    return true;
-                }
-
-                if (!window.postingSelectedEmployeeCodes.length) {
-                    return false;
-                }
-
-                var rowNode = settings.aoData[dataIndex].nTr;
-                var employeeCode = rowNode ? String(rowNode.getAttribute('data-employee-code')).trim() : '';
-                return window.postingSelectedEmployeeCodes.indexOf(employeeCode) !== -1;
-            });
-            window.postingTableFilterRegistered = true;
-        }
-
-        if (window.hasAttendanceRowsToLoad && !window.postingFilterActive) {
-            loadAttendanceRows(0);
-        } else {
-            initializeAttendanceTable();
-        }
-    });
-
-    function initializeAttendanceTable() {
-        if ($.fn.DataTable.isDataTable('.employee_attendance')) {
-            return;
-        }
-
-        window.attendanceDataTable = new DataTable('.employee_attendance', {
+        new DataTable('.employee_attendance', 
+        {
+            // pagelenth:25,
             fixedColumns: {
-                leftColumns: 1,
+                leftColumns: 1,  // 'start' and 'end' have been replaced with 'leftColumns' for clarity
             },
-            paginate: false,
+            paginate:false,
             dom: 'Bfrtip',
             buttons: [
                 'copy', 'excel'
@@ -852,115 +1869,8 @@
                 "defaultContent": "-",
                 "targets": "_all"
             }],
-            order: []
+            order: [] 
         });
-        window.attendanceDataTable.on('draw', function() {
-            filterAttendanceRowsBySelection(window.postingSelectedEmployeeCodes || []);
-        });
-        applyPostingTableFilter();
-    }
-
-    function selectedPostingCodes() {
-        return $('.posting-checkbox:checked').map(function() {
-            return String($(this).val()).trim();
-        }).get();
-    }
-
-    function resetAttendanceTableForReload(message) {
-        if ($.fn.DataTable.isDataTable('.employee_attendance')) {
-            $('.employee_attendance').DataTable().destroy();
-        }
-
-        window.attendanceDataTable = null;
-        $('#attendanceRows').html('<tr id="attendanceLoadingRow"><td colspan="36" class="text-center text-muted">' + message + '</td></tr>');
-    }
-
-    function loadAttendanceRowsForSelection() {
-        var selectedCodes = selectedPostingCodes();
-        var selectedKey = selectedCodes.slice().sort().join('|');
-
-        if (!window.hasAttendanceRowsToLoad || !window.postingFilterActive) {
-            return;
-        }
-
-        if (!selectedCodes.length) {
-            window.attendanceRowsLoadedFor = '';
-            resetAttendanceTableForReload('Select employees to preview attendance rows.');
-            return;
-        }
-
-        if (window.attendanceRowsLoadedFor === selectedKey || window.attendanceRowsLoading) {
-            return;
-        }
-
-        window.attendanceRowsLoadedFor = selectedKey;
-        resetAttendanceTableForReload('Loading selected attendance rows...');
-        loadAttendanceRows(0, selectedCodes);
-    }
-
-    function loadAttendanceRows(offset, selectedEmployeeCodes) {
-        window.attendanceRowsLoading = true;
-
-        $.ajax({
-            url: "{{ url('biometrics-per-company/rows') }}",
-            type: 'GET',
-            data: {
-                company: @json($company),
-                department: @json($department),
-                location: @json($location),
-                employee: selectedEmployeeCodes || @json($employee_filter),
-                from: @json($from_date),
-                to: @json($to_date),
-                offset: offset,
-                limit: 10
-            },
-            success: function(response) {
-                $('#attendanceLoadingRow').remove();
-                $('#attendanceRows').append(response.html);
-
-                if (response.has_more) {
-                    loadAttendanceRows(response.next_offset, selectedEmployeeCodes);
-                    return;
-                }
-
-                window.attendanceRowsLoading = false;
-                initializeAttendanceTable();
-                applyPostingTableFilter();
-            },
-            error: function() {
-                window.attendanceRowsLoading = false;
-                $('#attendanceLoadingRow').remove();
-                $('#attendanceRows').append('<tr><td colspan="36">Unable to load attendance rows. Please try again.</td></tr>');
-            }
-        });
-    }
-
-    function applyPostingTableFilter() {
-        var selectedCodes = selectedPostingCodes();
-
-        window.postingSelectedEmployeeCodes = selectedCodes;
-
-        loadAttendanceRowsForSelection();
-
-        if (!window.postingFilterActive) {
-            return;
-        }
-
-        if (window.attendanceDataTable) {
-            window.attendanceDataTable.draw();
-            filterAttendanceRowsBySelection(selectedCodes);
-            return;
-        }
-
-        filterAttendanceRowsBySelection(selectedCodes);
-    }
-
-    function filterAttendanceRowsBySelection(selectedCodes) {
-        $('#attendanceRows tr[data-employee-code]').each(function() {
-            var employeeCode = String($(this).attr('data-employee-code')).trim();
-            var shouldShow = selectedCodes.length > 0 && selectedCodes.indexOf(employeeCode) !== -1;
-            $(this).toggle(shouldShow);
-        });
-    }
+    });
 </script>
 @endsection

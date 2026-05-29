@@ -41,7 +41,7 @@
             width: 100%;
             height: 100%;
             z-index: 9999;
-            background: url("{{ asset('images/m.png')}}") 50% 50% no-repeat white ;
+            background: url("{{ asset('login_css/images/loader.gif')}}") 50% 50% no-repeat white ;
             opacity: .8;
             background-size:120px 120px;
         }
@@ -225,95 +225,6 @@
 
 		.tab-content {
 			padding: 20px;
-		}
-
-		table.table,
-		table.dataTable,
-		.table {
-			width: 100% !important;
-			border-collapse: separate !important;
-			border-spacing: 0 !important;
-			border: 1px solid #d6dee8 !important;
-			border-radius: 8px !important;
-			overflow: hidden !important;
-			background: #ffffff !important;
-			box-shadow: 0 6px 18px rgba(31, 45, 61, 0.06) !important;
-		}
-
-		table.table th,
-		table.table td,
-		table.dataTable th,
-		table.dataTable td,
-		.table th,
-		.table td {
-			border-top: 0 !important;
-			border-left: 0 !important;
-			border-right: 1px solid #d6dee8 !important;
-			border-bottom: 1px solid #d6dee8 !important;
-			color: #2d3748 !important;
-			line-height: 1.35 !important;
-			padding: .7rem .85rem !important;
-			vertical-align: middle !important;
-		}
-
-		table.table th:last-child,
-		table.table td:last-child,
-		table.dataTable th:last-child,
-		table.dataTable td:last-child,
-		.table th:last-child,
-		.table td:last-child {
-			border-right: 0 !important;
-		}
-
-		table.table tbody tr:last-child td,
-		table.dataTable tbody tr:last-child td,
-		.table tbody tr:last-child td {
-			border-bottom: 0 !important;
-		}
-
-		table.table thead th,
-		table.dataTable thead th,
-		.table thead th {
-			background: #f4f7fb !important;
-			color: #24324b !important;
-			font-size: .78rem !important;
-			font-weight: 700 !important;
-			letter-spacing: 0 !important;
-			text-transform: uppercase !important;
-			white-space: nowrap !important;
-		}
-
-		table.table tbody tr:nth-child(even),
-		table.dataTable tbody tr:nth-child(even),
-		.table tbody tr:nth-child(even) {
-			background: #fbfcfe !important;
-		}
-
-		table.table tbody tr:hover,
-		table.dataTable tbody tr:hover,
-		.table tbody tr:hover {
-			background: #eef5ff !important;
-			transition: background-color .15s ease-in-out;
-		}
-
-		.dataTables_wrapper .dataTables_filter input,
-		.dataTables_wrapper .dataTables_length select,
-		.dt-container .dt-search input,
-		.dt-container .dt-length select {
-			border: 1px solid #d6dee8 !important;
-			border-radius: 6px !important;
-			color: #2d3748 !important;
-			min-height: 34px !important;
-			padding: .35rem .6rem !important;
-		}
-
-		.dataTables_wrapper .dataTables_filter input:focus,
-		.dataTables_wrapper .dataTables_length select:focus,
-		.dt-container .dt-search input:focus,
-		.dt-container .dt-length select:focus {
-			border-color: #4b8fef !important;
-			box-shadow: 0 0 0 3px rgba(75, 143, 239, .14) !important;
-			outline: 0 !important;
 		}
 
 		input::-webkit-outer-spin-button,

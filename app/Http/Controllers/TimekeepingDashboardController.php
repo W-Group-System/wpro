@@ -41,28 +41,6 @@ class TimekeepingDashboardController extends Controller
         $to =  isset($request->to) ? $request->to : "";
         $status =  isset($request->status) ? $request->status : "";
         $leave_types = Leave::all();
-
-        if (!$company || !$from || !$to || !$status) {
-            return view('dashboards.timekeeping_dashboard',
-                        array(
-                            'header' => 'Timekeeping',
-                            'from' => $from,
-                            'to' => $to,
-                            'status' => $status,
-                            'leaves' => collect(),
-                            'leave_types' => $leave_types,
-                            'obs' => collect(),
-                            'wfhs' => collect(),
-                            'overtimes' => collect(),
-                            'companies' => $companies,
-                            'company' => $company,
-                            'dtrs' => collect(),
-                            'emp_data' => collect(),
-                            'getLastCutOffDate' => null
-                        )
-            );
-        }
-
         $leaves = EmployeeLeave::with('approver.approver_info','user')
                                 // ->whereHas('employee',function($q) use($allowed_companies){
                                 //     $q->whereIn('company_id',$allowed_companies);
