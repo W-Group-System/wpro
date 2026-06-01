@@ -171,30 +171,30 @@ class UploadController extends Controller
                         
                         
 
-                        // if ($types == 1 || $types == 14) { 
-                        //     if ($filed_date >= $startDate) {
-                        //         $errors[] = "Skipped [{$startDate}]: VL must be filed before the leave date.";
-                        //         continue;
-                        //     }
+                        if ($types == 1 || $types == 14) { 
+                            if ($filed_date >= $startDate) {
+                                $errors[] = "Skipped [{$startDate}]: VL must be filed before the leave date.";
+                                continue;
+                            }
 
-                        //     $workdaysBefore = $this->countWorkdays($filed_date, $startDate) - 1;
-                        //     if ($workdaysBefore < 3) {
-                        //         $errors[] = "Skipped [{$startDate}]: VL must be filed at least 3 workdays before leave. Only {$workdaysBefore} workday(s) gap found.";
-                        //         continue;
-                        //     }
-                        // }
+                            $workdaysBefore = $this->countWorkdays($filed_date, $startDate) - 1;
+                            if ($workdaysBefore < 3) {
+                                $errors[] = "Skipped [{$startDate}]: VL must be filed at least 3 workdays before leave. Only {$workdaysBefore} workday(s) gap found.";
+                                continue;
+                            }
+                        }
 
-                        // if ($types == 2 || $types == 15) { 
-                        //     if ($filed_date <= $startDate) {
-                        //         $errors[] = "Skipped [{$startDate}]: SL cannot be filed before the leave date. Filed: {$filed_date}";
-                        //         continue;
-                        //     }
-                        //     $workdaysAfter = $this->countWorkdays($startDate, $filed_date) - 1;
-                        //     if ($workdaysAfter > 3) {
-                        //         $errors[] = "Skipped [{$startDate}]: SL must be filed within 3 workdays after leave. Filed {$workdaysAfter} workday(s) late.";
-                        //         continue;
-                        //     }
-                        // }
+                        if ($types == 2 || $types == 15) { 
+                            if ($filed_date <= $startDate) {
+                                $errors[] = "Skipped [{$startDate}]: SL cannot be filed before the leave date. Filed: {$filed_date}";
+                                continue;
+                            }
+                            $workdaysAfter = $this->countWorkdays($startDate, $filed_date) - 1;
+                            if ($workdaysAfter > 3) {
+                                $errors[] = "Skipped [{$startDate}]: SL must be filed within 3 workdays after leave. Filed {$workdaysAfter} workday(s) late.";
+                                continue;
+                            }
+                        }
                         // $leaves = EmployeeLeave::whereIn('user_id', $user_id)
                         //     ->where('date_from', $startDate)
                         //     ->where('date_to', $endDate)
