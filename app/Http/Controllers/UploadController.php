@@ -33,18 +33,24 @@ class UploadController extends Controller
         );
     }
 
-    private function countWorkdays($from, $to) {
-        $start   = new DateTime($from);
-        $end     = new DateTime($to);
-        $count   = 0;
-        $current = clone $start;
+    private function countWorkdays($from, $to)
+    {
+        $start = new DateTime($from);
+        $end   = new DateTime($to);
 
-        while ($current <= $end) {
-            if ((int) $current->format('N') < 6) {
+        if ($start > $end) {
+            [$start, $end] = [$end, $start];
+        }
+
+        $count = 0;
+
+        while ($start <= $end) {
+            if ((int) $start->format('N') < 6) {
                 $count++;
             }
-            $current->modify('+1 day');
+            $start->modify('+1 day');
         }
+
         return $count;
     }
 
@@ -177,7 +183,7 @@ class UploadController extends Controller
                                 continue;
                             }
 
-                            $workdaysBefore = $this->countWorkdays($filed_date, $startDate) - 1;
+                            $workdaysBefore = $this->countWorkdays($filed_date, $startDate);
                             if ($workdaysBefore < 3) {
                                 $errors[] = "Skipped [{$startDate}]: VL must be filed at least 3 workdays before leave. Only {$workdaysBefore} workday(s) gap found.";
                                 continue;
@@ -189,7 +195,7 @@ class UploadController extends Controller
                                 $errors[] = "Skipped [{$startDate}]: SL cannot be filed before the leave date. Filed: {$filed_date}";
                                 continue;
                             }
-                            $workdaysAfter = $this->countWorkdays($startDate, $filed_date) - 1;
+                            $workdaysAfter = $this->countWorkdays($startDate, $filed_date);
                             if ($workdaysAfter > 3) {
                                 $errors[] = "Skipped [{$startDate}]: SL must be filed within 3 workdays after leave. Filed {$workdaysAfter} workday(s) late.";
                                 continue;
