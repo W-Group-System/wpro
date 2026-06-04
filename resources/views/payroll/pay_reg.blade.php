@@ -502,6 +502,13 @@
 
                               // dd($de_minimis);
                               $government_amount = $gross_taxable_income-$total_abs-$total_late_min- $total_undertime_min+$de_minimis+$other_allowances_basic_pay+$subliq;
+
+                              // Add De Minimis Adjustment to 2nd SSS
+                              // $payroll_instructions_dma = (!empty($name->employee->pay_instructions)) ? $name->employee->pay_instructions : collect([]);
+                              // $dma_every_cut_off = $payroll_instructions_dma->where('benefit_name', 'De Minimis Adjustment')->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
+                              // $dma_cutoff = $payroll_instructions_dma->where('benefit_name', 'De Minimis Adjustment')->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
+                              // $dma_total = $dma_every_cut_off + $dma_cutoff;
+                              // $government_amount = $government_amount + $dma_total;
                               $lastccc = 0;
                               if($payroll_b)
                               {
@@ -558,6 +565,16 @@
                                   $government_amount = round($government_amount+$lastccc,2);
                                  
                                 
+                                } 
+                                // De Minimis Adjustment to 2nd SSS
+                                else {
+                                  if(!empty($name->employee->pay_instructions))
+                                  {
+                                      $pi = $name->employee->pay_instructions;
+                                      $dma_eco = $pi->where('benefit_name','De Minimis Adjustment')->whereIn('frequency', ['Every cut off', 'This cut off'])->sum('amount');
+                                      $dma_co  = $pi->where('benefit_name','De Minimis Adjustment')->where('frequency', $payroll_a ? 'Every 1st cut off' : 'Every 2nd cut off')->sum('amount');
+                                      $government_amount = round($government_amount + $dma_eco + $dma_co, 2);
+                                  }
                                 }
                                 // dd($government_amount);
                                 $sss_amount = $sss->where('salary_to','>=',$government_amount)->first();
