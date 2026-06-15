@@ -88,7 +88,7 @@ class EmployeeTrainingController extends Controller
 
     public function employeeTrainingReports()
     {
-        $employeeTraining = EmployeeTraining::where('employee_id', auth()->user()->employee->id)->get();
+        $employeeTraining = EmployeeTraining::where('employee_id', auth()->user()->employee->user_id)->get();
 
         return view(
             'hr_report.training',
