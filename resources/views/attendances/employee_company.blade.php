@@ -1123,17 +1123,19 @@
                                                     // dd($check_if_holiday);
                                                   $work = $schedule_hours;
 
-                                                  if ($emp->employee_code == "A197326")//lacaran
-                                                    {
-                                                        if ($schedule_hours >= 4)
-                                                        {
-                                                            $schedule_hours =  $schedule_hours-1;
-                                                            if($work >= ($schedule_hours/1.5))
-                                                            {
-                                                                $work = $work-1;
-                                                            }
-                                                        }
-                                                    }
+                                                //   if ($emp->employee_code == "A197326")//lacaran
+                                                //     {
+                                                //         if ($schedule_hours >= 4)
+                                                //         {
+                                                //             $schedule_hours =  $schedule_hours-1;
+                                                //             if($work >= ($schedule_hours/1.5))
+                                                //             {
+                                                //                 $work = $work-1;
+                                                //             }
+                                                //         }
+                                                //     }
+
+                                                
                                                 //   if ($work >= 7)
                                                 //   {
                                                 //     $work = $work-1;
