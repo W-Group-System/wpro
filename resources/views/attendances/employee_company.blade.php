@@ -321,7 +321,6 @@
                                                 @if($abs == 1)
                                                     @if($employee_schedule)
                                                         @php 
-                                                            $lh_ot = 0;
                                                             $is_absent = '';
                                                             $if_leave = '';
                                                             $if_attendance_holiday = '';
@@ -579,6 +578,7 @@
                                                     @endif
                                                 @else
                                                     @php
+                                                        $lh_ot = 0;
                                                         $is_absent = '';
                                                         $if_restday = '';
                                                         
@@ -586,15 +586,18 @@
                                                     
                                                         // $abs=0;
                                                         // overtime formula for LH OT
-                                                        $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
-                                                        $lh_ot = 8;
-                                                        if($approved_overtime_hrs <= 8)
-                                                        {
-                                                            $lh_ot = $approved_overtime_hrs;
-                                                        }
-                                                        else
-                                                        {
-                                                            $lh_ot_ge = $approved_overtime_hrs-8;
+                                                        $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                                        if ($check_if_holiday !== "Special Holiday") {
+                                                            $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
+                                                            $lh_ot = 8;
+                                                            if($approved_overtime_hrs <= 8)
+                                                            {
+                                                                $lh_ot = $approved_overtime_hrs;
+                                                            }
+                                                            else
+                                                            {
+                                                                $lh_ot_ge = $approved_overtime_hrs-8;
+                                                            }   
                                                         }
                                                     @endphp  
                                                 @endif
