@@ -321,6 +321,7 @@
                                                 @if($abs == 1)
                                                     @if($employee_schedule)
                                                         @php 
+                                                            $lh_ot = 0;
                                                             $is_absent = '';
                                                             $if_leave = '';
                                                             $if_attendance_holiday = '';
@@ -584,6 +585,17 @@
                                                         $if_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r)),$employee_schedule);
                                                     
                                                         // $abs=0;
+                                                        // overtime formula for LH OT
+                                                        $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots,date('Y-m-d',strtotime($date_r))) : "";
+                                                        $lh_ot = 8;
+                                                        if($approved_overtime_hrs <= 8)
+                                                        {
+                                                            $lh_ot = $approved_overtime_hrs;
+                                                        }
+                                                        else
+                                                        {
+                                                            $lh_ot_ge = $approved_overtime_hrs-8;
+                                                        }
                                                     @endphp  
                                                 @endif
                                                 <td @if($if_has_ob) class='bg-info'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][in]" value="@if($time_start){{date('h:i A',strtotime($time_start))}}@endif">@if($time_start){{date('h:i A',strtotime($time_start))}}@endif</td>
@@ -1095,7 +1107,7 @@
                                                 {
                                                     $overtime = 0;
                                                 }
-                                                $lh_ot = 0;
+                                                // $lh_ot = 0; moved to line 324 for initialization
                                                 $sh_ot = 0;
                                                 $lh_ot_ge = 0;
                                                 $sh_ot_ge = 0;
