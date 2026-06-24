@@ -839,7 +839,8 @@ function checkUsedLeave($user_id,$leave_type){
 
 function checkIfHoliday($date,$location){
     $check_holiday = Holiday::where('holiday_date',$date)->where(function ($q) use ($location) {
-            $q->where('location', $location);
+            $q->where('location', $location)
+              ->orWhereNull('location');;
         })
         ->first();;
     if($check_holiday){
