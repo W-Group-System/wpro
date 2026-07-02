@@ -11,6 +11,12 @@
 				</button>
 			</div>
 			<div class="modal-body">
+                @php
+                    $postedLoanPayments = $loan->pay->filter(function($pay) {
+                        return $pay->pay_reg && $pay->pay_reg->cut_off_date;
+                    });
+                    $postedLoanPaymentTotal = $postedLoanPayments->sum('amount');
+                @endphp
 				<div id="container">
                     <div class='row '>
                         <div class='col-md-6'>
@@ -40,7 +46,7 @@
                     <div class='row'>
                         <div class='col-md-12'>
                            
-                           <b> Loan Balance: {{ number_format($loan->initial_amount-($loan->pay)->sum('amount'),2) }}</b>
+                           <b> Loan Balance: {{ number_format($loan->initial_amount-$postedLoanPaymentTotal,2) }}</b>
                         </div>
                     </div>
 				</div>
@@ -72,25 +78,30 @@
                             @php
                                 $loan_balance = $loan->initial_amount;
                             @endphp
-                            @foreach($loan->pay as $pay)
-                            <tr>
-                                @php
-                                    $loan_balance = $loan_balance-$pay->amount;
-                                @endphp
-                                <td>
-                                    {{-- @dd($pay->pay_reg) --}}
-                                    @if($pay->pay_reg != null)
-                                    {{ $pay->pay_reg->pay_period_from}} - {{ $pay->pay_reg->pay_period_to}}
-                                    @endif
-                                </td>
-                                <td>
-                                    {{ number_format($pay->amount,2)}}
-                                </td>
-                                <td>
-                                    {{ number_format($loan_balance,2)}}
-                                </td>
-                            </div>
-                            @endforeach
+                            @forelse($postedLoanPayments as $pay)
+                                <tr>
+                                    @php
+                                        $loan_balance = $loan_balance-$pay->amount;
+                                    @endphp
+                                    <td>
+                                        @if($pay->pay_reg->pay_period_from && $pay->pay_reg->pay_period_to)
+                                            {{ $pay->pay_reg->pay_period_from}} - {{ $pay->pay_reg->pay_period_to}}
+                                        @else
+                                            {{ $pay->pay_reg->cut_off_date }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ number_format($pay->amount,2)}}
+                                    </td>
+                                    <td>
+                                        {{ number_format($loan_balance,2)}}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">No posted loan deductions with cutoff yet.</td>
+                                </tr>
+                            @endforelse
 						</tbody>
 						<tfoot>
 
