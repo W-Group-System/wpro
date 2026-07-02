@@ -14,6 +14,7 @@ use App\EmployeeVessel;
 use App\Department;
 use App\Location;
 use App\Project;
+use App\Leave;
 use App\Schedule;
 use App\Attendance;
 use App\iclockterminal_mysql;
@@ -1238,6 +1239,7 @@ class EmployeeController extends Controller
 
         if ($tab == 'leave-settings') {
             $data['employeeLeaveSetting'] = Schema::hasTable('employee_leave_settings') ? $user->employee->leave_setting : null;
+            $data['leaves'] = Leave::orderBy('leave_type')->get();
             $data['employeeLeaveAccruals'] = $user->employee->employee_leave_list()
                 ->with('leave')
                 ->whereIn('leave_id', [1, 2])

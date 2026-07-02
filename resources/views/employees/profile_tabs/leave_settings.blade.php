@@ -36,6 +36,11 @@
                     <span class="profile-panel-kicker">Leave Credits</span>
                     <h4>SL and VL Settings</h4>
                 </div>
+                @if (checkUserPrivilege('employees_edit',auth()->user()->id) == 'yes')
+                    <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal" data-target="#manualLeaveCreditModal">
+                        <i class="ti-plus"></i> Manual Credit
+                    </button>
+                @endif
             </div>
             <form method="POST" action="{{ url('account-setting-hr/updateLeaveSettingsHR/'.$user->employee->id) }}" onsubmit="show()">
                 @csrf
@@ -219,6 +224,80 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade manual-leave-credit-modal" id="manualLeaveCreditModal" tabindex="-1" role="dialog" aria-labelledby="manualLeaveCreditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{{ url('store_employee_leaves_list') }}" onsubmit="show()">
+                @csrf
+                <input type="hidden" name="type" value="2">
+                <input type="hidden" name="employee" value="{{ $user->id }}">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="manualLeaveCreditModalLabel">Manual Leave Credit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Leave Type</label>
+                        <select name="leave" class="form-control" required>
+                            <option value="">-- Select Leave Type --</option>
+                            @foreach($leaves as $leave)
+                                <option value="{{ $leave->id }}">{{ $leave->leave_type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label>Count (days)</label>
+                        <input type="number" name="earned_per_month" class="form-control" min="0.01" step="0.01" placeholder="0.00" required>
+                        <small class="text-muted">This will add a new credit entry to employee leave lists for today.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Credit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .manual-leave-credit-modal .modal-dialog {
+        max-width: 500px;
+    }
+    .manual-leave-credit-modal .modal-content {
+        border-radius: 4px;
+        border: 1px solid #d5dde8;
+        box-shadow: 0 16px 38px rgba(15, 23, 42, .18);
+    }
+    .manual-leave-credit-modal .modal-header,
+    .manual-leave-credit-modal .modal-footer {
+        padding: 20px 24px;
+    }
+    .manual-leave-credit-modal .modal-body {
+        padding: 18px 24px 16px;
+    }
+    .manual-leave-credit-modal .modal-title {
+        color: #1f2937;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    .manual-leave-credit-modal label {
+        color: #2f3747;
+        font-weight: 600;
+    }
+    .manual-leave-credit-modal .form-control {
+        height: 44px;
+        border-color: #cfd7e3;
+    }
+    .manual-leave-credit-modal .btn-primary {
+        background: #2416f3;
+        border-color: #2416f3;
+    }
+</style>
 
 <script>
 function toggleLeaveFields(prefix) {

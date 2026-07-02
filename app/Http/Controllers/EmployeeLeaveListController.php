@@ -126,6 +126,7 @@ class EmployeeLeaveListController extends Controller
             $employee_leave_list->earned_per_month = $request->earned_per_month;
             $employee_leave_list->year = date('Y');
             $employee_leave_list->month = date('m');
+            $employee_leave_list->earned_date = date('Y-m-d');
             $employee_leave_list->save();
         }
 
