@@ -3,6 +3,9 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="newLoanlabel">Loan Registration Details</h5>
+                <a href="{{ url('audit_logs').'?'.http_build_query(['model' => 'App\\Loan', 'id' => $loan->id]) }}" target="_blank" class="btn btn-outline-info btn-sm ml-3">
+                    <i class="fa fa-history"></i> History Audit Trail
+                </a>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

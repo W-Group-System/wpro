@@ -96,12 +96,20 @@ class LoanController extends Controller
 
     public function updateloanReg(Request $request, $id)
     {
+        $this->validate($request, [
+            'loan_type' => 'required',
+            'monthly_ammort_amt' => 'required|numeric|min:1',
+            'initial_amount' => 'required|numeric|min:1',
+            'frequency' => 'required',
+            'status' => 'required',
+        ]);
+
         $loans = Loan::findOrFail($id);
         $loans->loan_type_id = $request->loan_type;
         // $loans->employee_id = $request->employee;
         // $loans->amount = $request->amount;
         $loans->monthly_ammort_amt = $request->monthly_ammort_amt;
-        // $loans->initial_amount = $request->initial_amount;
+        $loans->initial_amount = $request->initial_amount;
         $loans->start_date = $request->start_date;
         $loans->expiry_date = $request->expiry_date;
         $loans->schedule = $request->frequency;

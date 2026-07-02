@@ -9,20 +9,29 @@ class AuditLogsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Audit::where('auditable_type', 'App\Employee')
-                        ->orWhere('auditable_type', 'App\EmployeeAllowance');
+        $query = Audit::query();
 
-        // if ($request->range) {
+        if ($request->model) {
+            $query->where('auditable_type', $request->model);
+        } else {
+            $query->whereIn('auditable_type', ['App\Employee', 'App\EmployeeAllowance']);
+        }
 
-        //     [$start, $end] = explode('|', $request->range);
+        if ($request->id) {
+            $query->where('auditable_id', $request->id);
+        }
 
-        //     $query->whereBetween('created_at', [
-        //         $start . ' 00:00:00',
-        //         $end . ' 23:59:59'
-        //     ]);
-        // }
+        if ($request->range) {
 
-        $audits = $query->whereBetween('created_at', ['2025-05-01 00:00:00', '2025-11-25 23:59:59'])->get();
+            [$start, $end] = explode('|', $request->range);
+
+            $query->whereBetween('created_at', [
+                $start . ' 00:00:00',
+                $end . ' 23:59:59'
+            ]);
+        }
+
+        $audits = $query->latest()->get();
 
         return view('audits.index', [
             'header' => 'audits',

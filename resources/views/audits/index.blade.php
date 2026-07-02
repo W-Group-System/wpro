@@ -7,6 +7,17 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Audit Logs</h4>
+                            @if(request('model') || request('id'))
+                                <p class="card-description">
+                                    Filtered by
+                                    @if(request('model'))
+                                        <span class="badge badge-info">{{ class_basename(request('model')) }}</span>
+                                    @endif
+                                    @if(request('id'))
+                                        <span class="badge badge-secondary">Record #{{ request('id') }}</span>
+                                    @endif
+                                </p>
+                            @endif
                             <p class="card-description">
                                 {{-- <form method="GET" action="" class="mb-3">
                                     <div class="row">
@@ -43,7 +54,7 @@
                                     <tbody>
                                         @foreach ($audits as $audit)
                                             <tr>
-                                                <td>{{ $audit->user->name }}</td>
+                                                <td>{{ optional($audit->user)->name ?: '-' }}</td>
                                                 <td>
                                                     @if($audit->old_values)
                                                         @php
@@ -75,7 +86,7 @@
                                                     @endif
                                                 </td>
 
-                                                <td>{{ $audit->id }}</td>
+                                                <td>{{ $audit->auditable_id }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($audit->created_at)->format('F d, Y') }}</td>
                                             </tr>
                                         @endforeach
