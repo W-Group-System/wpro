@@ -200,10 +200,64 @@ class EmployeeLeaveController extends Controller
         ));
     }  
 
+    private function normalizeDailyLeaveDates(Request $request)
+    {
+        if ($request->date_from) {
+            $request->merge([
+                'date_to' => $request->date_from,
+            ]);
+        }
+    }
+
+    private function getLeaveDateBlockReason(Employee $employee, $leaveDate)
+    {
+        $leaveDate = date('Y-m-d', strtotime($leaveDate));
+
+        if (checkIfHoliday($leaveDate, $employee->location)) {
+            return 'Selected leave date is a holiday.';
+        }
+
+        $schedule = employeeSchedule(
+            $employee->ScheduleData,
+            $leaveDate,
+            $employee->schedule_id,
+            $employee->employee_code
+        );
+
+        $isRestDay = $schedule ? isRestDayBySchedule($schedule) : isRestDay($leaveDate);
+
+        if ($isRestDay == 1) {
+            return 'Selected leave date is a rest day.';
+        }
+
+        return null;
+    }
+
 
     public function new(Request $request)
     {
         $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $this->normalizeDailyLeaveDates($request);
+
+        if (!$request->date_from)
+        {
+            Alert::warning('Please select a leave date.')->persistent('Dismiss');
+            return back();
+        }
+
+        if ($request->date_from != $request->date_to)
+        {
+            Alert::warning('Leave filing should be daily only. Please select one leave date.')->persistent('Dismiss');
+            return back();
+        }
+
+        $blockReason = $this->getLeaveDateBlockReason($employee, $request->date_from);
+        if ($blockReason)
+        {
+            Alert::error($blockReason)->persistent('Dismiss');
+            return back();
+        }
+
         $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
         if ($request->date_from > $request->date_to)
         {
@@ -212,9 +266,8 @@ class EmployeeLeaveController extends Controller
         }
         if($request->withpay == 'on'){
             $existing_date_leave = EmployeeLeave::where(function($q)use($request) {
-                    // $q->where('date_from', $request->date_from)->orWhere('date_to', $request->date_to);
-                    $q->whereBetween('date_from', [$request->date_from, $request->date_to])
-                        ->orWhereBetween('date_to',[$request->date_from, $request->date_to]);
+                    $q->where('date_from', '<=', $request->date_to)
+                        ->where('date_to', '>=', $request->date_from);
                 })
                 ->where('leave_type', $request->leave_type)
                 ->where('user_id', auth()->user()->id)
@@ -284,9 +337,8 @@ class EmployeeLeaveController extends Controller
             }
         }else{
             $existing_date_leave = EmployeeLeave::where(function($q)use($request) {
-                    // $q->where('date_from', $request->date_from)->orWhere('date_to', $request->date_to);
-                    $q->whereBetween('date_from', [$request->date_from, $request->date_to])
-                        ->orWhereBetween('date_to',[$request->date_from, $request->date_to]);
+                    $q->where('date_from', '<=', $request->date_to)
+                        ->where('date_to', '>=', $request->date_from);
                 })
                 ->where('user_id', auth()->user()->id)
                 ->whereIn('status', ['Pending', 'Approved'])
@@ -341,6 +393,21 @@ class EmployeeLeaveController extends Controller
     {
         // dd($request->all());
         $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $this->normalizeDailyLeaveDates($request);
+
+        if (!$request->date_from)
+        {
+            Alert::warning('Please select a leave date.')->persistent('Dismiss');
+            return back();
+        }
+
+        $blockReason = $this->getLeaveDateBlockReason($employee, $request->date_from);
+        if ($blockReason)
+        {
+            Alert::error($blockReason)->persistent('Dismiss');
+            return back();
+        }
+
         $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
         if($request->withpay == 'on'){
 

@@ -1058,7 +1058,13 @@
                           @endif 
                       </td>
                       <td>{{date('M. d, Y h:i A', strtotime($employee_leave->created_at))}}</td>
-                      <td>{{date('M. d, Y - l', strtotime($employee_leave->date_from))}} to {{date('M. d, Y - l', strtotime($employee_leave->date_to))}} </td>
+                      <td>
+                        @if($employee_leave->date_from == $employee_leave->date_to)
+                          {{date('M. d, Y - l', strtotime($employee_leave->date_from))}}
+                        @else
+                          {{date('M. d, Y - l', strtotime($employee_leave->date_from))}} to {{date('M. d, Y - l', strtotime($employee_leave->date_to))}}
+                        @endif
+                      </td>
                       <td>{{ $employee_leave->leave->leave_type }}</td>
                       @if($employee_leave->withpay == 1)   
                         <td>Yes</td>
