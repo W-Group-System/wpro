@@ -1240,6 +1240,10 @@ class EmployeeController extends Controller
         if ($tab == 'leave-settings') {
             $data['employeeLeaveSetting'] = Schema::hasTable('employee_leave_settings') ? $user->employee->leave_setting : null;
             $data['leaves'] = Leave::orderBy('leave_type')->get();
+            $data['employeeLeaveYearlyBalances'] = getEmployeeLeaveCreditTallies($user->employee)
+                ->whereIn('leave_id', [1, 2])
+                ->sortBy('leave_type')
+                ->values();
             $data['employeeLeaveAccruals'] = $user->employee->employee_leave_list()
                 ->with('leave')
                 ->whereIn('leave_id', [1, 2])

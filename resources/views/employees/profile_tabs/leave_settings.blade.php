@@ -191,6 +191,43 @@
         <div class="profile-panel">
             <div class="profile-panel-header compact">
                 <div>
+                    <span class="profile-panel-kicker">Balance</span>
+                    <h4>Yearly Totals</h4>
+                </div>
+            </div>
+            <div class="table-responsive p-3">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Leave</th>
+                            <th>Earned</th>
+                            <th>Used</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($employeeLeaveYearlyBalances as $balance)
+                            <tr>
+                                <td>{{ date('Y') }}</td>
+                                <td>{{ $balance->leave_type }}</td>
+                                <td>{{ number_format($balance->earned, 3) }}</td>
+                                <td>{{ number_format($balance->used, 3) }}</td>
+                                <td>{{ number_format($balance->balance, 3) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center">No leave balance records yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="profile-panel">
+            <div class="profile-panel-header compact">
+                <div>
                     <span class="profile-panel-kicker">Cronjob</span>
                     <h4>Latest Accruals</h4>
                 </div>
