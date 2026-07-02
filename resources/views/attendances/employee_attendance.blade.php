@@ -572,6 +572,8 @@
                                                 }
                                             $work = $schedule_hours;
                                         }
+                                    }else{
+                                        $check_if_holiday_yesterday = false;  // for next loop cheking if absent before holiday
                                     }
                                     @endphp
                                     @if($work > 0)
