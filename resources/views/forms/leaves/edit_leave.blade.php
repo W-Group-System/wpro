@@ -113,16 +113,11 @@
                 </div>
                 <div class="form-group row">
                   <div class='col-md-2'>
-                    Date From 
+                    Leave Date
                   </div>
-                  <div class='col-md-4'>
-                    <input type="date" name='date_from' class="form-control" value="{{$leave->date_from}}" required>
-                  </div>
-                  <div class='col-md-2'>
-                    Date To 
-                  </div>
-                  <div class='col-md-4'>
-                    <input type="date" name='date_to' class="form-control" value="{{$leave->date_to}}" required>
+                  <div class='col-md-10'>
+                    <input type="date" name='date_from' class="form-control" value="{{$leave->date_from}}" onchange="this.form.querySelector('[name=date_to]').value=this.value" required>
+                    <input type="hidden" name='date_to' value="{{$leave->date_from}}">
                   </div>
                 </div>
                 <div class="form-group row">
