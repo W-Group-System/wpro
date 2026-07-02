@@ -217,8 +217,9 @@ class EmployeeLeaveController extends Controller
             return 'Selected leave date is a holiday.';
         }
 
-        $schedule = employeeSchedule(
+        $schedule = employeeScheduleV2(
             $employee->ScheduleData,
+            $employee->daily_schedules,
             $leaveDate,
             $employee->schedule_id,
             $employee->employee_code
@@ -233,10 +234,22 @@ class EmployeeLeaveController extends Controller
         return null;
     }
 
+    private function getDailyLeaveCount(Employee $employee, Request $request)
+    {
+        return get_count_days(
+            $employee->daily_schedules,
+            $employee->ScheduleData,
+            $request->date_from,
+            $request->date_to,
+            0,
+            1
+        );
+    }
+
 
     public function new(Request $request)
     {
-        $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $employee = Employee::with('daily_schedules', 'ScheduleData')->where('user_id',Auth::user()->id)->first();
         $this->normalizeDailyLeaveDates($request);
 
         if (!$request->date_from)
@@ -258,7 +271,7 @@ class EmployeeLeaveController extends Controller
             return back();
         }
 
-        $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
+        $count_days = $this->getDailyLeaveCount($employee, $request);
         if ($request->date_from > $request->date_to)
         {
             Alert::warning('Date From is cannot be greater than Date To')->persistent('Dismiss');
@@ -392,7 +405,7 @@ class EmployeeLeaveController extends Controller
     public function edit_leave(Request $request, $id)
     {
         // dd($request->all());
-        $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $employee = Employee::with('daily_schedules', 'ScheduleData')->where('user_id',Auth::user()->id)->first();
         $this->normalizeDailyLeaveDates($request);
 
         if (!$request->date_from)
@@ -408,7 +421,7 @@ class EmployeeLeaveController extends Controller
             return back();
         }
 
-        $count_days = get_count_days_leave($employee->ScheduleData,$request->date_from,$request->date_to);
+        $count_days = $this->getDailyLeaveCount($employee, $request);
         if($request->withpay == 'on'){
 
             if($count_days == 1){
