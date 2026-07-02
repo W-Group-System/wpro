@@ -49,6 +49,11 @@
 								</thead>
 								<tbody>
 									@foreach ($loans as $loan)
+                                        @php
+                                            $postedLoanPaymentTotal = $loan->pay->filter(function($pay) {
+                                                return $pay->pay_reg && $pay->pay_reg->cut_off_date;
+                                            })->sum('amount');
+                                        @endphp
 										<tr>
 											<td data-title="Loan Type">{{ $loan->loan_type->loan_name }}</td>
 											<td data-title="Full Name">
@@ -59,7 +64,7 @@
 											<td data-title="Amount">{{ number_format($loan->amount) }}</td>
 											<td data-title="Start Date">{{ date('M d, Y', strtotime($loan->start_date)) }}</td>
 											<td data-title="End Date">{{ date('M d, Y', strtotime($loan->expiry_date)) }}</td>
-											<td data-title="Loan Balance" >{{ number_format($loan->initial_amount-($loan->pay)->sum('amount'),2) }}</td>
+											<td data-title="Loan Balance" >{{ number_format($loan->initial_amount-$postedLoanPaymentTotal,2) }}</td>
 											<td data-title="Frequency">{{$loan->schedule}}</td>
 											<td>
                                                 @if($loan->status == "Active")
