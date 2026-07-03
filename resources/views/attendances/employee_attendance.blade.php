@@ -107,7 +107,6 @@
                         <tbody>
                             @php
                                 $is_absent_yesterday = false; // for next loop cheking if absent before holiday
-                                $check_if_holiday_yesterday = false; // for next loop cheking if absent before holiday
                             @endphp
                             @foreach($emp_data as $emp)
                                 @php
@@ -553,7 +552,6 @@
                                     $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
                                     if($check_if_holiday)
                                     {
-                                        $check_if_holiday_yesterday = true;  // for next loop cheking if absent before holiday
                                         if ($employee_schedule)
                                         {
                                             // holiday reg hours
@@ -572,9 +570,14 @@
                                                 }
                                             $work = $schedule_hours;
                                         }
-                                    }else{
-                                        $check_if_holiday_yesterday = false;  // for next loop cheking if absent before holiday
                                     }
+
+                                    if ($is_absent_yesterday){  // for next loop cheking if absent before holiday
+                                        if($check_if_holiday){
+                                            $work = 0;
+                                        }
+                                    }
+
                                     @endphp
                                     @if($work > 0)
                                         @php
@@ -593,6 +596,17 @@
                                         @endphp
                                     @endif
                                     @php
+                                        if($is_absent_yesterday){
+                                            if($check_if_holiday){
+                                                $abs = 1;
+                                            }
+                                        }
+                                        
+                                        if ($abs == 1) {  // for next loop cheking if absent before holiday
+                                            $is_absent_yesterday = true;
+                                        }else{
+                                            $is_absent_yesterday = false;
+                                        }
                                         $late = $late_diff_hours*60;
                                         if($leave_count == .5)
                                         { 
@@ -609,11 +623,6 @@
                                                 $work = ($schedule_hours/2);
                                                 $late = 0;
                                                 $undertime_hrs = 0;
-                                            }
-                                        }
-                                        if ($is_absent_yesterday){  // for next loop cheking if absent before holiday
-                                            if($check_if_holiday_yesterday){
-                                                $work = 0;
                                             }
                                         }
                                     @endphp
@@ -988,13 +997,6 @@
                                 </td> {{--Remarks--}} -->
                                             
                                 </tr>
-                                    @php
-                                        if ($abs == 1) {  // for next loop cheking if absent before holiday
-                                            $is_absent_yesterday = true;
-                                        }else{
-                                            $is_absent_yesterday = false;
-                                        }
-                                    @endphp
                                 @endforeach
                                 <tr>
                                     <td><strong>Subtotal</strong></td>
