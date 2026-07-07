@@ -131,6 +131,7 @@
                                                 $approved_overtimes =0;
                                                 $night_diffs =0;
                                                 $night_diff_ot =0;
+                                                $lh_ot = 0;
 
                                                 $subtotal_abs = 0;
                                                 $subtotal_leave_w_pay=0;
@@ -578,7 +579,7 @@
                                                     @endif
                                                 @else
                                                     @php
-                                                        $lh_ot = 0;
+                                                        // $lh_ot = 0; moved to line 134
                                                         $is_absent = '';
                                                         $if_restday = '';
                                                         
