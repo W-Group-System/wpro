@@ -1099,9 +1099,10 @@
 @php
     $total_net = str_pad(number_format($total_net,2, "", ""), 13, '0', STR_PAD_LEFT);
     $companyData = $companies->where('id',$company)->first();
+    $company_bank_number = '';
     if($companyData)
     {
-
+      $company_bank_number = str_pad($companyData->bank_number, 13, '0', STR_PAD_LEFT);
       $companyData = $companyData->company_code;
     }
 
@@ -1111,6 +1112,7 @@
    var paytext = {!! json_encode($paytext) !!};
    var total_net = {!! json_encode($total_net) !!};
    var company = {!! json_encode($companyData) !!};
+   var company_bank_number = {!! json_encode($company_bank_number) !!};
     
    function CreateTextFile() {
     
@@ -1120,7 +1122,7 @@
     get_date=get_date.slice(2);
     get_date=get_date.slice(2)+""+get_date.substring(0,2);
     console.log(get_date);
-    var text="PHP010000038248832"+get_date+"2"+total_net+"\n";
+    var text="PHP01"+company_bank_number+get_date+"2"+total_net+"\n";
    for (var key in paytext) {
     if(paytext[key] != undefined){
       text += "PHP10"+paytext[key].bank+"0000007"+paytext[key].amount+"\n";
