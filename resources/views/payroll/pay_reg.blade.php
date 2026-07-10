@@ -1125,7 +1125,7 @@
     var text="PHP01"+company_bank_number+get_date+"2"+total_net+"\n";
    for (var key in paytext) {
     if(paytext[key] != undefined){
-      text += "PHP10"+paytext[key].bank+"0000007"+paytext[key].amount+"\n";
+      text += "PHP10"+paytext[key].bank+company_bank_number.substring(0,4)+"007"+paytext[key].amount+"\n";
     }
      
   }
