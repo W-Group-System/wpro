@@ -1097,12 +1097,12 @@
     </div>
 </div>
 @php
-    $total_net = str_pad(number_format($total_net,2, "", ""), 13, '0', STR_PAD_LEFT);
+    $total_net = str_pad(number_format($total_net,2, "", ""), 15, '0', STR_PAD_LEFT);
     $companyData = $companies->where('id',$company)->first();
     $company_bank_number = '';
     if($companyData)
     {
-      $company_bank_number = str_pad($companyData->bank_number, 13, '0', STR_PAD_LEFT);
+      $company_bank_number = str_pad($companyData->bank_number, 15, '0', STR_PAD_LEFT);
       $companyData = $companyData->company_code;
     }
 
