@@ -177,18 +177,18 @@ class UploadController extends Controller
                         
                         
 
-                        if ($types == 1 || $types == 14) { 
-                            if ($filed_date >= $startDate) {
-                                $errors[] = "Skipped [{$startDate}]: VL must be filed before the leave date.";
-                                continue;
-                            }
+                        // if ($types == 1 || $types == 14) { 
+                        //     if ($filed_date >= $startDate) {
+                        //         $errors[] = "Skipped [{$startDate}]: VL must be filed before the leave date.";
+                        //         continue;
+                        //     }
 
-                            $workdaysBefore = $this->countWorkdays($filed_date, $startDate);
-                            if ($workdaysBefore < 3) {
-                                $errors[] = "Skipped [{$startDate}]: VL must be filed at least 3 workdays before leave. Only {$workdaysBefore} workday(s) gap found.";
-                                continue;
-                            }
-                        }
+                        //     $workdaysBefore = $this->countWorkdays($filed_date, $startDate);
+                        //     if ($workdaysBefore < 3) {
+                        //         $errors[] = "Skipped [{$startDate}]: VL must be filed at least 3 workdays before leave. Only {$workdaysBefore} workday(s) gap found.";
+                        //         continue;
+                        //     }
+                        // }
 
                         if ($types == 2 || $types == 15) { 
                             if ($filed_date <= $startDate) {
