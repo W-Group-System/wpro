@@ -263,7 +263,6 @@ class UploadController extends Controller
                                     $errors[] = "Skipped [{$startDate}]: SL cannot be filed before the leave date. Filed: {$filed_date}";
                                     continue;
                                 }
-                                dd($uid);
                                 // $workdaysAfter = $this->countWorkdays($startDate, $filed_date);
                                 $workdaysAfter = $this->countScheduledWorkdays(
                                     $uid,
