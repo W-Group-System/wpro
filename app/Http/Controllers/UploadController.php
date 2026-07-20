@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AttendanceLog;
 use App\Company;
+use App\DailySchedule;
 use App\Employee;
 use App\Exports\OvertimeTemplate;
 use App\Exports\OvertimeTemplateExport;
@@ -68,22 +69,44 @@ class UploadController extends Controller
             ->pluck('name')
             ->map(fn($day) => strtolower($day))
             ->toArray();
+            
+        $dailySchedules = DailySchedule::where('employee_code', $employee->employee_code)
+        ->whereBetween('log_date', [$startDate, Carbon::parse($endDate)->subDay()])
+        ->pluck('log_date')
+        ->map(fn($date) => Carbon::parse($date)->toDateString())
+        ->flip(); 
 
         $count = 0;
 
         $date = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
-
         while ($date->lt($end)) {
 
-            $dayName = strtolower($date->format('l')); 
+            $dateKey = $date->toDateString();
 
-            if (in_array($dayName, $workingDays)) {
+            if (isset($dailySchedules[$dateKey])) {
                 $count++;
+            } else {
+                $dayName = strtolower($date->format('l'));
+
+                if (in_array($dayName, $workingDays)) {
+                    $count++;
+                }
             }
 
             $date->addDay();
         }
+
+        // while ($date->lt($end)) {
+
+        //     $dayName = strtolower($date->format('l')); 
+
+        //     if (in_array($dayName, $workingDays)) {
+        //         $count++;
+        //     }
+
+        //     $date->addDay();
+        // }
 
         return $count;
     }
