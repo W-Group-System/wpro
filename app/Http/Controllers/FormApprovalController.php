@@ -61,10 +61,12 @@ class FormApprovalController extends Controller
                                 ->whereDate('created_at','>=',$from_date)
                                 ->whereDate('created_at','<=',$to_date)
                                 ->where('status','Approved')
+                                ->where('approved_by',auth()->user()->id)
                                 ->count();
         $declined = EmployeeLeave::whereIn('user_id',$user_ids)
                                 ->whereDate('created_at','>=',$from_date)
                                 ->whereDate('created_at','<=',$to_date)
+                                ->where('approved_by',auth()->user()->id)
                                 ->where('status','Declined')
                                 ->count();
         $request_to_cancel = EmployeeLeave::whereIn('user_id',$user_ids)
