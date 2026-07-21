@@ -122,6 +122,7 @@
                         <th>Half Day </th>
                         <th>Status</th> 
                         <th>Approvers</th> 
+                        <th>Approved By</th> 
                         <th>Reason/Remarks</th> 
                         <th>Attachment</th>
                         <th>Approved Date</th>
@@ -213,6 +214,7 @@
                             @endif<br>
                           @endforeach
                         </td>
+                        <td> {{optional($form_approval->approveBy)->name}}</td>
                         <td>
                           {{-- <p title="{{$form_approval->reason}}" style="width: 250px;white-space: nowrap; overflow: hidden;text-overflow: ellipsis;">
                             {{$form_approval->reason}}
