@@ -593,7 +593,8 @@
                                 if($name->employee->employee_code == "A287819")
                                 {
                                   $sss_ecc = 0;
-                                  $sss_ee = 1190;
+                                  // $sss_ee = 1190;
+                                  $sss_ee = 1275;
                                   $sss_er = 0;
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
@@ -601,7 +602,8 @@
                                 if($name->employee->employee_code == "A180518")
                                 {
                                   $sss_ecc = 0;
-                                  $sss_ee = 2590;
+                                  // $sss_ee = 2590;
+                                  $sss_ee = 2775;
                                   $sss_er = 0;
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
@@ -610,7 +612,8 @@
                                 if($name->employee->employee_code == "A178517")
                                 {
                                   $sss_ecc = 0;
-                                  $sss_ee = 2800;
+                                  // $sss_ee = 2800;
+                                  $sss_ee = 3675;
                                   $sss_er = 0;
                                   $wisp_ee = 0;
                                   $wisp_er = 0;
