@@ -547,6 +547,9 @@
                                         }  
                                     }
                                     $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                    if ( date('F d', strtotime($date_r)) == "January 01") {
+                                        $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),"");
+                                    }
                                     if($check_if_holiday)
                                     {
                                         if ($employee_schedule)
