@@ -80,7 +80,7 @@
                     <div class="row mb-2">
                       <div class="col-md-3"> 
                         Birth date
-                        <input type="date" name="birthdate" class='form-control form-control-sm required' max='{{date('Y-m-d', strtotime('-18 year'))}}' placeholder="BirthDate"/>
+                        <input type="date" name="birthdate" class='form-control form-control-sm required' max='{{date('Y-m-d', strtotime('-17 year'))}}' placeholder="BirthDate"/>
                       </div>
                       <div class="col-md-3"> 
                         Birth Place 
