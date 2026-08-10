@@ -794,6 +794,8 @@
                                     $lh_ot_ge=0;
                                     $lh_ot_nd=0;
                                     $lh_ot_nd_ge=0;
+                                    # add lh_ot_use global variable
+                                    $lh_ot_use = 0;
                                     if($check_if_holiday)
                                     {
                                         $late = 0;
