@@ -1462,10 +1462,11 @@
                                                                 }
                                                             } else 
                                                             {
-                                                                if($emp->level == 5)
-                                                                    {
+                                                                # Regardless of level
+                                                                // if($emp->level == 5)
+                                                                //     {
                                                                         $work=0;
-                                                                    }
+                                                                    // }
 
                                                             } 
                                                         }
