@@ -698,7 +698,9 @@
                                                             $time_end_ts =  $schedule_out;
                                                           
                                                         }
-                                                        $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        // fix late issue 
+                                                        // $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
+                                                        $work = (($time_end_ts - $time_start_ts) / 3600);
                                                         
                                                      
                                                         $schedule_hours = 0;
@@ -773,7 +775,9 @@
                                                           
                                                             if($schedule_hours > $work)
                                                             {
-                                                                $undertime = (double) number_format($schedule_hours - $work,2);
+                                                                // fix late issue
+                                                                // $undertime = (double) number_format($schedule_hours - $work,2);
+                                                                $undertime = $schedule_hours - $work;
                                                                 // dd($undertime);
                                                             }
                                                            if($work_ot > $original_sched)
@@ -823,7 +827,9 @@
                                                     $schedule_time_in_final =  new DateTime($schedule_time_in);
                                                     if(date('Y-m-d H:i',strtotime($time_in_data_full)) > date('Y-m-d H:i',strtotime($schedule_time_in))){
                                                         $late_diff = $schedule_time_in_final->diff(new DateTime($time_in_data_full));
-                                                        $late_diff_hours = round($late_diff->s / 3600 + $late_diff->i / 60 + $late_diff->h + $late_diff->days * 24, 2);
+                                                        // fix late issue
+                                                        // $late_diff_hours = round($late_diff->s / 3600 + $late_diff->i / 60 + $late_diff->h + $late_diff->days * 24, 2);
+                                                        $late_diff_hours = ($late_diff->s / 3600) + ($late_diff->i / 60) + $late_diff->h + ($late_diff->days * 24);
                                                     }   
                                                     
                                                     if($undertime > 0){
@@ -859,7 +865,8 @@
                                                     @endphp
                                                 @endif
                                                 @php
-                                                    $late = $late_diff_hours*60;
+                                                    // fix late issue
+                                                    $late = round($late_diff_hours * 60, 2);  
                                                   
                                                     if($late/60 > (($schedule_hours)/2.25))
                                                     {
@@ -931,6 +938,10 @@
                                                 }
                                                 if($undertime_hrs <0)
                                                 {
+                                                    $undertime_hrs = 0;
+                                                }
+                                                // fix late issue
+                                                if (abs($undertime_hrs) < 0.0001) {
                                                     $undertime_hrs = 0;
                                                 }
                                           
