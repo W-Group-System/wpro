@@ -258,22 +258,22 @@ class UploadController extends Controller
                                 }
                             }
 
-                            if ($types == 2 || $types == 15) { 
-                                if ($filed_date <= $startDate) {
-                                    $errors[] = "Skipped [{$startDate}]: SL cannot be filed before the leave date. Filed: {$filed_date}";
-                                    continue;
-                                }
-                                // $workdaysAfter = $this->countWorkdays($startDate, $filed_date);
-                                $workdaysAfter = $this->countScheduledWorkdays(
-                                    $uid,
-                                    $startDate,
-                                    $filed_date
-                                );
-                                if ($workdaysAfter > 3) {
-                                    $errors[] = "Skipped [{$startDate}]: SL must be filed within 3 workdays after leave. Filed {$workdaysAfter} workday(s) late.";
-                                    continue;
-                                }
-                            }
+                            // if ($types == 2 || $types == 15) { 
+                            //     if ($filed_date <= $startDate) {
+                            //         $errors[] = "Skipped [{$startDate}]: SL cannot be filed before the leave date. Filed: {$filed_date}";
+                            //         continue;
+                            //     }
+                            //     // $workdaysAfter = $this->countWorkdays($startDate, $filed_date);
+                            //     $workdaysAfter = $this->countScheduledWorkdays(
+                            //         $uid,
+                            //         $startDate,
+                            //         $filed_date
+                            //     );
+                            //     if ($workdaysAfter > 3) {
+                            //         $errors[] = "Skipped [{$startDate}]: SL must be filed within 3 workdays after leave. Filed {$workdaysAfter} workday(s) late.";
+                            //         continue;
+                            //     }
+                            // }
 
                             $existing = EmployeeLeave::where('user_id', $uid)
                                 ->where('date_from', $startDate)
