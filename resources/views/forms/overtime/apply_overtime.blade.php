@@ -161,7 +161,8 @@
             const otDate = new Date(this.ot_date);
             otDate.setDate(otDate.getDate() + 1);
             this.min_date = this.ot_date + ' 00:00:00';
-            this.ot_max_date = this.ot_date + ' 23:00:00';
+            // this.ot_max_date = this.ot_date + ' 23:00:00';
+            this.ot_max_date = this.ot_date + ' 23:59:59';
             this.max_date = otDate.toISOString().split('T')[0] + ' 23:00:00';
           }
         }
