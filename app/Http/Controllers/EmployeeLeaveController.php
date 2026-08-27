@@ -264,11 +264,20 @@ class EmployeeLeaveController extends Controller
             return back();
         }
 
-        $blockReason = $this->getLeaveDateBlockReason($employee, $request->date_from);
-        if ($blockReason)
-        {
-            Alert::error($blockReason)->persistent('Dismiss');
-            return back();
+        // $blockReason = $this->getLeaveDateBlockReason($employee, $request->date_from);
+        // if ($blockReason)
+        // {
+        //     Alert::error($blockReason)->persistent('Dismiss');
+        //     return back();
+        // }
+        if ($request->leave_type != 3) {
+            $blockReason = $this->getLeaveDateBlockReason($employee, $request->date_from);
+
+            if ($blockReason)
+            {
+                Alert::error($blockReason)->persistent('Dismiss');
+                return back();
+            }
         }
 
         $count_days = $this->getDailyLeaveCount($employee, $request);
