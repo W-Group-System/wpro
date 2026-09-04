@@ -131,7 +131,6 @@
                                                 $approved_overtimes =0;
                                                 $night_diffs =0;
                                                 $night_diff_ot =0;
-                                                $lh_ot = 0;
 
                                                 $subtotal_abs = 0;
                                                 $subtotal_leave_w_pay=0;
@@ -152,6 +151,8 @@
                                             @foreach($date_range as $date_r)
                                             
                                             @php
+                                                // moved $lh_ot variable initialization to per date instead of per employee
+                                                $lh_ot = 0;
                                                 $final_time_in = "";
                                                 $time_in = ($emp->attendances)->whereBetween('time_in',[$date_r." 00:00:00",$date_r." 23:59:59"])->sortBy('time_in')->first();
                                                 if($time_in == null)
