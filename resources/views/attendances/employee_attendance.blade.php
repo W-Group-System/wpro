@@ -105,6 +105,9 @@
 
                         
                         <tbody>
+                            @php
+                                $is_absent_yesterday = false; // for next loop cheking if absent before holiday
+                            @endphp
                             @foreach($emp_data as $emp)
                                 @php
                                     $work =0;
@@ -499,7 +502,7 @@
                                                 }
                                             }
 
-                                        @endphp                                            
+                                        @endphp                                      
                                     @endif
                                     @php
                                     $late_diff_hours=0;
@@ -571,6 +574,13 @@
                                             $work = $schedule_hours;
                                         }
                                     }
+
+                                    if ($is_absent_yesterday){  // for next loop cheking if absent before holiday
+                                        if($check_if_holiday){
+                                            $work = 0;
+                                        }
+                                    }
+
                                     @endphp
                                     @if($work > 0)
                                         @php
@@ -589,6 +599,17 @@
                                         @endphp
                                     @endif
                                     @php
+                                        if($is_absent_yesterday){
+                                            if($check_if_holiday){
+                                                $abs = 1;
+                                            }
+                                        }
+                                        
+                                        if ($abs == 1) {  // for next loop cheking if absent before holiday
+                                            $is_absent_yesterday = true;
+                                        }else{
+                                            $is_absent_yesterday = false;
+                                        }
                                         $late = $late_diff_hours*60;
                                         if($leave_count == .5)
                                         { 

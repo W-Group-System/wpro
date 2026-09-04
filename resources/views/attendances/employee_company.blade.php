@@ -122,6 +122,9 @@
 
                                     
                                     <tbody>
+                                        @php
+                                            $is_absent_yesterday = false;
+                                        @endphp
                                         @foreach($emp_data as $emp)
                                             @php
                                                 $work =0;
@@ -1489,12 +1492,19 @@
                                                     }
 
                                                 }
+                                                
+                                                if($check_if_holiday && $is_absent_yesterday){
+                                                    $abs = 1;
+                                                }else{
+                                                    $is_absent_yesterday = false;
+                                                }
 
                                                 if($abs == 1)
                                                 {
                                                     $work = 0;
                                                     $late = 0;
                                                     $undertime_hrs = 0;
+                                                    $is_absent_yesterday = true;
                                                 }
                                                 $subtotal_abs += $abs;
                                                 $subtotal_leave_w_pay += $leave_count;
