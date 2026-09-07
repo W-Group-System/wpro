@@ -348,7 +348,14 @@
                                                                     {
                                                                         $count_days_before = "-3 days";
                                                                     }
+                                                                    ## Added this to have holiday pay if before holiday is filed as ob
 
+                                                                    $has_ob_before_holiday = ($emp->approved_obs)
+                                                                    ->where(
+                                                                        'applied_date',
+                                                                        date('Y-m-d', strtotime($date_r . $count_days_before))
+                                                                    )
+                                                                    ->first();
                                                                     $check_leave = employeeHasLeave($emp->approved_leaves,date('Y-m-d',strtotime($date_r.$count_days_before)),$employee_schedule);
                                                                     // dd($if_attendance_holiday);
                                                                     if($check_leave){
@@ -543,6 +550,15 @@
                                                                     //     $abs = 1;
                                                                     // }
                                                                     // $previous_abs = $abs;
+                                                                    ## Added this to have holiday pay if before holiday is filed as ob
+                                                                    if (
+                                                                        $has_ob_before_holiday &&
+                                                                        $check_if_holiday != "Special Holiday"
+                                                                    ) {
+                                                                        $abs = 0;
+                                                                        $if_attendance_holiday_status = 'With-Pay';
+                                                                        $previous_abs = 0;
+                                                                    }
                                                                     if ($check_if_holiday != "Special Holiday") {
                                                                         if ($previous_abs == 1) {
                                                                             $abs = 1;
