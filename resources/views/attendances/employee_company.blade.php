@@ -553,7 +553,7 @@
                                                                     ## Added this to have holiday pay if before holiday is filed as ob
                                                                     if (
                                                                         $has_ob_before_holiday &&
-                                                                        $check_if_holiday != "Special Holiday"
+                                                                        ($check_if_holiday == "Regular Holiday" ||$check_if_holiday == "Legal Holiday")
                                                                     ) {
                                                                         $abs = 0;
                                                                         $if_attendance_holiday_status = 'With-Pay';
