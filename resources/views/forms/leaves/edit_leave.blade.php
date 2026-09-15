@@ -84,7 +84,7 @@
                             @if($leave->halfday == 1)
                                 <input id="editViewleaveHalfday" type="checkbox" name="halfday" class="form-check-input" value="1" checked>  
                             @else
-                                <input id="editViewleaveHalfday" type="checkbox" name="halfday" class="form-check-input" value="0">  
+                                <input id="editViewleaveHalfday" type="checkbox" name="halfday" class="form-check-input" value="1">  
                             @endif
                             Halfday
                         </label>
