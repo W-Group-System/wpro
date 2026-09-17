@@ -1182,7 +1182,78 @@
                                                     $restday_ot= 0;
                                                     $restday_ot_ge= 0;
                                                     // dd($check_if_holiday);
-                                                  $work = $schedule_hours;
+                                                    // Regular or Legal holiday should not be paid if employee is absent on the last working/scheduled day
+                                                    // $work = $schedule_hours;
+                                                    $holiday_pay_qualified = false;
+
+                                                    for ($i = 1; $i <= 7; $i++) {
+
+                                                        $previous_date = date(
+                                                            'Y-m-d',
+                                                            strtotime($date_r . " -{$i} days")
+                                                        );
+
+                                                        $previous_schedule = employeeSchedule(
+                                                            $schedules,
+                                                            $previous_date,
+                                                            $emp->schedule_id,
+                                                            $emp->employee_code
+                                                        );
+
+                                                        // Skip rest days / non-working days
+                                                        if (!$previous_schedule || empty($previous_schedule->time_in_from)) {
+                                                            continue;
+                                                        }
+
+                                                        //This is now the LAST SCHEDULED WORKING DAY
+
+                                                        // Check attendance
+                                                        $previous_attendance = ($emp->attendances)
+                                                            ->whereBetween('time_in', [
+                                                                $previous_date . ' 00:00:00',
+                                                                $previous_date . ' 23:59:59'
+                                                            ])
+                                                            ->sortBy('time_in')
+                                                            ->first();
+
+                                                        // Check approved OB
+                                                        $previous_ob = ($emp->approved_obs)
+                                                            ->where('applied_date', $previous_date)
+                                                            ->first();
+
+                                                        // Check approved leave
+                                                        $previous_leave = employeeHasLeave(
+                                                            $emp->approved_leaves,
+                                                            $previous_date,
+                                                            $previous_schedule
+                                                        );
+
+                                                        // Holiday is paid if the last scheduled
+                                                        // working day was worked, approved OB,
+                                                        // or approved leave with pay.
+                                                        if ($previous_attendance) {
+
+                                                            $holiday_pay_qualified = true;
+
+                                                        } elseif ($previous_ob) {
+
+                                                            $holiday_pay_qualified = true;
+
+                                                        } elseif ($previous_leave) {
+
+                                                            $holiday_pay_qualified = true;
+                                                        }
+
+                                                        // We found the previous scheduled working day,
+                                                        // so stop checking older dates.
+                                                        break;
+                                                    }
+
+                                                   //  Only give regular holiday hours when
+                                                   //  the last scheduled working day qualified.
+                                                    if ($holiday_pay_qualified && $work <= 0) {
+                                                        $work = $schedule_hours;
+                                                    }
 
                                                   if ($emp->employee_code == "A197326")//lacaran
                                                     {
