@@ -917,21 +917,52 @@
                                                     {
                                                         $undertime_hrs = $undertime_hrs -60;
                                                     }
+                                                    ## fix late and undertime for halfday am leave
+                                                    // if($leave_count == .5)
+                                                    // {
+                                                    //     if($work < ($schedule_hours/2))
+                                                    //     {
+                                                    //         $late = ($schedule_hours/2)-$work;
+                                                    //         if($work < $schedule_hours/2)
+                                                    //         {
+                                                    //             $late = 0;
+                                                    //             $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
+                                                    //         } 
+                                                    //     }
+                                                    //     else{
+                                                    //         $work = ($schedule_hours/2);
+                                                    //         $late = 0;
+                                                    //         $undertime_hrs = 0;
+                                                    //     }
+                                                    // }
                                                     if($leave_count == .5)
                                                     {
-                                                        if($work < ($schedule_hours/2))
+                                                        $schedule_time_in_final = new DateTime($schedule_time_in);
+
+                                                        $half_day_hours = $schedule_hours / 2;
+
+                                                        $half_day_start = clone $schedule_time_in_final;
+                                                        $half_day_start->modify("+{$half_day_hours} hours");
+
+                                                        $half_day_start->modify("+1 hour");
+
+                                                        $time_in_final = new DateTime($time_in_data_full);
+
+                                                        if($time_in_final > $half_day_start)
                                                         {
-                                                            $late = ($schedule_hours/2)-$work;
-                                                            if($work < $schedule_hours/2)
-                                                            {
-                                                                $late = 0;
-                                                                $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
-                                                            } 
+                                                            $late_diff = $half_day_start->diff($time_in_final);
+
+                                                            $late_diff_hours =
+                                                                ($late_diff->s / 3600) +
+                                                                ($late_diff->i / 60) +
+                                                                $late_diff->h +
+                                                                ($late_diff->days * 24);
+
+                                                            $late = round($late_diff_hours * 60, 2);
                                                         }
-                                                        else{
-                                                            $work = ($schedule_hours/2);
+                                                        else
+                                                        {
                                                             $late = 0;
-                                                            $undertime_hrs = 0;
                                                         }
                                                     }
 
