@@ -975,6 +975,7 @@
                                                         {
                                                             $undertime_hrs = 0;
                                                         }
+                                                        $work = ($schedule_hours/2);
                                                     }
 
                                                     if($abs_half == .5)
