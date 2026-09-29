@@ -938,15 +938,17 @@
                                                     if($leave_count == .5)
                                                     {
                                                         $schedule_time_in_final = new DateTime($schedule_time_in);
+                                                        $schedule_time_out_final = new DateTime($schedule_time_out);
+                                                        $time_in_final = new DateTime($time_in_data_full);
+                                                        $time_out_final = new DateTime($time_end);
+
 
                                                         $half_day_hours = $schedule_hours / 2;
 
                                                         $half_day_start = clone $schedule_time_in_final;
                                                         $half_day_start->modify("+{$half_day_hours} hours");
-
                                                         $half_day_start->modify("+1 hour");
 
-                                                        $time_in_final = new DateTime($time_in_data_full);
 
                                                         if($time_in_final > $half_day_start)
                                                         {
@@ -963,6 +965,15 @@
                                                         else
                                                         {
                                                             $late = 0;
+                                                        }
+                                                        $actual_hours = ($time_out_final->getTimestamp() - $time_in_final->getTimestamp()) / 3600;
+                                                        if($actual_hours < $half_day_hours)
+                                                        {
+                                                            $undertime_hrs = round($half_day_hours - $actual_hours, 2);
+                                                        }
+                                                        else
+                                                        {
+                                                            $undertime_hrs = 0;
                                                         }
                                                     }
 
