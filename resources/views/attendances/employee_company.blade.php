@@ -975,7 +975,18 @@
                                                         {
                                                             $undertime_hrs = 0;
                                                         }
-                                                        $work = ($schedule_hours/2);
+                                                        $work = $half_day_hours;
+
+                                                        if($late > 0)
+                                                        {
+                                                            $work -= $late;
+                                                        }
+
+                                                        if($undertime_hrs > 0)
+                                                        {
+                                                            $work -= $undertime_hrs;
+                                                        }
+                                                        $work = max(0, round($work, 2));
                                                     }
 
                                                     if($abs_half == .5)
