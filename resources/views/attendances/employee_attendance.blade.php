@@ -380,8 +380,10 @@
                                                 <td @if($if_has_ob) class='bg-info'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][out]" value="@if($time_end){{date('h:i A',strtotime($time_end))}}@endif">@if($time_end){{date('h:i A',strtotime($time_end))}}@endif</td>
                                               
                                                 
-                                                @php
+                                    @php
                                         $leave_count = 0;
+                                        //added this variable
+                                        $abs_half = 0;
                                         if($if_leave)
                                         {
                                             $l = explode('-',$if_leave);
@@ -390,6 +392,8 @@
 
                                             {
                                                 $leave_count = 0;
+                                                //added this based on the employee_company module
+                                                $abs_half = $l[1];
                                             }
                                             // dd($leave_count);
                                         }
@@ -404,7 +408,31 @@
                                         $original_sched = 0;
                                         $overtime = 0;
                                         $schedule_hours = 0;
+
+                                        //added this condition based on the employee_company
+                                        if($employee_schedule)
+                                        {
+                                            $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
+                                            $schedule_in = strtotime($date_r." ".$employee_schedule->time_in_to);
+                                            if(($schedule_out)< ($schedule_in))
+                                            {
+                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_oout_to)+86400;
+
+                                            }
+                                            $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                            if($schedule_hours > 8)
+                                            {
+                                                $schedule_hours =  $schedule_hours-1;
+                                            }
+                                            if($emp->employee_code == "A340612") //frosie
+                                            {
+                                                $schedule_hours =  $schedule_hours-1;
+
+                                            }
+                                        }
+                                        //end
                                     @endphp
+
                                     @if((($time_start)&&($time_end)) && $employee_schedule)    
                                         @php
                                             $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to);
@@ -420,6 +448,12 @@
                                     
                                             $time_start_ts = strtotime($time_start);
                                             $time_end_ts = strtotime($time_end);
+
+                                            //Added this based on employee_company
+                                            $lunch_start = strtotime(date('Y-m-d 12:00:00', $time_start_ts));
+                                            $lunch_end   = strtotime(date('Y-m-d 13:00:00', $time_start_ts));
+                                            //end
+                                            
                                             // if ($time_end_ts < $time_start_ts) {
                                             //     $time_end_ts += 86400; `
                                             // }
@@ -427,78 +461,75 @@
                                             {
                                                 $time_start_ts = strtotime($date_r." ".$employee_schedule->time_in_from);
                                             }
-                                            $work_ot =  round((($time_end_ts - $time_start_ts)/3600), 2);
-                                         
-                                            if($time_end_ts > $schedule_out)
-                                            {
-                                                // dd($time_end_ts." ".$schedule_out);
-                                                $time_end_ts =  $schedule_out;
-                                              
-                                            }
-                                             $work = (($time_end_ts - $time_start_ts) / 3600);
-                                            
-                                            // if($work_ot>10)
-                                            // {
-                                            //     dd($work_ot);
-                                            //     dd((date('Y-m-d H:i',strtotime($time_end_ts)))." ".(date('Y-m-d H:i',strtotime($time_start_ts))));
-                                            //     dd($schedule_out." ".date('Y-m-d H:i',$time_start_ts));
-                                            // }
-                                            $schedule_hours = 0;
-                                            
-                                            if($employee_schedule->time_in_from)
-                                            {
-                                                $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+                                            $work_ot = round((($time_end_ts - $time_start_ts)/3600), 2);
 
-                                                $lunch_start = strtotime(date('Y-m-d 12:00:00', $time_start_ts));
-                                                $lunch_end   = strtotime(date('Y-m-d 13:00:00', $time_start_ts));
-                                                // dd($schedule_hours);
-                                                if($schedule_hours > 8)
+                                                if($time_end_ts > $schedule_out)
                                                 {
-                                                    $schedule_hours =  $schedule_hours-1;
-                                                  
-                                                    if($work >= ($schedule_hours/1.5))
+                                                    $time_end_ts = $schedule_out;
+                                                }
+
+                                                // Same as employee_company
+                                                $work = (($time_end_ts - $time_start_ts) / 3600);
+
+                                                $schedule_hours = 0;
+
+                                                if($employee_schedule->time_in_from)
+                                                {
+                                                    $schedule_hours = ((($schedule_out)-($schedule_in))/3600);
+
+                                                    //$lunch_start = strtotime(date('Y-m-d 12:00:00', $time_start_ts));
+                                                    //$lunch_end   = strtotime(date('Y-m-d 13:00:00', $time_start_ts));
+
+                                                    if($schedule_hours > 8)
                                                     {
-                                                       
-                                                        $work = $work-1;
-                                                       
-                                                        
-                                                    }
-                                                   
-                                                    
-                                                } else {
-                                                    // Case if: Schedule <= 8 hours but spans lunch
-                                                    if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
                                                         $schedule_hours = $schedule_hours - 1;
-                                                        $work = $work - 1;
+
+                                                        if($work >= ($schedule_hours/1.5))
+                                                        {
+                                                            $work = $work - 1;
+                                                        }
                                                     }
-                                                }
+                                                    else {
+                                                        $day_of_week = date('N', strtotime($date_r)); 
+                                                        $is_weekend = ($day_of_week >= 6);
 
+                                                        $is_pbi = ($emp->company_id ?? '') === 10;
+                                                        $is_wli_hbu = (($emp->company_id ?? '') === 13 || 
+                                                                    ($emp->company_id ?? '') === 14 || 
+                                                                    ($emp->company_id ?? '') === 15);
 
-                                              
-                                                if($schedule_hours > $work)
-                                                {
-                                                    $undertime = (double) number_format($schedule_hours - $work,2);
-                                                }
-                                               if($work_ot > $original_sched)
-                                               {
-                                                $overtime = (double) number_format($work_ot - $original_sched,2);
-                                               }
-                                                    
-                                                
-                                              
-                                                if($work > $schedule_hours)
-                                                {
-                                                    $work = $schedule_hours;
-                                                }
-                                                if($leave_count == .5)
-                                                {
+                                                        if (!(($is_pbi && $is_weekend) || $is_wli_hbu || ($is_pbi && $schedule_hours <= 8))) {
+                                                            if ($time_start_ts <= $lunch_start && $time_end_ts >= $lunch_end) {
+                                                                $schedule_hours = $schedule_hours - 1;
+                                                                $work = $work - 1;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if($schedule_hours > $work)
+                                                    {
+                                                        // Same as employee_company
+                                                        $undertime = $schedule_hours - $work;
+                                                    }
+
+                                                    if($work_ot > $original_sched)
+                                                    {
+                                                        $overtime = (double) number_format($work_ot - $original_sched, 2);
+                                                    }
+
                                                     if($work > $schedule_hours)
                                                     {
+                                                        $work = $schedule_hours;
+                                                    }
 
-                                                        $work = $schedule_hours/2;
+                                                    if($leave_count == .5)
+                                                    {
+                                                        if($work > $schedule_hours)
+                                                        {
+                                                            $work = $schedule_hours/2;
+                                                        }
                                                     }
                                                 }
-                                            }
 
                                         @endphp                                            
                                     @endif
@@ -515,26 +546,29 @@
                                             $schedule_time_out = $time_in_data_date . ' ' . $employee_schedule['time_out_to'];
                                             $schedule_time_in =  date('Y-m-d H:i:s',strtotime($schedule_time_in));
                                             $schedule_time_in_final =  new DateTime($schedule_time_in);
-                                            $time_in_dt = new DateTime($time_in_data_full);
-                                            
+                                            //$time_in_dt = new DateTime($time_in_data_full);
+                                            //if ($time_in_dt > $schedule_time_in_final)
+                                            //added based on employee_company
                                             if(date('Y-m-d H:i',strtotime($time_in_data_full)) > date('Y-m-d H:i',strtotime($schedule_time_in))){
+                                                //$late_diff = $schedule_time_in_final->diff($time_in_dt);
                                                 $late_diff = $schedule_time_in_final->diff(new DateTime($time_in_data_full));
-
-                                                // Exclude lunch deduction from late hours
-                                                // $lunch_start = new DateTime($time_in_data_date . ' 12:00:00');
-                                                // $lunch_end   = new DateTime($time_in_data_date . ' 13:00:00');
-
-                                                // if ($time_in_dt >= $lunch_end) {
-                                                //     $late_diff_hours -= 1;
-                                                // }
                                                 
-                                                $late_diff_hours = ($late_diff->s / 3600) + ($late_diff->i / 60) + $late_diff->h + ($late_diff->days * 24);
-                                            }   
+                                                $late_diff_hours = ($late_diff->s / 3600 + $late_diff->i / 60 + $late_diff->h + $late_diff->days * 24);
+
+                                                //$late_diff_hours = max(0, round($late_diff_hours, 2));
+                                            }
+                                            //end
                                          
 
                                             if($undertime > 0){
                                                 if($late_diff_hours > 0){
                                                     $undertime_hrs = $undertime - $late_diff_hours;
+                                                    //added based on the employee_company
+                                                    if($late_diff_hours >= ($schedule_hours/2.25))
+                                                    {
+                                                        $undertime_hrs = $undertime - ($late_diff_hours-1);
+                                                    }
+                                                    //end
                                                 }else{
                                                     $undertime_hrs = $undertime;
                                                 }
@@ -575,43 +609,108 @@
                                     @endphp
                                     <!-- End -->
 
-
-                                    
                                     @if($work > 0)
                                         @php
                                             $abs = 0;
                                         @endphp
                                     @endif
+
                                     @if(($leave_count != 0) && ($abs == 0))
                                         @php
                                             $abs = $leave_count;
                                         @endphp
                                     @endif
+
                                     @if($rest)
                                         @php
                                             $abs =0;
                                             $leave_count =0;
+                                            $previous_abs = $abs;
                                         @endphp
                                     @endif
+
                                     @php
-                                        $late = $late_diff_hours*60;
-                                        if($leave_count == .5)
+                                    //changed this based on the employee_company
+                                        //$late = $late_diff_hours*60;
+                                        $late = round($late_diff_hours * 60, 2);
+                                        
+                                        //if($leave_count == .5)
+                                        if($late/60 > (($schedule_hours)/2.25))
                                         { 
-                                            if($work < ($schedule_hours/2))
+                                            $late = $late-60;
+                                            //Removed this based on the employee_code
+                                                //if($work < ($schedule_hours/2)){
+                                                //    $late = ($schedule_hours/2)-$work;
+                                                //    if($work < $schedule_hours/2){
+                                                //        $late = 0;
+                                                //        $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);}}
+                                                //else{
+                                                //    $work = ($schedule_hours/2);
+                                                //    $late = 0;
+                                                //    $undertime_hrs = 0;}
+                                            //end
+                                        }
+                                        //added this based on employee_company
+                                        if($undertime_hrs/60 > ($schedule_hours/2))
+                                        {
+                                            $undertime_hrs = $undertime_hrs -60;
+                                        }
+
+                                        if($leave_count == .5){
+                                            $schedule_time_in_final = new DateTime($schedule_time_in);
+                                            $schedule_time_out_final = new DateTime($schedule_time_out);
+                                            $time_in_final = new DateTime($time_in_data_full);
+                                            $time_out_final = new DateTime($time_end);
+
+                                            $half_day_hours = $schedule_hours / 2;
+                                            $half_day_start = clone $schedule_time_in_final;
+                                            $half_day_start->modify("+{$half_day_hours} hours");
+                                            $half_day_start->modify("+1 hour");
+
+                                            if($time_in_final > $half_day_start)
                                             {
-                                                $late = ($schedule_hours/2)-$work;
-                                                if($work < $schedule_hours/2)
-                                                {
-                                                    $late = 0;
-                                                    $undertime_hrs = (double) number_format(($schedule_hours/2 - $work),2);
-                                                } 
+                                                $late_diff = $half_day_start->diff($time_in_final);
+                                                $late_diff_hours = 
+                                                    ($late_diff->s / 3600) +
+                                                    ($late_diff->i / 60) + 
+                                                    $late_diff->h + 
+                                                    ($late_diff->days * 24);
+                                            
+                                                $late = round($late_diff_hours * 60, 2);
+                                            }
+                                            else {
+                                                $late = 0;
+                                            }
+                                            $actual_hours = ($time_out_final->getTimestamp() - $time_in_final->getTimestamp()) / 3600;
+                                            if($actual_hours < $half_day_hours){
+                                                $undertime_hrs = round($half_day_hours - $actual_hours, 2);
                                             }
                                             else{
+                                                $undertime_hrs = 0;
+                                            }
+                                            $work = ($schedule_hours/2);
+
+                                        }
+                                        if($abs_half == .5) {
+                                            $abs_half = .5;
+                                            if($work < ($schedule_hours/2)){
+                                                $default_halfday_hrs = 4;
+                                                if($schedule_hours <= $default_halfday_hrs){
+                                                    $late = 0;
+                                                }
+                                                else{
+                                                    $late = (double) number_format(($schedule_hours/2 - $work),2) * 60;
+                                                }
+                                                $undertime_hrs = 0;
+                                            }else{
                                                 $work = ($schedule_hours/2);
                                                 $late = 0;
                                                 $undertime_hrs = 0;
                                             }
                                         }
+                                        $overtime = $overtime+$late_diff_hours;
+                                        //end
+                                    //end
                                     @endphp
                                     @php
                                         if($work <0)
@@ -626,8 +725,11 @@
                                         {
                                             $undertime_hrs = 0;
                                         }
-                                        @endphp
-
+                                        //added this based on employee_company to fix late issue
+                                        if(abs($undertime_hrs) < 0.0001){
+                                            $undertime_hrs = 0;
+                                        }
+                                    @endphp
                                     @php
                                     
                                         $approved_overtime_hrs = $emp->approved_ots ? employeeHasOTDetails($emp->approved_ots, date('Y-m-d', strtotime($date_r))) : "";
@@ -642,37 +744,24 @@
 
                                             if ($employee_schedule)
                                             {
-                                                //remove the $tart_schedule in condition
-                                                //if ($time_start > $date_r) {$start_schedule = $date_r . " " . $employee_schedule->time_in_to; } else {
-                                                //  $start_schedule = (
-                                                //        date('Y-m-d',strtotime($time_start))
-                                                //        . " "
-                                                //        . $employee_schedule->time_in_to
-                                                //    );
-                                                //}
-
-                                                $start_schedule = date(
-                                                    'Y-m-d',
-                                                    strtotime($time_start)
-                                                ) . " " . $employee_schedule->time_in_to;
-
-                                                $end_schedule = date(
-                                                    'Y-m-d',
-                                                    strtotime($time_start)
-                                                ) . " " . $employee_schedule->time_out_to;
+                                                //remove the $start_schedule in condition baded on employee_company
+                                                    //if ($time_start > $date_r) {$start_schedule = $date_r . " " . $employee_schedule->time_in_to; } else {
+                                                    //  $start_schedule = (
+                                                    //        date('Y-m-d',strtotime($time_start))
+                                                    //        . " "
+                                                    //        . $employee_schedule->time_in_to
+                                                    //    );
+                                                    //}
+                                                //end
+                                                //added this based on the employee_company
+                                                $start_schedule = date('Y-m-d', strtotime($time_start)) . " " . $employee_schedule->time_in_to;
+                                                $end_schedule = date('Y-m-d', strtotime($time_start)) . " " . $employee_schedule->time_out_to;
 
 
                                                 if (strtotime($start_schedule) > strtotime($end_schedule))
                                                 {
-                                                    $s = date(
-                                                        'Y-m-d',
-                                                        strtotime($time_start . ' +1 day')
-                                                    );
-
-                                                    $end_schedule = date(
-                                                        'Y-m-d H:i',
-                                                        strtotime($s . " " . $employee_schedule->time_out_to)
-                                                    );
+                                                    $s = date('Y-m-d', strtotime($time_start . ' +1 day'));
+                                                    $end_schedule = date('Y-m-d H:i', strtotime($s . " " . $employee_schedule->time_out_to));
                                                 }
 
                                                 if (strtotime($start_schedule) > strtotime($time_start))
@@ -685,9 +774,7 @@
                                                     $nightdiff_end = $end_schedule;
                                                 }
 
-                                                $night_diff = night_difference_per_company(
-                                                    $nightdiff_start,
-                                                    $nightdiff_end,
+                                                $night_diff = night_difference_per_company($nightdiff_start, $nightdiff_end,
                                                     //$date_r
                                                 );
 
@@ -719,27 +806,16 @@
 
                                                 if ($night_diff < 7)
                                                 {
-                                                    $actual_night_diff = night_difference_per_company(
-                                                        $nightdiff_start,
-                                                        $nightdiff_end
-                                                    );
+                                                    $actual_night_diff = night_difference_per_company($nightdiff_start, $nightdiff_end);
+                                                    if ($employee_schedule){
+                                                        $isNightShift = strtotime($employee_schedule->time_in_to) > strtotime($employee_schedule->time_out_to);
 
-                                                    if ($employee_schedule)
-                                                    {
-                                                        $isNightShift =
-                                                            strtotime($employee_schedule->time_in_to) >
-                                                            strtotime($employee_schedule->time_out_to);
-
-                                                        if ($isNightShift)
-                                                        {
-                                                            $night_diff_ot =
-                                                                night_difference_per_company(
-                                                                    $time_start,
-                                                                    $time_end
-                                                                ) - $actual_night_diff;
+                                                        if ($isNightShift){
+                                                            $night_diff_ot = night_difference_per_company($time_start, $time_end) - $actual_night_diff;
                                                         }
                                                     }
                                                 }
+                                                //end
                                             }
                                         }
 
@@ -753,15 +829,11 @@
                                             $overtime = 0;
                                         }
 
-                                        //add this same as employee_company originally its not included
-                                        $overtime = $overtime + $late_diff_hours;
-
                                         if ($overtime < $approved_overtime_hrs)
                                         {
                                             //$overtime = ($overtime);
                                             $overtime = $overtime;
-                                        }
-                                        else
+                                        }else
                                         {
                                             //$overtime = ($approved_overtime_hrs)
                                             $overtime = $approved_overtime_hrs;
@@ -773,8 +845,7 @@
                                             {
                                                 $night_diff_ot = $overtime;
                                             }
-                                        }
-                                        else
+                                        }else
                                         {
                                             $night_diff_ot = 0;
                                         }
@@ -797,17 +868,12 @@
                                                     if($employee_schedule->time_in_from == '')
                                                     {
                                                         $rest = "RESTDAY";
-                                                        
-                                            
                                                     }
                                                     if($employee_schedule->time_in_from == null)
                                                     {
                                                         $rest = "RESTDAY";
-                                                    
                                                     }
-                                            
-                                            }
-                                            else {
+                                            }else {
                                                 
                                                 $rest = "RESTDAY";
                                             }
@@ -821,41 +887,69 @@
                                                 {
                                                     $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
                                                     $restnd =  night_difference_per_company($time_start,$time_end);
+                                                    //added this based on the employee_company - before added already fixed the (Reg hrs, Late, Undertime, Reg OT, Reg OT ND)
+                                                    if($work_rest > 9)
+                                                    {
+                                                        $restnd =  round(night_difference_per_company($time_start,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($time_start)))));
+                                                        $restnd_ge = night_difference_per_company($time_start,$time_end);
+                                                        $restnd_ge = $restnd_ge - $restnd;
+                                                        $restnd = $restnd-1;
+                                                        if($restnd <0)
+                                                        {
+                                                            $restnd = 0;
+                                                        }
+                                                        if($restnd_ge <0)
+                                                        {
+                                                            $restnd_ge = 0;
+                                                        }
+                                                    }
+                                                    //end
                                                 }
                                                 $late = 0;
                                                 $undertime = 0;
                                                 if($work_rest > 0)
                                                 {
-                                                    if($work_rest > 8)
-                                                    {
-                                                        $work_rest = $work_rest-1;
-                                                    }
-                                                    if($work_rest > $approved_overtime_hrs)
-                                                    {
+                                                    //if($work_rest > 8){
+                                                    //    $work_rest = $work_rest-1;
+                                                    //}
+                                                    //if($work_rest > $approved_overtime_hrs)
+                                                    //{
+                                                    //    $work_rest = $approved_overtime_hrs;
+                                                    //}
+                                                    
+                                                    //if($emp->company_id == 11)
+                                                    //{
+                                                    //    $restday_ot = $work_rest;
+                                                    //    if($work_rest >= 8)
+                                                    //    {
+                                                    //        $restday_ot = 8;
+                                                    //        $restday_ot_ge = $work_rest-8;
+                                                    //    }
+                                                    //}
+                                                    //else 
+                                                    //{
+                                                    //    if($work_rest >2)
+                                                    //    {
+                                                    //        $restday_ot = $work_rest;
+                                                    //        if($work_rest >= 8)
+                                                    //        {
+                                                    //            $restday_ot = 8;
+                                                    //            $restday_ot_ge = $work_rest-8;
+                                                    //        }
+                                                    //    }
+                                                    //}
+                                                    //added and changed the condition from top to this
+                                                    if($work_rest > $approved_overtime_hrs){
                                                         $work_rest = $approved_overtime_hrs;
                                                     }
-                                                    
-                                                    if($emp->company_id == 11)
-                                                    {
+                                                    if($work_rest > 2){
                                                         $restday_ot = $work_rest;
-                                                        if($work_rest >= 8)
-                                                        {
+                                                        if($work_rest >= 8){
                                                             $restday_ot = 8;
                                                             $restday_ot_ge = $work_rest-8;
                                                         }
                                                     }
-                                                    else 
-                                                    {
-                                                        if($work_rest >2)
-                                                        {
-                                                            $restday_ot = $work_rest;
-                                                            if($work_rest >= 8)
-                                                            {
-                                                                $restday_ot = 8;
-                                                                $restday_ot_ge = $work_rest-8;
-                                                            }
-                                                        }
-                                                    }
+                                                    //end
                                                 }
                                             
                                             }
@@ -998,8 +1092,8 @@
                                         $subtotal_rd_nd_ge += 0;
                                     @endphp
                                     <td @if($abs-$leave_count>0) class='bg-danger'@endif ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][abs]" value="{{$abs}}">{{number_format($abs,2)}}</td>
-                                    <td ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{$leave_count}}</td>
-                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{$work}}</td>
+                                    <td ><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][lv_w_pay]" value="{{$leave_count}}">{{number_format($leave_count,2)}}</td>
+                                    <td><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_hrs]" value="{{$work}}">{{number_format($work,2)}}</td>
                                     <td @if($late>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][late_min]" value="{{number_format($late)}}">{{number_format($late)}}</td>
                                     <td  @if($undertime_hrs>0) class='bg-danger'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][undertime_min]" value="{{$undertime_hrs*60}}">{{number_format($undertime_hrs*60,2)}}</td>
                                     <td @if($overtime>0) class='bg-warning'@endif><input type="hidden" name="employees[{{ $emp->employee_code }}][{{$date_r}}][reg_ot]" value="{{$overtime}}">{{number_format($overtime,2)}}</td> {{-- REG OT --}}
