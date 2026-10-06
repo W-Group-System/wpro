@@ -54,10 +54,12 @@ class HomeController extends Controller
         
         $employees_new_hire = Employee::where('original_date_hired',">=",date("Y-m-d", strtotime("-1 months")))->orderBy('original_date_hired','desc')->where('status', '!=', 'Declined')->get();
         $sevendays = date('Y-m-d',strtotime("-7 days"));
+        // $filter_date = '2026-10-02';
         if(auth()->user()->employee){
             if(auth()->user()->employee->employee_number){
                 $attendance_now = $attendance_controller->get_attendance_now(auth()->user()->employee->employee_number);
                 $attendances = $attendance_controller->get_attendances($sevendays,date('Y-m-d',strtotime("-1 day")),auth()->user()->employee->employee_number);
+                //$attendances = $attendance_controller->get_attendances($filter_date,$filter_date,auth()->user()->employee->employee_number);
             }else{
                 $attendance_now = null;
                 $attendances = null;
@@ -70,10 +72,12 @@ class HomeController extends Controller
         }
         // dd($attendances->unique('time_in','Y-m-d'));
         $date_ranges = $attendance_controller->dateRange($sevendays,date('Y-m-d',strtotime("-1 day")));
+        // $date_ranges = $attendance_controller->dateRange($filter_date,$filter_date);
         $handbook = Handbook::orderBy('id','desc')->first();
         $employees_under = auth()->user()->subbordinates;
         // dd(auth()->user()->employee);
         $attendance_employees = $attendance_controller->get_attendances_employees(date('Y-m-d'),date('Y-m-d'),$employees_under->pluck('employee_number')->toArray());
+        // $attendance_employees = $attendance_controller->get_attendances_employees($filter_date,$filter_date,$employees_under->pluck('employee_number')->toArray());
         $attendance_employees->load('employee.approved_leaves_with_pay');
         // dd($attendance_employees);
         $announcements = Announcement::with('user')->where('expired',null)

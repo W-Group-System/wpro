@@ -64,7 +64,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                    <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step='.5' placeholder="10.5">
+                    {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step='.5' placeholder="10.5"> --}}
+                    <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step="0.1" placeholder="10.5">
                 </div>
             </div>
               <div class="row border text-center">
@@ -102,7 +103,9 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step='.5' placeholder="10.5" required>
+                  {{-- #remove the step=.5 in the first input --}}
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step='.5' placeholder="10.5" required> --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step="0.1" placeholder="10.5" required>
               </div>
             </div>
               <div class="row border text-center">
@@ -140,8 +143,9 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step='.5' placeholder="10.5" required>
-              </div>
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step='.5' placeholder="10.5" required> --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step="0.1" placeholder="10.5" required>
+                </div>
             </div>
             <div class="row border text-center">
                 <div class='col-md-3 align-self-center'>
@@ -178,7 +182,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step='.5' placeholder="10.5" required>
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step='.5' placeholder="10.5" required> --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step="0.1" placeholder="10.5" required>
               </div>
             </div>
             <div class="row border text-center">
@@ -216,7 +221,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step='.5' placeholder="10.5" required>
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step='.5' placeholder="10.5" required> --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step="0.1" placeholder="10.5" required> 
               </div>
             </div>
             <div class="row border text-center">
@@ -254,7 +260,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step='.5' placeholder="10.5" required>
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step='.5' placeholder="10.5" required> --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step="0.1" placeholder="10.5" required>
               </div>
             </div>
             <div class="row border text-center">
@@ -292,7 +299,8 @@
                 </div>
               </div>
               <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step='.5' placeholder="10.5">
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step='.5' placeholder="10.5"> --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step="0.1" placeholder="10.5">
               </div>
             </div>
           </div>

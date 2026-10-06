@@ -32,6 +32,7 @@
                                           $estimated_out = "";
                                           $halfday_out = "";
                                           $schedule_hours = 0;
+                                          // dd($employee_schedule->working_hours);
                                           if($employee_schedule != null)
                                           {
                                             $schedule_out = strtotime(date('Y-m-d')." ".$employee_schedule->time_out_to);
@@ -62,10 +63,10 @@
                                            
                                               $halfday_out = date("h:i A", strtotime('+'.intval(($schedule_hours/2)*60).' minutes', strtotime($attendance_now->time_in)));
                                               // dd($halfday_out);
-                                                $hours = intval($employee_schedule['working_hours']);
-                                                $minutes = ($employee_schedule['working_hours']-$hours)*60;
-                                                $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($attendance_now->time_in)));
-                                                $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
+                                              $hours = intval($employee_schedule['working_hours']);
+                                              $minutes = ($employee_schedule['working_hours']-$hours)*60;
+                                              $estimated_out = date('h:i A', strtotime("+".$hours." hours",strtotime($attendance_now->time_in)));
+                                              $estimated_out = date('h:i A', strtotime("+".$minutes." minutes",strtotime($estimated_out)));
                                             }
                                             if(strtotime(date('h:i A',strtotime($attendance_now->time_in))) > strtotime(date('h:i A',strtotime($employee_schedule['time_in_to']))))
                                             {
@@ -79,7 +80,7 @@
                                             $halfday_out = "No Schedule";
                                           }
                                           
-                                        @endphp
+                                    @endphp
                                     @if($attendance_now->time_out == null )
                                         <hr>
                                         <small>
