@@ -67,7 +67,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                    <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Sunday']->working_hours ?? '0' }}" >
+                    {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Sunday']->working_hours ?? '0' }}" > --}}
+                    <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Sunday]' step='.1' placeholder="10.5" value="{{ $scheduleData['Sunday']->working_hours ?? '0' }}" >
                 </div>
             </div>
               <div class="row border text-center">
@@ -105,7 +106,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Monday']->working_hours ?? '0' }}" >
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Monday']->working_hours ?? '0' }}" > --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Monday]' step='.1' placeholder="10.5" value="{{ $scheduleData['Monday']->working_hours ?? '0' }}" >
               </div>
             </div>
               <div class="row border text-center">
@@ -143,7 +145,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Tuesday']->working_hours ?? '0' }}" >
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Tuesday']->working_hours ?? '0' }}" > --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Tuesday]' step='.1' placeholder="10.5" value="{{ $scheduleData['Tuesday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -181,7 +184,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Wednesday']->working_hours ?? '0' }}" >
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Wednesday']->working_hours ?? '0' }}" > --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Wednesday]' step='.1' placeholder="10.5" value="{{ $scheduleData['Wednesday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -219,7 +223,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Thursday']->working_hours ?? '0' }}" >
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Thursday']->working_hours ?? '0' }}" > --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Thursday]' step='.1' placeholder="10.5" value="{{ $scheduleData['Thursday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -257,7 +262,8 @@
                   </div>
                 </div>
                 <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Friday']->working_hours ?? '0' }}" >
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Friday']->working_hours ?? '0' }}" > --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Friday]' step='.1' placeholder="10.5" value="{{ $scheduleData['Friday']->working_hours ?? '0' }}" >
               </div>
             </div>
             <div class="row border text-center">
@@ -295,7 +301,8 @@
                 </div>
               </div>
               <div class='col-md-3  align-self-center'>
-                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Saturday']->working_hours ?? '0' }}" >
+                  {{-- <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step='.5' placeholder="10.5" value="{{ $scheduleData['Saturday']->working_hours ?? '0' }}" > --}}
+                  <input type='number' class='form-control form-control-sm align-self-center' name='working_hours[Saturday]' step='.1' placeholder="10.5" value="{{ $scheduleData['Saturday']->working_hours ?? '0' }}" >
               </div>
             </div>
           </div>
