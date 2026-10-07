@@ -517,24 +517,43 @@
                                             $schedule_time_in_final =  new DateTime($schedule_time_in);
                                             $time_in_dt = new DateTime($time_in_data_full);
                                             
-                                            if ($time_in_dt > $schedule_time_in_final) {
+                                            // if ($time_in_dt > $schedule_time_in_final) {
 
-                                                $late_diff = $schedule_time_in_final->diff($time_in_dt);
+                                            //     $late_diff = $schedule_time_in_final->diff($time_in_dt);
 
-                                                $late_diff_hours = (
-                                                    $late_diff->s / 3600 +
-                                                    $late_diff->i / 60 +
-                                                    $late_diff->h +
-                                                    $late_diff->days * 24
-                                                );
+                                            //     $late_diff_hours = (
+                                            //         $late_diff->s / 3600 +
+                                            //         $late_diff->i / 60 +
+                                            //         $late_diff->h +
+                                            //         $late_diff->days * 24
+                                            //     );
 
-                                                $late_diff_hours = max(0, round($late_diff_hours, 2));
+                                            //     $late_diff_hours = max(0, round($late_diff_hours, 2));
+                                            // }
+                                            if(date('Y-m-d H:i:s',strtotime($time_start)) > date('Y-m-d H:i:s',strtotime($schedule_time_in)))
+                                            {
+                                                $late_diff = $schedule_time_in_final->diff(new DateTime($time_in_data_full));
+
+                                                $late_diff_hours = ($late_diff->s / 3600) + ($late_diff->i / 60) + $late_diff->h + ($late_diff->days * 24);
                                             }
                                          
 
+                                            // if($undertime > 0){
+                                            //     if($late_diff_hours > 0){
+                                            //         $undertime_hrs = $undertime - $late_diff_hours;
+                                            //     }else{
+                                            //         $undertime_hrs = $undertime;
+                                            //     }
+                                            // }
                                             if($undertime > 0){
                                                 if($late_diff_hours > 0){
-                                                    $undertime_hrs = $undertime - $late_diff_hours;
+                                                    $undertime_hrs = $undertime - ($late_diff_hours);
+
+                                                    if($late_diff_hours >= ($schedule_hours/2.25))
+                                                    {
+                                                        $undertime_hrs = $undertime - ($late_diff_hours-1);
+                                                    }
+                                                
                                                 }else{
                                                     $undertime_hrs = $undertime;
                                                 }
@@ -946,7 +965,7 @@
                                         }
 
                                         //add this same as employee_company originally its not included
-                                        $overtime = $overtime + $late_diff_hours;
+                                        //$overtime = $overtime + $late_diff_hours;
 
                                         if ($overtime < $approved_overtime_hrs)
                                         {
