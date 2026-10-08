@@ -641,6 +641,17 @@
                                                 @php
                                                     $leave_count = 0;
                                                     $abs_half = 0;
+                                                    $halfday_status = null;
+                                                    if ($emp->approved_leaves && $emp->approved_leaves->count() > 0) {
+                                                        $leave_record = $emp->approved_leaves
+                                                            ->where('date_from', date('Y-m-d', strtotime($date_r)))
+                                                            ->where('date_to', date('Y-m-d', strtotime($date_r)))
+                                                            ->first();
+
+                                                        if ($leave_record) {
+                                                            $halfday_status = $leave_record->halfday_status;
+                                                        }
+                                                    }
                                                     if($if_leave)
                                                     {
                                                         $l = explode('-',$if_leave);
@@ -917,7 +928,7 @@
                                                     {
                                                         $undertime_hrs = $undertime_hrs -60;
                                                     }
-                                                    ## fix late and undertime for halfday am leave
+                                                    ## fix late and undertime for halfday paid leave
                                                     // if($leave_count == .5)
                                                     // {
                                                     //     if($work < ($schedule_hours/2))
@@ -935,60 +946,156 @@
                                                     //         $undertime_hrs = 0;
                                                     //     }
                                                     // }
-                                                    if($leave_count == .5)
-                                                    {
-                                                        $schedule_time_in_final = new DateTime($schedule_time_in);
-                                                        $schedule_time_out_final = new DateTime($schedule_time_out);
-                                                        $time_in_final = new DateTime($time_in_data_full);
-                                                        $time_out_final = new DateTime($time_end);
-
-
-                                                        $half_day_hours = $schedule_hours / 2;
-
-                                                        $half_day_start = clone $schedule_time_in_final;
-                                                        $half_day_start->modify("+{$half_day_hours} hours");
-                                                        $half_day_start->modify("+1 hour");
-
-
-                                                        if($time_in_final > $half_day_start)
+                                                    if($leave_count == .5) {
+                                                        if(strtolower($halfday_status) == 'first shift')
                                                         {
-                                                            $late_diff = $half_day_start->diff($time_in_final);
+                                                            $schedule_time_in_final = new DateTime($schedule_time_in);
+                                                            $schedule_time_out_final = new DateTime($schedule_time_out);
+                                                            $time_in_final = new DateTime($time_in_data_full);
+                                                            $time_out_final = new DateTime($time_end);
 
-                                                            $late_diff_hours =
-                                                                ($late_diff->s / 3600) +
-                                                                ($late_diff->i / 60) +
-                                                                $late_diff->h +
-                                                                ($late_diff->days * 24);
+                                                            $half_day_hours = $schedule_hours / 2;
 
-                                                            $late = round($late_diff_hours * 60, 2);
-                                                        }
-                                                        else
-                                                        {
-                                                            $late = 0;
-                                                        }
-                                                        $actual_hours = ($time_out_final->getTimestamp() - $time_in_final->getTimestamp()) / 3600;
-                                                        if($actual_hours < $half_day_hours)
-                                                        {
-                                                            $undertime_hrs = round($half_day_hours - $actual_hours, 2);
-                                                        }
-                                                        else
-                                                        {
-                                                            $undertime_hrs = 0;
-                                                        }
-                                                        $work = $half_day_hours;
+                                                        
+                                                            $half_day_start = clone $schedule_time_in_final;
+                                                            $half_day_start->modify("+{$half_day_hours} hours");
 
-                                                        if($late > 0)
+                                                            $half_day_start->modify("+1 hour");
+
+                                                            if($time_in_final > $half_day_start)
+                                                            {
+                                                                $late_diff = $half_day_start->diff($time_in_final);
+
+                                                                $late_diff_hours =
+                                                                    ($late_diff->s / 3600) +
+                                                                    ($late_diff->i / 60) +
+                                                                    $late_diff->h +
+                                                                    ($late_diff->days * 24);
+
+                                                                $late = round($late_diff_hours * 60, 2);
+                                                            }
+                                                            else
+                                                            {
+                                                                $late = 0;
+                                                            }
+
+                                                            if($time_out_final < $schedule_time_out_final)
+                                                            {
+                                                                $undertime_diff = $time_out_final->diff($schedule_time_out_final);
+
+                                                                $undertime_hours =
+                                                                    ($undertime_diff->s / 3600) +
+                                                                    ($undertime_diff->i / 60) +
+                                                                    $undertime_diff->h +
+                                                                    ($undertime_diff->days * 24);
+
+                                                                $undertime_hrs = round($undertime_hours, 2);
+                                                            }
+                                                            else
+                                                            {
+                                                                $undertime_hrs = 0;
+                                                            }
+
+                                                        
+                                                            $work = $half_day_hours;
+
+                                                            if($late > 0)
+                                                            {
+                                                                $work -= ($late / 60);
+                                                            }
+
+                                                            if($undertime_hrs > 0)
+                                                            {
+                                                                $work -= $undertime_hrs;
+                                                            }
+
+                                                            $work = max(0, round($work, 2));
+                                                        } elseif(strtolower($halfday_status) == 'second shift')
                                                         {
-                                                            $work -= $late;
+                                                            $schedule_time_in_final = new DateTime($schedule_time_in);
+                                                            $schedule_time_in_from = ($time_in_data_date . ' ' . $employee_schedule['time_in_from']);
+                                                            $schedule_time_in_from =  date('Y-m-d H:i:s',strtotime($schedule_time_in_from));
+                                                            $schedule_time_in_from_final = new DateTime($schedule_time_in_from);
+                                                            $schedule_time_out_final = new DateTime($schedule_time_out);
+                                                            $time_in_final = new DateTime($time_in_data_full);
+                                                            $time_out_final = new DateTime($time_end);
+
+                                                            $half_day_hours = $schedule_hours / 2;
+
+
+                                                            if($time_in_final < $schedule_time_in_from_final)
+                                                            {
+                                                                $half_day_out = clone $schedule_time_in_from_final;
+                                                            }
+                                                            elseif($time_in_final > $schedule_time_in_final)
+                                                            {
+                                                                $half_day_out = clone $schedule_time_in_final;
+                                                            }
+                                                            else
+                                                            {
+                                                                $half_day_out = clone $time_in_final;
+                                                            }
+
+                                                            $hours = floor($half_day_hours);
+                                                            $minutes = ($half_day_hours - $hours) * 60;
+
+                                                            $half_day_out->modify("+{$hours} hours");
+                                                            $half_day_out->modify("+{$minutes} minutes");
+
+                                                            if($time_in_final > $schedule_time_in_final)
+                                                            {
+                                                                $late_diff = $schedule_time_in_final->diff($time_in_final);
+
+                                                                $late_diff_hours =
+                                                                    ($late_diff->s / 3600) +
+                                                                    ($late_diff->i / 60) +
+                                                                    $late_diff->h +
+                                                                    ($late_diff->days * 24);
+
+                                                                $late = round($late_diff_hours * 60, 2);
+                                                            }
+                                                            else
+                                                            {
+                                                                $late = 0;
+                                                            }
+
+
+
+                                                            if($time_out_final < $half_day_out)
+                                                            {
+                                                                $undertime_diff = $time_out_final->diff($half_day_out);
+
+                                                                $undertime_hours =
+                                                                    ($undertime_diff->s / 3600) +
+                                                                    ($undertime_diff->i / 60) +
+                                                                    $undertime_diff->h +
+                                                                    ($undertime_diff->days * 24);
+
+                                                                $undertime_hrs = round($undertime_hours, 2);
+                                                            }
+                                                            else
+                                                            {
+                                                                $undertime_hrs = 0;
+                                                            }
+
+
+                                                            $work = $half_day_hours;
+
+                                                            if($late > 0)
+                                                            {
+                                                                $work -= ($late / 60);
+                                                            }
+
+                                                            if($undertime_hrs > 0)
+                                                            {
+                                                                $work -= $undertime_hrs;
+                                                            }
+
+                                                            $work = max(0, round($work, 2));
                                                         }
 
-                                                        if($undertime_hrs > 0)
-                                                        {
-                                                            $work -= $undertime_hrs;
-                                                        }
-                                                        $work = max(0, round($work, 2));
                                                     }
-
+                                                    
                                                     if($abs_half == .5)
                                                     {
                                                         $abs = .5;
