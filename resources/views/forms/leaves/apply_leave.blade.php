@@ -85,7 +85,7 @@
                             Halfday
                             <br>
                             <div class="halfDayStatus">
-                                <select name="halfday_status" class="form-control">
+                                <select name="halfday_status" id="halfday_status" class="form-control">
                                     <option value="">Choose One</option>
                                     <option value="First Shift">First Shift</option>
                                     <option value="Second Shift">Second Shift</option>
@@ -339,5 +339,16 @@
             $("[name='date_to']").removeAttr('min max');
             }
         })
+
+        // Require Halfday Status
+        function toggleHalfdayStatus() {
+            $('#halfday_status').prop('required', $('#leaveHalfday').is(':checked'));
+        }
+
+        toggleHalfdayStatus();
+
+        $('#leaveHalfday').on('change', function () {
+            toggleHalfdayStatus();
+        });
     })
 </script>
