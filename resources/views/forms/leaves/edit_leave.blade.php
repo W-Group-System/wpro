@@ -117,18 +117,17 @@
                     Leave Date
                   </div>
                   <div class='col-md-10'>
-                    <input type="date" name='date_from' class="form-control" value="{{$leave->date_from}}" onchange="if(this.form.querySelector('[name=leave_type]').value != '3') this.form.querySelector('[name=date_to]').value=this.value" required>
+                    <input type="date" name='date_from' class="form-control edit-leave-date-from" value="{{$leave->date_from}}" required>
                     {{-- <input type="hidden" name='date_to' value="{{$leave->date_from}}"> --}}
                   </div>
                 </div>
 
-                {{-- v-show(use vue2.7.14.js @header.blade.php) displays date to only when Maternity leave (type 3) is selected --}}
-                <div class="form-group row" v-show="leave_type == '3'">
+                <div class="form-group row edit-leave-date-to-group" style="display:none;">
                   <div class="col-md-2">
                     Date To
                   </div>
                   <div class="col-md-10">
-                    <input type="date" name='date_to' value="{{$leave->date_to}}" class="form-control" :required="leave_type == '3'">
+                    <input type="date" name='date_to' value="{{$leave->date_to}}" class="form-control edit-leave-date-to">
                   </div>
                 </div>
                 <div class="form-group row">
@@ -254,5 +253,35 @@
               document.getElementById("edit_leave_credit_total").innerHTML = this.leave_balances;
             }
           },
+  });
+
+  $(document).ready(function() {
+    var $editLeaveForm = $('#app' + '<?php echo $leave->id; ?>');
+    var $editLeaveType = $editLeaveForm.find('[name="leave_type"]');
+    var $editLeaveDateFrom = $editLeaveForm.find('.edit-leave-date-from');
+    var $editLeaveDateToGroup = $editLeaveForm.find('.edit-leave-date-to-group');
+    var $editLeaveDateTo = $editLeaveForm.find('.edit-leave-date-to');
+
+    function updateDateToField(clearMaternityDate) {
+      var isMaternityLeave = $editLeaveType.val() == 3;
+      $editLeaveDateToGroup.toggle(isMaternityLeave);
+      $editLeaveDateTo.prop('required', isMaternityLeave);
+
+      if (isMaternityLeave && clearMaternityDate) {
+        $editLeaveDateTo.val('');
+      } else if (!isMaternityLeave) {
+        $editLeaveDateTo.val($editLeaveDateFrom.val());
+      }
+    }
+
+    $editLeaveType.on('change', function() {
+      updateDateToField(true);
+    });
+    $editLeaveDateFrom.on('change', function() {
+      if ($editLeaveType.val() != 3) {
+        $editLeaveDateTo.val($editLeaveDateFrom.val());
+      }
+    });
+    updateDateToField(false);
   });
 </script>
