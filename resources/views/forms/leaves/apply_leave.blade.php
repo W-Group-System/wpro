@@ -102,9 +102,16 @@
                     </div>
                     <div class='col-md-10'>
                       <input type="date" name='date_from' id="leave_date" class="form-control" required>
-                      <input type="hidden" name='date_to' id="leave_date_to">
                     </div>
                   </div>
+                  {{-- Separate the leave date to --}}
+                  <div class="form-group row" id="leave_date_to_group" style="display:none;">
+                      <div class="col-md-2">Date To</div>
+                      <div class="col-md-10">
+                        <input type="date" name='date_to' id="leave_date_to" class="form-control">
+                      </div>
+                  </div>
+                  {{-- End --}}
                   <div class="form-group row">
                     <div class='col-md-2'>
                       Reason
@@ -289,11 +296,28 @@
   });
 
     $(document).ready(function() {
+        // to toggle date_to
+        function updateDateToField() {
+            const isMaternityLeave = $("#leave_type").val() == 3;
+            $("#leave_date_to_group").toggle(isMaternityLeave);
+            $("#leave_date_to").prop('required', isMaternityLeave);
+
+            if (isMaternityLeave) {
+                $("#leave_date_to").val('');
+            } else {
+                $("#leave_date_to").val($("#leave_date").val());
+            }
+        }
+
         $("#leave_date").on('change', function() {
-            $("#leave_date_to").val($(this).val());
+            if ($("#leave_type").val() != 3) {
+                $("#leave_date_to").val($(this).val());
+            }
         });
 
         $("#leave_type").on('change', function() {
+            updateDateToField();
+
             if ($(this).val() == 1 || $(this).val() == 14) {
                 $("[name='date_from']").attr('min', "{{date('Y-m-d', strtotime('+3 days'))}}");
                 $("[name='date_to']").attr('min', "{{date('Y-m-d', strtotime('+3 days'))}}");

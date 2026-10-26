@@ -39,7 +39,8 @@
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_sil && $leave_type->code == 'SIL' && $employee_status->classifcation == 'Project Based')
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
-                          @elseif($is_allowed_to_file_ml && $leave_type->code == 'ML')
+                          {{-- @elseif($is_allowed_to_file_ml && $leave_type->code == 'ML') --}}
+                          @elseif(($is_allowed_to_file_ml || $leave_type->id == $leave->leave_type) && $leave_type->code == 'ML')
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_pl && $leave_type->code == 'PL')
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
@@ -116,8 +117,18 @@
                     Leave Date
                   </div>
                   <div class='col-md-10'>
-                    <input type="date" name='date_from' class="form-control" value="{{$leave->date_from}}" onchange="this.form.querySelector('[name=date_to]').value=this.value" required>
-                    <input type="hidden" name='date_to' value="{{$leave->date_from}}">
+                    <input type="date" name='date_from' class="form-control" value="{{$leave->date_from}}" onchange="if(this.form.querySelector('[name=leave_type]').value != '3') this.form.querySelector('[name=date_to]').value=this.value" required>
+                    {{-- <input type="hidden" name='date_to' value="{{$leave->date_from}}"> --}}
+                  </div>
+                </div>
+
+                {{-- v-show(use vue2.7.14.js @header.blade.php) displays date to only when Maternity leave (type 3) is selected --}}
+                <div class="form-group row" v-show="leave_type == '3'">
+                  <div class="col-md-2">
+                    Date To
+                  </div>
+                  <div class="col-md-10">
+                    <input type="date" name='date_to' value="{{$leave->date_to}}" class="form-control" :required="leave_type == '3'">
                   </div>
                 </div>
                 <div class="form-group row">
