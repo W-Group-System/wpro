@@ -589,6 +589,37 @@
                                                 }
 
                                                 $work = $schedule_hours;
+
+                                                // Start: Check if there is an approved OB before holiday
+                                                $holiday_pay_qualified_by_ob = false;
+                                                for ($i = 1; $i <= 7; $i++) {
+                                                    $previous_date = date(
+                                                        'Y-m-d',
+                                                        strtotime($date_r . " -{$i} days")
+                                                    );
+                                                    $previous_schedule = employeeSchedule(
+                                                        $schedules,
+                                                        $previous_date,
+                                                        $emp->schedule_id,
+                                                        $emp->employee_code
+                                                    );
+                                                    if (!$previous_schedule || empty($previous_schedule->time_in_from)) {
+                                                        continue;
+                                                    }
+
+                                                    $previous_ob = ($emp->approved_obs)
+                                                        ->where('applied_date', $previous_date)
+                                                        ->first();
+                                                    if ($previous_ob) {
+                                                        $holiday_pay_qualified_by_ob = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if ($holiday_pay_qualified_by_ob) {
+                                                    $abs = 0;
+                                                    $work = $schedule_hours;
+                                                }
+                                                // End: Approved OB holiday qualification.
                                             }
                                         }
                                     @endphp
