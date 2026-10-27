@@ -12,7 +12,16 @@
                 <p class="card-description">
                   <form method='get' onsubmit='show();'  enctype="multipart/form-data">
                   <div class=row>
-                    <div class='col-md-3'>
+                    {{-- <div class='col-md-4'>
+                        <div class="form-group">
+                          <select data-placeholder="Filter By Employee" class="form-control form-control-sm js-example-basic-single" style='width:100%;' name='employee[]' multiple>
+                              @foreach($employees as $emp)
+                                  <option value="{{$emp->employee_number}}" @if(in_array($emp->employee_number, $emp_code)) selected @endif>{{$emp->employee_number}} - {{$emp->first_name}} {{$emp->last_name}}</option>
+                              @endforeach
+                          </select>
+                        </div>
+                    </div> --}}
+                    <div class='col-md-2'>
                           <div class="form-group">
                               <select data-placeholder="Filter By Company" class="form-control form-control-sm required js-example-basic-single" style='width:100%;' name='company'>
                                   <option value="">-- Filter By Company --</option>
@@ -33,7 +42,7 @@
                         <input type="date" value='{{$to_date}}'  class="form-control" name="to" id='to' max='{{date('Y-m-d')}}' required/>
                       </div>
                     </div>
-                    <div class='col-md-3'>
+                    <div class='col-md-2'>
                         <button type="submit" class="btn btn-primary mb-2">Submit</button>
                         @if($date_range)
                             <button class='btn btn-info mb-2' onclick="exportTableToExcel('employee_attendance','{{$from_date}} - {{$to_date}}')">Export</button>

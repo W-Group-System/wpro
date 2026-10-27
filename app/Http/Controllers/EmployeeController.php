@@ -1921,10 +1921,15 @@ class EmployeeController extends Controller
                                     ->orderBy('id','asc');
                                 }])
                                 ->with(['approved_obs' => function ($query) use ($date_from, $to_date) {
+                                    //  $query->whereBetween('applied_date', [
+                                    //     date('Y-m-d', strtotime($date_from . ' -6 days')),
+                                    //     $to_date
+                                    // ])
                                     $query->whereBetween('applied_date', [$date_from, $to_date])
                                     ->where('status','Approved')
                                     ->orderBy('id','asc');
                                 }])
+
                                 ->with(['approved_dtrs' => function ($query) use ($date_from, $to_date) {
                                     $query->whereBetween('dtr_date', [$date_from, $to_date])
                                     ->where('status','Approved')
@@ -1936,9 +1941,11 @@ class EmployeeController extends Controller
                                 })
                                 ->when($allowed_projects,function($q) use($allowed_projects){
                                     $q->whereIn('project',$allowed_projects);
-                                })->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
+                                })
+                                ->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
                                 ->orderBy('last_name','asc')
                                 ->orderBy('first_name','asc')
+                                ->where('employee_code','A3152721')
                                 // ->where('employee_code','A189123')
                                 // ->where('employee_code','A3155322')
                                 ;

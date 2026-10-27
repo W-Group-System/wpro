@@ -242,7 +242,7 @@
                                                             // dd($cenvertedTime);
                                                         }
                                                     }
-                                                   
+
                                                   
                                                     $time_in = ($emp->attendances)->whereBetween('time_in',[$cenvertedTime,$date_r." 23:59:59"])->sortBy('time_in')->first();
                                                   
@@ -1339,6 +1339,7 @@
                                                 $rst_sh_nd_ge =0;
                                                 
                                                 $check_if_holiday = checkIfHoliday(date('Y-m-d',strtotime($date_r)),$emp->location);
+                                                $holiday_pay_qualified_by_ob = false;
                                                 if($check_if_holiday)
                                                 {
                                                     $restnd_ge=0;
@@ -1411,6 +1412,33 @@
                                                         // so stop checking older dates.
                                                         break;
                                                     }
+                                                    
+                                                    // Start: Check if there is an approved OB before holiday
+                                                    for ($i = 1; $i <= 7; $i++) {
+                                                        $previous_date = date(
+                                                            'Y-m-d',
+                                                            strtotime($date_r . " -{$i} days")
+                                                        );
+                                                        $previous_schedule = employeeSchedule(
+                                                            $schedules,
+                                                            $previous_date,
+                                                            $emp->schedule_id,
+                                                            $emp->employee_code
+                                                        );
+                                                        if (!$previous_schedule || empty($previous_schedule->time_in_from)) {
+                                                            continue;
+                                                        }
+
+                                                        $previous_ob = ($emp->approved_obs)
+                                                            ->where('applied_date', $previous_date)
+                                                            ->first();
+                                                        if ($previous_ob) {
+                                                            $holiday_pay_qualified = true;
+                                                            $holiday_pay_qualified_by_ob = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    // End
 
                                                    //  Only give regular holiday hours when
                                                    //  the last scheduled working day qualified.
@@ -1767,6 +1795,13 @@
                                                     $late = 0;
                                                     $undertime_hrs = 0;
                                                 }
+                                                // Start set the holiday paid if OB is filed before holiday
+                                                if ($check_if_holiday && $holiday_pay_qualified_by_ob) {
+                                                    $holiday_pay_qualified = true;
+                                                    $abs = 0;
+                                                    $work = $schedule_hours;
+                                                }
+                                                // End
                                                 $subtotal_abs += $abs;
                                                 $subtotal_leave_w_pay += $leave_count;
                                                 $subtotal_reg_hrs += $work;
