@@ -1945,7 +1945,7 @@ class EmployeeController extends Controller
                                 ->where('classification','!=',8)->where('original_date_hired','<=',$to_date)
                                 ->orderBy('last_name','asc')
                                 ->orderBy('first_name','asc')
-                                ->where('employee_code','A3152721')
+                                // ->where('employee_code','A3152721')
                                 // ->where('employee_code','A189123')
                                 // ->where('employee_code','A3155322')
                                 ;
