@@ -39,7 +39,8 @@
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_sil && $leave_type->code == 'SIL' && $employee_status->classifcation == 'Project Based')
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
-                          @elseif($is_allowed_to_file_ml && $leave_type->code == 'ML')
+                          {{-- @elseif($is_allowed_to_file_ml && $leave_type->code == 'ML') --}}
+                          @elseif(($is_allowed_to_file_ml || $leave_type->id == $leave->leave_type) && $leave_type->code == 'ML')
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
                           @elseif($is_allowed_to_file_pl && $leave_type->code == 'PL')
                             <option value="{{$leave_type->id}}" {{ $leave_type->id == $leave->leave_type ? 'selected' : ''}}>{{$leave_type->leave_type}}</option>
@@ -116,8 +117,17 @@
                     Leave Date
                   </div>
                   <div class='col-md-10'>
-                    <input type="date" name='date_from' class="form-control" value="{{$leave->date_from}}" onchange="this.form.querySelector('[name=date_to]').value=this.value" required>
-                    <input type="hidden" name='date_to' value="{{$leave->date_from}}">
+                    <input type="date" name='date_from' class="form-control edit-leave-date-from" value="{{$leave->date_from}}" required>
+                    {{-- <input type="hidden" name='date_to' value="{{$leave->date_from}}"> --}}
+                  </div>
+                </div>
+
+                <div class="form-group row edit-leave-date-to-group" style="display:none;">
+                  <div class="col-md-2">
+                    Date To
+                  </div>
+                  <div class="col-md-10">
+                    <input type="date" name='date_to' value="{{$leave->date_to}}" class="form-control edit-leave-date-to">
                   </div>
                 </div>
                 <div class="form-group row">
@@ -243,5 +253,35 @@
               document.getElementById("edit_leave_credit_total").innerHTML = this.leave_balances;
             }
           },
+  });
+
+  $(document).ready(function() {
+    var $editLeaveForm = $('#app' + '<?php echo $leave->id; ?>');
+    var $editLeaveType = $editLeaveForm.find('[name="leave_type"]');
+    var $editLeaveDateFrom = $editLeaveForm.find('.edit-leave-date-from');
+    var $editLeaveDateToGroup = $editLeaveForm.find('.edit-leave-date-to-group');
+    var $editLeaveDateTo = $editLeaveForm.find('.edit-leave-date-to');
+
+    function updateDateToField(clearMaternityDate) {
+      var isMaternityLeave = $editLeaveType.val() == 3;
+      $editLeaveDateToGroup.toggle(isMaternityLeave);
+      $editLeaveDateTo.prop('required', isMaternityLeave);
+
+      if (isMaternityLeave && clearMaternityDate) {
+        $editLeaveDateTo.val('');
+      } else if (!isMaternityLeave) {
+        $editLeaveDateTo.val($editLeaveDateFrom.val());
+      }
+    }
+
+    $editLeaveType.on('change', function() {
+      updateDateToField(true);
+    });
+    $editLeaveDateFrom.on('change', function() {
+      if ($editLeaveType.val() != 3) {
+        $editLeaveDateTo.val($editLeaveDateFrom.val());
+      }
+    });
+    updateDateToField(false);
   });
 </script>

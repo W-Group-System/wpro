@@ -202,7 +202,7 @@ class EmployeeLeaveController extends Controller
 
     private function normalizeDailyLeaveDates(Request $request)
     {
-        if ($request->date_from) {
+        if ($request->date_from && $request->leave_type != 3) {
             $request->merge([
                 'date_to' => $request->date_from,
             ]);
@@ -258,9 +258,21 @@ class EmployeeLeaveController extends Controller
             return back();
         }
 
-        if ($request->date_from != $request->date_to)
+        if ($request->leave_type == 3 && !$request->date_to)
+        {
+            Alert::warning('Please select a maternity leave end date.')->persistent('Dismiss');
+            return back();
+        }
+
+        if ($request->leave_type != 3 && $request->date_from != $request->date_to)
         {
             Alert::warning('Leave filing should be daily only. Please select one leave date.')->persistent('Dismiss');
+            return back();
+        }
+
+        if ($request->date_from > $request->date_to)
+        {
+            Alert::warning('Date From is cannot be greater than Date To')->persistent('Dismiss');
             return back();
         }
 
@@ -281,11 +293,6 @@ class EmployeeLeaveController extends Controller
         }
 
         $count_days = $this->getDailyLeaveCount($employee, $request);
-        if ($request->date_from > $request->date_to)
-        {
-            Alert::warning('Date From is cannot be greater than Date To')->persistent('Dismiss');
-            return back();
-        }
         if($request->withpay == 'on'){
             $existing_date_leave = EmployeeLeave::where(function($q)use($request) {
                     $q->where('date_from', '<=', $request->date_to)
