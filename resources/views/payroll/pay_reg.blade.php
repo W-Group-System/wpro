@@ -723,16 +723,16 @@
                                 {
                                   $philhealth = 0;
                                 }
-                                // Viray
-                                if($name->employee->employee_code == "A322809")
-                                {
-                                  $philhealth = 0;
-                                }
-                                // Baraquiel
-                                if($name->employee->employee_code == "A371424")
-                                {
-                                  $philhealth = 0;
-                                }
+                                // // Viray
+                                // if($name->employee->employee_code == "A322809")
+                                // {
+                                //   $philhealth = 0;
+                                // }
+                                // // Baraquiel
+                                // if($name->employee->employee_code == "A371424")
+                                // {
+                                //   $philhealth = 0;
+                                // }
 
                                 
                                 // if($name->employee->employee_code == "A3193626")
@@ -801,6 +801,24 @@
                                   $wisp_ee    = 0;
                                   $wisp_er    = 0;
                                 }
+
+                              }
+
+                              $philhealth_er = $philhealth;
+                              $philhealth_er_display = -1 * $philhealth;
+                              // Viray
+                              if($payroll_b && $name->employee->employee_code == "A322809")
+                              {
+                                $philhealth = 0;
+                                $philhealth_er = 1527.51;
+                                $philhealth_er_display = $philhealth_er;
+                              }
+                              // Baraquiel
+                              if($name->employee->employee_code == "A371424")
+                              {
+                                $philhealth = 0;
+                                $philhealth_er = 453.20;
+                                $philhealth_er_display = $philhealth_er;
                               }
                               
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
@@ -940,7 +958,8 @@
                               <td>{{number_format(-1*($hdmf),2)}}<input type='hidden' name='hdmf_ee[{{$key+1}}]' value="{{$hdmf}}"></td>
                               <td>{{number_format(-1*($hdmf),2)}}<input type='hidden' name='hdmf_er[{{$key+1}}]' value="{{$hdmf}}"></td>
                               <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_ee[{{$key+1}}]' value="{{$philhealth}}"></td>
-                              <td>{{number_format(-1*($philhealth),2)}}<input type='hidden' name='philhealth_er[{{$key+1}}]' value="{{$philhealth}}"></td>
+                              {{-- <td>{{number_format(-1*($philhealth),2)}}<input type='text' name='philhealth_ee[{{$key+1}}]' value="{{$philhealth}}"></td> --}}
+                              <td>{{number_format($philhealth_er_display,2)}}<input type='hidden' name='philhealth_er[{{$key+1}}]' value="{{$philhealth_er}}"></td>
                               <td>{{number_format(-1*($wisp_ee),2)}}<input type='hidden' name='wisp_ee[{{$key+1}}]' value="{{$wisp_ee}}"></td>
                               <td>{{number_format(-1*($wisp_er),2)}}<input type='hidden' name='wisp_er[{{$key+1}}]' value="{{$wisp_er}}"></td>
                               <td>{{number_format(-1*($statutory),2)}}<input type='hidden' name='statutory[{{$key+1}}]' value="{{$statutory}}"></td>
@@ -1212,5 +1231,3 @@
     @endforeach
     @include('payroll.upload_payroll') --}}
 @endsection
-
-
