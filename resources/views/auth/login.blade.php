@@ -18,8 +18,8 @@
             <form method="POST" action="{{ route('login') }}" aria-label="{{ __('Login') }}" onsubmit='show()'>
               @csrf
               <div class="form-group first">
-                <label for="email">Email</label>
-                <input  class="form-control" id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" placeholder="Email Address" required autofocus>
+                <label for="personal_email">Email or Employee Code/Number</label>
+                <input id="personal_email" type="text" class="form-control{{ $errors->has('personal_email') ? ' is-invalid' : '' }}" name="personal_email" value="{{ old('personal_email') }}" placeholder="Email or Employee Code/Number" required autofocus>
               </div>
               <div class="form-group last mb-3">
                 <label for="password">Password</label>

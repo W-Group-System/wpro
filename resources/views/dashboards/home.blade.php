@@ -40,7 +40,7 @@
                                             if(($schedule_out) < ($schedule_in))
                                             {
                                                 
-                                                $schedule_out = strtotime($date_r." ".$employee_schedule->time_out_to)+86400;
+                                                $schedule_out += 86400;
                                                 // dd(date('Y-m-d H:i',$schedule_out)." ".date('Y-m-d H:i',$schedule_in));
                                             }
                                             $schedule_hours = ((($schedule_out)-($schedule_in))/3600);

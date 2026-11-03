@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
+use App\Employee;
 use App\EmployeeLeave;
 use App\EmployeeOvertime;
 use App\EmployeeWfh;
@@ -28,6 +29,42 @@ class LoginController extends Controller
     */
 
     use AuthenticatesUsers;
+
+    public function username()
+    {
+        return 'personal_email';
+    }
+
+    protected function attemptLogin(Request $request)
+    {
+        $email = trim($request->input($this->username()));
+        $password = $request->input('password');
+        $remember = $request->filled('remember');
+
+        if ($this->guard()->attempt([
+            'email' => $email,
+            'password' => $password,
+        ], $remember)) {
+            return true;
+        }
+
+        $userId = Employee::where(function ($query) use ($email) {
+            $query->where('personal_email', $email)
+                ->orWhere('employee_code', $email)
+                ->orWhere('employee_number', $email);
+        })
+            ->whereNotNull('user_id')
+            ->value('user_id');
+
+        if (!$userId) {
+            return false;
+        }
+
+        return $this->guard()->attempt([
+            'id' => $userId,
+            'password' => $password,
+        ], $remember);
+    }
 
     /**
      * Where to redirect users after login.
