@@ -712,9 +712,9 @@
                                   $philhealth = 500;
                                 }
                                 if($name->employee->employee_code == "A162313")
-                              {
-                                $philhealth = 5000;
-                              }
+                                {
+                                  $philhealth = 5000;
+                                }
                                 if($name->employee->employee_code == "A190524")
                                 {
                                   $philhealth = 0;
@@ -723,6 +723,18 @@
                                 {
                                   $philhealth = 0;
                                 }
+                                // Viray
+                                if($name->employee->employee_code == "A322809")
+                                {
+                                  $philhealth = 0;
+                                }
+                                // Baraquiel
+                                if($name->employee->employee_code == "A371424")
+                                {
+                                  $philhealth = 0;
+                                }
+
+                                
                                 // if($name->employee->employee_code == "A3193626")
                                 // {
                                 //   $philhealth = 450;
