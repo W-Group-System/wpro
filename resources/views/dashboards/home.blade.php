@@ -28,6 +28,7 @@
                                   <p class="card-text">Time In : 
                                     @if($attendance_now != null){{date('h:i A',strtotime($attendance_now->time_in))}} <br>
                                     @php
+                                          $date_r = $date_r ?? date('Y-m-d');
                                           $employee_schedule = employeeSchedule($schedules,$attendance_now->time_in,$schedules[0]->schedule_id);
                                           $estimated_out = "";
                                           $halfday_out = "";
