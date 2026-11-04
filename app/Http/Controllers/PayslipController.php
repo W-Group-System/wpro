@@ -329,6 +329,14 @@ class PayslipController extends Controller
                     ->whereHas('employee', function ($query) {
                         $query->where('status', 'Active');
                     })
+                    // filter employees by last name
+                    // ->whereHas('employee', function ($query) {
+                    //     $query->where('status', 'Active')
+                    //         ->where(function ($q) {
+                    //             $q->where('last_name', 'like', 'Viray')
+                    //                 ->orWhere('last_name', 'like', 'Largosa'); 
+                    //         });
+                    // })
                     ->select('company_id', 'employee_no', 'name', 'cut_off_date',
                     DB::raw('COUNT(CASE WHEN shift NOT LIKE "%REST%" THEN 1 END) as shift_count'),
                     DB::raw('SUM(abs) as total_abs'),
