@@ -811,14 +811,14 @@
                               {
                                 $philhealth = 0;
                                 $philhealth_er = 1527.51;
-                                $philhealth_er_display = $philhealth_er;
+                                $philhealth_er_display = -1 * $philhealth_er;
                               }
                               // Baraquiel
                               if($name->employee->employee_code == "A371424")
                               {
                                 $philhealth = 0;
                                 $philhealth_er = 453.20;
-                                $philhealth_er_display = $philhealth_er;
+                                $philhealth_er_display = -1 * $philhealth_er;
                               }
                               
                               $statutory = $sss_ee+$wisp_ee+$hdmf+$philhealth;
