@@ -1349,6 +1349,10 @@
                                                     // Regular or Legal holiday should not be paid if employee is absent on the last working/scheduled day
                                                     // $work = $schedule_hours;
                                                     $holiday_pay_qualified = false;
+                                                    $qualification_date = date(
+                                                        'Y-m-d',
+                                                        strtotime($date_r . ' -1 day')
+                                                    );
 
                                                     for ($i = 1; $i <= 7; $i++) {
 
@@ -1356,6 +1360,10 @@
                                                             'Y-m-d',
                                                             strtotime($date_r . " -{$i} days")
                                                         );
+                                                        // Skip consecutive holidays
+                                                        if (checkIfHoliday($previous_date, $emp->location)) {
+                                                            continue;
+                                                        }
 
                                                         $previous_schedule = employeeSchedule(
                                                             $schedules,
@@ -1370,7 +1378,7 @@
                                                         }
 
                                                         //This is now the LAST SCHEDULED WORKING DAY
-
+                                                                                     
                                                         // Check attendance
                                                         $previous_attendance = ($emp->attendances)
                                                             ->whereBetween('time_in', [
