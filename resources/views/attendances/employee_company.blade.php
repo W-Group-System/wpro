@@ -1799,7 +1799,18 @@
                                                 if ($check_if_holiday && $holiday_pay_qualified_by_ob) {
                                                     $holiday_pay_qualified = true;
                                                     $abs = 0;
-                                                    $work = $schedule_hours;
+                                                    // $work = $schedule_hours;
+                                                    // Validation for Special Hoiliday and Non Monthly
+                                                    if (
+                                                        $check_if_holiday == "Special Holiday" &&
+                                                        $emp->work_description == "Non-Monthly" &&
+                                                        $rest != "RESTDAY" &&
+                                                        (!$time_in || $time_in->time_in == null)
+                                                    ) {
+                                                        $work = 0;
+                                                    } else {
+                                                        $work = $schedule_hours;
+                                                    }
                                                 }
                                                 // End
                                                 $subtotal_abs += $abs;
