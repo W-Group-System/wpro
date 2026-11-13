@@ -231,6 +231,7 @@ class UploadController extends Controller
                         $endDate = date('Y-m-d',strtotime($row[4]));
                         $approved_date = date('Y-m-d',strtotime($row[7]));
                         $filed_date    = date('Y-m-d', strtotime($row[2]));
+                        $halfday_status = $row[11];
                         
                         
                         // $leaves = EmployeeLeave::whereIn('user_id', $user_id)
@@ -297,6 +298,7 @@ class UploadController extends Controller
                             $leave->status = $row[10];
                             $leave->created_by = auth()->user()->id;
                             $leave->created_at = date('Y-m-d', strtotime($row[2]));
+                            $leave->halfday_status = $halfday_status;
                             $leave->save();
                         }
                     }
