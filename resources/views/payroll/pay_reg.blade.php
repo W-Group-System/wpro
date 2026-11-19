@@ -816,8 +816,11 @@
                               // Baraquiel
                               if($name->employee->employee_code == "A371424")
                               {
+                                
                                 $philhealth = 0;
-                                $philhealth_er = 453.20;
+                                if($payroll_b) {
+                                  $philhealth_er = 453.20;
+                                }
                                 $philhealth_er_display = -1 * $philhealth_er;
                               }
                               
