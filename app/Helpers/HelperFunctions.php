@@ -540,7 +540,11 @@ else
     
     // Loop over each day in the date range
     while ($dateFromObj <= $dateToObj) {
-        $dailySchedule = $dailySchedules->firstWhere('log_date', $dateFromObj->format('Y-m-d'));
+        // $dailySchedule = $dailySchedules->firstWhere('log_date', $dateFromObj->format('Y-m-d'));
+        $dailySchedule = $dailySchedules
+            ->where('log_date', $dateFromObj->format('Y-m-d'))
+            ->sortByDesc('id')
+            ->first();
         
         if ($dailySchedule) {
             // If a daily schedule exists, check if working_hours is set
@@ -2178,7 +2182,7 @@ function checkUsedPsl($id, $sl,$prev_sl, $scheduleData)
 
 function employeeScheduleV2($schedules = array(), $dailySchedule=array(), $check_date, $schedule_id, $empNum=""){
     if (count($dailySchedule) > 0){
-        foreach($dailySchedule as $item){
+        foreach(collect($dailySchedule)->sortByDesc('id') as $item){
             if ($item['log_date'] == $check_date && $item['employee_code'] == $empNum) {
                 return $item;
             }
