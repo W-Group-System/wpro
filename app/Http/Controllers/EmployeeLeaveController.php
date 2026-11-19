@@ -101,7 +101,42 @@ class EmployeeLeaveController extends Controller
 
         // $attendance_logs = Attendance::where('employee_code', auth()->user()->employee->employee_number)->orderBy('id', 'desc')->get()->take(2);
         $last_logs = date('Y-m-d');
-        $threeDaysAgo = date('Y-m-d', strtotime('-3 weekdays'));
+        // $threeDaysAgo = date('Y-m-d', strtotime('-3 weekdays'));
+        $employeeCode = auth()->user()->employee->employee_number;
+        $scheduleId = $employee_status->schedule_id;
+        $schedules = $employee_status->ScheduleData;
+
+        $date = Carbon::today();
+        $workingDays = 0;
+        while ($workingDays < 3) {
+
+            $date->subDay();
+
+            $checkDate = $date->format('Y-m-d');
+
+            // Skip holidays
+            if (checkIfHoliday($checkDate, $employee_status->location)) {
+                continue;
+            }
+
+            // Get employee's schedule for this date
+            $schedule = employeeSchedule(
+                $schedules,
+                $checkDate,
+                $scheduleId,
+                $employeeCode
+            );
+
+            // Skip rest days or dates without a working schedule
+            if (!$schedule || empty($schedule->time_in_from)) {
+                continue;
+            }
+
+            $workingDays++;
+        }
+
+        $threeDaysAgo = $date->format('Y-m-d');
+
         // dd($threeDaysAgo);
         $attendance_logs = AttendanceLog::where('emp_code', auth()->user()->employee->employee_number)
             // ->orderBy('date', 'desc')
