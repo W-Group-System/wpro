@@ -752,6 +752,10 @@
                                                         // fix late issue 
                                                         // $work =  round((($time_end_ts - $time_start_ts)/3600), 2);
                                                         $work = (($time_end_ts - $time_start_ts) / 3600);
+
+                                                        if ($check_if_holiday && $emp->work_description != "Non-Monthly") {
+                                                            $work = $original_sched;
+                                                        }
                                                         
                                                      
                                                         $schedule_hours = 0;
