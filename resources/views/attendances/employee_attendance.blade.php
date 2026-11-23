@@ -678,6 +678,14 @@
                                         // }
                                         if($leave_count == .5)
                                         {
+                                            ## halfday leave Undefined variable: schedule_time_in
+                                            $time_in_data_full =  date('Y-m-d H:i:s',strtotime($time_start));
+                                            $time_in_data_date =  date('Y-m-d',strtotime($time_start));
+                                            $schedule_time_in =  $time_in_data_date . ' ' . $employee_schedule['time_in_to'];
+                                            $schedule_time_out = $time_in_data_date . ' ' . $employee_schedule['time_out_to'];
+                                            $schedule_time_in = date('Y-m-d H:i:s',strtotime($schedule_time_in));
+
+
                                             $schedule_time_in_final = new DateTime($schedule_time_in);
                                             $schedule_time_out_final = new DateTime($schedule_time_out);
                                             $time_in_final = new DateTime($time_in_data_full);
