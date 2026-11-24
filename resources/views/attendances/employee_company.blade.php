@@ -1857,6 +1857,7 @@
                                                         (!$time_in || $time_in->time_in == null)
                                                     ) {
                                                         $work = 0;
+                                                        $abs = 1;
                                                     } else {
                                                         $work = $schedule_hours;
                                                     }
