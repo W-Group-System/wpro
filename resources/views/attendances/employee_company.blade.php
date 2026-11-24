@@ -1385,13 +1385,28 @@
                                                         //This is now the LAST SCHEDULED WORKING DAY
                                                                                      
                                                         // Check attendance
-                                                        $previous_attendance = ($emp->attendances)
-                                                            ->whereBetween('time_in', [
-                                                                $previous_date . ' 00:00:00',
-                                                                $previous_date . ' 23:59:59'
-                                                            ])
-                                                            ->sortBy('time_in')
-                                                            ->first();
+                                                        // $previous_attendance = ($emp->attendances)
+                                                        //     ->whereBetween('time_in', [
+                                                        //         $previous_date . ' 00:00:00',
+                                                        //         $previous_date . ' 23:59:59'
+                                                        //     ])
+                                                        //     ->sortBy('time_in')
+                                                        //     ->first();
+                                                        $previous_attendance = $emp->attendances->first(function ($attendance) use ($previous_date) {
+
+                                                            $has_time_in = !empty($attendance->time_in);
+                                                            $has_time_out = !empty($attendance->time_out);
+
+                                                            $time_in_matches = $has_time_in &&
+                                                                date('Y-m-d', strtotime($attendance->time_in)) == $previous_date;
+
+                                                            $time_out_matches = $has_time_out &&
+                                                                date('Y-m-d', strtotime($attendance->time_out)) == $previous_date;
+
+                                                            return ($time_in_matches || $time_out_matches)
+                                                                && $has_time_in
+                                                                && $has_time_out;
+                                                        });
 
                                                         // Check approved OB
                                                         $previous_ob = ($emp->approved_obs)
@@ -1452,11 +1467,29 @@
                                                         }
                                                     }
                                                     // End
-
+                                                    ## fix holiday pay
                                                    //  Only give regular holiday hours when
                                                    //  the last scheduled working day qualified.
-                                                    if ($holiday_pay_qualified && $work <= 0) {
+
+                                                    // if ($holiday_pay_qualified && $work <= 0) {
+                                                    //     $work = $schedule_hours;
+                                                    // }
+
+                                                    if (
+                                                        $holiday_pay_qualified == true && $work <= 0
+                                                    ) {
+                                                        // $if_attendance_holiday_status = 'With-Pay';
+
+                                                        // Do not mark the employee absent.
+                                                        $abs = 0;
+                                                        $is_absent = '';
+
+                                                        // Reset previous absence so it won't affect
+                                                        // the next consecutive holiday.
+                                                        $previous_abs = 0;
+
                                                         $work = $schedule_hours;
+                                                        
                                                     }
 
                                                   if ($emp->employee_code == "A197326")//lacaran
