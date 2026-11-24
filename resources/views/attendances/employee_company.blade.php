@@ -1423,18 +1423,21 @@
                                                         // Holiday is paid if the last scheduled
                                                         // working day was worked, approved OB,
                                                         // or approved leave with pay.
-                                                        if ($previous_attendance) {
+                                                        if ($emp->work_description != 'Non-Monthly') {
+                                                            if ($previous_attendance) {
 
-                                                            $holiday_pay_qualified = true;
+                                                                $holiday_pay_qualified = true;
 
-                                                        } elseif ($previous_ob) {
+                                                            } elseif ($previous_ob) {
 
-                                                            $holiday_pay_qualified = true;
+                                                                $holiday_pay_qualified = true;
 
-                                                        } elseif ($previous_leave) {
+                                                            } elseif ($previous_leave) {
 
-                                                            $holiday_pay_qualified = true;
+                                                                $holiday_pay_qualified = true;
+                                                            }
                                                         }
+                                                        
 
                                                         // We found the previous scheduled working day,
                                                         // so stop checking older dates.
