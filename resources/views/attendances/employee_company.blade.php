@@ -1276,28 +1276,67 @@
                                                         $overtime = 0;
                                                         $night_diff = 0;
                                                         $night_diff_ot = 0;
-                                                        if(($time_start) && ($time_end) && ($approved_overtime_hrs >0))
-                                                        {
+                                                        // if(($time_start) && ($time_end) && ($approved_overtime_hrs >0))
+                                                        // {
                                                             
-                                                            $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
-                                                            $restnd =  night_difference_per_company($time_start,$time_end);
-                                                            if($work_rest >9 )
-                                                            { 
-                                                                $restnd =  round(night_difference_per_company($time_start,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($time_start)))));
-                                                                $restnd_ge = night_difference_per_company($time_start,$time_end);
-                                                                $restnd_ge = $restnd_ge - $restnd;
-                                                                $restnd = $restnd-1;
-                                                                if($restnd <0)
-                                                                {
+                                                        //     $work_rest =  round(((strtotime($time_end) - strtotime($time_start))/3600), 2);
+                                                        //     $restnd =  night_difference_per_company($time_start,$time_end);
+                                                        //     if($work_rest >9 )
+                                                        //     { 
+                                                        //         $restnd =  round(night_difference_per_company($time_start,date("Y-m-d H:i:s", strtotime('+9 hours',strtotime($time_start)))));
+                                                        //         $restnd_ge = night_difference_per_company($time_start,$time_end);
+                                                        //         $restnd_ge = $restnd_ge - $restnd;
+                                                        //         $restnd = $restnd-1;
+                                                        //         if($restnd <0)
+                                                        //         {
+                                                        //             $restnd = 0;
+                                                        //         }
+                                                        //         if($restnd_ge <0)
+                                                        //         {
+                                                        //             $restnd_ge = 0;
+                                                        //         }
+                                                        //     }
+                                                          
+                                                            
+                                                        // }
+                                                        ## fix restday nd and nd over 8
+                                                        if (($time_start) && ($time_end) && ($approved_overtime_hrs > 0))
+                                                        {
+                                                            $work_rest = round(
+                                                                (strtotime($time_end) - strtotime($time_start)) / 3600,
+                                                                2
+                                                            );
+
+                                                            $restnd = night_difference_per_company($time_start, $time_end);
+                                                            $restnd_ge = 0;
+
+                                                            if ($work_rest > 9)
+                                                            {
+                                                                $cutoff = date(
+                                                                    "Y-m-d H:i:s",
+                                                                    strtotime('+8 hours', strtotime($time_start))
+                                                                );
+
+                                                                $total_restnd = $restnd;
+
+                                                                // ND before completing 8 hours
+                                                                $restnd = round(
+                                                                    night_difference_per_company($time_start, $cutoff), 2
+                                                                );
+
+                                                                // ND after completing 8 hours
+                                                                $restnd_ge = round(
+                                                                    $total_restnd - $restnd, 2
+                                                                );
+
+                                                                if ($restnd < 0) {
                                                                     $restnd = 0;
                                                                 }
-                                                                if($restnd_ge <0)
-                                                                {
+
+                                                                if ($restnd_ge < 0) {
                                                                     $restnd_ge = 0;
                                                                 }
                                                             }
-                                                          
-                                                            
                                                         }
                                                         $late = 0;
                                                         $undertime = 0;
@@ -1393,7 +1432,7 @@
                                                         //     ->sortBy('time_in')
                                                         //     ->first();
                                                         $previous_attendance = $emp->attendances->first(function ($attendance) use ($previous_date) {
-
+                                                           
                                                             $has_time_in = !empty($attendance->time_in);
                                                             $has_time_out = !empty($attendance->time_out);
 
